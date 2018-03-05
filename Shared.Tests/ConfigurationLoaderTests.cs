@@ -49,6 +49,17 @@ namespace Shared.Tests
             Assert.Equal("Endgame", conf.GameName);
         }
 
+        [Fact]
+        public void ActionCostsLoaded()
+        {
+            Assert.Equal(10, conf.MoveDelay);
+            Assert.Equal(45, conf.DiscoverDelay);
+            Assert.Equal(50, conf.TestDelay);
+            Assert.Equal(10, conf.PickUpDelay);
+            Assert.Equal(10, conf.PlacingDelay);
+            Assert.Equal(500, conf.KnowledgeExchangeDelay);
+        }
+
 
 
         const string FILECONTENT = @"

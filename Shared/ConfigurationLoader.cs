@@ -8,6 +8,15 @@ namespace Shared
 {
     public class ConfigurationLoader
     {
+
+        public GameConfiguration LoadConfiguration(string filepath)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.Load(filepath);
+
+            return LoadConfiguration(doc);
+        }
+
         public GameConfiguration LoadConfiguration(XmlDocument doc)
         {
             GameConfiguration result = new GameConfiguration();
@@ -18,17 +27,10 @@ namespace Shared
             {
                 LoadGMAttributes(result, gmSettingsNode);
                 LoadGameDefinition(result, gmSettingsNode);
+                LoadActionCosts(result, gmSettingsNode);
             }
 
             return result;
-        }
-
-        public GameConfiguration LoadConfiguration(string filepath)
-        {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(filepath);
-
-            return LoadConfiguration(doc);
         }
 
         private void LoadGMAttributes(GameConfiguration config, XmlNode gmSettingsNode)
@@ -39,7 +41,6 @@ namespace Shared
             if (double.TryParse(gmSettingsNode.Attributes["RetryRegisterGameInterval"]?.InnerText, out double registerGameInterval))
                 config.RetryRegisterGameInterval = registerGameInterval;
         }
-
         private void LoadGameDefinition(GameConfiguration config, XmlNode gmSettingsNode)
         {
             XmlNode gameDefinitionNode = gmSettingsNode["GameDefinition"];
@@ -72,7 +73,6 @@ namespace Shared
                 config.GameName = gameDefinitionNode["GameName"]?.InnerText;
             }
         }
-
         private List<MockGoal> GetGameGoals(XmlNode gameDefinitionNode)
         {
              var result = new List<MockGoal>();
@@ -99,6 +99,31 @@ namespace Shared
             }
 
             return result;
+        }
+        private void LoadActionCosts(GameConfiguration config, XmlNode gmSettingsNode)
+        {
+            XmlNode actionCostsNode = gmSettingsNode["ActionCosts"];
+
+            if (actionCostsNode != null)
+            {
+                if (double.TryParse(actionCostsNode["MoveDelay"]?.InnerText, out double moveDelay))
+                    config.MoveDelay = moveDelay;
+
+                if (double.TryParse(actionCostsNode["DiscoverDelay"]?.InnerText, out double discoverDelay))
+                    config.DiscoverDelay = discoverDelay;
+
+                if (double.TryParse(actionCostsNode["TestDelay"]?.InnerText, out double testDelay))
+                    config.TestDelay = testDelay;
+
+                if (double.TryParse(actionCostsNode["PickUpDelay"]?.InnerText, out double pickUpDelay))
+                    config.PickUpDelay = pickUpDelay;
+
+                if (double.TryParse(actionCostsNode["PlacingDelay"]?.InnerText, out double placingDelay))
+                    config.PlacingDelay = placingDelay;
+
+                if (double.TryParse(actionCostsNode["KnowledgeExchangeDelay"]?.InnerText, out double knowledgeExchangeDelay))
+                    config.KnowledgeExchangeDelay = knowledgeExchangeDelay;
+            }
         }
     }
 }
