@@ -36,6 +36,19 @@ namespace Shared.Tests
             Assert.Equal(blueGoal, conf.Goals[1]);
         }
 
+        [Fact]
+        public void GameDefinitionLoaded()
+        {
+            Assert.Equal(0.33, conf.ShamProbability);
+            Assert.Equal(200, conf.PlacingNewPiecesFrequency);
+            Assert.Equal(10, conf.InitialNumberOfPieces);
+            Assert.Equal(10, conf.BoardWidth);
+            Assert.Equal(10, conf.TaskAreaLength);
+            Assert.Equal(3, conf.GoalAreaLength);
+            Assert.Equal(8, conf.NumberOfPlayersPerTeam);
+            Assert.Equal("Endgame", conf.GameName);
+        }
+
 
 
         const string FILECONTENT = @"

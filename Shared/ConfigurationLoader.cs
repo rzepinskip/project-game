@@ -47,6 +47,29 @@ namespace Shared
             if (gameDefinitionNode != null)
             {
                 config.Goals =  GetGameGoals(gameDefinitionNode);
+
+                if (double.TryParse(gameDefinitionNode["ShamProbability"]?.InnerText, out double shamProbability))
+                    config.ShamProbability = shamProbability;
+
+                if (double.TryParse(gameDefinitionNode["PlacingNewPiecesFrequency"]?.InnerText, out double placingNewPiecesFrequency))
+                    config.PlacingNewPiecesFrequency = placingNewPiecesFrequency;
+
+                if (int.TryParse(gameDefinitionNode["InitialNumberOfPieces"]?.InnerText, out int initialNumberOfPieces))
+                    config.InitialNumberOfPieces = initialNumberOfPieces;
+
+                if (int.TryParse(gameDefinitionNode["BoardWidth"]?.InnerText, out int boardWidth))
+                    config.BoardWidth = boardWidth;
+
+                if (int.TryParse(gameDefinitionNode["TaskAreaLength"]?.InnerText, out int taskAreaLength))
+                    config.TaskAreaLength = taskAreaLength;
+
+                if (int.TryParse(gameDefinitionNode["GoalAreaLength"]?.InnerText, out int goalAreaLength))
+                    config.GoalAreaLength = goalAreaLength;
+
+                if (int.TryParse(gameDefinitionNode["NumberOfPlayersPerTeam"]?.InnerText, out int numberOfPlayersPerTeam))
+                    config.NumberOfPlayersPerTeam = numberOfPlayersPerTeam;
+
+                config.GameName = gameDefinitionNode["GameName"]?.InnerText;
             }
         }
 
