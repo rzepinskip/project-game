@@ -7,12 +7,6 @@ namespace Shared
 {
     public class PlayerBase
     {
-        public enum PlayerTeam {
-            [XmlEnum(Name = "red")]
-            Red,
-            [XmlEnum(Name = "blue")]
-            Blue
-        }
 
         public enum TeamRole {
             [XmlEnum(Name = "member")]
@@ -22,7 +16,7 @@ namespace Shared
 
         }
 
-        private PlayerTeam Team { get; set; }
+        private CommonResources.Team Team { get; set; }
         private TeamRole Type { get; set; }
         private int Id { get; set; }
     }

@@ -6,6 +6,7 @@ namespace Shared.Board
 {
     class GoalField : Field
     {
-        public GoalAreaObject ContainedGoalAreaObject { get; set; }
+        public Shared.CommonResources.GoalFieldType Type { get; set; }
+        public Shared.CommonResources.Team Team { get; set; }
     }
 }

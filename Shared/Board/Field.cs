@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Shared.Board
 {
-    abstract class Field : BoardObject {
-        public FieldObject ContainedObject { get; set; }
-        public Pawn PlayerPawn { get; set; }
+    public abstract class Field : Location {
+        public Location Location { get; set; }
+        public int? PlayerId { get; set; }
         public DateTime Timestamp { get; set; }
     }
 }

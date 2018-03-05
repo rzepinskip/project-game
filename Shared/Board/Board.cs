@@ -6,14 +6,15 @@ namespace Shared.Board
 {
     public class Board
     {
-        public BoardObject[,] Content { get; }
+        public Location[,] Content { get; }
         public int TaskAreaSize { get; }
         public int GoalAreaSize { get; }
-
+        public int Width { get; }
         public Board(int boardWidth, int taskAreaSize, int goalAreaSize) {
             this.GoalAreaSize = goalAreaSize;
             this.TaskAreaSize = taskAreaSize;
-            this.Content = new BoardObject[taskAreaSize + 2 * goalAreaSize, boardWidth];
+            this.Width = boardWidth;
+            this.Content = new Location[taskAreaSize + 2 * goalAreaSize, boardWidth];
         }
     }
 }

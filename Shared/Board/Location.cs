@@ -4,7 +4,10 @@ using System.Text;
 
 namespace Shared.Board
 {
-    class Sham : FieldObject
+    public abstract class Location
     {
+        public int X { get; set; }
+
+        public int Y { get; set; }
     }
 }

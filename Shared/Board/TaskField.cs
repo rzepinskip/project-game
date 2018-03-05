@@ -4,8 +4,9 @@ using System.Text;
 
 namespace Shared.Board
 {
-    class TaskAreaField
+    public class TaskField: Field
     {
         public int DistanceToPiece { get; set; }
+        public int? PieceId { get; set; }
     }
 }
