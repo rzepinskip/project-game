@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Shared
 {
-    public class MockGoal
+    public struct MockGoal
     {
         public int X { get; set; }
         public int Y { get; set; }

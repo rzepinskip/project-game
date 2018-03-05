@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace Shared
 {
@@ -11,7 +12,13 @@ namespace Shared
         {
             GameConfiguration result = new GameConfiguration();
 
-            LoadGMSettings(result, doc);
+            XmlNode gmSettingsNode = doc.DocumentElement;
+
+            if (gmSettingsNode != null)
+            {
+                LoadGMAttributes(result, gmSettingsNode);
+                LoadGameDefinition(result, gmSettingsNode);
+            }
 
             return result;
         }
@@ -24,9 +31,8 @@ namespace Shared
             return LoadConfiguration(doc);
         }
 
-        private void LoadGMSettings(GameConfiguration config, XmlDocument doc)
+        private void LoadGMAttributes(GameConfiguration config, XmlNode gmSettingsNode)
         {
-            XmlNode gmSettingsNode = doc.DocumentElement;
             if (double.TryParse(gmSettingsNode.Attributes["KeepAliveInterval"]?.InnerText, out double keepAlive))
                 config.KeepAliveInterval = keepAlive;
 
@@ -34,11 +40,42 @@ namespace Shared
                 config.RetryRegisterGameInterval = registerGameInterval;
         }
 
-        //private void LoadGameDefinition(GameConfiguration config, XmlDocument doc)
-        //{
-        //    XmlNode gameDefinitionNode = doc.DocumentElement.SelectSingleNode("/GameDefinition");
+        private void LoadGameDefinition(GameConfiguration config, XmlNode gmSettingsNode)
+        {
+            XmlNode gameDefinitionNode = gmSettingsNode["GameDefinition"];
 
-        //    config.Goals = new List<MockGoal>();
-        //}
+            if (gameDefinitionNode != null)
+            {
+                config.Goals =  GetGameGoals(gameDefinitionNode);
+            }
+        }
+
+        private List<MockGoal> GetGameGoals(XmlNode gameDefinitionNode)
+        {
+             var result = new List<MockGoal>();
+
+            foreach (XmlNode node in gameDefinitionNode.ChildNodes)
+            {
+                if (node.Name != "Goals")
+                    continue;
+
+                var goal = new MockGoal();
+
+                if (!int.TryParse(node.Attributes["x"]?.InnerText, out int x))
+                    continue;
+
+                if (!int.TryParse(node.Attributes["y"]?.InnerText, out int y))
+                    continue;
+
+                goal.Team = node.Attributes["team"].InnerText;
+                goal.X = x;
+                goal.Y = y;
+                goal.Type = node.Attributes["type"].InnerText;
+
+                result.Add(goal);
+            }
+
+            return result;
+        }
     }
 }

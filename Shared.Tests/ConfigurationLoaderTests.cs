@@ -17,11 +17,26 @@ namespace Shared.Tests
         }
 
         [Fact]
-        public void GameMasterSettingsLoaded()
+        public void GameMasterAttributesLoaded()
         {
             Assert.Equal(500, conf.KeepAliveInterval);
             Assert.Equal(60000, conf.RetryRegisterGameInterval);
         }
+
+        [Fact]
+        public void GoalsLoaded()
+        {
+            Assert.NotNull(conf.Goals);
+            Assert.Equal(2,conf.Goals.Count);
+
+            var redGoal = new MockGoal { Team = "red", X = 4, Y = 15, Type = "goal" };
+            var blueGoal = new MockGoal { Team = "blue", X = 6, Y = 1, Type = "goal" };
+
+            Assert.Equal(redGoal, conf.Goals[0]);
+            Assert.Equal(blueGoal, conf.Goals[1]);
+        }
+
+
 
         const string FILECONTENT = @"
 <GameMasterSettings xmlns = ""https://se2.mini.pw.edu.pl/17-pl-19/17-pl-19/""
@@ -29,16 +44,6 @@ namespace Shared.Tests
                     RetryRegisterGameInterval=""60000"">
   <GameDefinition>
     <Goals team = ""red"" x=""4"" y =""15"" type=""goal"" />
-    <Goals team = ""red"" x=""5"" y =""15"" type=""goal"" />
-    <Goals team = ""red"" x=""6"" y =""15"" type=""goal"" />
-    <Goals team = ""red"" x=""4"" y =""14"" type=""goal"" />
-    <Goals team = ""red"" x=""5"" y =""14"" type=""goal"" />
-    <Goals team = ""red"" x=""6"" y =""14"" type=""goal"" />
-    <Goals team = ""blue"" x=""4"" y=""0"" type=""goal"" />
-    <Goals team = ""blue"" x=""5"" y=""0"" type=""goal"" />
-    <Goals team = ""blue"" x=""6"" y=""0"" type=""goal"" />
-    <Goals team = ""blue"" x=""4"" y=""1"" type=""goal"" />
-    <Goals team = ""blue"" x=""5"" y=""1"" type=""goal"" />
     <Goals team = ""blue"" x=""6"" y=""1"" type=""goal"" />
     <ShamProbability>0.33</ShamProbability>
     <PlacingNewPiecesFrequency>200</PlacingNewPiecesFrequency>
