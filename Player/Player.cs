@@ -10,5 +10,6 @@ namespace Player
         private string PlayerGuid { get; set; }
         private Board Board { get; set; }
         private List<PlayerBase> Players { get; set; }
+        private Field OccupiedField { get; set; }
     }
 }

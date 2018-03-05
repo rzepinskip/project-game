@@ -7,7 +7,7 @@ namespace GameMaster
 {
     class GameMaster
     {
-        Dictionary<string, Pawn> Players { get; }
+        Dictionary<string, Location> Players { get; }
         Board Board { get; set; }
     }
 }
