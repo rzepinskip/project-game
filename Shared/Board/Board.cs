@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Shared.Board
 {
-    class Board
+    public class Board
     {
         public BoardObject[,] Content { get; }
         public int TaskAreaSize { get; }
