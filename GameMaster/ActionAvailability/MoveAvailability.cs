@@ -10,7 +10,7 @@ namespace GameMaster.ActionAvailability
     {
         public static Location GetNewLocation(Location l, CommonResources.MoveType direction)
         {
-            Location nl = new Location(){ X = 0, Y = 0 };
+            Location nl = new Location(){ X = l.X, Y = l.Y };
             switch (direction)
             {
                 case CommonResources.MoveType.Down:
@@ -32,7 +32,7 @@ namespace GameMaster.ActionAvailability
         {
             bool response = true;
             Location nl = GetNewLocation(l, direction);
-            if (nl.Y - 1 < 0 || nl.X - 1 < 0 || nl.X + 1 > BoardWidth - 1 || nl.Y + 1 > BoardHeight - 1)
+            if (nl.Y < 0 || nl.X < 0 || nl.X > BoardWidth - 1 || nl.Y > BoardHeight - 1)
                 response = false;
             return response;
         }
@@ -56,7 +56,7 @@ namespace GameMaster.ActionAvailability
             return response;
 
         }
-        public static bool IsAvailableTeamArea(Location l, CommonResources.MoveType direction, Board board)
+        public static bool IsFieldPlayerUnoccupied(Location l, CommonResources.MoveType direction, Board board)
         {
             bool response = true;
             Location nl = GetNewLocation(l, direction);
