@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Shared.Board
 {
-    public abstract class Location
+    public class Location
     {
         public int X { get; set; }
 
