@@ -9,5 +9,19 @@ namespace Shared.Board
         public int X { get; set; }
 
         public int Y { get; set; }
+
+        public override bool Equals(object obj) {
+            var location = obj as Location;
+            return location != null &&
+                   X == location.X &&
+                   Y == location.Y;
+        }
+
+        public override int GetHashCode() {
+            var hashCode = 1861411795;
+            hashCode = hashCode * -1521134295 + X.GetHashCode();
+            hashCode = hashCode * -1521134295 + Y.GetHashCode();
+            return hashCode;
+        }
     }
 }
