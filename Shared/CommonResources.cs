@@ -16,6 +16,7 @@ namespace Shared
             [XmlEnum("unknown")]
             Unknown
         }
+
         public enum TeamColour
         {
             [XmlEnum("red")]
@@ -23,6 +24,7 @@ namespace Shared
             [XmlEnum("blue")]
             Blue
         }
+
         public enum MoveType
         {
             [XmlEnum("up")]
@@ -34,6 +36,7 @@ namespace Shared
             [XmlEnum("right")]
             Right
         }
+
         public enum PieceType
         {
             [XmlEnum("unknown")]

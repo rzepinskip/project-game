@@ -14,7 +14,7 @@ namespace Shared.BoardObjects
         [XmlAttribute()]
         public ulong PieceId { get; set; }
 
-        [XmlIgnore()]
+        [XmlAttribute()]
         public bool PieceIdSpecified { get; set; }
     }
 }

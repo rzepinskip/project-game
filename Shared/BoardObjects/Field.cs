@@ -14,7 +14,7 @@ namespace Shared.BoardObjects
         [XmlAttribute()]
         public Guid PlayerId { get; set; }
 
-        [XmlIgnore()]
+        [XmlAttribute()]
         public bool PlayerIdFieldSpecified { get; set; }
     }
 
