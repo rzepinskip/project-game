@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Shared.Board
 {
+    [Serializable]
     public class Location
     {
+        [XmlAttribute("x")]
         public int X { get; set; }
 
+        [XmlAttribute("y")]
         public int Y { get; set; }
 
         public override bool Equals(object obj) {
