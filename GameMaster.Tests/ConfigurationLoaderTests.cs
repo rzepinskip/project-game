@@ -11,7 +11,7 @@ namespace GameMaster.Tests
     public class ConfigurationLoaderTests
     {
         GameConfiguration conf;
-        
+
         public ConfigurationLoaderTests()
         {
             ConfigurationLoader cl = new ConfigurationLoader();
@@ -28,45 +28,49 @@ namespace GameMaster.Tests
         [Fact]
         public void GoalsLoaded()
         {
-            Assert.NotNull(conf.GD.Goals);
-            Assert.Equal(2, conf.GD.Goals.Count);
+            Assert.NotNull(conf.GameDefinition.Goals);
+            Assert.Equal(2, conf.GameDefinition.Goals.Count);
 
             var redGoal = new GoalField { Team = CommonResources.Team.Red, X = 4, Y = 15, Type = CommonResources.GoalFieldType.Goal };
             var blueGoal = new GoalField { Team = CommonResources.Team.Blue, X = 6, Y = 1, Type = CommonResources.GoalFieldType.Goal };
 
-            Assert.Equal(redGoal.Team, conf.GD.Goals[0].Team);
-            Assert.Equal(redGoal.Type, conf.GD.Goals[0].Type);
-            Assert.Equal(redGoal.X, conf.GD.Goals[0].X);
-            Assert.Equal(redGoal.Y, conf.GD.Goals[0].Y);
 
-            Assert.Equal(blueGoal.Team, conf.GD.Goals[1].Team);
-            Assert.Equal(blueGoal.Type, conf.GD.Goals[1].Type);
-            Assert.Equal(blueGoal.X, conf.GD.Goals[1].X);
-            Assert.Equal(blueGoal.Y, conf.GD.Goals[1].Y);
+            var first = conf.GameDefinition.Goals[0];
+            var second = conf.GameDefinition.Goals[1];
+
+            Assert.Equal(redGoal.Team, first.Team);
+            Assert.Equal(redGoal.Type, first.Type);
+            Assert.Equal(redGoal.X, first.X);
+            Assert.Equal(redGoal.Y, first.Y);
+
+            Assert.Equal(blueGoal.Team, second.Team);
+            Assert.Equal(blueGoal.Type, second.Type);
+            Assert.Equal(blueGoal.X, second.X);
+            Assert.Equal(blueGoal.Y, second.Y);
         }
 
         [Fact]
         public void GameDefinitionLoaded()
         {
-            Assert.Equal(0.33, conf.GD.ShamProbability);
-            Assert.Equal(200, conf.GD.PlacingNewPiecesFrequency);
-            Assert.Equal(10, conf.GD.InitialNumberOfPieces);
-            Assert.Equal(10, conf.GD.BoardWidth);
-            Assert.Equal(10, conf.GD.TaskAreaLength);
-            Assert.Equal(3, conf.GD.GoalAreaLength);
-            Assert.Equal(8, conf.GD.NumberOfPlayersPerTeam);
-            Assert.Equal("Endgame", conf.GD.GameName);
+            Assert.Equal(0.33, conf.GameDefinition.ShamProbability);
+            Assert.Equal(200, conf.GameDefinition.PlacingNewPiecesFrequency);
+            Assert.Equal(10, conf.GameDefinition.InitialNumberOfPieces);
+            Assert.Equal(10, conf.GameDefinition.BoardWidth);
+            Assert.Equal(10, conf.GameDefinition.TaskAreaLength);
+            Assert.Equal(3, conf.GameDefinition.GoalAreaLength);
+            Assert.Equal(8, conf.GameDefinition.NumberOfPlayersPerTeam);
+            Assert.Equal("Endgame", conf.GameDefinition.GameName);
         }
 
         [Fact]
         public void ActionCostsLoaded()
         {
-            Assert.Equal(10, conf.AC.MoveDelay);
-            Assert.Equal(45, conf.AC.DiscoverDelay);
-            Assert.Equal(50, conf.AC.TestDelay);
-            Assert.Equal(10, conf.AC.PickUpDelay);
-            Assert.Equal(10, conf.AC.PlacingDelay);
-            Assert.Equal(500, conf.AC.KnowledgeExchangeDelay);
+            Assert.Equal(10, conf.ActionCosts.MoveDelay);
+            Assert.Equal(45, conf.ActionCosts.DiscoverDelay);
+            Assert.Equal(50, conf.ActionCosts.TestDelay);
+            Assert.Equal(10, conf.ActionCosts.PickUpDelay);
+            Assert.Equal(10, conf.ActionCosts.PlacingDelay);
+            Assert.Equal(500, conf.ActionCosts.KnowledgeExchangeDelay);
         }
 
 
