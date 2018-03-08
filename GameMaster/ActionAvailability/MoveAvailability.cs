@@ -36,10 +36,10 @@ namespace GameMaster.ActionAvailability
                 response = false;
             return response;
         }
-        public static bool IsAvailableTeamArea(Location l, CommonResources.Team team, CommonResources.MoveType direction, int GoalAreaSize, int TaskAreaSize )
+        public static bool IsAvailableTeamArea(Location l, CommonResources.TeamColour team, CommonResources.MoveType direction, int GoalAreaSize, int TaskAreaSize )
         {
             bool response = true;
-            if (team == CommonResources.Team.Red)
+            if (team == CommonResources.TeamColour.Red)
             {
                 if(GetNewLocation(l, direction).Y > TaskAreaSize + GoalAreaSize - 1)
                 {

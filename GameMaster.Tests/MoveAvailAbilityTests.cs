@@ -19,10 +19,10 @@ namespace GameMaster.Tests
 
         public MoveAvailabilityTests() {
             board = new Shared.BoardObjects.Board(5, taskAreaSize, goalAreaSize);
-            board.Content[1, 3].PlayerId = 1;
-            board.Content[3, 3].PlayerId = 2;
-            board.Content[2, 4].PlayerId = 3;
-            board.Content[2, 2].PlayerId = 4;
+            board.Content[1, 3].PlayerId = new Guid("1");
+            board.Content[3, 3].PlayerId = new Guid("2");  
+            board.Content[2, 4].PlayerId = new Guid("3");  
+            board.Content[2, 2].PlayerId = new Guid("4");  
             locationFail = new Shared.BoardObjects.Location() { X = 2, Y = 3 };
             locationSuccess = new Shared.BoardObjects.Location() { X = 1, Y = 1 };
         }
@@ -79,25 +79,25 @@ namespace GameMaster.Tests
         [Fact]
         public void RedMovingUpToBlueGoal() {
             Shared.BoardObjects.Location l = new Shared.BoardObjects.Location() { X = 0, Y = 5 };
-            Assert.False(MoveAvailability.IsAvailableTeamArea(l, Shared.CommonResources.Team.Red, Shared.CommonResources.MoveType.Up, goalAreaSize, taskAreaSize));
+            Assert.False(MoveAvailability.IsAvailableTeamArea(l, Shared.CommonResources.TeamColour.Red, Shared.CommonResources.MoveType.Up, goalAreaSize, taskAreaSize));
         }
 
         [Fact]
         public void BlueMovingDownToRedGoal() {
             Shared.BoardObjects.Location l = new Shared.BoardObjects.Location() { X = 0, Y = 2 };
-            Assert.False(MoveAvailability.IsAvailableTeamArea(l, Shared.CommonResources.Team.Blue, Shared.CommonResources.MoveType.Down, goalAreaSize, taskAreaSize));
+            Assert.False(MoveAvailability.IsAvailableTeamArea(l, Shared.CommonResources.TeamColour.Blue, Shared.CommonResources.MoveType.Down, goalAreaSize, taskAreaSize));
         }
 
         [Fact]
         public void RedMovingUp() {
             Shared.BoardObjects.Location l = new Shared.BoardObjects.Location() { X = 0, Y = 3 };
-            Assert.True(MoveAvailability.IsAvailableTeamArea(l, Shared.CommonResources.Team.Red, Shared.CommonResources.MoveType.Up, goalAreaSize, taskAreaSize));
+            Assert.True(MoveAvailability.IsAvailableTeamArea(l, Shared.CommonResources.TeamColour.Red, Shared.CommonResources.MoveType.Up, goalAreaSize, taskAreaSize));
         }
 
         [Fact]
         public void BlueMovingDown() {
             Shared.BoardObjects.Location l = new Shared.BoardObjects.Location() { X = 0, Y = 4 };
-            Assert.True(MoveAvailability.IsAvailableTeamArea(l, Shared.CommonResources.Team.Blue, Shared.CommonResources.MoveType.Down, goalAreaSize, taskAreaSize));
+            Assert.True(MoveAvailability.IsAvailableTeamArea(l, Shared.CommonResources.TeamColour.Blue, Shared.CommonResources.MoveType.Down, goalAreaSize, taskAreaSize));
         }
 
         [Fact]

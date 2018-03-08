@@ -9,9 +9,9 @@ namespace Shared.BoardObjects
     public class GoalField : Field
     {
         [XmlAttribute("type")]
-        public Shared.CommonResources.GoalFieldType Type { get; set; }
+        public CommonResources.GoalFieldType Type { get; set; }
 
         [XmlAttribute("team")]
-        public Shared.CommonResources.Team Team { get; set; }
+        public CommonResources.TeamColour Team { get; set; }
     }
 }

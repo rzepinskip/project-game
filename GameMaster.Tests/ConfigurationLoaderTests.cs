@@ -31,8 +31,8 @@ namespace GameMaster.Tests
             Assert.NotNull(conf.GD.Goals);
             Assert.Equal(2, conf.GD.Goals.Count);
 
-            var redGoal = new GoalField { Team = CommonResources.Team.Red, X = 4, Y = 15, Type = CommonResources.GoalFieldType.Goal };
-            var blueGoal = new GoalField { Team = CommonResources.Team.Blue, X = 6, Y = 1, Type = CommonResources.GoalFieldType.Goal };
+            var redGoal = new GoalField { Team = CommonResources.TeamColour.Red, X = 4, Y = 15, Type = CommonResources.GoalFieldType.Goal };
+            var blueGoal = new GoalField { Team = CommonResources.TeamColour.Blue, X = 6, Y = 1, Type = CommonResources.GoalFieldType.Goal };
 
             Assert.Equal(redGoal.Team, conf.GD.Goals[0].Team);
             Assert.Equal(redGoal.Type, conf.GD.Goals[0].Type);

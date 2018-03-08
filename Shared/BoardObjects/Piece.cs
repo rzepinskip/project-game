@@ -1,15 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Shared.BoardObjects
 {
-    public class Piece 
+    [Serializable]
+    public class Piece
     {
+        [XmlAttribute()]
         public int Id { get; set; }
+
+        [XmlAttribute()]
         public CommonResources.PieceType Type { get; set; }
-        public DateTime TimeStamp { get; set; }
-        public int? PlayerId { get; set; }
+
+        [XmlAttribute()]
+        public DateTime Timestamp { get; set; }
+
+        [XmlAttribute()]
+        public Guid PlayerId { get; set; }
+
+        [XmlIgnore()]
+        public bool PlayerIdFieldSpecified { get; set; }
 
     }
 }

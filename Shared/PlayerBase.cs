@@ -16,7 +16,7 @@ namespace Shared
 
         }
 
-        private CommonResources.Team Team { get; set; }
+        private CommonResources.TeamColour Team { get; set; }
         private TeamRole Type { get; set; }
         private int Id { get; set; }
     }

@@ -9,35 +9,38 @@ namespace Shared
     {
         public enum GoalFieldType
         {
-            [XmlEnum(Name = "non-goal")]
+            [XmlEnum("non-goal")]
             NonGoal,
-            [XmlEnum(Name = "goal")]
+            [XmlEnum("goal")]
             Goal,
-            [XmlEnum(Name = "unknown")]
+            [XmlEnum("unknown")]
             Unknown
         }
-        public enum Team {
-            [XmlEnum(Name = "red")]
+        public enum TeamColour
+        {
+            [XmlEnum("red")]
             Red,
-            [XmlEnum(Name = "blue")]
+            [XmlEnum("blue")]
             Blue
         }
-        public enum MoveType {
-            [XmlEnum(Name = "up")]
+        public enum MoveType
+        {
+            [XmlEnum("up")]
             Up,
-            [XmlEnum(Name = "down")]
+            [XmlEnum("down")]
             Down,
-            [XmlEnum(Name = "left")]
+            [XmlEnum("left")]
             Left,
-            [XmlEnum(Name = "right")]
+            [XmlEnum("right")]
             Right
         }
-        public enum PieceType {
-            [XmlEnum(Name = "unknown")]
+        public enum PieceType
+        {
+            [XmlEnum("unknown")]
             Unknown,
-            [XmlEnum(Name = "sham")]
+            [XmlEnum("sham")]
             Sham,
-            [XmlEnum(Name = "normal")]
+            [XmlEnum("normal")]
             Normal
         }
     }
