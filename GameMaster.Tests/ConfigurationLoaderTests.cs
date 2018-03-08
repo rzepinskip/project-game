@@ -1,5 +1,5 @@
 ﻿using GameMaster.Configuration;
-using Shared.Board;
+using Shared.BoardObjects;
 using System.Xml;
 using Xunit;
 using Shared;

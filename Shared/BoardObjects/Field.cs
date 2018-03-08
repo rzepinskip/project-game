@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Shared.Board
+namespace Shared.BoardObjects
 {
     [Serializable]
     public abstract class Field : Location {

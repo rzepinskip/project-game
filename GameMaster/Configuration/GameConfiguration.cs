@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
-using Shared.Board;
+using Shared.BoardObjects;
 
 namespace GameMaster.Configuration
 {

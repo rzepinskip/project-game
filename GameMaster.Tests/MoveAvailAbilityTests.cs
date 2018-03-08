@@ -12,91 +12,91 @@ namespace GameMaster.Tests
         int boardHeight = 32;
         int goalAreaSize = 2;
         int taskAreaSize = 4;
-        Shared.Board.Location locationFail;
-        Shared.Board.Location locationSuccess;
+        Shared.BoardObjects.Location locationFail;
+        Shared.BoardObjects.Location locationSuccess;
 
-        Shared.Board.Board board;
+        Shared.BoardObjects.Board board;
 
         public MoveAvailabilityTests() {
-            board = new Shared.Board.Board(5, taskAreaSize, goalAreaSize);
+            board = new Shared.BoardObjects.Board(5, taskAreaSize, goalAreaSize);
             board.Content[1, 3].PlayerId = 1;
             board.Content[3, 3].PlayerId = 2;
             board.Content[2, 4].PlayerId = 3;
             board.Content[2, 2].PlayerId = 4;
-            locationFail = new Shared.Board.Location() { X = 2, Y = 3 };
-            locationSuccess = new Shared.Board.Location() { X = 1, Y = 1 };
+            locationFail = new Shared.BoardObjects.Location() { X = 2, Y = 3 };
+            locationSuccess = new Shared.BoardObjects.Location() { X = 1, Y = 1 };
         }
 
         [Fact]
         public void MovingLeftAndLeavingBoard()
         {
-            Shared.Board.Location l = new Shared.Board.Location() { X = 0, Y = 20 };
+            Shared.BoardObjects.Location l = new Shared.BoardObjects.Location() { X = 0, Y = 20 };
             Assert.False(MoveAvailability.IsInsideBoard(l, Shared.CommonResources.MoveType.Left, boardWidth, boardHeight));
         }
 
         [Fact]
         public void MovingRightAndLeavingBoard() {
-            Shared.Board.Location l = new Shared.Board.Location() { X = 11, Y = 20 };
+            Shared.BoardObjects.Location l = new Shared.BoardObjects.Location() { X = 11, Y = 20 };
             Assert.False(MoveAvailability.IsInsideBoard(l, Shared.CommonResources.MoveType.Right, boardWidth, boardHeight));
         }
 
         [Fact]
         public void MovingDownAndLeavingBoard() {
-            Shared.Board.Location l = new Shared.Board.Location() { X = 0, Y = 0 };
+            Shared.BoardObjects.Location l = new Shared.BoardObjects.Location() { X = 0, Y = 0 };
             Assert.False(MoveAvailability.IsInsideBoard(l, Shared.CommonResources.MoveType.Down, boardWidth, boardHeight));
         }
 
         [Fact]
         public void MovingUpAndLeavingBoard() {
-            Shared.Board.Location l = new Shared.Board.Location() { X = 11, Y = 31 };
+            Shared.BoardObjects.Location l = new Shared.BoardObjects.Location() { X = 11, Y = 31 };
             Assert.False(MoveAvailability.IsInsideBoard(l, Shared.CommonResources.MoveType.Up, boardWidth, boardHeight));
         }
 
         [Fact]
         public void MovingLeft() {
-            Shared.Board.Location l = new Shared.Board.Location() { X = 1, Y = 20 };
+            Shared.BoardObjects.Location l = new Shared.BoardObjects.Location() { X = 1, Y = 20 };
             Assert.True(MoveAvailability.IsInsideBoard(l, Shared.CommonResources.MoveType.Left, boardWidth, boardHeight));
         }
 
         [Fact]
         public void MovingRight() {
-            Shared.Board.Location l = new Shared.Board.Location() { X = 10, Y = 20 };
+            Shared.BoardObjects.Location l = new Shared.BoardObjects.Location() { X = 10, Y = 20 };
             Assert.True(MoveAvailability.IsInsideBoard(l, Shared.CommonResources.MoveType.Right, boardWidth, boardHeight));
         }
 
         [Fact]
         public void MovingDown() {
-            Shared.Board.Location l = new Shared.Board.Location() { X = 0, Y = 1 };
+            Shared.BoardObjects.Location l = new Shared.BoardObjects.Location() { X = 0, Y = 1 };
             Assert.True(MoveAvailability.IsInsideBoard(l, Shared.CommonResources.MoveType.Down, boardWidth, boardHeight));
         }
 
         [Fact]
         public void MovingUp() {
-            Shared.Board.Location l = new Shared.Board.Location() { X = 11, Y = 30 };
+            Shared.BoardObjects.Location l = new Shared.BoardObjects.Location() { X = 11, Y = 30 };
             Assert.True(MoveAvailability.IsInsideBoard(l, Shared.CommonResources.MoveType.Up, boardWidth, boardHeight));
         }
 
         [Fact]
         public void RedMovingUpToBlueGoal() {
-            Shared.Board.Location l = new Shared.Board.Location() { X = 0, Y = 5 };
+            Shared.BoardObjects.Location l = new Shared.BoardObjects.Location() { X = 0, Y = 5 };
             Assert.False(MoveAvailability.IsAvailableTeamArea(l, Shared.CommonResources.Team.Red, Shared.CommonResources.MoveType.Up, goalAreaSize, taskAreaSize));
         }
 
         [Fact]
         public void BlueMovingDownToRedGoal() {
-            Shared.Board.Location l = new Shared.Board.Location() { X = 0, Y = 2 };
+            Shared.BoardObjects.Location l = new Shared.BoardObjects.Location() { X = 0, Y = 2 };
             Assert.False(MoveAvailability.IsAvailableTeamArea(l, Shared.CommonResources.Team.Blue, Shared.CommonResources.MoveType.Down, goalAreaSize, taskAreaSize));
         }
 
         [Fact]
         public void RedMovingUp() {
-            Shared.Board.Location l = new Shared.Board.Location() { X = 0, Y = 3 };
+            Shared.BoardObjects.Location l = new Shared.BoardObjects.Location() { X = 0, Y = 3 };
             Assert.True(MoveAvailability.IsAvailableTeamArea(l, Shared.CommonResources.Team.Red, Shared.CommonResources.MoveType.Up, goalAreaSize, taskAreaSize));
         }
 
         [Fact]
         public void BlueMovingDown() {
-            Shared.Board.Location l = new Shared.Board.Location() { X = 0, Y = 4 };
+            Shared.BoardObjects.Location l = new Shared.BoardObjects.Location() { X = 0, Y = 4 };
             Assert.True(MoveAvailability.IsAvailableTeamArea(l, Shared.CommonResources.Team.Blue, Shared.CommonResources.MoveType.Down, goalAreaSize, taskAreaSize));
         }
 
@@ -142,22 +142,22 @@ namespace GameMaster.Tests
 
         [Fact]
         public void GetNewLocationMovingLeft() {
-            Assert.Equal(new Shared.Board.Location() { X = 1, Y = 3 }, MoveAvailability.GetNewLocation(locationFail, Shared.CommonResources.MoveType.Left));
+            Assert.Equal(new Shared.BoardObjects.Location() { X = 1, Y = 3 }, MoveAvailability.GetNewLocation(locationFail, Shared.CommonResources.MoveType.Left));
         }
 
         [Fact]
         public void GetNewLocationMovingRight() {
-            Assert.Equal(new Shared.Board.Location() { X = 3, Y = 3 }, MoveAvailability.GetNewLocation(locationFail, Shared.CommonResources.MoveType.Right));
+            Assert.Equal(new Shared.BoardObjects.Location() { X = 3, Y = 3 }, MoveAvailability.GetNewLocation(locationFail, Shared.CommonResources.MoveType.Right));
         }
 
         [Fact]
         public void GetNewLocationMovingUp() {
-            Assert.Equal(new Shared.Board.Location() { X = 2, Y = 4 }, MoveAvailability.GetNewLocation(locationFail, Shared.CommonResources.MoveType.Up));
+            Assert.Equal(new Shared.BoardObjects.Location() { X = 2, Y = 4 }, MoveAvailability.GetNewLocation(locationFail, Shared.CommonResources.MoveType.Up));
         }
 
         [Fact]
         public void GetNewLocationMovingDown() {
-            Assert.Equal(new Shared.Board.Location() { X = 2, Y = 2 }, MoveAvailability.GetNewLocation(locationFail, Shared.CommonResources.MoveType.Down));
+            Assert.Equal(new Shared.BoardObjects.Location() { X = 2, Y = 2 }, MoveAvailability.GetNewLocation(locationFail, Shared.CommonResources.MoveType.Down));
         }
     }
 }

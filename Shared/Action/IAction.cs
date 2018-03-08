@@ -7,7 +7,7 @@ namespace Shared.Action
 {
     public interface IAction
     {
-        void Execute(MockBoard board);
-        void CanExecute(MockBoard board);
+        void Execute(BoardObjects. board);
+        void CanExecute(Board board);
     }
 }

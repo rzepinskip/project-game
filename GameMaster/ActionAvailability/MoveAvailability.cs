@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Shared.Board;
+using Shared.BoardObjects;
 using Shared;
 
 namespace GameMaster.ActionAvailability

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Shared;
-using Shared.Board;
+using Shared.BoardObjects;
 namespace Player
 {
     class Player : PlayerBase
