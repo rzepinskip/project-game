@@ -4,7 +4,7 @@ using System.Text;
 using Shared.Board;
 using Shared;
 
-namespace GameMaster.ActionAvailability
+namespace GameMaster.ActionAvailability.ActionAvailabilityHelpers
 {
     public static class MoveAvailability
     {

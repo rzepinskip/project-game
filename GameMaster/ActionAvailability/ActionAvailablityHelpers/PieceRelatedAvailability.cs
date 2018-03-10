@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GameMaster.ActionAvailability
+namespace GameMaster.ActionAvailability.ActionAvailabilityHelpers
 {
     public static class PieceRelatedAvailability
     {
