@@ -19,7 +19,12 @@ namespace GameMaster.ActionAvailability
         {
             bool result = false;
             if (this.Validate())
-                result = nextLink.ValidateLink();
+            {
+                if (nextLink == null)
+                    result = true;
+                else
+                    result = nextLink.ValidateLink();
+            }
             return result;
         }
     }
