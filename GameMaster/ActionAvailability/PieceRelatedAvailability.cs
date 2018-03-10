@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GameMaster.ActionAvailability
 {
-    public static class PickUpAvailability
+    public static class PieceRelatedAvailability
     {
         public static bool IsPieceInCurrentLocation(Location l, Board board)
         {

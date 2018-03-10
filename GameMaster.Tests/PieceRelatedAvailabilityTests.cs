@@ -6,7 +6,7 @@ using GameMaster.ActionAvailability;
 
 namespace GameMaster.Tests
 {
-    public class PickUpAvailabilityTests
+    public class PieceRelatedAvailabilityTests
     {
 
         int boardWidth = 5;
@@ -22,7 +22,7 @@ namespace GameMaster.Tests
 
         Shared.Board.Board board;
 
-        public PickUpAvailabilityTests() {
+        public PieceRelatedAvailabilityTests() {
             board = new Shared.Board.Board(boardWidth, taskAreaSize, goalAreaSize);
             board.Content[1, 3].PlayerId = 1;
             board.Content[3, 3].PlayerId = 2;
