@@ -6,13 +6,15 @@ using GameMaster.ActionAvailability;
 
 namespace GameMaster.Tests
 {
-    public class PickUpAvailabilityTest
+    public class PickUpAvailabilityTests
     {
 
         int boardWidth = 5;
         int goalAreaSize = 2;
         int taskAreaSize = 4;
-        string playerGuid = "c094cab7-da7b-457f-89e5-a5c51756035f";
+        int pieceId = 1;
+        string playerGuidSuccessPickUp = "c094cab7-da7b-457f-89e5-a5c51756035f";
+        string playerGuidFailPickUp = "c094cab7-da7b-457f-89e5-a5c51756035d";
         Dictionary<string, int> playerGuidToPieceId;
         Shared.Board.Location locationFail;
         Shared.Board.Location locationSuccess;
@@ -20,7 +22,7 @@ namespace GameMaster.Tests
 
         Shared.Board.Board board;
 
-        public PickUpAvailabilityTest() {
+        public PickUpAvailabilityTests() {
             board = new Shared.Board.Board(boardWidth, taskAreaSize, goalAreaSize);
             board.Content[1, 3].PlayerId = 1;
             board.Content[3, 3].PlayerId = 2;
@@ -31,6 +33,9 @@ namespace GameMaster.Tests
             goalAreaLocation = new Shared.Board.Location() { X = 1, Y = 1 };
 
             board.PlacePieceInTaskArea(1, locationSuccess);
+
+            playerGuidToPieceId = new Dictionary<string, int>();
+            playerGuidToPieceId.Add(playerGuidFailPickUp, pieceId);
         }
 
         [Fact]
@@ -51,7 +56,12 @@ namespace GameMaster.Tests
         [Fact]
         public void PickUpWhenPlayerNotCarringPiece()
         {
-            Assert.True(PickUpAvailability.HasPlayerEmptySlotForPiece())
+            Assert.True(PickUpAvailability.HasPlayerEmptySlotForPiece(playerGuidSuccessPickUp, playerGuidToPieceId));
+        }
+
+        [Fact]
+        public void PickUpWhenPlayerCarringPiece() {
+            Assert.False(PickUpAvailability.HasPlayerEmptySlotForPiece(playerGuidFailPickUp, playerGuidToPieceId));
         }
     }
 }

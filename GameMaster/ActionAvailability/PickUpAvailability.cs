@@ -16,7 +16,11 @@ namespace GameMaster.ActionAvailability
         }
         public static bool HasPlayerEmptySlotForPiece(string playerGuid, Dictionary<string, int> playerGuidToPiece)
         {
-            return true;
+            bool result = true;
+            int pieceId;
+            if (playerGuidToPiece.TryGetValue(playerGuid, out pieceId))
+                result = false;
+            return result;
         }
     }
 }
