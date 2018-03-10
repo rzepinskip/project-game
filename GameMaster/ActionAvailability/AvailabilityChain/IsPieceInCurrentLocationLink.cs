@@ -1,4 +1,5 @@
-﻿using Shared.Board;
+﻿using GameMaster.ActionAvailability.ActionAvailabilityHelpers;
+using Shared.Board;
 using System;
 using System.Collections.Generic;
 using System.Text;
