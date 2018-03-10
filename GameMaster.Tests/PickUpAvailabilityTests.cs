@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 using GameMaster.ActionAvailability;
+using GameMaster.ActionAvailability.ActionAvailabilityHelpers;
 
 namespace GameMaster.Tests
 {
