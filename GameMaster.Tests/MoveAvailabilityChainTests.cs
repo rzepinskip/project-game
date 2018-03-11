@@ -6,13 +6,13 @@ namespace GameMaster.Tests
 {
     public class MoveAvailabilityChainTests
     {
-        int goalAreaSize = 2;
-        int taskAreaSize = 4;
-        Shared.Board.Location locationFail;
-        Shared.Board.Location locationSuccess;
-        Shared.Board.Location locationMovingFail;
-        Shared.Board.Board board;
-        Team team = Team.Red; 
+        private int goalAreaSize = 2;
+        private int taskAreaSize = 4;
+        private Shared.Board.Location locationFail;
+        private Shared.Board.Location locationSuccess;
+        private Shared.Board.Location locationMovingFail;
+        private Shared.Board.Board board;
+        private Team team = Team.Red; 
 
         public MoveAvailabilityChainTests() 
         {

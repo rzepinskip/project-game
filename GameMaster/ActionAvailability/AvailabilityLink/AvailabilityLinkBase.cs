@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GameMaster.ActionAvailability.AvailabilityLink
+﻿namespace GameMaster.ActionAvailability.AvailabilityLink
 {
     abstract class AvailabilityLinkBase
     {
@@ -17,7 +13,7 @@ namespace GameMaster.ActionAvailability.AvailabilityLink
 
         public bool ValidateLink()
         {
-            bool result = false;
+            var result = false;
             if (this.Validate())
             {
                 if (nextLink == null)

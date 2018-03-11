@@ -1,7 +1,5 @@
 ﻿using Shared.Board;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace GameMaster.ActionAvailability.ActionAvailabilityHelpers
 {
@@ -9,16 +7,16 @@ namespace GameMaster.ActionAvailability.ActionAvailabilityHelpers
     {
         public static bool IsPieceInCurrentLocation(Location l, Board board)
         {
-            int? PieceId = board.GetPieceFromBoard(l);
+            var PieceId = board.GetPieceFromBoard(l);
+            var result = true;
             if (PieceId == null)
-                return false;
-            return true;
+                result = false;
+            return result;
         }
         public static bool HasPlayerEmptySlotForPiece(string playerGuid, Dictionary<string, int> playerGuidToPiece)
         {
-            bool result = true;
-            int pieceId;
-            if (playerGuidToPiece.TryGetValue(playerGuid, out pieceId))
+            var result = true;
+            if (playerGuidToPiece.TryGetValue(playerGuid, out var pieceId))
                 result = false;
             return result;
         }

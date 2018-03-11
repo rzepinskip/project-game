@@ -6,18 +6,17 @@ namespace GameMaster.Tests
 {
     public class PlaceAvailabilityChainTests
     {
-        int boardWidth = 5;
-        int goalAreaSize = 2;
-        int taskAreaSize = 4;
-        int pieceId = 1;
-        string playerGuidSuccessPlace = "c094cab7-da7b-457f-89e5-a5c51756035f";
-        string playerGuidFailPlace = "c094cab7-da7b-457f-89e5-a5c51756035d";
-        Dictionary<string, int> playerGuidToPieceId;
-        Shared.Board.Location locationFail;
-        Shared.Board.Location locationSuccess;
-        Shared.Board.Location goalAreaLocation;
-
-        Shared.Board.Board board;
+        private int boardWidth = 5;
+        private int goalAreaSize = 2;
+        private int taskAreaSize = 4;
+        private int pieceId = 1;
+        private string playerGuidSuccessPlace = "c094cab7-da7b-457f-89e5-a5c51756035f";
+        private string playerGuidFailPlace = "c094cab7-da7b-457f-89e5-a5c51756035d";
+        private Dictionary<string, int> playerGuidToPieceId;
+        private Shared.Board.Location locationFail;
+        private Shared.Board.Location locationSuccess;
+        private Shared.Board.Location goalAreaLocation;
+        private Shared.Board.Board board;
 
         public PlaceAvailabilityChainTests()
         {

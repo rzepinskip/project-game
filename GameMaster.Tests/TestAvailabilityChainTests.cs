@@ -7,12 +7,10 @@ namespace GameMaster.Tests
     public class TestAvailabilityChainTests
     {
 
-        string playerGuidSuccessTest = "c094cab7-da7b-457f-89e5-a5c51756035f";
-        string playerGuidFailTest = "c094cab7-da7b-457f-89e5-a5c51756035d";
-        Dictionary<string, int> playerGuidToPieceId;
-        int pieceId = 1;
-
-        Shared.Board.Board board;
+        private string playerGuidSuccessTest = "c094cab7-da7b-457f-89e5-a5c51756035f";
+        private string playerGuidFailTest = "c094cab7-da7b-457f-89e5-a5c51756035d";
+        private Dictionary<string, int> playerGuidToPieceId;
+        private int pieceId = 1;
 
         public TestAvailabilityChainTests()
         {

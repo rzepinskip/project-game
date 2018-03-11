@@ -1,15 +1,12 @@
 ﻿using GameMaster.ActionAvailability.ActionAvailabilityHelpers;
 using Shared.Board;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GameMaster.ActionAvailability.AvailabilityLink
 {
     class IsPieceInCurrentLocationLink : AvailabilityLinkBase
     {
-        Location location;
-        Board board;
+        private Location location;
+        private Board board;
         public IsPieceInCurrentLocationLink(Location location, Board board)
         {
             this.location = location;

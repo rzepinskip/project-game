@@ -10,7 +10,8 @@ namespace Shared.Board
         public int TaskAreaSize { get; }
         public int GoalAreaSize { get; }
         public int Width { get; }
-        public int Height {
+        public int Height
+        {
             get
             {
                 return 2 * this.GoalAreaSize + TaskAreaSize;
@@ -22,12 +23,13 @@ namespace Shared.Board
             this.Width = boardWidth;
             this.Content = new Field[boardWidth, Height];
 
-            for (int i = 0; i < boardWidth; ++i) {
-                for (int j = 0; j < goalAreaSize; ++j)
+            for (var i = 0; i < boardWidth; ++i)
+            {
+                for (var j = 0; j < goalAreaSize; ++j)
                     this.Content[i, j] = new GoalField();
-                for (int j = goalAreaSize; j < taskAreaSize + goalAreaSize; ++j)
+                for (var j = goalAreaSize; j < taskAreaSize + goalAreaSize; ++j)
                     this.Content[i, j] = new TaskField();
-                for (int j = taskAreaSize + goalAreaSize; j < 2 * goalAreaSize + taskAreaSize; ++j)
+                for (var j = taskAreaSize + goalAreaSize; j < this.Height; ++j)
                     this.Content[i, j] = new GoalField();
             }
         }

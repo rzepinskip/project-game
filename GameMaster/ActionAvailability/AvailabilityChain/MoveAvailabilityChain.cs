@@ -6,11 +6,10 @@ namespace GameMaster.ActionAvailability.AvailabilityChain
 {
     public class MoveAvailabilityChain :IAvailabilityChain
     {
-
-        Location location;
-        MoveType direction;
-        Team team;
-        Board board;
+        private Location location;
+        private MoveType direction;
+        private Team team;
+        private Board board;
 
         public MoveAvailabilityChain(Location location, MoveType direction, Team team, Board board) 
         {
@@ -22,7 +21,7 @@ namespace GameMaster.ActionAvailability.AvailabilityChain
 
         public bool ActionAvailable() 
         {
-            AvailabilityChainBuilder builder = new AvailabilityChainBuilder(new IsInsideBoardLink(location, direction, board.Width, board.Height))
+            var builder = new AvailabilityChainBuilder(new IsInsideBoardLink(location, direction, board.Width, board.Height))
                 .AddNextLink(new IsAvailableTeamAreaLink(location, direction, board.GoalAreaSize, board.TaskAreaSize, team))
                 .AddNextLink(new IsFieldPlayerUnoccupiedLink(location, direction, board));
             return builder.Build().ValidateLink();

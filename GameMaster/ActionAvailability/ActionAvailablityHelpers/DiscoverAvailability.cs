@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GameMaster.ActionAvailability.ActionAvailabilityHelpers
+﻿namespace GameMaster.ActionAvailability.ActionAvailabilityHelpers
 {
-    class DiscoverAvailability
+    public static class DiscoverAvailability
     {
         //always available
         public static bool IsDiscoveryAvailable()

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GameMaster.ActionAvailability.AvailabilityChain
+﻿namespace GameMaster.ActionAvailability.AvailabilityChain
 {
     interface IAvailabilityChain
     {

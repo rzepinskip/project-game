@@ -1,28 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Shared.Board;
+﻿using Shared.Board;
 using Xunit;
 
 namespace Shared.Tests
 {
     public class BoardTests
     {
-        Board.Board board;
-        Location locationInTaskArea;
-        Location locationInRedGoal;
-        Location locationInBlueGoal;
-        Location locationOutsideBoard;
-        Location pieceLocation;
-        Location nonPieceLocation;
-        Location placePieceSuccess;
-        int boardWidth = 5;
-        int goalAreaSize = 2;
-        int taskAreaSize = 4;
-        int pieceId = 1;
-        int anotherPieceId = 2;
+        private Board.Board board;
+        private Location locationInTaskArea;
+        private Location locationInRedGoal;
+        private Location locationInBlueGoal;
+        private Location locationOutsideBoard;
+        private Location pieceLocation;
+        private Location nonPieceLocation;
+        private Location placePieceSuccess;
+        private int boardWidth = 5;
+        private int goalAreaSize = 2;
+        private int taskAreaSize = 4;
+        private int pieceId = 1;
+        private int anotherPieceId = 2;
 
-        public BoardTests() {
+        public BoardTests()
+        {
             board = new Board.Board(boardWidth, taskAreaSize, goalAreaSize);
             locationInTaskArea = new Location() { X = 3, Y = 3 };
             locationInRedGoal = new Location() { X = 3, Y = 0 };
@@ -36,40 +34,47 @@ namespace Shared.Tests
         }
 
         [Fact]
-        public void LocationInTaskAreaWhenInTaskArea() {
+        public void LocationInTaskAreaWhenInTaskArea()
+        {
             Assert.True(board.IsLocationInTaskArea(locationInTaskArea));
         }
 
         [Fact]
-        public void LocationInTaskAreaWhenInRedGoalArea() {
+        public void LocationInTaskAreaWhenInRedGoalArea()
+        {
             Assert.False(board.IsLocationInTaskArea(locationInRedGoal));
         }
 
         [Fact]
-        public void LocationInTaskAreaWhenInBlueGoalArea() {
+        public void LocationInTaskAreaWhenInBlueGoalArea()
+        {
             Assert.False(board.IsLocationInTaskArea(locationInBlueGoal));
         }
 
         [Fact]
-        public void LocationInTaskAreaWhenOutsideBoard() {
+        public void LocationInTaskAreaWhenOutsideBoard()
+        {
             Assert.False(board.IsLocationInTaskArea(locationOutsideBoard));
         }
 
         [Fact]
-        public void PlacePieceWhenInTaskArea() {
+        public void PlacePieceWhenInTaskArea()
+        {
             board.PlacePieceInTaskArea(anotherPieceId, placePieceSuccess);
             int? anotherPieceIdValue = anotherPieceId;
             Assert.Equal(anotherPieceIdValue, ((TaskField)board.Content[placePieceSuccess.X, placePieceSuccess.Y]).PieceId);
         }
 
         [Fact]
-        public void GetExistingPieceFromBoard() {
+        public void GetExistingPieceFromBoard()
+        {
             int? anotherPieceValue = pieceId;
             Assert.Equal(anotherPieceValue, board.GetPieceFromBoard(pieceLocation));
         }
 
         [Fact]
-        public void GetNonExistingPieceFromBoard() {
+        public void GetNonExistingPieceFromBoard()
+        {
             Assert.Null(board.GetPieceFromBoard(nonPieceLocation));
         }
 

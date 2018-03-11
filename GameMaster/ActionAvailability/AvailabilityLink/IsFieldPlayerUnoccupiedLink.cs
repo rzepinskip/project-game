@@ -1,17 +1,14 @@
 ﻿using GameMaster.ActionAvailability.ActionAvailabilityHelpers;
 using Shared.Board;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using static Shared.CommonResources;
 
 namespace GameMaster.ActionAvailability.AvailabilityLink
 {
     class IsFieldPlayerUnoccupiedLink : AvailabilityLinkBase
     {
-        Location location;
-        MoveType move;
-        Board board;
+        private Location location;
+        private MoveType move;
+        private Board board;
         public IsFieldPlayerUnoccupiedLink(Location location, MoveType move, Board board)
         {
             this.location = location;
