@@ -11,7 +11,7 @@ namespace Shared.GameMessages
     public abstract class GameMessage
     {
         [XmlAttribute()]
-        public Guid PlayerGuid { get; set; }
+        public string PlayerGuid { get; set; }
 
         [XmlAttribute()]
         public int GameId { get; set; }

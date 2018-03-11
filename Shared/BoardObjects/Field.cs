@@ -12,11 +12,9 @@ namespace Shared.BoardObjects
         public DateTime Timestamp { get; set; }
 
         [XmlAttribute()]
-        public Guid PlayerId { get; set; }
+        public string PlayerId { get; set; }
 
         [XmlAttribute()]
         public bool PlayerIdFieldSpecified { get; set; }
     }
-
-
 }
