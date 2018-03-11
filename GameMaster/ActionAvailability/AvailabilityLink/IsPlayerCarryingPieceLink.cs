@@ -1,11 +1,9 @@
 ﻿using GameMaster.ActionAvailability.ActionAvailabilityHelpers;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace GameMaster.ActionAvailability.AvailabilityChain
+namespace GameMaster.ActionAvailability.AvailabilityLink
 {
-    class IsPlayerCarryingPieceLink : AvailabilityChainBase
+    class IsPlayerCarryingPieceLink : AvailabilityLinkBase
     {
         public string playerGuid;
         public Dictionary<string, int> playerGuidToPieceId;

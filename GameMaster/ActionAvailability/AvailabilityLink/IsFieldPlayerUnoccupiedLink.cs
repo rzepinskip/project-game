@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Text;
 using static Shared.CommonResources;
 
-namespace GameMaster.ActionAvailability.AvailabilityChain
+namespace GameMaster.ActionAvailability.AvailabilityLink
 {
-    class IsFieldPlayerUnoccupiedLink : AvailabilityChainBase
+    class IsFieldPlayerUnoccupiedLink : AvailabilityLinkBase
     {
         Location location;
         MoveType move;

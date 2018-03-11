@@ -4,12 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GameMaster.ActionAvailability.AvailabilityChain
+namespace GameMaster.ActionAvailability.AvailabilityLink
 {
-    class IsNoPiecePlacedLinkcs : AvailabilityChainBase {
+    class IsNoPiecePlacedLink : AvailabilityLinkBase {
         Location location;
         Board board;
-        public IsNoPiecePlacedLinkcs(Location location, Board board) {
+        public IsNoPiecePlacedLink(Location location, Board board) {
             this.location = location;
             this.board = board;
         }

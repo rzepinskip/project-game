@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GameMaster.ActionAvailability
+namespace GameMaster.ActionAvailability.AvailabilityLink
 {
-    abstract class AvailabilityChainBase
+    abstract class AvailabilityLinkBase
     {
-        protected AvailabilityChainBase nextLink;
+        protected AvailabilityLinkBase nextLink;
 
         abstract protected bool Validate();
 
-        public void SetNextLink(AvailabilityChainBase nextLink)
+        public void SetNextLink(AvailabilityLinkBase nextLink)
         {
             this.nextLink = nextLink;
         }

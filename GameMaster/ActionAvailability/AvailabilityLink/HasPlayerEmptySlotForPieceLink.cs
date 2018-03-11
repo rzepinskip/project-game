@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GameMaster.ActionAvailability.AvailabilityChain
+namespace GameMaster.ActionAvailability.AvailabilityLink
 {
-    class HasPlayerEmptySlotForPieceLink : AvailabilityChainBase
+    class HasPlayerEmptySlotForPieceLink : AvailabilityLinkBase
     {
         public string playerGuid;
         public Dictionary<string, int> playerGuidToPieceId;

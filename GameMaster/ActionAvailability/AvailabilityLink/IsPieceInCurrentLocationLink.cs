@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GameMaster.ActionAvailability.AvailabilityChain
+namespace GameMaster.ActionAvailability.AvailabilityLink
 {
-    class IsPieceInCurrentLocationLink : AvailabilityChainBase
+    class IsPieceInCurrentLocationLink : AvailabilityLinkBase
     {
         Location location;
         Board board;

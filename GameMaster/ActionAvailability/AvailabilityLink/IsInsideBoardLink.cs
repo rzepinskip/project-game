@@ -5,9 +5,9 @@ using static Shared.CommonResources;
 using Shared.Board;
 using GameMaster.ActionAvailability.ActionAvailabilityHelpers;
 
-namespace GameMaster.ActionAvailability.AvailabilityChain
+namespace GameMaster.ActionAvailability.AvailabilityLink
 {
-    class IsInsideBoardLink : AvailabilityChainBase
+    class IsInsideBoardLink : AvailabilityLinkBase
     {
         private Location location;
         private MoveType move;
