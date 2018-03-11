@@ -1,13 +1,10 @@
 ﻿using Shared.Board;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using static Shared.CommonResources;
-using Shared;
-using GameMaster.ActionAvailability.AvailabilityChain;
-namespace GameMaster.ActionAvailability
+using GameMaster.ActionAvailability.AvailabilityLink;
+
+namespace GameMaster.ActionAvailability.AvailabilityChain
 {
-    public class MoveAvailabilityChain
+    public class MoveAvailabilityChain :IAvailabilityChain
     {
 
         Location location;
@@ -23,7 +20,7 @@ namespace GameMaster.ActionAvailability
             this.board = board;
         }
 
-        public bool MoveAvailable() 
+        public bool ActionAvailable() 
         {
             AvailabilityChainBuilder builder = new AvailabilityChainBuilder(new IsInsideBoardLink(location, direction, board.Width, board.Height))
                 .AddNextLink(new IsAvailableTeamAreaLink(location, direction, board.GoalAreaSize, board.TaskAreaSize, team))

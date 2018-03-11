@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit;
-using GameMaster.ActionAvailability;
+﻿using Xunit;
 using static Shared.CommonResources;
+using GameMaster.ActionAvailability.AvailabilityChain;
 
 namespace GameMaster.Tests
 {
@@ -32,31 +29,31 @@ namespace GameMaster.Tests
         [Fact]
         public void MovingLeftAndLeavingBoard() 
         {
-            MoveAvailabilityChain moveAvailabilityChain = new MoveAvailabilityChain(locationMovingFail, Shared.CommonResources.MoveType.Left, team, board);
-            Assert.False(moveAvailabilityChain.MoveAvailable());
+            var moveAvailabilityChain = new MoveAvailabilityChain(locationMovingFail, MoveType.Left, team, board);
+            Assert.False(moveAvailabilityChain.ActionAvailable());
 
         }
         
         [Fact]
         public void RedMovingUpToBlueGoal() 
         {
-            Shared.Board.Location l = new Shared.Board.Location() { X = 0, Y = 5 };
-            MoveAvailabilityChain moveAvailabilityChain = new MoveAvailabilityChain(l, MoveType.Up, Team.Red, board);
-            Assert.False(moveAvailabilityChain.MoveAvailable());
+            var l = new Shared.Board.Location() { X = 0, Y = 5 };
+            var moveAvailabilityChain = new MoveAvailabilityChain(l, MoveType.Up, Team.Red, board);
+            Assert.False(moveAvailabilityChain.ActionAvailable());
         }
 
         [Fact]
         public void MovingLeftToFieldWithPlayer() 
         {
-            MoveAvailabilityChain moveAvailabilityChain = new MoveAvailabilityChain(locationFail, MoveType.Left, Team.Red, board);
-            Assert.False(moveAvailabilityChain.MoveAvailable());
+            var moveAvailabilityChain = new MoveAvailabilityChain(locationFail, MoveType.Left, Team.Red, board);
+            Assert.False(moveAvailabilityChain.ActionAvailable());
         }
 
         [Fact]
         public void MoveAvailable() 
         {
-            MoveAvailabilityChain moveAvailabilityChain = new MoveAvailabilityChain(locationSuccess, MoveType.Left, Team.Red, board);
-            Assert.True(moveAvailabilityChain.MoveAvailable());
+            var moveAvailabilityChain = new MoveAvailabilityChain(locationSuccess, MoveType.Left, Team.Red, board);
+            Assert.True(moveAvailabilityChain.ActionAvailable());
         }
     }
 
