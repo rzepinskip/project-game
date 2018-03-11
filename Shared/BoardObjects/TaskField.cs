@@ -5,16 +5,9 @@ using System.Xml.Serialization;
 
 namespace Shared.BoardObjects
 {
-    [Serializable]
-    public class TaskField: Field
+    public class TaskField : Field
     {
-        [XmlAttribute()]
         public int DistanceToPiece { get; set; }
-
-        [XmlAttribute()]
-        public ulong PieceId { get; set; }
-
-        [XmlAttribute()]
-        public bool PieceIdSpecified { get; set; }
+        public int? PieceId { get; set; }
     }
 }

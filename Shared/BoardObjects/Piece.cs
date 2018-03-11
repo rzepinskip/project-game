@@ -5,22 +5,11 @@ using System.Xml.Serialization;
 
 namespace Shared.BoardObjects
 {
-    [Serializable]
-    public class Piece
+    class Piece
     {
-        [XmlAttribute()]
         public int Id { get; set; }
-
-        [XmlAttribute()]
         public CommonResources.PieceType Type { get; set; }
-
-        [XmlAttribute()]
-        public DateTime Timestamp { get; set; }
-
-        [XmlAttribute()]
-        public string PlayerId { get; set; }
-
-        [XmlAttribute()]
-        public bool PlayerIdFieldSpecified { get; set; }
+        public DateTime TimeStamp { get; set; }
+        public int? PlayerId { get; set; }
     }
 }

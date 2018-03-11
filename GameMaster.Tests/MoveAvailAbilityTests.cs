@@ -19,10 +19,10 @@ namespace GameMaster.Tests
 
         public MoveAvailabilityTests() {
             board = new Shared.BoardObjects.Board(5, taskAreaSize, goalAreaSize);
-            board.Content[1, 3].PlayerId = "1";
-            board.Content[3, 3].PlayerId = "2";  
-            board.Content[2, 4].PlayerId = "3";  
-            board.Content[2, 2].PlayerId = "4";  
+            board.Content[1, 3].PlayerId = 1;
+            board.Content[3, 3].PlayerId = 2;  
+            board.Content[2, 4].PlayerId = 3;  
+            board.Content[2, 2].PlayerId = 4;  
             locationFail = new Shared.BoardObjects.Location() { X = 2, Y = 3 };
             locationSuccess = new Shared.BoardObjects.Location() { X = 1, Y = 1 };
         }

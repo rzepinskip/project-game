@@ -5,7 +5,6 @@ using System.Xml.Serialization;
 
 namespace Shared.BoardObjects
 {
-    [Serializable]
     public class Location
     {
         [XmlAttribute("x")]

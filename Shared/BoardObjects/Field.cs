@@ -5,16 +5,10 @@ using System.Xml.Serialization;
 
 namespace Shared.BoardObjects
 {
-    [Serializable]
     public abstract class Field : Location
     {
-        [XmlAttribute()]
+        //public Location Location { get; set; }
+        public int? PlayerId { get; set; }
         public DateTime Timestamp { get; set; }
-
-        [XmlAttribute()]
-        public string PlayerId { get; set; }
-
-        [XmlAttribute()]
-        public bool PlayerIdFieldSpecified { get; set; }
     }
 }
