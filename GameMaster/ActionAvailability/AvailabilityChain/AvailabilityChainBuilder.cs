@@ -5,18 +5,12 @@ namespace GameMaster.ActionAvailability.AvailabilityChain
 {
     class AvailabilityChainBuilder
     {
-        AvailabilityLinkBase first;
-        AvailabilityLinkBase last;
-        private IsPieceInCurrentLocationLink isPieceInCurrentLocationLink;
+        private AvailabilityLinkBase first;
+        private AvailabilityLinkBase last;
 
         public AvailabilityChainBuilder(AvailabilityLinkBase first) {
             this.first = first;
             this.last = first;
-        }
-
-        public AvailabilityChainBuilder(IsPieceInCurrentLocationLink isPieceInCurrentLocationLink)
-        {
-            this.isPieceInCurrentLocationLink = isPieceInCurrentLocationLink;
         }
 
         public AvailabilityChainBuilder AddNextLink(AvailabilityLinkBase nextLink) {
