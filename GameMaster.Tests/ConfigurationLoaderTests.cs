@@ -15,7 +15,7 @@ namespace GameMaster.Tests
         public ConfigurationLoaderTests()
         {
             ConfigurationLoader cl = new ConfigurationLoader();
-            conf = cl.LoadConfigurationFromText(FILECONTENT);
+            conf = cl.LoadConfigurationFromFile("Resources\\ConfigurationLoaderTestsData.xml");
         }
 
         [Fact]
@@ -72,33 +72,5 @@ namespace GameMaster.Tests
             Assert.Equal(10, conf.ActionCosts.PlacingDelay);
             Assert.Equal(500, conf.ActionCosts.KnowledgeExchangeDelay);
         }
-
-
-
-        const string FILECONTENT = @"
-<GameMasterSettings xmlns = ""https://se2.mini.pw.edu.pl/17-pl-19/17-pl-19/""
-                    KeepAliveInterval=""500""
-                    RetryRegisterGameInterval=""60000"">
-  <GameDefinition>
-    <Goals team=""red"" x=""4"" y =""15"" type=""goal"" />
-    <Goals team=""blue"" x=""6"" y =""1"" type=""goal"" />
-    <ShamProbability>0.33</ShamProbability>
-    <PlacingNewPiecesFrequency>200</PlacingNewPiecesFrequency>
-    <InitialNumberOfPieces>10</InitialNumberOfPieces>
-    <BoardWidth>10</BoardWidth>
-    <TaskAreaLength>10</TaskAreaLength>
-    <GoalAreaLength>3</GoalAreaLength>
-    <NumberOfPlayersPerTeam>8</NumberOfPlayersPerTeam>
-    <GameName>Endgame</GameName>
-  </GameDefinition>
-  <ActionCosts>
-    <MoveDelay>10</MoveDelay>
-    <DiscoverDelay>45</DiscoverDelay>
-    <TestDelay>50</TestDelay>
-    <PickUpDelay>10</PickUpDelay>
-    <PlacingDelay>10</PlacingDelay>
-    <KnowledgeExchangeDelay>500</KnowledgeExchangeDelay>
-  </ActionCosts>
-</GameMasterSettings>";
     }
 }
