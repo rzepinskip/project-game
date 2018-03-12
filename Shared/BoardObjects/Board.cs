@@ -19,12 +19,15 @@ namespace Shared.BoardObjects
         }
 
         public Dictionary<int, PlayerInfo> Players { get; }
+        public Dictionary<int, Piece> Pieces { get; }
 
         public Board(int boardWidth, int taskAreaSize, int goalAreaSize) {
             this.GoalAreaSize = goalAreaSize;
             this.TaskAreaSize = taskAreaSize;
             this.Width = boardWidth;
             this.Content = new Field[boardWidth, Height];
+            this.Players = new Dictionary<int, PlayerInfo>();
+            this.Pieces = new Dictionary<int, Piece>();
 
             for (var i = 0; i < boardWidth; ++i)
             {
