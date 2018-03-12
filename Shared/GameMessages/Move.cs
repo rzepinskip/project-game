@@ -17,12 +17,12 @@ namespace Shared.GameMessages
         [XmlAttribute()]
         public bool DirectionFieldSpecified;
 
-        public override void Execute(Board board)
+        public override void Execute(BoardObjects.Board board)
         {
             throw new NotImplementedException();
         }
 
-        public override void CanExecute(Board board)
+        public override void CanExecute(BoardObjects.Board board)
         {
             throw new NotImplementedException();
         }

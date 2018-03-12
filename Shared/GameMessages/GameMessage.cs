@@ -16,7 +16,7 @@ namespace Shared.GameMessages
         [XmlAttribute()]
         public int GameId { get; set; }
 
-        public abstract void Execute(Board board);
-        public abstract void CanExecute(Board board);
+        public abstract void Execute(BoardObjects.Board board);
+        public abstract void CanExecute(BoardObjects.Board board);
     }
 }

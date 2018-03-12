@@ -12,7 +12,6 @@ namespace GameMaster.Configuration
 {
     public class ConfigurationLoader
     {
-
         public GameConfiguration LoadConfigurationFromFile(string filepath)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(GameConfiguration));
