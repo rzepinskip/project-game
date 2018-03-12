@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 
-namespace Shared.Board
+namespace Shared.BoardObjects
 {
     [Serializable]
     public abstract class Field : Location, IEquatable<Field>

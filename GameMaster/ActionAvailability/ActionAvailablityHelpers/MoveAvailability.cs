@@ -1,4 +1,4 @@
-﻿using Shared.Board;
+﻿using Shared.BoardObjects;
 using Shared;
 
 namespace GameMaster.ActionAvailability.ActionAvailabilityHelpers
@@ -33,10 +33,10 @@ namespace GameMaster.ActionAvailability.ActionAvailabilityHelpers
                 response = false;
             return response;
         }
-        public static bool IsAvailableTeamArea(Location l, CommonResources.Team team, CommonResources.MoveType direction, int GoalAreaSize, int TaskAreaSize )
+        public static bool IsAvailableTeamArea(Location l, CommonResources.TeamColour team, CommonResources.MoveType direction, int GoalAreaSize, int TaskAreaSize )
         {
             var response = true;
-            if (team == CommonResources.Team.Red)
+            if (team == CommonResources.TeamColour.Red)
             {
                 if(GetNewLocation(l, direction).Y > TaskAreaSize + GoalAreaSize - 1)
                 {

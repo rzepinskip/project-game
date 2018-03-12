@@ -13,21 +13,21 @@ namespace GameMaster.Tests
         private string playerGuidSuccessPickUp = "c094cab7-da7b-457f-89e5-a5c51756035f";
         private string playerGuidFailPickUp = "c094cab7-da7b-457f-89e5-a5c51756035d";
         private Dictionary<string, int> playerGuidToPieceId;
-        private Shared.Board.Location locationFail;
-        private Shared.Board.Location locationSuccess;
-        private Shared.Board.Location goalAreaLocation;
-        private Shared.Board.Board board;
+        private Shared.BoardObjects.Location locationFail;
+        private Shared.BoardObjects.Location locationSuccess;
+        private Shared.BoardObjects.Location goalAreaLocation;
+        private Shared.BoardObjects.Board board;
 
         public PieceRelatedAvailabilityTests()
         {
-            board = new Shared.Board.Board(boardWidth, taskAreaSize, goalAreaSize);
+            board = new Shared.BoardObjects.Board(boardWidth, taskAreaSize, goalAreaSize);
             board.Content[1, 3].PlayerId = 1;
             board.Content[3, 3].PlayerId = 2;
             board.Content[2, 4].PlayerId = 3;
             board.Content[2, 2].PlayerId = 4;
-            locationFail = new Shared.Board.Location() { X = 2, Y = 3 };
-            locationSuccess = new Shared.Board.Location() { X = 1, Y = 3 };
-            goalAreaLocation = new Shared.Board.Location() { X = 1, Y = 1 };
+            locationFail = new Shared.BoardObjects.Location() { X = 2, Y = 3 };
+            locationSuccess = new Shared.BoardObjects.Location() { X = 1, Y = 3 };
+            goalAreaLocation = new Shared.BoardObjects.Location() { X = 1, Y = 1 };
 
             board.PlacePieceInTaskArea(1, locationSuccess);
 

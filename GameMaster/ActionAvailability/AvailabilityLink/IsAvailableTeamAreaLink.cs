@@ -1,5 +1,5 @@
 ﻿using static Shared.CommonResources;
-using Shared.Board;
+using Shared.BoardObjects;
 using GameMaster.ActionAvailability.ActionAvailabilityHelpers;
 
 namespace GameMaster.ActionAvailability.AvailabilityLink
@@ -10,8 +10,8 @@ namespace GameMaster.ActionAvailability.AvailabilityLink
         private MoveType move;
         private int goalAreaSize;
         private int taskAreaSize;
-        private Team team;
-        public IsAvailableTeamAreaLink(Location location, MoveType move, int goalAreaSize, int taskAreaSize, Team team)
+        private TeamColour team;
+        public IsAvailableTeamAreaLink(Location location, MoveType move, int goalAreaSize, int taskAreaSize, TeamColour team)
         {
             this.location = location;
             this.move = move;

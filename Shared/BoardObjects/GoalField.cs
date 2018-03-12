@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace Shared.Board
+namespace Shared.BoardObjects
 {
     [Serializable]
     public class GoalField : Field, IEquatable<GoalField>
     {
         [XmlAttribute("type")]
         public Shared.CommonResources.GoalFieldType Type { get; set; }
-
         [XmlAttribute("team")]
-        public Shared.CommonResources.Team Team { get; set; }
+        public Shared.CommonResources.TeamColour Team { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -47,3 +46,4 @@ namespace Shared.Board
         }
     }
 }
+

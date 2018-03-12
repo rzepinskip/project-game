@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace Shared.Board
+namespace Shared.BoardObjects
 {
     [Serializable]
     public class Location : IEquatable<Location>

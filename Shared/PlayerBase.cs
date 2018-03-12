@@ -7,17 +7,15 @@ namespace Shared
 {
     public class PlayerBase
     {
-
-        public enum TeamRole {
+        public enum PlayerType {
             [XmlEnum(Name = "member")]
             Member,
             [XmlEnum(Name = "leader")]
             Leader
-
         }
 
-        private CommonResources.Team Team { get; set; }
-        private TeamRole Type { get; set; }
+        private CommonResources.TeamColour Team { get; set; }
+        private PlayerType Type { get; set; }
         private int Id { get; set; }
     }
 }

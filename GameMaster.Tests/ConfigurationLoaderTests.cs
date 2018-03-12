@@ -1,5 +1,5 @@
 ﻿using GameMaster.Configuration;
-using Shared.Board;
+using Shared.BoardObjects;
 using System.Xml;
 using Xunit;
 using Shared;
@@ -41,8 +41,8 @@ namespace GameMaster.Tests
                     GameName = "Endgame",
                     Goals = new List<GoalField>
                     {
-                        new GoalField { Team = CommonResources.Team.Red, X = 4, Y = 15, Type = CommonResources.GoalFieldType.Goal },
-                        new GoalField { Team = CommonResources.Team.Blue, X = 6, Y = 1, Type = CommonResources.GoalFieldType.Goal }
+                        new GoalField { Team = CommonResources.TeamColour.Red, X = 4, Y = 15, Type = CommonResources.GoalFieldType.Goal },
+                        new GoalField { Team = CommonResources.TeamColour.Blue, X = 6, Y = 1, Type = CommonResources.GoalFieldType.Goal }
                     }
                 }
         };                  

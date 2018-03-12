@@ -1,4 +1,4 @@
-﻿using Shared.Board;
+﻿using Shared.BoardObjects;
 using System.Collections.Generic;
 
 namespace GameMaster.ActionAvailability.ActionAvailabilityHelpers

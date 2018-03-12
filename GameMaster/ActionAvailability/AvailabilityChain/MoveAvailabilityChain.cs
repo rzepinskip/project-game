@@ -1,4 +1,4 @@
-﻿using Shared.Board;
+﻿using Shared.BoardObjects;
 using static Shared.CommonResources;
 using GameMaster.ActionAvailability.AvailabilityLink;
 
@@ -8,10 +8,10 @@ namespace GameMaster.ActionAvailability.AvailabilityChain
     {
         private Location location;
         private MoveType direction;
-        private Team team;
+        private TeamColour team;
         private Board board;
 
-        public MoveAvailabilityChain(Location location, MoveType direction, Team team, Board board) 
+        public MoveAvailabilityChain(Location location, MoveType direction, TeamColour team, Board board) 
         {
             this.location = location;
             this.direction = direction;

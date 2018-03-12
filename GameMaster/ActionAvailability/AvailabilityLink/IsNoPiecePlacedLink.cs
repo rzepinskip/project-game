@@ -1,5 +1,5 @@
 ﻿using GameMaster.ActionAvailability.ActionAvailabilityHelpers;
-using Shared.Board;
+using Shared.BoardObjects;
 
 namespace GameMaster.ActionAvailability.AvailabilityLink
 {

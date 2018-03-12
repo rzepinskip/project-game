@@ -1,11 +1,11 @@
-﻿using Shared.Board;
+﻿using Shared.BoardObjects;
 using Xunit;
 
 namespace Shared.Tests
 {
     public class BoardTests
     {
-        private Board.Board board;
+        private BoardObjects.Board board;
         private Location locationInTaskArea;
         private Location locationInRedGoal;
         private Location locationInBlueGoal;
@@ -21,7 +21,7 @@ namespace Shared.Tests
 
         public BoardTests()
         {
-            board = new Board.Board(boardWidth, taskAreaSize, goalAreaSize);
+            board = new BoardObjects.Board(boardWidth, taskAreaSize, goalAreaSize);
             locationInTaskArea = new Location() { X = 3, Y = 3 };
             locationInRedGoal = new Location() { X = 3, Y = 0 };
             locationInBlueGoal = new Location() { X = 3, Y = 7 };

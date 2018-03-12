@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using Shared.Board;
+using Shared.BoardObjects;
 using Shared;
 using System.Xml.Serialization;
 using System.IO;

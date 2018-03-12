@@ -1,4 +1,4 @@
-﻿using Shared.Board;
+﻿using Shared.BoardObjects;
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
