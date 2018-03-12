@@ -17,6 +17,9 @@ namespace Shared.BoardObjects
                 return 2 * this.GoalAreaSize + TaskAreaSize;
             }
         }
+
+        public Dictionary<int, PlayerInfo> Players { get; }
+
         public Board(int boardWidth, int taskAreaSize, int goalAreaSize) {
             this.GoalAreaSize = goalAreaSize;
             this.TaskAreaSize = taskAreaSize;
