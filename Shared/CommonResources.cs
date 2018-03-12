@@ -22,6 +22,16 @@ namespace Shared
             [XmlEnum(Name = "blue")]
             Blue
         }
+        public enum MoveType {
+            [XmlEnum(Name = "up")]
+            Up,
+            [XmlEnum(Name = "down")]
+            Down,
+            [XmlEnum(Name = "left")]
+            Left,
+            [XmlEnum(Name = "right")]
+            Right
+        }
         public enum PieceType {
             [XmlEnum(Name = "unknown")]
             Unknown,
