@@ -20,7 +20,8 @@ namespace Shared.BoardObjects
 
         public Dictionary<int, PlayerInfo> Players { get; }
 
-        public Board(int boardWidth, int taskAreaSize, int goalAreaSize) {
+        public Board(int boardWidth, int taskAreaSize, int goalAreaSize)
+        {
             this.GoalAreaSize = goalAreaSize;
             this.TaskAreaSize = taskAreaSize;
             this.Width = boardWidth;
@@ -29,11 +30,11 @@ namespace Shared.BoardObjects
             for (var i = 0; i < boardWidth; ++i)
             {
                 for (var j = 0; j < goalAreaSize; ++j)
-                    this.Content[i, j] = new GoalField();
+                    this.Content[i, j] = new GoalField() { X = i, Y = j };
                 for (var j = goalAreaSize; j < taskAreaSize + goalAreaSize; ++j)
-                    this.Content[i, j] = new TaskField();
+                    this.Content[i, j] = new TaskField() { X = i, Y = j };
                 for (var j = taskAreaSize + goalAreaSize; j < this.Height; ++j)
-                    this.Content[i, j] = new GoalField();
+                    this.Content[i, j] = new GoalField() { X = i, Y = j };
             }
         }
         public bool IsLocationInTaskArea(Location l)
@@ -60,7 +61,22 @@ namespace Shared.BoardObjects
         }
         public int GetManhattanDistance(Location l)
         {
-            throw new NotImplementedException();
+            var min = int.MaxValue;
+            for (var i = 0; i < Width; ++i)
+                for (var j = GoalAreaSize; j < TaskAreaSize + GoalAreaSize; ++j)
+                {
+                    var field = Content[i, j] as TaskField;
+                    if (field.PieceId != null)
+                    {
+                        var distance = field.GetManhattanDistance(l);
+                        if (distance < min)
+                            min = distance;
+                    }
+                }
+            if (min == int.MaxValue)
+                min = -1;
+
+            return min;
         }
     }
 }
