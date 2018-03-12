@@ -58,5 +58,9 @@ namespace Shared.BoardObjects
             return pieceId;
 
         }
+        public int GetManhattanDistance(Location l)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
