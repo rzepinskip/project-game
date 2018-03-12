@@ -1,8 +1,8 @@
-﻿using GameMaster.ActionAvailability.AvailabilityChain;
+﻿using Shared.ActionAvailability.AvailabilityChain;
 using System.Collections.Generic;
 using Xunit;
 
-namespace GameMaster.Tests
+namespace Shared.Tests
 {
     public class PlaceAvailabilityChainTests
     {

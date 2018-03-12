@@ -1,7 +1,7 @@
-﻿using GameMaster.ActionAvailability.AvailabilityLink;
+﻿using Shared.ActionAvailability.AvailabilityLink;
 using System.Collections.Generic;
 
-namespace GameMaster.ActionAvailability.AvailabilityChain
+namespace Shared.ActionAvailability.AvailabilityChain
 {
     public class TestAvailabilityChain : IAvailabilityChain
     {

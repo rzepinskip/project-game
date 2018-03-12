@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using Xunit;
-using GameMaster.ActionAvailability.AvailabilityChain;
+using Shared.ActionAvailability.ActionAvailabilityHelpers;
 
-namespace GameMaster.Tests
+namespace Shared.Tests
 {
-    public class PickUpAvailabilityChainTests
+    public class PickUpAvailabilityTests
     {
         private int boardWidth = 5;
         private int goalAreaSize = 2;
@@ -18,7 +18,7 @@ namespace GameMaster.Tests
         private Shared.BoardObjects.Location goalAreaLocation;
         private Shared.BoardObjects.Board board;
 
-        public PickUpAvailabilityChainTests()
+        public PickUpAvailabilityTests()
         {
             board = new Shared.BoardObjects.Board(boardWidth, taskAreaSize, goalAreaSize);
             board.Content[1, 3].PlayerId = 1;
@@ -38,28 +38,28 @@ namespace GameMaster.Tests
         [Fact]
         public void PickUpOnEmptyTaskField()
         {
-            var pickUpAvailabilityChain = new PickUpAvailabilityChain(locationFail, board, playerGuidSuccessPickUp, playerGuidToPieceId);
-            Assert.False(pickUpAvailabilityChain.ActionAvailable());
+            Assert.False(PieceRelatedAvailability.IsPieceInCurrentLocation(locationFail, board));
         }
-        
+        [Fact]
+        public void PickUpOnTaskFieldWithPiece()
+        {
+            Assert.True(PieceRelatedAvailability.IsPieceInCurrentLocation(locationSuccess, board));
+        }
         [Fact]
         public void PickUpOnGoalArea()
         {
-            var pickUpAvailabilityChain = new PickUpAvailabilityChain(goalAreaLocation, board, playerGuidSuccessPickUp, playerGuidToPieceId);
-            Assert.False(pickUpAvailabilityChain.ActionAvailable());
+            Assert.False(PieceRelatedAvailability.IsPieceInCurrentLocation(goalAreaLocation, board));
         }
         [Fact]
-        public void PickUpAvailable()
+        public void PickUpWhenPlayerNotCarringPiece()
         {
-            var pickUpAvailabilityChain = new PickUpAvailabilityChain(locationSuccess, board, playerGuidSuccessPickUp, playerGuidToPieceId);
-            Assert.True(pickUpAvailabilityChain.ActionAvailable());
+            Assert.True(PieceRelatedAvailability.HasPlayerEmptySlotForPiece(playerGuidSuccessPickUp, playerGuidToPieceId));
         }
 
         [Fact]
         public void PickUpWhenPlayerCarringPiece()
         {
-            var pickUpAvailabilityChain = new PickUpAvailabilityChain(locationSuccess, board, playerGuidFailPickUp, playerGuidToPieceId);
-            Assert.False(pickUpAvailabilityChain.ActionAvailable());
+            Assert.False(PieceRelatedAvailability.HasPlayerEmptySlotForPiece(playerGuidFailPickUp, playerGuidToPieceId));
         }
     }
 }

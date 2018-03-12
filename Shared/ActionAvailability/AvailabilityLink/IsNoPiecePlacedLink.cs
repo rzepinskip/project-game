@@ -1,7 +1,7 @@
-﻿using GameMaster.ActionAvailability.ActionAvailabilityHelpers;
+﻿using Shared.ActionAvailability.ActionAvailabilityHelpers;
 using Shared.BoardObjects;
 
-namespace GameMaster.ActionAvailability.AvailabilityLink
+namespace Shared.ActionAvailability.AvailabilityLink
 {
     class IsNoPiecePlacedLink : AvailabilityLinkBase
     {

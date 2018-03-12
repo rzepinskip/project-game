@@ -1,7 +1,7 @@
 ﻿using Xunit;
-using GameMaster.ActionAvailability.ActionAvailabilityHelpers;
+using Shared.ActionAvailability.ActionAvailabilityHelpers;
 
-namespace GameMaster.Tests
+namespace Shared.Tests
 {
     public class MoveAvailabilityTests
     {

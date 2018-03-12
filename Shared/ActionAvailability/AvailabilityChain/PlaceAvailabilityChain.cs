@@ -1,17 +1,17 @@
-﻿using GameMaster.ActionAvailability.AvailabilityLink;
+﻿using Shared.ActionAvailability.AvailabilityLink;
 using Shared.BoardObjects;
 using System.Collections.Generic;
 
-namespace GameMaster.ActionAvailability.AvailabilityChain
+namespace Shared.ActionAvailability.AvailabilityChain
 {
-    public class PickUpAvailabilityChain
+    public class PlaceAvailabilityChain : IAvailabilityChain
     {
         private Location location;
         private Board board;
         private string playerGuid;
         private Dictionary<string, int> playerGuidToPiece;
 
-        public PickUpAvailabilityChain(Location location, Board board, string playerGuid, Dictionary<string, int> playerGuidToPiece)
+        public PlaceAvailabilityChain(Location location, Board board, string playerGuid, Dictionary<string, int> playerGuidToPiece)
         {
             this.location = location;
             this.board = board;
@@ -21,8 +21,8 @@ namespace GameMaster.ActionAvailability.AvailabilityChain
 
         public bool ActionAvailable()
         {
-            var builder = new AvailabilityChainBuilder(new IsPieceInCurrentLocationLink(location, board))
-                .AddNextLink(new HasPlayerEmptySlotForPieceLink(playerGuid, playerGuidToPiece));
+            var builder = new AvailabilityChainBuilder(new IsNoPiecePlacedLink(location, board))
+                .AddNextLink(new IsPlayerCarryingPieceLink(playerGuid, playerGuidToPiece));
             return builder.Build().ValidateLink();
         }
     }

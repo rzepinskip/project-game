@@ -1,8 +1,8 @@
 ﻿using Shared.BoardObjects;
 using static Shared.CommonResources;
-using GameMaster.ActionAvailability.AvailabilityLink;
+using Shared.ActionAvailability.AvailabilityLink;
 
-namespace GameMaster.ActionAvailability.AvailabilityChain
+namespace Shared.ActionAvailability.AvailabilityChain
 {
     public class MoveAvailabilityChain :IAvailabilityChain
     {

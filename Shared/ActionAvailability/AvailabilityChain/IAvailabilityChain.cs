@@ -1,4 +1,4 @@
-﻿namespace GameMaster.ActionAvailability.AvailabilityChain
+﻿namespace Shared.ActionAvailability.AvailabilityChain
 {
     interface IAvailabilityChain
     {

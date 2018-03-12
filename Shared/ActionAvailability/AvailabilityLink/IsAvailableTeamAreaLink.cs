@@ -1,8 +1,8 @@
 ﻿using static Shared.CommonResources;
 using Shared.BoardObjects;
-using GameMaster.ActionAvailability.ActionAvailabilityHelpers;
+using Shared.ActionAvailability.ActionAvailabilityHelpers;
 
-namespace GameMaster.ActionAvailability.AvailabilityLink
+namespace Shared.ActionAvailability.AvailabilityLink
 {
     class IsAvailableTeamAreaLink : AvailabilityLinkBase
     {

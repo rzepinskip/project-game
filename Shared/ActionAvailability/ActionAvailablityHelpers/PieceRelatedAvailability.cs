@@ -1,7 +1,7 @@
 ﻿using Shared.BoardObjects;
 using System.Collections.Generic;
 
-namespace GameMaster.ActionAvailability.ActionAvailabilityHelpers
+namespace Shared.ActionAvailability.ActionAvailabilityHelpers
 {
     public static class PieceRelatedAvailability
     {

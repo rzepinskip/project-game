@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using Xunit;
-using GameMaster.ActionAvailability.ActionAvailabilityHelpers;
+using Shared.ActionAvailability.ActionAvailabilityHelpers;
 
-namespace GameMaster.Tests
+namespace Shared.Tests
 {
-    public class PickUpAvailabilityTests
+    public class PieceRelatedAvailabilityTests
     {
         private int boardWidth = 5;
         private int goalAreaSize = 2;
@@ -18,7 +18,7 @@ namespace GameMaster.Tests
         private Shared.BoardObjects.Location goalAreaLocation;
         private Shared.BoardObjects.Board board;
 
-        public PickUpAvailabilityTests()
+        public PieceRelatedAvailabilityTests()
         {
             board = new Shared.BoardObjects.Board(boardWidth, taskAreaSize, goalAreaSize);
             board.Content[1, 3].PlayerId = 1;
@@ -57,8 +57,7 @@ namespace GameMaster.Tests
         }
 
         [Fact]
-        public void PickUpWhenPlayerCarringPiece()
-        {
+        public void PickUpWhenPlayerCarringPiece() {
             Assert.False(PieceRelatedAvailability.HasPlayerEmptySlotForPiece(playerGuidFailPickUp, playerGuidToPieceId));
         }
     }

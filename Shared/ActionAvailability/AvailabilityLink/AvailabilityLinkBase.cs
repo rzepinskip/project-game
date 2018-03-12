@@ -1,4 +1,4 @@
-﻿namespace GameMaster.ActionAvailability.AvailabilityLink
+﻿namespace Shared.ActionAvailability.AvailabilityLink
 {
     abstract class AvailabilityLinkBase
     {

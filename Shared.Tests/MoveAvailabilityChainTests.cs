@@ -1,8 +1,8 @@
 ﻿using Xunit;
 using static Shared.CommonResources;
-using GameMaster.ActionAvailability.AvailabilityChain;
+using Shared.ActionAvailability.AvailabilityChain;
 
-namespace GameMaster.Tests
+namespace Shared.Tests
 {
     public class MoveAvailabilityChainTests
     {

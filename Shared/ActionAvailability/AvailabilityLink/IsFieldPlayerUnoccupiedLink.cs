@@ -1,8 +1,8 @@
-﻿using GameMaster.ActionAvailability.ActionAvailabilityHelpers;
+﻿using Shared.ActionAvailability.ActionAvailabilityHelpers;
 using Shared.BoardObjects;
 using static Shared.CommonResources;
 
-namespace GameMaster.ActionAvailability.AvailabilityLink
+namespace Shared.ActionAvailability.AvailabilityLink
 {
     class IsFieldPlayerUnoccupiedLink : AvailabilityLinkBase
     {

@@ -1,7 +1,7 @@
-﻿using GameMaster.ActionAvailability.AvailabilityLink;
+﻿using Shared.ActionAvailability.AvailabilityLink;
 
 
-namespace GameMaster.ActionAvailability.AvailabilityChain
+namespace Shared.ActionAvailability.AvailabilityChain
 {
     class AvailabilityChainBuilder
     {
