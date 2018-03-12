@@ -1,23 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
+﻿using Shared.BoardObjects;
+using Shared.ResponseMessages;
 using System.Xml.Serialization;
-using Shared.BoardObjects;
 
 namespace Shared.GameMessages.PieceActions
 {
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
     public class PlacePiece : GameMessage
     {
-        public override void CanExecute(BoardObjects.Board board)
+        public override ResponseMessage Execute(Board board)
         {
-            throw new NotImplementedException();
-        }
+            var player = board.Players[PlayerId];
 
-        public override void Execute(BoardObjects.Board board)
-        {
-            throw new NotImplementedException();
+            if (player.Piece.Type == CommonResources.PieceType.Sham)
+                return new PlacePieceResponse();
+
+            var playerGoalField = board.Content[player.Location.X, player.Location.Y];
+            var response = new PlacePieceResponse()
+            {
+                GoalField = playerGoalField as GoalField
+            };
+
+            return response;
         }
     }
 
