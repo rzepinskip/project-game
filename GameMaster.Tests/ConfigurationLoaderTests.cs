@@ -48,7 +48,7 @@ namespace GameMaster.Tests
         };                  
 
             ConfigurationLoader cl = new ConfigurationLoader();
-            conf = cl.LoadConfigurationFromFile("Resources\\ConfigurationLoaderTestsData.xml");
+            conf = cl.LoadConfigurationFromFile("Resources/ConfigurationLoaderTestsData.xml");
         }
 
         [Fact]
