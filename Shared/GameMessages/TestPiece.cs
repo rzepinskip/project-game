@@ -19,5 +19,10 @@ namespace Shared.GameMessages.PieceActions
         {
             throw new NotImplementedException();
         }
+
+        public override CommonResources.ActionType GetActionType()
+        {
+            return CommonResources.ActionType.Test;
+        }
     }
 }

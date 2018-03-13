@@ -46,5 +46,14 @@ namespace Shared
             [XmlEnum("normal")]
             Normal
         }
+
+        public enum ActionType
+        {
+            Move,
+            Discover,
+            PickUp,
+            Place,
+            Test
+        }
     }
 }
