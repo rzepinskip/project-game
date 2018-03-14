@@ -19,10 +19,5 @@ namespace Shared.GameMessages
         {
             throw new NotImplementedException();
         }
-
-        public override CommonResources.ActionType GetActionType()
-        {
-            return CommonResources.ActionType.Discover;
-        }
     }
 }
