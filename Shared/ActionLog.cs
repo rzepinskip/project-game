@@ -8,16 +8,16 @@ namespace Shared
 {
     public class ActionLog
     {
-        //public ActionLog(int playerId, PlayerInfo playerInfo, GameMessage m)
-        //{
-        //    ActionType = m.GetActionType();
-        //    Timestamp = DateTime.Now;
-        //    GameID = m.GameId;
-        //    PlayerID = playerId;
-        //    PlayerGUID = m.PlayerGuid;
-        //    Colour = playerInfo.Team;
-        //    Role = playerInfo.Role;
-        //}
+        public ActionLog(int playerId, int gameId, string playerGuid,PlayerInfo playerInfo, CommonResources.ActionType actionType)
+        {
+            ActionType = actionType;
+            Timestamp = DateTime.Now;
+            GameID = gameId;
+            PlayerID = playerId;
+            PlayerGUID = playerGuid;
+            Colour = playerInfo.Team;
+            Role = playerInfo.Role;
+        }
 
         public CommonResources.ActionType ActionType { get; set; }
         public DateTime Timestamp { get; set; }
