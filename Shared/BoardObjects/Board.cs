@@ -19,6 +19,8 @@ namespace Shared.BoardObjects
         }
 
         public Dictionary<int, PlayerInfo> Players { get; }
+        public Dictionary<int, Piece> Pieces { get; }
+
 
         public Board(int boardWidth, int taskAreaSize, int goalAreaSize)
         {
@@ -59,7 +61,7 @@ namespace Shared.BoardObjects
             return pieceId;
 
         }
-        public int GetManhattanDistance(Location l)
+        public int GetDistanceToPiece(Location l)
         {
             var min = int.MaxValue;
             for (var i = 0; i < Width; ++i)
