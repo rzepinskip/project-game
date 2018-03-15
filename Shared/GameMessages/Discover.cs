@@ -4,20 +4,39 @@ using System.Text;
 using System.Xml;
 using Shared.BoardObjects;
 using System.Xml.Serialization;
+using Shared.ResponseMessages;
+using static Shared.CommonResources;
 
 namespace Shared.GameMessages
 {
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
     public class Discover : GameMessage
     {
-        public override void CanExecute(BoardObjects.Board board)
+        public override ResponseMessage Execute(Board board)
         {
-            throw new NotImplementedException();
-        }
+            var player = board.Players[PlayerId];
+            var taskFields = new List<TaskField>();
+            var pieces = new List<Piece>();
 
-        public override void Execute(BoardObjects.Board board)
-        {
-            throw new NotImplementedException();
+            var response = new DiscoverResponse { PlayerId = PlayerId, TaskFields = taskFields, Pieces = pieces };
+
+            var downLeftCorner = new Location { X = Math.Max(player.Location.X - 1, 0), Y = Math.Max(player.Location.Y - 1, 0) };
+            var upRightCorner = new Location { X = Math.Min(player.Location.X + 1, board.Width), Y = Math.Min(player.Location.Y + 1, board.Height) };
+
+            for (int i = downLeftCorner.X; i < upRightCorner.X + 1; i++)
+                for (int j = downLeftCorner.Y; j < upRightCorner.Y + 1; j++)
+                    if (board.Content[i, j] is TaskField taskfield)
+                    {
+                        taskfield.DistanceToPiece = board.GetDistanceToPiece(taskfield);
+                        taskFields.Add(taskfield);
+
+                        if (taskfield.PieceId.HasValue)
+                        {
+                            var piece = board.Pieces[taskfield.PieceId.Value];
+                            pieces.Add(new Piece { Id = piece.Id, PlayerId = piece.PlayerId, Type = PieceType.Unknown });
+                        }
+                    }
+            return response;
         }
 
         public override ActionLog ToLog(int playerId, PlayerInfo playerInfo)

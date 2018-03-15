@@ -8,6 +8,7 @@ namespace Shared.ResponseMessages
     public class MoveResponse : ResponseMessage
     {
         public IEnumerable<TaskField> TaskFields { get; set; }
+        public IEnumerable<Piece> Pieces { get; set; }
         public Location NewPlayerLocation { get; set; }
 
         public override void Update(Board board)

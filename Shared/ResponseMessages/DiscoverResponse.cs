@@ -8,6 +8,8 @@ namespace Shared.ResponseMessages
     public class DiscoverResponse : ResponseMessage
     {
         public IEnumerable<TaskField> TaskFields { get; set; }
+        public IEnumerable<Piece> Pieces { get; set; }
+
         public override void Update(Board board)
         {
             foreach(var taskField in TaskFields)

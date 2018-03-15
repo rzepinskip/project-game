@@ -1,4 +1,5 @@
 ﻿using Shared.BoardObjects;
+using Shared.ResponseMessages;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,13 +13,13 @@ namespace Shared.GameMessages
     {
 
         [XmlAttribute()]
+        public int PlayerId { get; set; }
         public string PlayerGuid { get; set; }
 
         [XmlAttribute()]
         public int GameId { get; set; }
 
-        public abstract void Execute(BoardObjects.Board board);
-        public abstract void CanExecute(BoardObjects.Board board);
+        public abstract ResponseMessage Execute(BoardObjects.Board board);
 
         public abstract ActionLog ToLog(int playerId, PlayerInfo playeInfo);
     }
