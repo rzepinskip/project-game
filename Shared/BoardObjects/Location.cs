@@ -14,6 +14,15 @@ namespace Shared.BoardObjects
         [XmlAttribute("y")]
         public int Y { get; set; }
 
+        public Location()
+        {
+            
+        }
+        public Location(int x, int y)
+        {
+            this.X = x;
+            this.Y = y;
+        }
         public override bool Equals(object obj)
         {
             return Equals(obj as Location);

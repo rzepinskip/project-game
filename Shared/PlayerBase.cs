@@ -14,8 +14,8 @@ namespace Shared
             Leader
         }
 
-        private CommonResources.TeamColour Team { get; set; }
-        private PlayerType Type { get; set; }
-        private int Id { get; set; }
+        public CommonResources.TeamColour Team { get; set; }
+        public PlayerType Type { get; set; }
+        public int Id { get; set; }
     }
 }

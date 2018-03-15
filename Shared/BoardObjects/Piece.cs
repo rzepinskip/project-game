@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 
 namespace Shared.BoardObjects
 {
-    class Piece
+    public class Piece
     {
         public int Id { get; set; }
         public CommonResources.PieceType Type { get; set; }

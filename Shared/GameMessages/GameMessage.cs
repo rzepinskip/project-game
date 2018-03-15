@@ -8,8 +8,9 @@ using System.Xml.Serialization;
 namespace Shared.GameMessages
 {
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
-    public abstract class GameMessage
+    public abstract class GameMessage : ILoggable
     {
+
         [XmlAttribute()]
         public string PlayerGuid { get; set; }
 
@@ -18,5 +19,7 @@ namespace Shared.GameMessages
 
         public abstract void Execute(BoardObjects.Board board);
         public abstract void CanExecute(BoardObjects.Board board);
+
+        public abstract ActionLog ToLog(int playerId, PlayerInfo playeInfo);
     }
 }
