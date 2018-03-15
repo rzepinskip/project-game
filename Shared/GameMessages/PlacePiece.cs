@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Xml.Serialization;
-using Shared.BoardObjects;
+﻿using Shared.BoardObjects;
 using Shared.ResponseMessages;
+using System.Xml.Serialization;
 
 namespace Shared.GameMessages.PieceActions
 {
@@ -13,9 +9,20 @@ namespace Shared.GameMessages.PieceActions
     {
         public override ResponseMessage Execute(Board board)
         {
-            throw new NotImplementedException();
-        }
+            var player = board.Players[PlayerId];
 
+            if (player.Piece.Type == CommonResources.PieceType.Sham)
+                return new PlacePieceResponse();
+
+            var playerGoalField = board.Content[player.Location.X, player.Location.Y];
+            var response = new PlacePieceResponse()
+            {
+                GoalField = playerGoalField as GoalField
+            };
+            
+            return response;
+        }
+        
         public override ActionLog ToLog(int playerId, PlayerInfo playerInfo)
         {
             return new ActionLog(playerId, GameId, PlayerGuid, playerInfo, CommonResources.ActionType.Place);
