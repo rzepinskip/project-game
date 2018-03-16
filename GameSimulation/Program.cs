@@ -6,6 +6,7 @@ using Shared.GameMessages;
 using System.Collections.Generic;
 using System.Threading;
 using Shared.ResponseMessages;
+using Shared;
 
 namespace GameSimulation
 {
@@ -27,12 +28,14 @@ namespace GameSimulation
                     Console.WriteLine("P: received");
                 }
 
-                var message = new Discover()
+                var message = new Move()
                 {
-                    PlayerId = player.Id
+                    PlayerId = player.Id,
+                    Direction = player.Team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up,
                 };
                 player.RequestsQueue.Enqueue(message);
-                Console.WriteLine("P:" + message.ToLog(player.Id, new Shared.PlayerInfo()));
+
+                Console.WriteLine("P:" + message.ToLog(player.Id, new PlayerInfo()));
             }
         }
 
@@ -46,38 +49,24 @@ namespace GameSimulation
                     if (queue.Count > 0)
                     {
                         var request = queue.Dequeue();
-                        Console.WriteLine("GM:" + request.ToLog(request.PlayerId, new Shared.PlayerInfo()));
-                        var response = new DiscoverResponse();
+                        var requesterInfo = gameMaster.Board.Players[request.PlayerId];
+                        Console.WriteLine("GM:" + request.ToLog(request.PlayerId, requesterInfo));
+                        var response = request.Execute(gameMaster.Board);
                         gameMaster.ResponsesQueues[request.PlayerId].Enqueue(response);
                     }
                 }
-
             }
         }
 
-
         static void Main(string[] args)
         {
-            var gm = new GameMaster.GameMaster();
-            
+            var players = GeneratePlayers();
+            var gm = new GameMaster.GameMaster(GenerateBoard(players));
 
-            var playersCount = 2;
-            var players = new List<Player.Player>();
-
-            for (int i = 0; i < playersCount; i++)
+            foreach (var player in players)
             {
-                var player = new Player.Player
-                {
-                    Id = i
-                };
-
-                var requestQueue = new Queue<GameMessage>();
-                player.RequestsQueue = requestQueue;
-                gm.RequestsQueues.Add(requestQueue);
-
-                var responsesQueue = new Queue<ResponseMessage>();
-                player.ResponsesQueue = responsesQueue;
-                gm.ResponsesQueues.Add(responsesQueue);
+                gm.RequestsQueues.Add(player.RequestsQueue);
+                gm.ResponsesQueues.Add(player.ResponsesQueue);
 
                 var playerThread = new Thread(() => PlayerGameplay(player));
                 playerThread.Start();
@@ -87,6 +76,60 @@ namespace GameSimulation
             gameMasterThread.Start();
         }
 
-     
+        private static List<Player.Player> GeneratePlayers()
+        {
+            var playersCount = 2;
+            var players = new List<Player.Player>();
+
+            for (int i = 0; i < playersCount; i++)
+            {
+                var player = new Player.Player(new Board(5, 5, 5))
+                {
+                    Id = i,
+                    RequestsQueue = new Queue<GameMessage>(),
+                    ResponsesQueue = new Queue<ResponseMessage>(),
+                };
+
+                players.Add(player);
+            }
+
+            return players;
+        }
+        private static Board GenerateBoard(List<Player.Player> players)
+        {
+            var board = new Board(5, 5, 5);
+            var count = 0;
+
+            foreach (var player in players)
+            {
+                player.Team = player.Id % 2 == 0 ? CommonResources.TeamColour.Red : CommonResources.TeamColour.Blue;
+
+                var location = new Location();
+                if (player.Team == CommonResources.TeamColour.Blue)
+                {
+                    location = new Location(count / 2, board.GoalAreaSize);
+                }
+                else
+                {
+                    location = new Location(count / 2, board.Height - (board.GoalAreaSize + 1));
+                }
+
+                var playerInfo = new PlayerInfo
+                {
+                    Location = location,
+                    Team = player.Team,
+                    Role = PlayerBase.PlayerType.Member,
+                };
+
+                board.Players.Add(player.Id, playerInfo);
+            }
+
+
+            int pieceId = 1;
+            var pieceLocation = new Location() { X = 2, Y = 3 };
+            board.PlacePieceInTaskArea(pieceId, pieceLocation);
+
+            return board;
+        }
     }
 }

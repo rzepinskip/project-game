@@ -17,5 +17,13 @@ namespace Player
         private Board Board { get; set; }
         private List<PlayerBase> Players { get; set; }
         private Field OccupiedField { get; set; }
+
+        public Player()
+        { }
+
+        public Player(Board board)
+        {
+            Board = board;
+        }
     }
 }
