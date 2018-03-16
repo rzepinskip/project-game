@@ -13,8 +13,8 @@ namespace GameSimulation
     class Program
     {
         private static int iterations = 10000;
-        private static int minInterval = 3000;
-        private static int maxInterval = 4000;
+        private static int minInterval = 1000;
+        private static int maxInterval = 2000;
         private static Random rd = new Random();
 
         static void Main(string[] args)
@@ -34,10 +34,11 @@ namespace GameSimulation
             var gameMasterThread = new Thread(() => GameMasterGameplay(gm));
             gameMasterThread.Start();
 
+            var boardVisualizer = new BoardVisualizer();
             for (int i = 0; i < iterations; i++)
             {
                 Thread.Sleep(1000);
-                WriteBoard(gm.Board);
+                boardVisualizer.VisualizeBoard(gm.Board);
                 Console.WriteLine(i);
             }
         }
@@ -60,7 +61,7 @@ namespace GameSimulation
                 };
                 player.RequestsQueue.Enqueue(message);
 
-               // Console.WriteLine("P:" + message.ToLog(player.Id, new PlayerInfo()));
+                // Console.WriteLine("P:" + message.ToLog(player.Id, new PlayerInfo()));
             }
         }
         private static void GameMasterGameplay(GameMaster.GameMaster gameMaster)
@@ -74,7 +75,7 @@ namespace GameSimulation
                     {
                         var request = queue.Dequeue();
                         var requesterInfo = gameMaster.Board.Players[request.PlayerId];
-                       // Console.WriteLine("GM:" + request.ToLog(request.PlayerId, requesterInfo));
+                        // Console.WriteLine("GM:" + request.ToLog(request.PlayerId, requesterInfo));
                         var response = request.Execute(gameMaster.Board);
                         gameMaster.ResponsesQueues[request.PlayerId].Enqueue(response);
                     }
@@ -89,7 +90,7 @@ namespace GameSimulation
 
             for (int i = 0; i < playersCount; i++)
             {
-                var player = new Player.Player(new Board(5, 5, 5))
+                var player = new Player.Player(new Board(10, 10, 5))
                 {
                     Id = i,
                     RequestsQueue = new Queue<GameMessage>(),
@@ -103,7 +104,7 @@ namespace GameSimulation
         }
         private static Board GenerateBoard(List<Player.Player> players)
         {
-            var board = new Board(5, 5, 5);
+            var board = new Board(10, 10, 5);
             var count = 0;
 
             foreach (var player in players)
@@ -137,30 +138,6 @@ namespace GameSimulation
             board.PlacePieceInTaskArea(pieceId, pieceLocation);
 
             return board;
-        }
-
-        private static void WriteBoard(Board board)
-        {
-            Console.Clear();
-            for (int i = board.Height - 1; i >= 0; i--)
-            {
-                for (int j = 0; j < board.Width; j++)
-                {
-                    var field = board.Content[j,i];
-                    if (field.PlayerId != null)
-                        WriteWithColor("+", ConsoleColor.Green);
-                    else
-                        WriteWithColor(".", ConsoleColor.Black);
-                    Console.Write(" ");
-                }
-                Console.WriteLine();
-            }
-        }
-        private static void WriteWithColor(string s, ConsoleColor cs)
-        {
-            Console.BackgroundColor = cs;
-            Console.Write(s);
-            Console.ResetColor();
         }
     }
 }
