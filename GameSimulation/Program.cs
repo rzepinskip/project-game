@@ -17,47 +17,6 @@ namespace GameSimulation
         private static int maxInterval = 4000;
         private static Random rd = new Random();
 
-        private static void PlayerGameplay(Player.Player player)
-        {
-            for (int i = 0; i < iterations; i++)
-            {
-                Thread.Sleep(rd.Next(minInterval, maxInterval));
-
-                if (player.ResponsesQueue.Count > 0)
-                {
-                    Console.WriteLine("P: received");
-                }
-
-                var message = new Move()
-                {
-                    PlayerId = player.Id,
-                    Direction = player.Team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up,
-                };
-                player.RequestsQueue.Enqueue(message);
-
-                Console.WriteLine("P:" + message.ToLog(player.Id, new PlayerInfo()));
-            }
-        }
-
-        private static void GameMasterGameplay(GameMaster.GameMaster gameMaster)
-        {
-            for (int i = 0; i < iterations; i++)
-            {
-                Thread.Sleep(rd.Next(minInterval, maxInterval));
-                foreach (var queue in gameMaster.RequestsQueues)
-                {
-                    if (queue.Count > 0)
-                    {
-                        var request = queue.Dequeue();
-                        var requesterInfo = gameMaster.Board.Players[request.PlayerId];
-                        Console.WriteLine("GM:" + request.ToLog(request.PlayerId, requesterInfo));
-                        var response = request.Execute(gameMaster.Board);
-                        gameMaster.ResponsesQueues[request.PlayerId].Enqueue(response);
-                    }
-                }
-            }
-        }
-
         static void Main(string[] args)
         {
             var players = GeneratePlayers();
@@ -74,6 +33,53 @@ namespace GameSimulation
 
             var gameMasterThread = new Thread(() => GameMasterGameplay(gm));
             gameMasterThread.Start();
+
+            for (int i = 0; i < iterations; i++)
+            {
+                Thread.Sleep(1000);
+                WriteBoard(gm.Board);
+                Console.WriteLine(i);
+            }
+        }
+
+        private static void PlayerGameplay(Player.Player player)
+        {
+            for (int i = 0; i < iterations; i++)
+            {
+                Thread.Sleep(rd.Next(minInterval, maxInterval));
+
+                if (player.ResponsesQueue.Count > 0)
+                {
+                    //Console.WriteLine("P: received");
+                }
+
+                var message = new Move()
+                {
+                    PlayerId = player.Id,
+                    Direction = player.Team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up,
+                };
+                player.RequestsQueue.Enqueue(message);
+
+               // Console.WriteLine("P:" + message.ToLog(player.Id, new PlayerInfo()));
+            }
+        }
+        private static void GameMasterGameplay(GameMaster.GameMaster gameMaster)
+        {
+            for (int i = 0; i < iterations; i++)
+            {
+                Thread.Sleep(rd.Next(minInterval, maxInterval));
+                foreach (var queue in gameMaster.RequestsQueues)
+                {
+                    if (queue.Count > 0)
+                    {
+                        var request = queue.Dequeue();
+                        var requesterInfo = gameMaster.Board.Players[request.PlayerId];
+                       // Console.WriteLine("GM:" + request.ToLog(request.PlayerId, requesterInfo));
+                        var response = request.Execute(gameMaster.Board);
+                        gameMaster.ResponsesQueues[request.PlayerId].Enqueue(response);
+                    }
+                }
+            }
         }
 
         private static List<Player.Player> GeneratePlayers()
@@ -113,6 +119,7 @@ namespace GameSimulation
                 {
                     location = new Location(count / 2, board.Height - (board.GoalAreaSize + 1));
                 }
+                count++;
 
                 var playerInfo = new PlayerInfo
                 {
@@ -130,6 +137,30 @@ namespace GameSimulation
             board.PlacePieceInTaskArea(pieceId, pieceLocation);
 
             return board;
+        }
+
+        private static void WriteBoard(Board board)
+        {
+            Console.Clear();
+            for (int i = board.Height - 1; i >= 0; i--)
+            {
+                for (int j = 0; j < board.Width; j++)
+                {
+                    var field = board.Content[j,i];
+                    if (field.PlayerId != null)
+                        WriteWithColor("+", ConsoleColor.Green);
+                    else
+                        WriteWithColor(".", ConsoleColor.Black);
+                    Console.Write(" ");
+                }
+                Console.WriteLine();
+            }
+        }
+        private static void WriteWithColor(string s, ConsoleColor cs)
+        {
+            Console.BackgroundColor = cs;
+            Console.Write(s);
+            Console.ResetColor();
         }
     }
 }
