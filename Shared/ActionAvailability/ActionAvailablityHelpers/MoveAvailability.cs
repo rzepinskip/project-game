@@ -16,7 +16,7 @@ namespace Shared.ActionAvailability.ActionAvailabilityHelpers
         public bool IsAvailableTeamArea(Location l, CommonResources.TeamColour team, CommonResources.MoveType direction, int GoalAreaSize, int TaskAreaSize )
         {
             var response = true;
-            if (team == CommonResources.TeamColour.Red)
+            if (team == CommonResources.TeamColour.Blue)
             {
                 if(l.GetNewLocation(direction).Y > TaskAreaSize + GoalAreaSize - 1)
                 {

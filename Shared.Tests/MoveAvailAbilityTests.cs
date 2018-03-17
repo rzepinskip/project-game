@@ -82,31 +82,31 @@ namespace Shared.Tests
         }
 
         [Fact]
-        public void RedMovingUpToBlueGoal()
+        public void BlueMovingUpToRedGoal()
         {
             var l = new Shared.BoardObjects.Location(0, 5);
-            Assert.False(new MoveAvailability().IsAvailableTeamArea(l, Shared.CommonResources.TeamColour.Red, Shared.CommonResources.MoveType.Up, goalAreaSize, taskAreaSize));
+            Assert.False(new MoveAvailability().IsAvailableTeamArea(l, Shared.CommonResources.TeamColour.Blue, Shared.CommonResources.MoveType.Up, goalAreaSize, taskAreaSize));
         }
 
         [Fact]
-        public void BlueMovingDownToRedGoal()
+        public void RedMovingDownToBlueGoal()
         {
             var l = new Shared.BoardObjects.Location(0, 2);
-            Assert.False(new MoveAvailability().IsAvailableTeamArea(l, Shared.CommonResources.TeamColour.Blue, Shared.CommonResources.MoveType.Down, goalAreaSize, taskAreaSize));
+            Assert.False(new MoveAvailability().IsAvailableTeamArea(l, Shared.CommonResources.TeamColour.Red, Shared.CommonResources.MoveType.Down, goalAreaSize, taskAreaSize));
         }
 
         [Fact]
-        public void RedMovingUp()
+        public void BlueMovingUp()
         {
             var l = new Shared.BoardObjects.Location(0, 3);
-            Assert.True(new MoveAvailability().IsAvailableTeamArea(l, Shared.CommonResources.TeamColour.Red, Shared.CommonResources.MoveType.Up, goalAreaSize, taskAreaSize));
+            Assert.True(new MoveAvailability().IsAvailableTeamArea(l, Shared.CommonResources.TeamColour.Blue, Shared.CommonResources.MoveType.Up, goalAreaSize, taskAreaSize));
         }
 
         [Fact]
-        public void BlueMovingDown()
+        public void RedMovingDown()
         {
             var l = new Shared.BoardObjects.Location(0, 4);
-            Assert.True(new MoveAvailability().IsAvailableTeamArea(l, Shared.CommonResources.TeamColour.Blue, Shared.CommonResources.MoveType.Down, goalAreaSize, taskAreaSize));
+            Assert.True(new MoveAvailability().IsAvailableTeamArea(l, Shared.CommonResources.TeamColour.Red, Shared.CommonResources.MoveType.Down, goalAreaSize, taskAreaSize));
         }
 
         [Fact]
