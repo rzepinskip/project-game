@@ -11,6 +11,13 @@ namespace Player.Strategy
         public enum PlayerState
         {
             InitState,
+            InGoalMovingToTask,
+            MoveToPiece,
+            Discover,
+            Pick,
+            Test,
+            MoveToGoal,
+            Place
             //etc
         }
         private PlayerState currentState;
