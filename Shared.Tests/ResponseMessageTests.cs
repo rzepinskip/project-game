@@ -2,6 +2,7 @@
 using Shared.BoardObjects;
 using Shared.ResponseMessages;
 using System.Collections.Generic;
+using System;
 
 namespace Shared.Tests
 {
@@ -60,14 +61,14 @@ namespace Shared.Tests
                 PlayerId = 1,
                 TaskFields = new List<TaskField>
                 {
-                    new TaskField
-                    {
-                        DistanceToPiece = 0,
-                        PieceId = null,
-                        PlayerId = null,
-                        X = 1,
-                        Y = 2
-                    }
+                    new TaskField(
+                        0,
+                        null,
+                        null,
+                        DateTime.Now,
+                        1,
+                        2
+                    )
                 }
             };
 
@@ -134,11 +135,14 @@ namespace Shared.Tests
 
             for (int i = -1; i <= 1; ++i)
                 for (int j = 0; j <= 1; ++j)
-                    taskFields.Add(new TaskField
-                    {
-                        X = 2 + i,
-                        Y = 3 + j,
-                    });
+                    taskFields.Add(new TaskField(
+                        -1,
+                        null,
+                        null,
+                        DateTime.Now,
+                        2 + i,
+                        3 + j
+                    ));
 
             discoverResponce.TaskFields = taskFields;
 

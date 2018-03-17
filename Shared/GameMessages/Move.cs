@@ -34,7 +34,7 @@ namespace Shared.GameMessages
             if (actionAvailability.ActionAvailable())
             {
                 board.Content[player.Location.X, player.Location.Y].PlayerId = null;
-                var newLocation = MoveAvailability.GetNewLocation(player.Location, Direction);
+                var newLocation = player.Location.GetNewLocation(Direction);
                 var field = board.Content[newLocation.X, newLocation.Y];
                 field.PlayerId = PlayerId;
                 player.Location = newLocation;

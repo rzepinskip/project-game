@@ -21,7 +21,7 @@ namespace Shared.ActionAvailability.AvailabilityLink
         }
         protected override bool Validate()
         {
-            return MoveAvailability.IsAvailableTeamArea(location, team, move, goalAreaSize, taskAreaSize);
+            return new MoveAvailability().IsAvailableTeamArea(location, team, move, goalAreaSize, taskAreaSize);
         }
     }
 }

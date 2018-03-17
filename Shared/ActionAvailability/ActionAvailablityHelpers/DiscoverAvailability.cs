@@ -1,9 +1,9 @@
 ﻿namespace Shared.ActionAvailability.ActionAvailabilityHelpers
 {
-    public static class DiscoverAvailability
+    public class DiscoverAvailability
     {
         //always available
-        public static bool IsDiscoveryAvailable()
+        public bool IsDiscoveryAvailable()
         {
             return true;
         }

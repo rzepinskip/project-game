@@ -2,12 +2,23 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
+using static Shared.CommonResources;
 
 namespace Shared.BoardObjects
 {
     [Serializable]
     public class GoalField : Field, IEquatable<GoalField>
     {
+        public GoalField()
+        {
+
+        }
+        public GoalField(GoalFieldType type, TeamColour team, int? playerId, DateTime timestamp, int x, int y) : base(playerId, timestamp, x, y)
+        {
+            Team = team;
+            Type = type;
+        }
+
         [XmlAttribute("type")]
         public Shared.CommonResources.GoalFieldType Type { get; set; }
         [XmlAttribute("team")]

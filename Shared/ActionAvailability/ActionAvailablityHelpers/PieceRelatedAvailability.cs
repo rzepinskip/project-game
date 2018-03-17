@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Shared.ActionAvailability.ActionAvailabilityHelpers
 {
-    public static class PieceRelatedAvailability
+    public class PieceRelatedAvailability
     {
-        public static bool IsPieceInCurrentLocation(Location l, Board board)
+        public bool IsPieceInCurrentLocation(Location l, Board board)
         {
             var PieceId = board.GetPieceFromBoard(l);
             var result = true;
@@ -13,7 +13,7 @@ namespace Shared.ActionAvailability.ActionAvailabilityHelpers
                 result = false;
             return result;
         }
-        public static bool HasPlayerEmptySlotForPiece(string playerGuid, Dictionary<string, int> playerGuidToPiece)
+        public bool HasPlayerEmptySlotForPiece(string playerGuid, Dictionary<string, int> playerGuidToPiece)
         {
             var result = true;
             if (playerGuidToPiece.TryGetValue(playerGuid, out var pieceId))

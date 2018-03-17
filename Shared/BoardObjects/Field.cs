@@ -6,7 +6,14 @@ namespace Shared.BoardObjects
 {
     [Serializable]
     public abstract class Field : Location, IEquatable<Field>
-    {
+    { 
+        public Field():base(0,0) { }
+        public Field(int? playerId, DateTime timestamp, int x, int y) : base(x,y)
+        {
+            PlayerId = playerId;
+            Timestamp = timestamp;
+        }
+
         //public Location Location { get; set; }
         public int? PlayerId { get; set; }
         public DateTime Timestamp { get; set; }
