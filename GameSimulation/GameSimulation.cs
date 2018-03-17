@@ -12,22 +12,23 @@ namespace GameSimulation
 {
     class GameSimulation
     {
-        public int _iterations;
-        public int _minInterval = 500;
-        public int _maxInterval = 2000;
+        public GameMaster.GameMaster GameMaster { get; set; }
+        public List<Player.Player> Players { get; set; }
 
-        private Random rd = new Random();
+        private int _iterations;
+        private int _minInterval = 500;
+        private int _maxInterval = 2000;
+        private const string _configFilePath = "Resources/ExampleConfig.xml";
+        private Random _random = new Random();
 
         private Thread _gameMasterThread;
         private List<Thread> _playerThreads = new List<Thread>();
-
-        public GameMaster.GameMaster GameMaster { get; set; }
-        public List<Player.Player> Players { get; set; }
 
         public GameSimulation(int iterations)
         {
             _iterations = iterations;
         }
+
         public void StartSimulation()
         {
             GameMaster = GenerateGameMaster();
@@ -54,7 +55,7 @@ namespace GameSimulation
         private GameMaster.GameMaster GenerateGameMaster()
         {
             var gameMaster = new GameMaster.GameMaster();
-            gameMaster.PrepareBoard();
+            gameMaster.PrepareBoard(_configFilePath);
 
             return gameMaster;
         }
@@ -99,7 +100,7 @@ namespace GameSimulation
         {
             for (int i = 0; i < _iterations; i++)
             {
-                Thread.Sleep(rd.Next(_minInterval, _maxInterval));
+                Thread.Sleep(_random.Next(_minInterval, _maxInterval));
                 var message = new Move()
                 {
                     PlayerId = player.Id,
@@ -112,7 +113,7 @@ namespace GameSimulation
         {
             for (int i = 0; i < _iterations; i++)
             {
-                Thread.Sleep(rd.Next(_minInterval, _maxInterval));
+                Thread.Sleep(_random.Next(_minInterval, _maxInterval));
                 foreach (var queue in gameMaster.RequestsQueues)
                 {
                     if (queue.Count > 0)
