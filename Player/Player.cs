@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Shared;
 using Shared.BoardObjects;
 using Shared.GameMessages;
@@ -16,14 +14,15 @@ namespace Player
         private string PlayerGuid { get; set; }
         private Board Board { get; set; }
         private List<PlayerBase> Players { get; set; }
-        private Field OccupiedField { get; set; }
+        public Location Location { get; set; }
 
-        public Player()
-        { }
-
-        public Player(Board board)
+        public void InitializePlayer(int id, CommonResources.TeamColour team, PlayerType type, Board board, Location location)
         {
+            Id = id;
+            Team = team;
+            Type = type;
             Board = board;
+            Location = location;
         }
     }
 }
