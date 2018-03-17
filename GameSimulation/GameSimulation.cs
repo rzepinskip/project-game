@@ -58,6 +58,7 @@ namespace GameSimulation
             gameMaster.PrepareBoard(_configFilePath);
 
             return gameMaster;
+
         }
 
         private List<Player.Player> GeneratePlayers(GameMaster.GameMaster gameMaster)
