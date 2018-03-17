@@ -25,9 +25,9 @@ namespace Shared.Tests
             board.Content[3, 3].PlayerId = 2;
             board.Content[2, 4].PlayerId = 3;
             board.Content[2, 2].PlayerId = 4;
-            locationFail = new Shared.BoardObjects.Location() { X = 2, Y = 3 };
-            locationSuccess = new Shared.BoardObjects.Location() { X = 1, Y = 3 };
-            goalAreaLocation = new Shared.BoardObjects.Location() { X = 1, Y = 1 };
+            locationFail = new Shared.BoardObjects.Location(2, 3);
+            locationSuccess = new Shared.BoardObjects.Location(1, 3);
+            goalAreaLocation = new Shared.BoardObjects.Location(1, 1);
 
             board.PlacePieceInTaskArea(1, locationFail);
 

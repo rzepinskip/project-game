@@ -25,9 +25,9 @@ namespace Shared.Tests
             board.Content[3, 3].PlayerId = 2;
             board.Content[2, 4].PlayerId = 3;
             board.Content[2, 2].PlayerId = 4;
-            locationFail = new Shared.BoardObjects.Location() { X = 2, Y = 3 };
-            locationSuccess = new Shared.BoardObjects.Location() { X = 1, Y = 3 };
-            goalAreaLocation = new Shared.BoardObjects.Location() { X = 1, Y = 1 };
+            locationFail = new Shared.BoardObjects.Location(2, 3);
+            locationSuccess = new Shared.BoardObjects.Location(1, 3);
+            goalAreaLocation = new Shared.BoardObjects.Location(1, 1);
 
             board.PlacePieceInTaskArea(1, locationSuccess);
 
@@ -38,27 +38,27 @@ namespace Shared.Tests
         [Fact]
         public void PickUpOnEmptyTaskField()
         {
-            Assert.False(PieceRelatedAvailability.IsPieceInCurrentLocation(locationFail, board));
+            Assert.False(new PieceRelatedAvailability().IsPieceInCurrentLocation(locationFail, board));
         }
         [Fact]
         public void PickUpOnTaskFieldWithPiece()
         {
-            Assert.True(PieceRelatedAvailability.IsPieceInCurrentLocation(locationSuccess, board));
+            Assert.True(new PieceRelatedAvailability().IsPieceInCurrentLocation(locationSuccess, board));
         }
         [Fact]
         public void PickUpOnGoalArea()
         {
-            Assert.False(PieceRelatedAvailability.IsPieceInCurrentLocation(goalAreaLocation, board));
+            Assert.False(new PieceRelatedAvailability().IsPieceInCurrentLocation(goalAreaLocation, board));
         }
         [Fact]
         public void PickUpWhenPlayerNotCarringPiece()
         {
-            Assert.True(PieceRelatedAvailability.HasPlayerEmptySlotForPiece(playerGuidSuccessPickUp, playerGuidToPieceId));
+            Assert.True(new PieceRelatedAvailability().HasPlayerEmptySlotForPiece(playerGuidSuccessPickUp, playerGuidToPieceId));
         }
 
         [Fact]
         public void PickUpWhenPlayerCarringPiece() {
-            Assert.False(PieceRelatedAvailability.HasPlayerEmptySlotForPiece(playerGuidFailPickUp, playerGuidToPieceId));
+            Assert.False(new PieceRelatedAvailability().HasPlayerEmptySlotForPiece(playerGuidFailPickUp, playerGuidToPieceId));
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace GameMaster.Tests
 {
@@ -41,8 +42,8 @@ namespace GameMaster.Tests
                     GameName = "Endgame",
                     Goals = new List<GoalField>
                     {
-                        new GoalField { Team = CommonResources.TeamColour.Red, X = 4, Y = 15, Type = CommonResources.GoalFieldType.Goal },
-                        new GoalField { Team = CommonResources.TeamColour.Blue, X = 6, Y = 1, Type = CommonResources.GoalFieldType.Goal }
+                        new GoalField(CommonResources.GoalFieldType.Goal, CommonResources.TeamColour.Red, null, DateTime.MinValue, 4, 15) ,
+                        new GoalField(CommonResources.GoalFieldType.Goal, CommonResources.TeamColour.Blue, null, DateTime.MinValue, 6, 1 )
                     }
                 }
         };                  
