@@ -24,5 +24,6 @@ namespace Player
             Board = board;
             Location = location;
         }
+
     }
 }

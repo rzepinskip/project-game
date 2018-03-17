@@ -22,5 +22,6 @@ namespace Shared.GameMessages
         public abstract ResponseMessage Execute(BoardObjects.Board board);
 
         public abstract ActionLog ToLog(int playerId, PlayerInfo playeInfo);
+
     }
 }
