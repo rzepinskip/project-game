@@ -99,12 +99,18 @@ namespace GameSimulation
 
         public void PlayerGameplay(Player.Player player)
         {
+            var initMessage = new Move()
+            {
+                PlayerId = player.Id,
+                Direction = player.Team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up,
+            };
+            player.RequestsQueue.Enqueue(initMessage);
             for (int i = 0; i < _iterations; i++)
             {
                 bool gotNewResponse = false;
                 while (!gotNewResponse)
                 {
-                    Thread.Sleep(rd.Next(_minInterval, _maxInterval));
+                    Thread.Sleep(_random.Next(_minInterval, _maxInterval));
                     if (player.ResponsesQueue.Count != 0)
                     {
                         gotNewResponse = true;

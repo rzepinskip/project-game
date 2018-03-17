@@ -22,17 +22,29 @@ namespace Player.Strategy.StateTransition
 
 
             //New chain of resposibility, maybe (?)
-            if (MoveAvailability.IsInsideBoard(location, CommonResources.MoveType.Left, board.Width, board.Height))
+            if (new MoveAvailability().IsInsideBoard(location, CommonResources.MoveType.Left, board.Width, board.Height))
             {
                 CheckIfCloser(board, new Location(location.X - 1, location.Y), ref distanceToNearest, CommonResources.MoveType.Left, ref directionToNearest);
             }
-            if (MoveAvailability.IsInsideBoard(location, CommonResources.MoveType.Right, board.Width, board.Height))
+            if (new MoveAvailability().IsInsideBoard(location, CommonResources.MoveType.Right, board.Width, board.Height))
             {
                 CheckIfCloser(board, new Location(location.X + 1, location.Y), ref distanceToNearest, CommonResources.MoveType.Right, ref directionToNearest);
             }
-            if(MoveAvailability.IsInsideBoard(location, CommonResources.MoveType.Down, board.Width, board.Height)) {
-                
+            if(new MoveAvailability().IsInsideBoard(location, CommonResources.MoveType.Down, board.Width, board.Height))
+            {
+                CheckIfCloser(board, new Location(location.X, location.Y - 1), ref distanceToNearest, CommonResources.MoveType.Down, ref directionToNearest);    
             }
+            if (new MoveAvailability().IsInsideBoard(location, CommonResources.MoveType.Up, board.Width, board.Height))
+            {
+                CheckIfCloser(board, new Location(location.X, location.Y + 1), ref distanceToNearest, CommonResources.MoveType.Up, ref directionToNearest);
+            }
+
+            ChangeState = PlayerStrategy.PlayerState.MoveToPiece;
+            return new Move
+            {
+                Direction = directionToNearest,
+                PlayerId = playerId
+            };
         }
 
         private void CheckIfCloser(Board board, Location newLocation, ref int distanceToNearest, CommonResources.MoveType direction, ref CommonResources.MoveType directionToNearest)
