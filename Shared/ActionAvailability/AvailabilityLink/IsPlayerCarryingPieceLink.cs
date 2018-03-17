@@ -14,7 +14,7 @@ namespace Shared.ActionAvailability.AvailabilityLink
         }
         protected override bool Validate()
         {
-            return !PieceRelatedAvailability.HasPlayerEmptySlotForPiece(playerGuid, playerGuidToPieceId);
+            return !new PieceRelatedAvailability().HasPlayerEmptySlotForPiece(playerGuid, playerGuidToPieceId);
         }
     }
 }

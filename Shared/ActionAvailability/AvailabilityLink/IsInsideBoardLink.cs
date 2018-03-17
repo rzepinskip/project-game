@@ -20,7 +20,7 @@ namespace Shared.ActionAvailability.AvailabilityLink
         }
         protected override bool Validate()
         {
-            return MoveAvailability.IsInsideBoard(location, move, width, height);
+            return new MoveAvailability().IsInsideBoard(location, move, width, height);
         }
     }
 }

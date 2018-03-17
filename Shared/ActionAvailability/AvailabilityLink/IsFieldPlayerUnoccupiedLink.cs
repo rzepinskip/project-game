@@ -17,7 +17,7 @@ namespace Shared.ActionAvailability.AvailabilityLink
         }
         protected override bool Validate()
         {
-            return MoveAvailability.IsFieldPlayerUnoccupied(location, move, board);
+            return new MoveAvailability().IsFieldPlayerUnoccupied(location, move, board);
         }
     }
 }

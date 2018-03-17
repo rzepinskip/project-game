@@ -15,7 +15,7 @@ namespace Shared.ActionAvailability.AvailabilityLink
 
         protected override bool Validate()
         {
-            return PieceRelatedAvailability.IsPieceInCurrentLocation(location, board);
+            return new PieceRelatedAvailability().IsPieceInCurrentLocation(location, board);
         }
     }
 }

@@ -22,13 +22,13 @@ namespace Shared.Tests
         public BoardTests()
         {
             board = new BoardObjects.Board(boardWidth, taskAreaSize, goalAreaSize);
-            locationInTaskArea = new Location() { X = 3, Y = 3 };
-            locationInRedGoal = new Location() { X = 3, Y = 0 };
-            locationInBlueGoal = new Location() { X = 3, Y = 7 };
-            locationOutsideBoard = new Location() { X = 10, Y = 10 };
-            pieceLocation = new Location() { X = 2, Y = 3 };
-            nonPieceLocation = new Location() { X = 1, Y = 3 };
-            placePieceSuccess = new Location() { X = 4, Y = 3 };
+            locationInTaskArea = new Location(3, 3);
+            locationInRedGoal = new Location(3, 0);
+            locationInBlueGoal = new Location(3, 7);
+            locationOutsideBoard = new Location(10, 10);
+            pieceLocation = new Location(2, 3);
+            nonPieceLocation = new Location(1, 3);
+            placePieceSuccess = new Location(4, 3);
 
             board.PlacePieceInTaskArea(pieceId, pieceLocation);
         }

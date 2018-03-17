@@ -8,6 +8,11 @@ namespace Shared.BoardObjects
     [Serializable]
     public class Location : IEquatable<Location>
     {
+        public Location(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
         [XmlAttribute("x")]
         public int X { get; set; }
 
@@ -17,11 +22,6 @@ namespace Shared.BoardObjects
         public Location()
         {
             
-        }
-        public Location(int x, int y)
-        {
-            this.X = x;
-            this.Y = y;
         }
         public override bool Equals(object obj)
         {
@@ -35,6 +35,26 @@ namespace Shared.BoardObjects
                    Y == other.Y;
         }
 
+        public Location GetNewLocation( CommonResources.MoveType direction)
+        {
+            var nl = new Location(){ X = X, Y = Y };
+            switch (direction)
+            {
+                case CommonResources.MoveType.Down:
+                    nl.Y = Y - 1;
+                    break;
+                case CommonResources.MoveType.Left:
+                    nl.X = X - 1;
+                    break;
+                case CommonResources.MoveType.Right:
+                    nl.X = X + 1;
+                    break;
+                case CommonResources.MoveType.Up:
+                    nl.Y = Y + 1;
+                    break;
+            }
+            return nl;
+        }
         public override int GetHashCode()
         {
             var hashCode = 1861411795;

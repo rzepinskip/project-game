@@ -38,7 +38,6 @@ namespace Shared.GameMessages
                     }
             return response;
         }
-
         public override ActionLog ToLog(int playerId, PlayerInfo playerInfo)
         {
             return new ActionLog(playerId, GameId, PlayerGuid, playerInfo, CommonResources.ActionType.Discover);
