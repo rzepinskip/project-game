@@ -37,9 +37,10 @@ namespace Shared.GameMessages
                 var newLocation = MoveAvailability.GetNewLocation(player.Location, Direction);
                 var field = board.Content[newLocation.X, newLocation.Y];
                 field.PlayerId = PlayerId;
+                player.Location = newLocation;
 
                 response.NewPlayerLocation = newLocation;
-                if (newLocation is TaskField taskField)
+                if (field is TaskField taskField)
                 {
                     taskField.DistanceToPiece = board.GetDistanceToPiece(taskField);
                     taskFields.Add(taskField);
