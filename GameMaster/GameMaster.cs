@@ -20,9 +20,10 @@ namespace GameMaster
         {
             var configLoader = new ConfigurationLoader();
             var config = configLoader.LoadConfigurationFromFile(configFilePath);
+            var gameDefiniton = config.GameDefinition;
 
             var boardGenerator = new BoardGenerator();
-            Board = boardGenerator.InitializeBoard(config);
+            Board = boardGenerator.InitializeBoard(gameDefiniton);
         }
 
         public void PutLog(string filename, ActionLog log)

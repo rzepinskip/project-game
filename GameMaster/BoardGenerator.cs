@@ -11,10 +11,8 @@ namespace GameMaster
         private Board _board;
         private Random _random = new Random();
 
-        public Board InitializeBoard(GameConfiguration gameConfig)
+        public Board InitializeBoard(GameDefinition gameDefinition)
         {
-            var gameDefinition = gameConfig.GameDefinition;
-
             _board = new Board(gameDefinition.BoardWidth, gameDefinition.TaskAreaLength, gameDefinition.GoalAreaLength);
             PlaceInitialPieces(gameDefinition.InitialNumberOfPieces, gameDefinition.ShamProbability);
 
