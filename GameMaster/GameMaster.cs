@@ -44,5 +44,26 @@ namespace GameMaster
         {
             return new PieceGenerator(board);
         }
+
+        public bool CheckGameEndCondition()
+        {
+            var blueRemainingGoalsCount = 0;
+            var redRemainingGoalsCount = 0;
+
+            foreach (var field in Board.Content)
+            {
+                if (field is GoalField goalField)
+                {
+                    if (goalField.Type == CommonResources.GoalFieldType.Goal)
+                    {
+                        if (goalField.Team == CommonResources.TeamColour.Red)
+                            redRemainingGoalsCount++;
+                        else
+                            blueRemainingGoalsCount++;
+                    }
+                }
+            }
+            return blueRemainingGoalsCount == 0 || redRemainingGoalsCount == 0;
+        }
     }
 }

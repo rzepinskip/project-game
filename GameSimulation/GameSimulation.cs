@@ -18,10 +18,11 @@ namespace GameSimulation
         public PieceGenerator PieceGenerator { get; private set; }
 
         private int _iterations;
-        private int _minInterval = 500;
-        private int _maxInterval = 2000;
+        private int _minInterval = 5;
+        private int _maxInterval = 20;
         private const string _configFilePath = "Resources/ExampleConfig.xml";
         private Random _random = new Random();
+        public bool GameFinished { get; private set; } = false;
 
         private Thread _gameMasterThread;
         private Thread _pieceGeneratorThread;
@@ -111,6 +112,9 @@ namespace GameSimulation
             player.RequestsQueue.Enqueue(player.GetNextRequestMessage());
             for (int i = 0; i < _iterations; i++)
             {
+                if (GameFinished)
+                    break;
+
                 bool gotNewResponse = false;
                 while (!gotNewResponse)
                 {
@@ -145,6 +149,12 @@ namespace GameSimulation
         {
             for (int i = 0; i < _iterations; i++)
             {
+                if (gameMaster.CheckGameEndCondition())
+                {
+                    GameFinished = true;
+                    break;
+                }
+
                 Thread.Sleep(_random.Next(_minInterval, _maxInterval));
                 foreach (var queue in gameMaster.RequestsQueues)
                 {
@@ -162,7 +172,10 @@ namespace GameSimulation
         {
             for (int i = 0; i < _iterations; i++)
             {
-                Thread.Sleep(5*_maxInterval);
+                if (GameFinished)
+                    break;
+
+                Thread.Sleep(5 * _maxInterval);
                 pieceGenerator.SpawnPiece();
             }
         }

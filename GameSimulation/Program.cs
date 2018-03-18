@@ -14,10 +14,14 @@ namespace GameSimulation
             var boardVisualizer = new BoardVisualizer();
             for (int i = 0; i < iterations*10; i++)
             {
+                if (simulation.GameFinished)
+                    break;
+
                 Thread.Sleep(200);
                 boardVisualizer.VisualizeBoard(simulation.GameMaster.Board);
                 Console.WriteLine(i);
             }
+            Console.WriteLine("game finished");
         }
 
     }
