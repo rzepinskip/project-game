@@ -19,16 +19,12 @@ namespace GameSimulation
         public List<Player.Player> Players { get; private set; }
         public PieceGenerator PieceGenerator { get; private set; }
 
-        private int _minInterval = 5;
-        private int _maxInterval = 20;
         private int _spawnPieceFrequency;
         private Random _random = new Random();
 
         public bool GameFinished { get; private set; } = false;
 
-        private Thread _gameMasterThread;
         private Thread _pieceGeneratorThread;
-        private List<Thread> _playerThreads = new List<Thread>();
 
         public GameSimulation(string configFilePath)
         {
@@ -49,11 +45,11 @@ namespace GameSimulation
         {
             foreach (var player in players)
             {
-                player.RequestsQueue = new Queue<GameMessage>();
-                player.ResponsesQueue = new Queue<ResponseMessage>();
+                player.RequestsQueue = new ObservableQueue<GameMessage>();
+                player.ResponsesQueue = new ObservableQueue<ResponseMessage>();
 
-                gameMaster.RequestsQueues.Add(player.RequestsQueue);
-                gameMaster.ResponsesQueues.Add(player.ResponsesQueue);
+                gameMaster.RequestsQueues.Add(player.Id, player.RequestsQueue);
+                gameMaster.ResponsesQueues.Add(player.Id, player.ResponsesQueue);
             }
         }
 
@@ -83,85 +79,20 @@ namespace GameSimulation
 
         private void GenerateThreads(GameMaster.GameMaster gameMaster, List<Player.Player> players, PieceGenerator pieceGenerator)
         {
-            _gameMasterThread = new Thread(() => GameMasterGameplay(gameMaster));
-
             _pieceGeneratorThread = new Thread(() => PieceGeneratorGameplay(pieceGenerator));
-
-            foreach (var player in players)
-            {
-                _playerThreads.Add(new Thread(() => PlayerGameplay(player)));
-            }
         }
+
         public void StartSimulation()
         {
-            _gameMasterThread.Start();
             _pieceGeneratorThread.Start();
 
-            foreach (var playerThread in _playerThreads)
+            GameMaster.ListenToIncomingMessages();
+
+            foreach (var player in Players)
             {
-                playerThread.Start();
+                player.ListenToIncomingMessages();
+                player.RequestsQueue.Enqueue(player.GetNextRequestMessage());
             }
-        }
-
-        private void PlayerGameplay(Player.Player player)
-        {
-            //var initMessage = new Move()
-            //{
-            //    PlayerId = player.Id,
-            //    Direction = player.Team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up,
-            //};
-            //player.RequestsQueue.Enqueue(initMessage);
-            player.RequestsQueue.Enqueue(player.GetNextRequestMessage());
-            while (!GameFinished)
-            {
-
-                Thread.Sleep(_random.Next(_minInterval, _maxInterval));
-                if (player.ResponsesQueue.Count != 0)
-                {
-                    player.UpdateBoard(player.ResponsesQueue.Dequeue());
-                    //
-                    //change board state based on response 
-                    //  - update method in Response Message
-                    //based on board state change strategy state
-                    //  - implement strategy
-                    //  - hold current state
-                    //  - implement state changing action (stateless in next iteration) which return new message
-                    //
-                    //var message = new Move()
-                    //{
-                    //    PlayerId = player.Id,
-                    //    Direction = player.Team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up,
-                    //};
-                    player.RequestsQueue.Enqueue(player.GetNextRequestMessage());
-
-                }
-            }
-        }
-        private void GameMasterGameplay(GameMaster.GameMaster gameMaster)
-        {
-            while (!gameMaster.CheckGameEndCondition())
-            {
-                Thread.Sleep(_random.Next(_minInterval, _maxInterval));
-                foreach (var queue in gameMaster.RequestsQueues)
-                {
-                    if (queue.Count > 0)
-                    {
-                        SendResponse(gameMaster, queue.Dequeue());
-                    }
-                }
-            }
-
-            GameFinished = true;
-        }
-
-        private async Task SendResponse(GameMaster.GameMaster gameMaster, GameMessage request)
-        {
-            var delay = Convert.ToInt32(request.GetDelay(gameMaster.GameConfiguration.ActionCosts));
-            await Task.Delay(delay);
-
-            var requesterInfo = gameMaster.Board.Players[request.PlayerId];
-            var response = request.Execute(gameMaster.Board);
-            gameMaster.ResponsesQueues[request.PlayerId].Enqueue(response);
         }
 
         private void PieceGeneratorGameplay(PieceGenerator pieceGenerator)

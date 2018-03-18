@@ -8,17 +8,20 @@ using Shared.ResponseMessages;
 using GameMaster.Configuration;
 using System;
 using System.Linq;
+using System.Threading;
 
 namespace GameMaster
 {
     public class GameMaster
     {
-        public List<Queue<GameMessage>> RequestsQueues { get; set; } = new List<Queue<GameMessage>>();
-        public List<Queue<ResponseMessage>> ResponsesQueues { get; set; } = new List<Queue<ResponseMessage>>();
+        public Dictionary<int, ObservableQueue<GameMessage>> RequestsQueues { get; set; } = new Dictionary<int, ObservableQueue<GameMessage>>();
+        public Dictionary<int, ObservableQueue<ResponseMessage>> ResponsesQueues { get; set; } = new Dictionary<int, ObservableQueue<ResponseMessage>>();
         public Board Board { get; set; }
-        Dictionary<string, int> PlayerGuidToId { get; }
+        public GameConfiguration GameConfiguration { get; private set; }
+        public bool GameFinished { get; private set; }
 
-        public GameConfiguration GameConfiguration { get; set; }
+        private Dictionary<string, int> PlayerGuidToId { get; }
+
 
         public GameMaster(GameConfiguration gameConfiguration)
         {
@@ -64,6 +67,36 @@ namespace GameMaster
                 }
             }
             return blueRemainingGoalsCount == 0 || redRemainingGoalsCount == 0;
+        }
+
+        public void HandleMessagesFromPlayer(int playerId)
+        {
+            var requestQueue = RequestsQueues[playerId];
+            while (requestQueue.Count > 0)
+            {
+                var request = requestQueue.Peek();
+                var delay = Convert.ToInt32(request.GetDelay(GameConfiguration.ActionCosts));
+                Thread.Sleep(delay);
+
+                var requesterInfo = Board.Players[request.PlayerId];
+                var response = request.Execute(Board);
+                ResponsesQueues[request.PlayerId].Enqueue(response);
+
+                GameFinished = !CheckGameEndCondition();
+
+                RequestsQueues[request.PlayerId].Dequeue();
+            }
+        }
+
+        public void ListenToIncomingMessages()
+        {
+            foreach (var queue in RequestsQueues)
+            {
+                queue.Value.CollectionChanged += (sender, args) =>
+                {
+                    new Thread(() => HandleMessagesFromPlayer(queue.Value.Peek().PlayerId)).Start();
+                };
+            }
         }
     }
 }
