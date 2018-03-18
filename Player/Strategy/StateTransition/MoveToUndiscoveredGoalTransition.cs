@@ -27,7 +27,6 @@ namespace Player.Strategy.StateTransition
                 ChangeState = PlayerStrategy.PlayerState.InGoalMovingToTask;
 
                 undiscoveredGoalFields.RemoveAt(0);
-                Debug.WriteLine("Placed piece");
                 return new PlacePiece
                 {
                     PlayerId = playerId

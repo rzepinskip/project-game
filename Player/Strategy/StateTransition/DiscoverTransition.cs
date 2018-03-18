@@ -41,7 +41,6 @@ namespace Player.Strategy.StateTransition
             }
 
 
-            Debug.WriteLine(distanceToNearest);
             ChangeState = PlayerStrategy.PlayerState.MoveToPiece;
             return new Move
             {
