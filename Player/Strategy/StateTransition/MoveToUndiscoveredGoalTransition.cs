@@ -22,7 +22,7 @@ namespace Player.Strategy.StateTransition
         {
             Location undiscoveredGoalLocation = undiscoveredGoalFields[0];
 
-            if(undiscoveredGoalLocation == location)
+            if(location.Equals(undiscoveredGoalLocation))
             {
                 ChangeState = PlayerStrategy.PlayerState.InGoalMovingToTask;
 
@@ -33,6 +33,8 @@ namespace Player.Strategy.StateTransition
                     PlayerId = playerId
                 };
             }
+
+            ChangeState = PlayerStrategy.PlayerState.MoveToUndiscoveredGoal;
 
             CommonResources.MoveType direction = undiscoveredGoalLocation.GetLocationTo(location);
 

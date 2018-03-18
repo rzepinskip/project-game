@@ -18,27 +18,35 @@ namespace Player.Strategy.StateTransition
         {
             var playerInfo = board.Players[playerId];
 
-            switch (playerInfo.Piece.Type)
+            if (playerInfo.Piece == null)
             {
-                case CommonResources.PieceType.Sham:
-                    ChangeState = PlayerStrategy.PlayerState.Discover;
-                    return new Discover
-                    {
-                        PlayerId = playerId
-                    };
-
-                case CommonResources.PieceType.Normal:
-                    ChangeState = PlayerStrategy.PlayerState.MoveToGoalArea;
-                    var direction = team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Up : CommonResources.MoveType.Down;
-                    return new Move
-                    {
-                        Direction = direction,
-                        PlayerId = playerId
-                    };
-
-                default:
-                    throw new Exception("STH WENT TERRIBLY WRONG");
+                ChangeState = PlayerStrategy.PlayerState.Discover;
+                return new Discover
+                {
+                    PlayerId = playerId
+                };
+            } else
+            {
+                ChangeState = PlayerStrategy.PlayerState.MoveToGoalArea;
+                var direction = team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Up : CommonResources.MoveType.Down;
+                return new Move
+                {
+                    Direction = direction,
+                    PlayerId = playerId
+                };
             }
+
+            //switch (playerInfo.Piece.Type)
+            //{
+            //    case CommonResources.PieceType.Sham:
+                    
+
+            //    case CommonResources.PieceType.Normal:
+                   
+
+            //    default:
+            //        throw new Exception("STH WENT TERRIBLY WRONG");
+            //}
         }
     }
 }
