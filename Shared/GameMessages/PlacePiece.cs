@@ -9,14 +9,28 @@ namespace Shared.GameMessages.PieceActions
     {
         public override ResponseMessage Execute(Board board)
         {
+            ///TODO: different action on TaskField
             var player = board.Players[PlayerId];
+            var piece = player.Piece;
 
-            if (player.Piece.Type == CommonResources.PieceType.Sham)
+            player.Piece = null;
+
+            if (piece.Type == CommonResources.PieceType.Sham)
                 return new PlacePieceResponse();
 
             var playerGoalField = board.Content[player.Location.X, player.Location.Y];
+            var goalField = playerGoalField as GoalField;
+
+
+            ///TODO: GameMaster counter
+            if(goalField != null)
+            {
+                goalField.Type = CommonResources.GoalFieldType.NonGoal;
+            }
+
             var response = new PlacePieceResponse()
             {
+                PlayerId = this.PlayerId,
                 GoalField = playerGoalField as GoalField
             };
             

@@ -9,7 +9,11 @@ namespace Shared.GameMessages.PieceActions
     {
         public override ResponseMessage Execute(Board board)
         {
-            var playerPiece = board.Players[PlayerId].Piece;
+            var player = board.Players[PlayerId];
+            var playerPiece = player.Piece;
+
+            if (playerPiece.Type == CommonResources.PieceType.Sham)
+                player.Piece = null;
 
             var response = new TestPieceResponse()
             {
