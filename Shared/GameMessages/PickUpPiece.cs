@@ -45,6 +45,11 @@ namespace Shared.GameMessages
         {
             return new ActionLog(playerId, GameId, PlayerGuid, playerInfo, CommonResources.ActionType.PickUp);
         }
+
+        public override double GetDelay(ActionCosts actionCosts)
+        {
+            return actionCosts.PickUpDelay;
+        }
     }
 
 }

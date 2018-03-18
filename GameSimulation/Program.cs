@@ -7,12 +7,11 @@ namespace GameSimulation
     {
         static void Main(string[] args)
         {
-            var iterations = 1000;
-            var simulation = new GameSimulation(iterations, "Resources/ExampleConfig.xml");
+            var simulation = new GameSimulation( "Resources/ExampleAdvancedConfig.xml");
             simulation.StartSimulation();
 
             var boardVisualizer = new BoardVisualizer();
-            for (int i = 0; i < iterations*10; i++)
+            for (int i = 0;; i++)
             {
                 if (simulation.GameFinished)
                     break;
