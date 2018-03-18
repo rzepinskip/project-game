@@ -10,10 +10,11 @@ namespace Player.Strategy.StateTransition
 {
     class PickTransition : BaseTransition
     {
-        public PickTransition(Location location, CommonResources.TeamColour team, int playerId) : base(location, team, playerId)
-        { }
+        public PickTransition(Location location, CommonResources.TeamColour team, int playerId, Board board) : base(location, team, playerId, board)
+        {
+        }
 
-        public override GameMessage ExecuteStrategy(Board board)
+        public override GameMessage ExecuteStrategy()
         {
             ChangeState = PlayerStrategy.PlayerState.Test;
             return new TestPiece

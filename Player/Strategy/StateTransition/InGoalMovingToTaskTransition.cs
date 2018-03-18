@@ -9,17 +9,18 @@ namespace Player.Strategy.StateTransition
 {
     class InGoalMovingToTaskTransition : BaseTransition
     {
-        public InGoalMovingToTaskTransition(Location location, CommonResources.TeamColour team, int playerId) : base(location, team, playerId)
+        public InGoalMovingToTaskTransition(Location location, CommonResources.TeamColour team, int playerId, Board board) : base(location, team, playerId, board)
         {
         }
-        public override GameMessage ExecuteStrategy(Board board)
+
+        public override GameMessage ExecuteStrategy()
         {
             var taskField = board.Content[location.X, location.Y] as TaskField;
 
             if (taskField == null)
             {
                 ChangeState = PlayerStrategy.PlayerState.InGoalMovingToTask;
-                var direction = team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Up : CommonResources.MoveType.Down;
+                var direction = team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up;
                 return new Move
                 {
                     Direction = direction,

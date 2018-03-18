@@ -6,16 +6,17 @@ using Shared.BoardObjects;
 using Shared.GameMessages;
 using Shared;
 using Shared.ActionAvailability.ActionAvailabilityHelpers;
+using System.Diagnostics;
 
 namespace Player.Strategy.StateTransition
 {
     class DiscoverTransition : BaseTransition
     {
-        public DiscoverTransition(Location location, CommonResources.TeamColour team, int playerId) : base(location, team, playerId)
+        public DiscoverTransition(Location location, CommonResources.TeamColour team, int playerId, Board board) : base(location, team, playerId, board)
         {
         }
 
-        public override GameMessage ExecuteStrategy(Board board)
+        public override GameMessage ExecuteStrategy()
         {
             CommonResources.MoveType directionToNearest = CommonResources.MoveType.Left;
             int distanceToNearest = Int32.MaxValue;
@@ -39,6 +40,8 @@ namespace Player.Strategy.StateTransition
                 CheckIfCloser(board, new Location(location.X, location.Y + 1), ref distanceToNearest, CommonResources.MoveType.Up, ref directionToNearest);
             }
 
+
+            Debug.WriteLine(distanceToNearest);
             ChangeState = PlayerStrategy.PlayerState.MoveToPiece;
             return new Move
             {
@@ -55,7 +58,7 @@ namespace Player.Strategy.StateTransition
                 if (taskField.DistanceToPiece < distanceToNearest)
                 {
                     distanceToNearest = taskField.DistanceToPiece;
-                    direction = CommonResources.MoveType.Left;
+                    directionToNearest = direction;
                 }
             }
         }

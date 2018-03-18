@@ -9,10 +9,11 @@ namespace Player.Strategy.StateTransition
 {
     class MoveToPieceTranstition : BaseTransition
     {
-        public MoveToPieceTranstition(Location location, CommonResources.TeamColour team, int playerId) : base(location, team, playerId)
-        { }
+        public MoveToPieceTranstition(Location location, CommonResources.TeamColour team, int playerId, Board board) : base(location, team, playerId, board)
+        {
+        }
 
-        public override GameMessage ExecuteStrategy(Board board)
+        public override GameMessage ExecuteStrategy()
         {
             var taskField = board.Content[location.X, location.Y] as TaskField;
             var distanceToNearestPiece = taskField.DistanceToPiece;

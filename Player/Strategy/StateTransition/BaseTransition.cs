@@ -15,14 +15,16 @@ namespace Player.Strategy.StateTransition
         protected TeamColour team;
         protected int playerId;
         public PlayerState ChangeState { get; set; }
+        protected Board board;
 
-        public BaseTransition(Location location, TeamColour team, int playerId)
+        public BaseTransition(Location location, TeamColour team, int playerId, Board board)
         {
             this.location = location;
             this.team = team;
             this.playerId = playerId;
+            this.board = board;
         }
 
-        public abstract GameMessage ExecuteStrategy(Board board);
+        public abstract GameMessage ExecuteStrategy();
     }
 }

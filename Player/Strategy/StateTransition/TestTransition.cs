@@ -10,10 +10,11 @@ namespace Player.Strategy.StateTransition
 {
     class TestTransition : BaseTransition
     {
-        public TestTransition(Location location, CommonResources.TeamColour team, int playerId) : base(location, team, playerId)
-        { }
+        public TestTransition(Location location, CommonResources.TeamColour team, int playerId, Board board) : base(location, team, playerId, board)
+        {
+        }
 
-        public override GameMessage ExecuteStrategy(Board board)
+        public override GameMessage ExecuteStrategy()
         {
             var playerInfo = board.Players[playerId];
 
@@ -27,8 +28,8 @@ namespace Player.Strategy.StateTransition
                     };
 
                 case CommonResources.PieceType.Normal:
-                    ChangeState = PlayerStrategy.PlayerState.MoveToGoal;
-                    var direction = team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up;
+                    ChangeState = PlayerStrategy.PlayerState.MoveToGoalArea;
+                    var direction = team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Up : CommonResources.MoveType.Down;
                     return new Move
                     {
                         Direction = direction,

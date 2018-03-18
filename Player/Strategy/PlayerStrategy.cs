@@ -1,4 +1,5 @@
-﻿using Shared.BoardObjects;
+﻿using Player.Strategy.StateTransition.Factory;
+using Shared.BoardObjects;
 using Shared.GameMessages;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,9 @@ namespace Player.Strategy
 {
     public class PlayerStrategy
     {
-        private List<GoalField> undiscoveredGoalFields;
-        public PlayerStrategy(Board board, Shared.CommonResources.TeamColour team)
+        private List<GoalField> undiscoveredGoalFields = new List<GoalField>();
+        private StateTranstitionFactory stateTransitionFactory;
+        public PlayerStrategy(Board board, Shared.CommonResources.TeamColour team, int playerId)
         {
             currentState = PlayerState.InitState;
 
@@ -21,6 +23,8 @@ namespace Player.Strategy
                 for (var j = offset; j < offset +  board.GoalAreaSize; ++j)
                     undiscoveredGoalFields.Add(board.Content[i, j] as GoalField);
             }
+
+            this.stateTransitionFactory = new StateTranstitionFactory(board, playerId, team, undiscoveredGoalFields);
         }
         public enum PlayerState
         {
@@ -34,24 +38,17 @@ namespace Player.Strategy
             MoveToGoalArea,
             MoveToUndiscoveredGoal,
             Place
-            //etc
+            
         }
         private PlayerState currentState;
 
         
-        public void ChangeState(Board currentBoard)
+        public GameMessage NextMove(Location location)
         {
-
-        }
-        public GameMessage NextMove()
-        {
-            
-            switch (currentState)
-            {
-                //case PlayerState.InitState:
-            }
-            
-            throw new NotImplementedException();
+            var transition = stateTransitionFactory.GetNextTranstition(currentState, location);
+            GameMessage gameMessage = transition.ExecuteStrategy();
+            currentState = transition.ChangeState;
+            return gameMessage;
 
         }
     }

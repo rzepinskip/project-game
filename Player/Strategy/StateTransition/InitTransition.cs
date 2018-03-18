@@ -9,11 +9,11 @@ namespace Player.Strategy.StateTransition
 {
     class InitTransition : BaseTransition
     {
-        public InitTransition(Location location, CommonResources.TeamColour team, int playerId) : base(location, team, playerId)
+        public InitTransition(Location location, CommonResources.TeamColour team, int playerId, Board board) : base(location, team, playerId, board)
         {
-
         }
-        public override GameMessage ExecuteStrategy(Board board)
+
+        public override GameMessage ExecuteStrategy()
         {
             if(board.IsLocationInTaskArea(location))
             {
