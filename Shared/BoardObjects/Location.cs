@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
 using System.Xml.Serialization;
 
 namespace Shared.BoardObjects
 {
     [Serializable]
+    [DebuggerDisplay("[X = {X}, Y = {Y}]")]
     public class Location : IEquatable<Location>
     {
         public Location(int x, int y)
