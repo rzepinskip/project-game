@@ -26,31 +26,31 @@ namespace Player.Strategy.StateTransition.Factory
             switch (state)
             {
                 case PlayerState.InitState:
-                    return new InitTransition(location, teamColour, playerId);
+                    return new InitTransition(location, teamColour, playerId, board);
 
                 case PlayerState.MoveToPiece:
-                    return new MoveToPieceTranstition(location, teamColour, playerId);
+                    return new MoveToPieceTranstition(location, teamColour, playerId, board);
 
                 case PlayerState.RandomWalk:
-                    return new RandomWalkTransition(location, teamColour, playerId);
+                    return new RandomWalkTransition(location, teamColour, playerId, board);
 
                 case PlayerState.Discover:
-                    return new DiscoverTransition(location, teamColour, playerId);
+                    return new DiscoverTransition(location, teamColour, playerId, board);
 
                 case PlayerState.Pick:
-                    return new PickTransition(location, teamColour, playerId);
+                    return new PickTransition(location, teamColour, playerId, board);
 
                 case PlayerState.MoveToGoalArea:
-                    return new MoveToGoalTransition(undiscoveredGoalFields, location, teamColour, playerId);
+                    return new MoveToGoalTransition(undiscoveredGoalFields, location, teamColour, playerId, board);
 
                 case PlayerState.MoveToUndiscoveredGoal:
-                    return new MoveToUndiscoveredGoalTransition(undiscoveredGoalFields, location, teamColour, playerId);
+                    return new MoveToUndiscoveredGoalTransition(undiscoveredGoalFields, location, teamColour, playerId, board);
 
                 case PlayerState.Test:
-                    return new TestTransition(location, teamColour, playerId);
+                    return new TestTransition(location, teamColour, playerId, board);
 
                 case PlayerState.InGoalMovingToTask:
-                    return new InGoalMovingToTaskTransition(location, teamColour, playerId);
+                    return new InGoalMovingToTaskTransition(location, teamColour, playerId, board);
 
                 default:
                     throw new Exception("Factory exception");
