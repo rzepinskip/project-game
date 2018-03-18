@@ -24,6 +24,9 @@ namespace Shared.GameMessages
             var piece = board.Pieces[playerField.PieceId.Value];
             piece.PlayerId = PlayerId;
 
+            player.Piece = piece;
+            playerField.PieceId = null;
+
             response = new PickUpPieceResponse()
             {
                 PlayerId = this.PlayerId,
@@ -34,6 +37,7 @@ namespace Shared.GameMessages
                     Type = CommonResources.PieceType.Unknown
                 }
             };
+            
             return response;
         }
         

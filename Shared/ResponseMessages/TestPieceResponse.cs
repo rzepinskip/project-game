@@ -12,6 +12,8 @@ namespace Shared.ResponseMessages
         {
             var playerInfo = board.Players[this.PlayerId];
             playerInfo.Piece = Piece;
+            if (Piece.Type == CommonResources.PieceType.Sham)
+                playerInfo.Piece = null;
         }
     }
 }
