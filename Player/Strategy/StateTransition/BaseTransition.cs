@@ -9,7 +9,7 @@ using Shared;
 
 namespace Player.Strategy.StateTransition
 {
-    abstract class BaseTransition
+    public abstract class BaseTransition
     {
         protected Location location;
         protected TeamColour team;

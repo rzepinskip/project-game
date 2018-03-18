@@ -56,6 +56,27 @@ namespace Shared.BoardObjects
             }
             return nl;
         }
+
+        public CommonResources.MoveType GetLocationTo(Location location)
+        {
+            int dx = this.X - location.X;
+            int dy = this.Y - location.Y;
+            CommonResources.MoveType horizontalDirection = (dx > 0) ? CommonResources.MoveType.Right : CommonResources.MoveType.Left;
+            CommonResources.MoveType verticalDirection = (dy > 0) ? CommonResources.MoveType.Up : CommonResources.MoveType.Down;
+
+            if (dx == 0 && dy == 0)
+                throw new Exception("You're already on that field dummy !");
+
+            if (dx == 0)
+                return verticalDirection;
+
+            if (dy == 0)
+                return horizontalDirection;
+
+            var random = new Random();
+            return (random.Next() % 2 == 0) ? verticalDirection : horizontalDirection;
+        }
+
         public override int GetHashCode()
         {
             var hashCode = 1861411795;

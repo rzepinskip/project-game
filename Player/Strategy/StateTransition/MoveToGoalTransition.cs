@@ -32,8 +32,13 @@ namespace Player.Strategy.StateTransition
             {
                 ChangeState = PlayerStrategy.PlayerState.MoveToUndiscoveredGoal;
                 Location undiscoveredGoalLocation = undiscoveredGoalFields[0];
-                //CommonResources.MoveType direction = 
+                CommonResources.MoveType direction = undiscoveredGoalLocation.GetLocationTo(location);
 
+                return new Move
+                {
+                    Direction = direction,
+                    PlayerId = playerId
+                };
             }
 
         }

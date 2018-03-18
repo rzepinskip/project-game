@@ -6,11 +6,13 @@ using System.Text;
 
 namespace Player.Strategy
 {
-    class PlayerStrategy
+    public class PlayerStrategy
     {
         private List<GoalField> undiscoveredGoalFields;
         public PlayerStrategy(Board board, Shared.CommonResources.TeamColour team)
         {
+            currentState = PlayerState.InitState;
+
             int teamCoefficient = team == Shared.CommonResources.TeamColour.Blue ? 0 : 1;
             int offset = teamCoefficient * (board.TaskAreaSize + board.GoalAreaSize);
 
@@ -43,14 +45,12 @@ namespace Player.Strategy
         }
         public GameMessage NextMove()
         {
-            /*
+            
             switch (currentState)
             {
-                case state:
-                    init message
-                    return message
+                //case PlayerState.InitState:
             }
-            */
+            
             throw new NotImplementedException();
 
         }
