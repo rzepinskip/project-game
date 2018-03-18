@@ -8,7 +8,7 @@ namespace GameSimulation
         static void Main(string[] args)
         {
             var iterations = 1000;
-            var simulation = new GameSimulation(iterations);
+            var simulation = new GameSimulation(iterations, "Resources/ExampleConfig.xml");
             simulation.StartSimulation();
 
             var boardVisualizer = new BoardVisualizer();

@@ -18,14 +18,14 @@ namespace GameMaster
         public Board Board { get; set; }
         Dictionary<string, int> PlayerGuidToId { get; }
 
-        public void PrepareBoard(string configFilePath)
+        private GameConfiguration _gameConfiguration;
+
+        public GameMaster(GameConfiguration gameConfiguration)
         {
-            var configLoader = new ConfigurationLoader();
-            var config = configLoader.LoadConfigurationFromFile(configFilePath);
-            var gameDefiniton = config.GameDefinition;
+            _gameConfiguration = gameConfiguration;
 
             var boardGenerator = new BoardGenerator();
-            Board = boardGenerator.InitializeBoard(gameDefiniton);
+            Board = boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
         }
 
         public void PutLog(string filename, ActionLog log)
@@ -42,7 +42,7 @@ namespace GameMaster
 
         public PieceGenerator CreatePieceGenerator(Board board)
         {
-            return new PieceGenerator(board);
+            return new PieceGenerator(board, _gameConfiguration.GameDefinition.ShamProbability);
         }
 
         public bool CheckGameEndCondition()

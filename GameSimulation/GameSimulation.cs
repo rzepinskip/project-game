@@ -1,4 +1,5 @@
 ﻿using GameMaster;
+using GameMaster.Configuration;
 using Player;
 using Shared;
 using Shared.BoardObjects;
@@ -20,19 +21,25 @@ namespace GameSimulation
         private int _iterations;
         private int _minInterval = 5;
         private int _maxInterval = 20;
-        private const string _configFilePath = "Resources/ExampleConfig.xml";
+        private int _spawnPieceFrequency;
         private Random _random = new Random();
+
         public bool GameFinished { get; private set; } = false;
 
         private Thread _gameMasterThread;
         private Thread _pieceGeneratorThread;
         private List<Thread> _playerThreads = new List<Thread>();
 
-        public GameSimulation(int iterations)
+        public GameSimulation(int iterations, string configFilePath)
         {
             _iterations = iterations;
 
-            GameMaster = GenerateGameMaster();
+            var configLoader = new ConfigurationLoader();
+            var config = configLoader.LoadConfigurationFromFile(configFilePath);
+
+            _spawnPieceFrequency = Convert.ToInt32(config.GameDefinition.PlacingNewPiecesFrequency);
+
+            GameMaster = GenerateGameMaster(config);
             PieceGenerator = GameMaster.CreatePieceGenerator(GameMaster.Board);
             Players = GeneratePlayers(GameMaster);
 
@@ -53,13 +60,11 @@ namespace GameSimulation
             }
         }
 
-        private GameMaster.GameMaster GenerateGameMaster()
+        private GameMaster.GameMaster GenerateGameMaster(GameConfiguration config)
         {
-            var gameMaster = new GameMaster.GameMaster();
-            gameMaster.PrepareBoard(_configFilePath);
+            var gameMaster = new GameMaster.GameMaster(config);
 
             return gameMaster;
-
         }
 
         private List<Player.Player> GeneratePlayers(GameMaster.GameMaster gameMaster)
@@ -139,9 +144,6 @@ namespace GameSimulation
                         player.RequestsQueue.Enqueue(player.GetNextRequestMessage());
 
                     }
-
-
-
                 }
             }
         }
@@ -175,7 +177,7 @@ namespace GameSimulation
                 if (GameFinished)
                     break;
 
-                Thread.Sleep(5 * _maxInterval);
+                Thread.Sleep(_spawnPieceFrequency);
                 pieceGenerator.SpawnPiece();
             }
         }
