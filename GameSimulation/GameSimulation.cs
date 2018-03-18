@@ -23,6 +23,7 @@ namespace GameSimulation
         private Random _random = new Random();
 
         public bool GameFinished { get; private set; } = false;
+        public CommonResources.TeamColour Winners { get; private set; }
 
         private Thread _pieceGeneratorThread;
 
@@ -37,8 +38,17 @@ namespace GameSimulation
             PieceGenerator = GameMaster.CreatePieceGenerator(GameMaster.Board);
             Players = GeneratePlayers(GameMaster);
 
+            GameMaster.GameFinished += GameMaster_GameFinished;
+
             CreateQueues(GameMaster, Players);
-            GenerateThreads(GameMaster, Players, PieceGenerator);
+            _pieceGeneratorThread = new Thread(() => PieceGeneratorGameplay(PieceGenerator));
+        }
+
+        private void GameMaster_GameFinished(object sender, GameFinishedEventArgs e)
+        {
+            //should wait for all threads end
+            Winners = e.Winners;
+            GameFinished = true;
         }
 
         private void CreateQueues(GameMaster.GameMaster gameMaster, List<Player.Player> players)
@@ -77,11 +87,6 @@ namespace GameSimulation
             return players;
         }
 
-        private void GenerateThreads(GameMaster.GameMaster gameMaster, List<Player.Player> players, PieceGenerator pieceGenerator)
-        {
-            _pieceGeneratorThread = new Thread(() => PieceGeneratorGameplay(pieceGenerator));
-        }
-
         public void StartSimulation()
         {
             _pieceGeneratorThread.Start();
@@ -103,6 +108,5 @@ namespace GameSimulation
                 pieceGenerator.SpawnPiece();
             }
         }
-
     }
 }

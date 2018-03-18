@@ -12,15 +12,25 @@ using System.Threading;
 
 namespace GameMaster
 {
+    public class GameFinishedEventArgs : EventArgs
+    {
+        public CommonResources.TeamColour Winners { get; set; }
+
+        public GameFinishedEventArgs(CommonResources.TeamColour winners)
+        {
+            Winners = winners;
+        }
+    }
+    
     public class GameMaster
     {
         public Dictionary<int, ObservableQueue<GameMessage>> RequestsQueues { get; set; } = new Dictionary<int, ObservableQueue<GameMessage>>();
         public Dictionary<int, ObservableQueue<ResponseMessage>> ResponsesQueues { get; set; } = new Dictionary<int, ObservableQueue<ResponseMessage>>();
         public Board Board { get; set; }
         public GameConfiguration GameConfiguration { get; private set; }
-        public bool GameFinished { get; private set; }
-
         private Dictionary<string, int> PlayerGuidToId { get; }
+
+        public virtual event EventHandler<GameFinishedEventArgs> GameFinished;
 
 
         public GameMaster(GameConfiguration gameConfiguration)
@@ -48,7 +58,7 @@ namespace GameMaster
             return new PieceGenerator(board, GameConfiguration.GameDefinition.ShamProbability);
         }
 
-        public bool CheckGameEndCondition()
+        public bool IsGameFinished()
         {
             var blueRemainingGoalsCount = 0;
             var redRemainingGoalsCount = 0;
@@ -69,6 +79,33 @@ namespace GameMaster
             return blueRemainingGoalsCount == 0 || redRemainingGoalsCount == 0;
         }
 
+        public CommonResources.TeamColour CheckWinner()
+        {
+            var blueRemainingGoalsCount = 0;
+            var redRemainingGoalsCount = 0;
+
+            foreach (var field in Board.Content)
+            {
+                if (field is GoalField goalField)
+                {
+                    if (goalField.Type == CommonResources.GoalFieldType.Goal)
+                    {
+                        if (goalField.Team == CommonResources.TeamColour.Red)
+                            redRemainingGoalsCount++;
+                        else
+                            blueRemainingGoalsCount++;
+                    }
+                }
+            }
+
+            if (blueRemainingGoalsCount == 0)
+                return CommonResources.TeamColour.Blue;
+            else if (redRemainingGoalsCount == 0)
+                return CommonResources.TeamColour.Red;
+            else
+                throw new InvalidOperationException();
+        }
+
         public void HandleMessagesFromPlayer(int playerId)
         {
             var requestQueue = RequestsQueues[playerId];
@@ -82,7 +119,8 @@ namespace GameMaster
                 var response = request.Execute(Board);
                 ResponsesQueues[request.PlayerId].Enqueue(response);
 
-                GameFinished = !CheckGameEndCondition();
+                if (IsGameFinished())
+                    GameFinished(this, new GameFinishedEventArgs(CheckWinner()));
 
                 RequestsQueues[request.PlayerId].Dequeue();
             }

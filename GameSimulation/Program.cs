@@ -7,7 +7,7 @@ namespace GameSimulation
     {
         static void Main(string[] args)
         {
-            var simulation = new GameSimulation( "Resources/ExampleAdvancedConfig.xml");
+            var simulation = new GameSimulation( "Resources/ExampleConfig.xml");
             simulation.StartSimulation();
 
             var boardVisualizer = new BoardVisualizer();
@@ -20,8 +20,7 @@ namespace GameSimulation
                 boardVisualizer.VisualizeBoard(simulation.GameMaster.Board);
                 Console.WriteLine(i);
             }
-            Console.WriteLine("game finished");
+            Console.WriteLine($"Game finished - team {simulation.Winners} won!");
         }
-
     }
 }
