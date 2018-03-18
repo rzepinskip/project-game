@@ -1,4 +1,5 @@
-﻿using Player;
+﻿using GameMaster;
+using Player;
 using Shared;
 using Shared.BoardObjects;
 using Shared.GameMessages;
@@ -12,8 +13,9 @@ namespace GameSimulation
 {
     class GameSimulation
     {
-        public GameMaster.GameMaster GameMaster { get; set; }
-        public List<Player.Player> Players { get; set; }
+        public GameMaster.GameMaster GameMaster { get; private set; }
+        public List<Player.Player> Players { get; private set; }
+        public PieceGenerator PieceGenerator { get; private set; }
 
         private int _iterations;
         private int _minInterval = 500;
@@ -22,23 +24,21 @@ namespace GameSimulation
         private Random _random = new Random();
 
         private Thread _gameMasterThread;
+        private Thread _pieceGeneratorThread;
         private List<Thread> _playerThreads = new List<Thread>();
 
         public GameSimulation(int iterations)
         {
             _iterations = iterations;
-        }
 
-        public void StartSimulation()
-        {
             GameMaster = GenerateGameMaster();
+            PieceGenerator = GameMaster.CreatePieceGenerator(GameMaster.Board);
             Players = GeneratePlayers(GameMaster);
 
             CreateQueues(GameMaster, Players);
-
-            GenerateThreads(GameMaster, Players);
-            RunThreads();
+            GenerateThreads(GameMaster, Players, PieceGenerator);
         }
+
 
         private void CreateQueues(GameMaster.GameMaster gameMaster, List<Player.Player> players)
         {
@@ -71,25 +71,28 @@ namespace GameSimulation
                 var playerBoard = new Board(gameMaster.Board.Width, gameMaster.Board.TaskAreaSize, gameMaster.Board.GoalAreaSize);
                 var playerInfo = gameMaster.Board.Players[i];
                 var player = new Player.Player();
-                player.InitializePlayer(i, playerInfo.Team, playerInfo.Role ,playerBoard, playerInfo.Location);
+                player.InitializePlayer(i, playerInfo.Team, playerInfo.Role, playerBoard, playerInfo.Location);
                 players.Add(player);
             }
 
             return players;
         }
 
-        private void GenerateThreads(GameMaster.GameMaster gameMaster, List<Player.Player> players)
+        private void GenerateThreads(GameMaster.GameMaster gameMaster, List<Player.Player> players, PieceGenerator pieceGenerator)
         {
             _gameMasterThread = new Thread(() => GameMasterGameplay(gameMaster));
+
+            _pieceGeneratorThread = new Thread(() => PieceGeneratorGameplay(pieceGenerator));
 
             foreach (var player in players)
             {
                 _playerThreads.Add(new Thread(() => PlayerGameplay(player)));
             }
         }
-        private void RunThreads()
+        public void StartSimulation()
         {
             _gameMasterThread.Start();
+            _pieceGeneratorThread.Start();
 
             foreach (var playerThread in _playerThreads)
             {
@@ -97,7 +100,7 @@ namespace GameSimulation
             }
         }
 
-        public void PlayerGameplay(Player.Player player)
+        private void PlayerGameplay(Player.Player player)
         {
             //var initMessage = new Move()
             //{
@@ -133,12 +136,12 @@ namespace GameSimulation
 
                     }
 
-                    
+
 
                 }
             }
         }
-        public void GameMasterGameplay(GameMaster.GameMaster gameMaster)
+        private void GameMasterGameplay(GameMaster.GameMaster gameMaster)
         {
             for (int i = 0; i < _iterations; i++)
             {
@@ -153,6 +156,14 @@ namespace GameSimulation
                         gameMaster.ResponsesQueues[request.PlayerId].Enqueue(response);
                     }
                 }
+            }
+        }
+        private void PieceGeneratorGameplay(PieceGenerator pieceGenerator)
+        {
+            for (int i = 0; i < _iterations; i++)
+            {
+                Thread.Sleep(5*_maxInterval);
+                pieceGenerator.SpawnPiece();
             }
         }
 

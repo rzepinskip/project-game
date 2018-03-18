@@ -6,6 +6,8 @@ using Shared.GameMessages;
 using CsvHelper;
 using Shared.ResponseMessages;
 using GameMaster.Configuration;
+using System;
+using System.Linq;
 
 namespace GameMaster
 {
@@ -36,6 +38,11 @@ namespace GameMaster
                     csvWriter.WriteRecord(log);
                 }
             }
+        }
+
+        public PieceGenerator CreatePieceGenerator(Board board)
+        {
+            return new PieceGenerator(board);
         }
     }
 }
