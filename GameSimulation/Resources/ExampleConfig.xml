@@ -10,7 +10,7 @@
     <BoardWidth>10</BoardWidth>
     <TaskAreaLength>10</TaskAreaLength>
     <GoalAreaLength>3</GoalAreaLength>
-    <NumberOfPlayersPerTeam>8</NumberOfPlayersPerTeam>
+    <NumberOfPlayersPerTeam>1</NumberOfPlayersPerTeam>
     <GameName>Endgame</GameName>
   </GameDefinition>
   <ActionCosts>
