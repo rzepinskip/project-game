@@ -99,12 +99,13 @@ namespace GameSimulation
 
         public void PlayerGameplay(Player.Player player)
         {
-            var initMessage = new Move()
-            {
-                PlayerId = player.Id,
-                Direction = player.Team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up,
-            };
-            player.RequestsQueue.Enqueue(initMessage);
+            //var initMessage = new Move()
+            //{
+            //    PlayerId = player.Id,
+            //    Direction = player.Team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up,
+            //};
+            //player.RequestsQueue.Enqueue(initMessage);
+            player.RequestsQueue.Enqueue(player.GetNextRequestMessage());
             for (int i = 0; i < _iterations; i++)
             {
                 bool gotNewResponse = false;
@@ -114,6 +115,7 @@ namespace GameSimulation
                     if (player.ResponsesQueue.Count != 0)
                     {
                         gotNewResponse = true;
+                        player.UpdateBoard(player.ResponsesQueue.Dequeue());
                         //
                         //change board state based on response 
                         //  - update method in Response Message
@@ -122,12 +124,12 @@ namespace GameSimulation
                         //  - hold current state
                         //  - implement state changing action (stateless in next iteration) which return new message
                         //
-                        var message = new Move()
-                        {
-                            PlayerId = player.Id,
-                            Direction = player.Team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up,
-                        };
-                        player.RequestsQueue.Enqueue(message);
+                        //var message = new Move()
+                        //{
+                        //    PlayerId = player.Id,
+                        //    Direction = player.Team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up,
+                        //};
+                        player.RequestsQueue.Enqueue(player.GetNextRequestMessage());
 
                     }
 
