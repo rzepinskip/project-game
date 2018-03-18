@@ -7,10 +7,11 @@ using Shared.GameMessages;
 
 namespace Player.Strategy.StateTransition
 {
-    class MoveToPieceTranstition : BaseTransition
+    class RandomWalkTransition : BaseTransition
     {
-        public MoveToPieceTranstition(Location location, CommonResources.TeamColour team, int playerId) : base(location, team, playerId)
-        { }
+        public RandomWalkTransition(Location location, CommonResources.TeamColour team, int playerId) : base(location, team, playerId)
+        {
+        }
 
         public override GameMessage ExecuteStrategy(Board board)
         {
@@ -30,21 +31,24 @@ namespace Player.Strategy.StateTransition
                     PlayerId = playerId
                 };
             }
-
-            if(distanceToNearestPiece == 0)
+            else
             {
-                ChangeState = PlayerStrategy.PlayerState.Pick;
-                return new PickUpPiece
+
+                if(distanceToNearestPiece == 0)
+                {
+                    ChangeState = PlayerStrategy.PlayerState.Pick;
+                    return new PickUpPiece
+                    {
+                        PlayerId = playerId
+                    };
+                }
+
+                ChangeState = PlayerStrategy.PlayerState.Discover;
+                return new Discover
                 {
                     PlayerId = playerId
                 };
             }
-
-            ChangeState = PlayerStrategy.PlayerState.Discover;
-            return new Discover
-            {
-                PlayerId = playerId
-            };
         }
     }
 }

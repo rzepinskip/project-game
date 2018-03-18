@@ -40,7 +40,7 @@ namespace Shared.BoardObjects
                 for (var j = goalAreaSize; j < taskAreaSize + goalAreaSize; ++j)
                     this.Content[i, j] = new TaskField(-1, null, null, DateTime.Now, i, j);
                 for (var j = taskAreaSize + goalAreaSize; j < this.Height; ++j)
-                    this.Content[i, j] = new GoalField(GoalFieldType.Unknown, CommonResources.TeamColour.Blue, null, DateTime.Now, i, j);
+                    this.Content[i, j] = new GoalField(GoalFieldType.Unknown, CommonResources.TeamColour.Red, null, DateTime.Now, i, j);
             }
         }
         public bool IsLocationInTaskArea(Location l)
