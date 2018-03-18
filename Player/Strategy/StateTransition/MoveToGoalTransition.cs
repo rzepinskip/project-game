@@ -4,6 +4,7 @@ using System.Text;
 using Shared;
 using Shared.BoardObjects;
 using Shared.GameMessages;
+using Shared.GameMessages.PieceActions;
 
 namespace Player.Strategy.StateTransition
 {
@@ -30,8 +31,18 @@ namespace Player.Strategy.StateTransition
             }
             else
             {
-                ChangeState = PlayerStrategy.PlayerState.MoveToUndiscoveredGoal;
                 Location undiscoveredGoalLocation = undiscoveredGoalFields[0];
+                if (location.Equals(undiscoveredGoalFields[0]))
+                {
+                    ChangeState = PlayerStrategy.PlayerState.InGoalMovingToTask;
+                    undiscoveredGoalFields.RemoveAt(0);
+                    return new PlacePiece
+                    {
+                        PlayerId = playerId
+                    };
+                }
+
+                ChangeState = PlayerStrategy.PlayerState.MoveToUndiscoveredGoal;
                 CommonResources.MoveType direction = undiscoveredGoalLocation.GetLocationTo(location);
 
                 return new Move
