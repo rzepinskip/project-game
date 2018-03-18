@@ -91,11 +91,11 @@ namespace GameSimulation
         {
             _pieceGeneratorThread.Start();
 
-            GameMaster.ListenToIncomingMessages();
+            GameMaster.StartListeningToRequests();
 
             foreach (var player in Players)
             {
-                player.ListenToIncomingMessages();
+                player.StartListeningToResponses();
                 player.RequestsQueue.Enqueue(player.GetNextRequestMessage());
             }
         }

@@ -7,21 +7,10 @@ using CsvHelper;
 using Shared.ResponseMessages;
 using GameMaster.Configuration;
 using System;
-using System.Linq;
 using System.Threading;
 
 namespace GameMaster
-{
-    public class GameFinishedEventArgs : EventArgs
-    {
-        public CommonResources.TeamColour Winners { get; set; }
-
-        public GameFinishedEventArgs(CommonResources.TeamColour winners)
-        {
-            Winners = winners;
-        }
-    }
-    
+{   
     public class GameMaster
     {
         public Dictionary<int, ObservableQueue<GameMessage>> RequestsQueues { get; set; } = new Dictionary<int, ObservableQueue<GameMessage>>();
@@ -126,7 +115,7 @@ namespace GameMaster
             }
         }
 
-        public void ListenToIncomingMessages()
+        public void StartListeningToRequests()
         {
             foreach (var queue in RequestsQueues)
             {
@@ -135,6 +124,16 @@ namespace GameMaster
                     new Thread(() => HandleMessagesFromPlayer(queue.Value.Peek().PlayerId)).Start();
                 };
             }
+        }
+    }
+
+    public class GameFinishedEventArgs : EventArgs
+    {
+        public CommonResources.TeamColour Winners { get; set; }
+
+        public GameFinishedEventArgs(CommonResources.TeamColour winners)
+        {
+            Winners = winners;
         }
     }
 }

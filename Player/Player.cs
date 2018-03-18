@@ -42,7 +42,7 @@ namespace Player
         }
 
 
-        public void HandleMessage(ResponseMessage response)
+        public void HandleResponse(ResponseMessage response)
         {
             UpdateBoard(response);
             //
@@ -61,11 +61,11 @@ namespace Player
             RequestsQueue.Enqueue(GetNextRequestMessage());
         }
 
-        public void ListenToIncomingMessages()
+        public void StartListeningToResponses()
         {
             ResponsesQueue.CollectionChanged += (sender, args) =>
             {
-                new Thread(() => HandleMessage(ResponsesQueue.Dequeue())).Start();
+                new Thread(() => HandleResponse(ResponsesQueue.Dequeue())).Start();
             };
         }
     }
