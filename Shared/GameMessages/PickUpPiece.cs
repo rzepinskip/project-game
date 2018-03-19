@@ -1,5 +1,4 @@
-﻿using System;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 using Shared.BoardObjects;
 using Shared.ResponseMessages;
 
@@ -27,20 +26,20 @@ namespace Shared.GameMessages
             player.Piece = piece;
             playerField.PieceId = null;
 
-            response = new PickUpPieceResponse()
+            response = new PickUpPieceResponse
             {
-                PlayerId = this.PlayerId,
-                Piece = new Piece()
+                PlayerId = PlayerId,
+                Piece = new Piece
                 {
                     Id = piece.Id,
                     PlayerId = piece.PlayerId,
                     Type = CommonResources.PieceType.Unknown
                 }
             };
-            
+
             return response;
         }
-        
+
         public override ActionLog ToLog(int playerId, PlayerInfo playerInfo)
         {
             return new ActionLog(playerId, GameId, PlayerGuid, playerInfo, CommonResources.ActionType.PickUp);
@@ -51,5 +50,4 @@ namespace Shared.GameMessages
             return actionCosts.PickUpDelay;
         }
     }
-
 }

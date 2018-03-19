@@ -1,5 +1,5 @@
-﻿using Shared.BoardObjects;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Shared.BoardObjects;
 
 namespace Shared.ActionAvailability.ActionAvailabilityHelpers
 {
@@ -13,6 +13,7 @@ namespace Shared.ActionAvailability.ActionAvailabilityHelpers
                 result = false;
             return result;
         }
+
         public bool HasPlayerEmptySlotForPiece(string playerGuid, Dictionary<string, int> playerGuidToPiece)
         {
             var result = true;

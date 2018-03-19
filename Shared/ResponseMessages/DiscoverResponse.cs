@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Shared.BoardObjects;
 
 namespace Shared.ResponseMessages
@@ -12,7 +10,7 @@ namespace Shared.ResponseMessages
 
         public override void Update(Board board)
         {
-            foreach(var taskField in TaskFields)
+            foreach (var taskField in TaskFields)
                 board.Content[taskField.X, taskField.Y] = taskField;
         }
     }

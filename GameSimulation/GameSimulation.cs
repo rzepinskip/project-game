@@ -1,31 +1,21 @@
-﻿using GameMaster;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using GameMaster;
 using GameMaster.Configuration;
-using Player;
 using Shared;
 using Shared.BoardObjects;
 using Shared.GameMessages;
 using Shared.ResponseMessages;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace GameSimulation
 {
-    class GameSimulation
+    internal class GameSimulation
     {
-        public GameMaster.GameMaster GameMaster { get; private set; }
-        public List<Player.Player> Players { get; private set; }
-        public PieceGenerator PieceGenerator { get; private set; }
+        private readonly Thread _pieceGeneratorThread;
 
-        private int _spawnPieceFrequency;
+        private readonly int _spawnPieceFrequency;
         private Random _random = new Random();
-
-        public bool GameFinished { get; private set; } = false;
-        public CommonResources.TeamColour Winners { get; private set; }
-
-        private Thread _pieceGeneratorThread;
 
         public GameSimulation(string configFilePath)
         {
@@ -43,6 +33,13 @@ namespace GameSimulation
             CreateQueues(GameMaster, Players);
             _pieceGeneratorThread = new Thread(() => PieceGeneratorGameplay(PieceGenerator));
         }
+
+        public GameMaster.GameMaster GameMaster { get; }
+        public List<Player.Player> Players { get; }
+        public PieceGenerator PieceGenerator { get; }
+
+        public bool GameFinished { get; private set; }
+        public CommonResources.TeamColour Winners { get; private set; }
 
         private void GameMaster_GameFinished(object sender, GameFinishedEventArgs e)
         {
@@ -75,9 +72,10 @@ namespace GameSimulation
             var playersCount = gameMaster.Board.Players.Count;
             var players = new List<Player.Player>(playersCount);
 
-            for (int i = 0; i < playersCount; i++)
+            for (var i = 0; i < playersCount; i++)
             {
-                var playerBoard = new Board(gameMaster.Board.Width, gameMaster.Board.TaskAreaSize, gameMaster.Board.GoalAreaSize);
+                var playerBoard = new Board(gameMaster.Board.Width, gameMaster.Board.TaskAreaSize,
+                    gameMaster.Board.GoalAreaSize);
                 var playerInfo = gameMaster.Board.Players[i];
                 var player = new Player.Player();
                 player.InitializePlayer(i, playerInfo.Team, playerInfo.Role, playerBoard, playerInfo.Location);

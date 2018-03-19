@@ -1,12 +1,12 @@
-﻿using Shared.ActionAvailability.AvailabilityLink;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Shared.ActionAvailability.AvailabilityLink;
 
 namespace Shared.ActionAvailability.AvailabilityChain
 {
     public class TestAvailabilityChain : IAvailabilityChain
     {
-        private string playerGuid;
-        private Dictionary<string, int> playerGuidToPiece;
+        private readonly string playerGuid;
+        private readonly Dictionary<string, int> playerGuidToPiece;
 
         public TestAvailabilityChain(string playerGuid, Dictionary<string, int> playerGuidToPiece)
         {

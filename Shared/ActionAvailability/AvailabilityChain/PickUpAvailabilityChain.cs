@@ -1,17 +1,18 @@
-﻿using Shared.ActionAvailability.AvailabilityLink;
+﻿using System.Collections.Generic;
+using Shared.ActionAvailability.AvailabilityLink;
 using Shared.BoardObjects;
-using System.Collections.Generic;
 
 namespace Shared.ActionAvailability.AvailabilityChain
 {
     public class PickUpAvailabilityChain
     {
-        private Location location;
-        private Board board;
-        private string playerGuid;
-        private Dictionary<string, int> playerGuidToPiece;
+        private readonly Board board;
+        private readonly Location location;
+        private readonly string playerGuid;
+        private readonly Dictionary<string, int> playerGuidToPiece;
 
-        public PickUpAvailabilityChain(Location location, Board board, string playerGuid, Dictionary<string, int> playerGuidToPiece)
+        public PickUpAvailabilityChain(Location location, Board board, string playerGuid,
+            Dictionary<string, int> playerGuidToPiece)
         {
             this.location = location;
             this.board = board;

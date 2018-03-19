@@ -1,17 +1,17 @@
-﻿using Shared.BoardObjects;
+﻿using Shared.ActionAvailability.AvailabilityLink;
+using Shared.BoardObjects;
 using static Shared.CommonResources;
-using Shared.ActionAvailability.AvailabilityLink;
 
 namespace Shared.ActionAvailability.AvailabilityChain
 {
-    public class MoveAvailabilityChain :IAvailabilityChain
+    public class MoveAvailabilityChain : IAvailabilityChain
     {
-        private Location location;
-        private MoveType direction;
-        private TeamColour team;
-        private Board board;
+        private readonly Board board;
+        private readonly MoveType direction;
+        private readonly Location location;
+        private readonly TeamColour team;
 
-        public MoveAvailabilityChain(Location location, MoveType direction, TeamColour team, Board board) 
+        public MoveAvailabilityChain(Location location, MoveType direction, TeamColour team, Board board)
         {
             this.location = location;
             this.direction = direction;
@@ -19,13 +19,14 @@ namespace Shared.ActionAvailability.AvailabilityChain
             this.board = board;
         }
 
-        public bool ActionAvailable() 
+        public bool ActionAvailable()
         {
-            var builder = new AvailabilityChainBuilder(new IsInsideBoardLink(location, direction, board.Width, board.Height))
-                .AddNextLink(new IsAvailableTeamAreaLink(location, direction, board.GoalAreaSize, board.TaskAreaSize, team))
-                .AddNextLink(new IsFieldPlayerUnoccupiedLink(location, direction, board));
+            var builder =
+                new AvailabilityChainBuilder(new IsInsideBoardLink(location, direction, board.Width, board.Height))
+                    .AddNextLink(new IsAvailableTeamAreaLink(location, direction, board.GoalAreaSize,
+                        board.TaskAreaSize, team))
+                    .AddNextLink(new IsFieldPlayerUnoccupiedLink(location, direction, board));
             return builder.Build().ValidateLink();
         }
-        
     }
 }

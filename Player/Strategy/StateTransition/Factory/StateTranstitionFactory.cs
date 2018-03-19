@@ -1,19 +1,20 @@
-﻿using Shared.BoardObjects;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using static Player.Strategy.PlayerStrategy;
 using Shared;
+using Shared.BoardObjects;
+using static Player.Strategy.PlayerStrategy;
 
 namespace Player.Strategy.StateTransition.Factory
 {
     public class StateTranstitionFactory
     {
-        private Board board;
-        private int playerId;
-        private CommonResources.TeamColour teamColour;
-        private List<GoalField> undiscoveredGoalFields;
-        public StateTranstitionFactory(Board board, int playerId, CommonResources.TeamColour teamColour, List<GoalField> undiscoveredGoalFields)
+        private readonly Board board;
+        private readonly int playerId;
+        private readonly CommonResources.TeamColour teamColour;
+        private readonly List<GoalField> undiscoveredGoalFields;
+
+        public StateTranstitionFactory(Board board, int playerId, CommonResources.TeamColour teamColour,
+            List<GoalField> undiscoveredGoalFields)
         {
             this.board = board;
             this.playerId = playerId;
@@ -44,7 +45,8 @@ namespace Player.Strategy.StateTransition.Factory
                     return new MoveToGoalTransition(undiscoveredGoalFields, location, teamColour, playerId, board);
 
                 case PlayerState.MoveToUndiscoveredGoal:
-                    return new MoveToUndiscoveredGoalTransition(undiscoveredGoalFields, location, teamColour, playerId, board);
+                    return new MoveToUndiscoveredGoalTransition(undiscoveredGoalFields, location, teamColour, playerId,
+                        board);
 
                 case PlayerState.Test:
                     return new TestTransition(location, teamColour, playerId, board);

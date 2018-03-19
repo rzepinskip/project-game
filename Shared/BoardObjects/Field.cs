@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml.Serialization;
 
 namespace Shared.BoardObjects
 {
     [Serializable]
     public abstract class Field : Location, IEquatable<Field>
-    { 
-        public Field():base(0,0) { }
-        public Field(int? playerId, DateTime timestamp, int x, int y) : base(x,y)
+    {
+        public Field() : base(0, 0)
+        {
+        }
+
+        public Field(int? playerId, DateTime timestamp, int x, int y) : base(x, y)
         {
             PlayerId = playerId;
             Timestamp = timestamp;
@@ -18,17 +20,17 @@ namespace Shared.BoardObjects
         public int? PlayerId { get; set; }
         public DateTime Timestamp { get; set; }
 
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as Field);
-        }
-
         public bool Equals(Field other)
         {
             return other != null &&
                    base.Equals(other) &&
                    EqualityComparer<int?>.Default.Equals(PlayerId, other.PlayerId) &&
                    Timestamp == other.Timestamp;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Field);
         }
 
         public override int GetHashCode()

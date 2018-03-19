@@ -1,30 +1,18 @@
-﻿using Shared.BoardObjects;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using Shared;
+using Shared.BoardObjects;
 
 namespace GameSimulation
 {
-    class BoardVisualizer
+    internal class BoardVisualizer
     {
-        class ColoredString
-        {
-            public string Data { get; set; }
-            public ConsoleColor Color { get; set; }
-
-            public ColoredString(string data, ConsoleColor color = ConsoleColor.White)
-            {
-                Data = data;
-                Color = color;
-            }
-        }
-
         public void VisualizeBoard(Board board)
         {
             var output = new List<ColoredString>(100);
-            for (int i = board.Height - 1; i >= 0; i--)
+            for (var i = board.Height - 1; i >= 0; i--)
             {
-                for (int j = 0; j < board.Width; j++)
+                for (var j = 0; j < board.Width; j++)
                 {
                     var symbol = new ColoredString("");
 
@@ -32,7 +20,7 @@ namespace GameSimulation
                     if (field.PlayerId != null)
                     {
                         var player = board.Players[field.PlayerId.Value];
-                        if (player.Team == Shared.CommonResources.TeamColour.Red)
+                        if (player.Team == CommonResources.TeamColour.Red)
                             symbol = new ColoredString("R", ConsoleColor.DarkRed);
                         else
                             symbol = new ColoredString("B", ConsoleColor.DarkCyan);
@@ -44,21 +32,22 @@ namespace GameSimulation
                     }
                     else if (field is GoalField goalField)
                     {
-                        if (goalField.Type == Shared.CommonResources.GoalFieldType.Goal)
-                            symbol.Data = ("G ");
+                        if (goalField.Type == CommonResources.GoalFieldType.Goal)
+                            symbol.Data = "G ";
                         else
-                            symbol.Data = ("+ ");
+                            symbol.Data = "+ ";
                     }
                     else if (field is TaskField taskField)
                     {
                         if (taskField.PieceId != null)
-                            symbol.Data = ("p ");
+                            symbol.Data = "p ";
                         else
-                            symbol.Data = ("- ");
+                            symbol.Data = "- ";
                     }
 
                     output.Add(symbol);
                 }
+
                 output.Add(new ColoredString("\n"));
             }
 
@@ -70,6 +59,18 @@ namespace GameSimulation
                 Console.ForegroundColor = coloredString.Color;
                 Console.Write(coloredString.Data);
             }
+        }
+
+        private class ColoredString
+        {
+            public ColoredString(string data, ConsoleColor color = ConsoleColor.White)
+            {
+                Data = data;
+                Color = color;
+            }
+
+            public string Data { get; set; }
+            public ConsoleColor Color { get; }
         }
     }
 }

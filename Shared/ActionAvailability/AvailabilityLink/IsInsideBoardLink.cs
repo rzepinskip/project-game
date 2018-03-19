@@ -1,15 +1,15 @@
-﻿using static Shared.CommonResources;
+﻿using Shared.ActionAvailability.ActionAvailabilityHelpers;
 using Shared.BoardObjects;
-using Shared.ActionAvailability.ActionAvailabilityHelpers;
+using static Shared.CommonResources;
 
 namespace Shared.ActionAvailability.AvailabilityLink
 {
-    class IsInsideBoardLink : AvailabilityLinkBase
+    internal class IsInsideBoardLink : AvailabilityLinkBase
     {
-        private Location location;
-        private MoveType move;
-        private int width;
-        private int height;
+        private readonly int height;
+        private readonly Location location;
+        private readonly MoveType move;
+        private readonly int width;
 
         public IsInsideBoardLink(Location location, MoveType move, int width, int height)
         {
@@ -18,6 +18,7 @@ namespace Shared.ActionAvailability.AvailabilityLink
             this.width = width;
             this.height = height;
         }
+
         protected override bool Validate()
         {
             return new MoveAvailability().IsInsideBoard(location, move, width, height);

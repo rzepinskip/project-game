@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace Shared
 {
     public class PlayerBase
     {
-        public enum PlayerType {
-            [XmlEnum(Name = "member")]
-            Member,
-            [XmlEnum(Name = "leader")]
-            Leader
+        public enum PlayerType
+        {
+            [XmlEnum(Name = "member")] Member,
+            [XmlEnum(Name = "leader")] Leader
         }
 
         public CommonResources.TeamColour Team { get; set; }

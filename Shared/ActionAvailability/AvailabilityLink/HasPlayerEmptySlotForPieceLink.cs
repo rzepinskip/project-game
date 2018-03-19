@@ -1,17 +1,19 @@
-﻿using Shared.ActionAvailability.ActionAvailabilityHelpers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Shared.ActionAvailability.ActionAvailabilityHelpers;
 
 namespace Shared.ActionAvailability.AvailabilityLink
 {
-    class HasPlayerEmptySlotForPieceLink : AvailabilityLinkBase
+    internal class HasPlayerEmptySlotForPieceLink : AvailabilityLinkBase
     {
-        private string playerGuid;
-        private Dictionary<string, int> playerGuidToPieceId;
+        private readonly string playerGuid;
+        private readonly Dictionary<string, int> playerGuidToPieceId;
+
         public HasPlayerEmptySlotForPieceLink(string playerGuid, Dictionary<string, int> playerGuidToPieceId)
         {
             this.playerGuid = playerGuid;
             this.playerGuidToPieceId = playerGuidToPieceId;
         }
+
         protected override bool Validate()
         {
             return new PieceRelatedAvailability().HasPlayerEmptySlotForPiece(playerGuid, playerGuidToPieceId);

@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Shared;
 using Shared.BoardObjects;
 using Shared.GameMessages;
 
 namespace Player.Strategy.StateTransition
 {
-    class RandomWalkTransition : BaseTransition
+    internal class RandomWalkTransition : BaseTransition
     {
-        public RandomWalkTransition(Location location, CommonResources.TeamColour team, int playerId, Board board) : base(location, team, playerId, board)
+        public RandomWalkTransition(Location location, CommonResources.TeamColour team, int playerId, Board board) :
+            base(location, team, playerId, board)
         {
         }
 
@@ -18,11 +17,11 @@ namespace Player.Strategy.StateTransition
             var taskField = board.Content[location.X, location.Y] as TaskField;
             var distanceToNearestPiece = taskField.DistanceToPiece;
 
-            if(distanceToNearestPiece == -1)
+            if (distanceToNearestPiece == -1)
             {
                 //random move
                 var r = new Random();
-                CommonResources.MoveType direction = r.Next() % 2 == 0 ? CommonResources.MoveType.Left : CommonResources.MoveType.Right;
+                var direction = r.Next() % 2 == 0 ? CommonResources.MoveType.Left : CommonResources.MoveType.Right;
 
                 ChangeState = PlayerStrategy.PlayerState.RandomWalk;
                 return new Move
@@ -31,24 +30,21 @@ namespace Player.Strategy.StateTransition
                     PlayerId = playerId
                 };
             }
-            else
+
+            if (distanceToNearestPiece == 0)
             {
-
-                if(distanceToNearestPiece == 0)
-                {
-                    ChangeState = PlayerStrategy.PlayerState.Pick;
-                    return new PickUpPiece
-                    {
-                        PlayerId = playerId
-                    };
-                }
-
-                ChangeState = PlayerStrategy.PlayerState.Discover;
-                return new Discover
+                ChangeState = PlayerStrategy.PlayerState.Pick;
+                return new PickUpPiece
                 {
                     PlayerId = playerId
                 };
             }
+
+            ChangeState = PlayerStrategy.PlayerState.Discover;
+            return new Discover
+            {
+                PlayerId = playerId
+            };
         }
     }
 }

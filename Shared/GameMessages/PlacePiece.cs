@@ -1,6 +1,6 @@
-﻿using Shared.BoardObjects;
+﻿using System.Xml.Serialization;
+using Shared.BoardObjects;
 using Shared.ResponseMessages;
-using System.Xml.Serialization;
 
 namespace Shared.GameMessages.PieceActions
 {
@@ -23,20 +23,17 @@ namespace Shared.GameMessages.PieceActions
 
 
             ///TODO: GameMaster counter
-            if(goalField != null)
-            {
-                goalField.Type = CommonResources.GoalFieldType.NonGoal;
-            }
+            if (goalField != null) goalField.Type = CommonResources.GoalFieldType.NonGoal;
 
-            var response = new PlacePieceResponse()
+            var response = new PlacePieceResponse
             {
-                PlayerId = this.PlayerId,
+                PlayerId = PlayerId,
                 GoalField = playerGoalField as GoalField
             };
-            
+
             return response;
         }
-        
+
         public override ActionLog ToLog(int playerId, PlayerInfo playerInfo)
         {
             return new ActionLog(playerId, GameId, PlayerGuid, playerInfo, CommonResources.ActionType.Place);
@@ -47,5 +44,4 @@ namespace Shared.GameMessages.PieceActions
             return actionCosts.PlacingDelay;
         }
     }
-
 }

@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Shared;
+﻿using Shared;
 using Shared.BoardObjects;
 using Shared.GameMessages;
 
 namespace Player.Strategy.StateTransition
 {
-    class InGoalMovingToTaskTransition : BaseTransition
+    internal class InGoalMovingToTaskTransition : BaseTransition
     {
-        public InGoalMovingToTaskTransition(Location location, CommonResources.TeamColour team, int playerId, Board board) : base(location, team, playerId, board)
+        public InGoalMovingToTaskTransition(Location location, CommonResources.TeamColour team, int playerId,
+            Board board) : base(location, team, playerId, board)
         {
         }
 
@@ -20,22 +18,22 @@ namespace Player.Strategy.StateTransition
             if (taskField == null)
             {
                 ChangeState = PlayerStrategy.PlayerState.InGoalMovingToTask;
-                var direction = team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up;
+                var direction = team == CommonResources.TeamColour.Red
+                    ? CommonResources.MoveType.Down
+                    : CommonResources.MoveType.Up;
                 return new Move
                 {
                     Direction = direction,
                     PlayerId = playerId
                 };
             }
-            else
-            {
-                ChangeState = PlayerStrategy.PlayerState.Discover;
 
-                return new Discover
-                {
-                    PlayerId = playerId
-                };
-            }
+            ChangeState = PlayerStrategy.PlayerState.Discover;
+
+            return new Discover
+            {
+                PlayerId = playerId
+            };
         }
     }
 }

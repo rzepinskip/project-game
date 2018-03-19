@@ -1,14 +1,13 @@
-﻿using Shared.BoardObjects;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using Shared.BoardObjects;
 
 namespace GameMaster.Configuration
 {
     public class GameDefinition : IEquatable<GameDefinition>
     {
-        [XmlElement]
-        public List<GoalField> Goals { get; set; }
+        [XmlElement] public List<GoalField> Goals { get; set; }
 
         public double ShamProbability { get; set; }
 
@@ -26,21 +25,14 @@ namespace GameMaster.Configuration
 
         public string GameName { get; set; }
 
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as GameDefinition);
-        }
-
         public bool Equals(GameDefinition other)
         {
             if (Goals.Count != other.Goals.Count)
                 return false;
 
-            for(int i = 0; i < Goals.Count; ++i)
-            {
-                if(!Goals[i].Equals(other.Goals[i]))
+            for (var i = 0; i < Goals.Count; ++i)
+                if (!Goals[i].Equals(other.Goals[i]))
                     return false;
-            }
 
             return other != null &&
                    ShamProbability == other.ShamProbability &&
@@ -51,6 +43,11 @@ namespace GameMaster.Configuration
                    GoalAreaLength == other.GoalAreaLength &&
                    NumberOfPlayersPerTeam == other.NumberOfPlayersPerTeam &&
                    GameName == other.GameName;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as GameDefinition);
         }
 
         public override int GetHashCode()

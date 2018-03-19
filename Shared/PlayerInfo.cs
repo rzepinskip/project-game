@@ -5,9 +5,11 @@ namespace Shared
     public class PlayerInfo
     {
         public PlayerInfo()
-        { }
+        {
+        }
 
-        public PlayerInfo(CommonResources.TeamColour team, PlayerBase.PlayerType role, Location location, Piece piece = null)
+        public PlayerInfo(CommonResources.TeamColour team, PlayerBase.PlayerType role, Location location,
+            Piece piece = null)
         {
             Team = team;
             Role = role;

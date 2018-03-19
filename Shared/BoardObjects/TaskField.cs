@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml.Serialization;
 
 namespace Shared.BoardObjects
 {
     public class TaskField : Field
     {
-        public TaskField(int distanceToPiece, int? pieceId, int? playerId, DateTime date, int x, int y) : base(playerId, date, x,y)
+        public TaskField(int distanceToPiece, int? pieceId, int? playerId, DateTime date, int x, int y) : base(playerId,
+            date, x, y)
         {
             DistanceToPiece = distanceToPiece;
             PieceId = pieceId;

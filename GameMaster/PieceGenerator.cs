@@ -1,17 +1,15 @@
-﻿using Shared;
-using Shared.BoardObjects;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
+using Shared;
+using Shared.BoardObjects;
 
 namespace GameMaster
 {
     public class PieceGenerator
     {
-        private Board _board;
-        private Random _random = new Random();
-        private double _shamProbability;
+        private readonly Board _board;
+        private readonly Random _random = new Random();
+        private readonly double _shamProbability;
 
 
         public PieceGenerator(Board board, double shamProbability)
@@ -26,7 +24,9 @@ namespace GameMaster
             var taskField = _board.Content[location.X, location.Y] as TaskField;
 
             var pieceId = _board.Pieces.Count > 0 ? _board.Pieces.Keys.ToList().Max() + 1 : 0;
-            var type = _random.NextDouble() <= _shamProbability ? CommonResources.PieceType.Sham : CommonResources.PieceType.Normal;
+            var type = _random.NextDouble() <= _shamProbability
+                ? CommonResources.PieceType.Sham
+                : CommonResources.PieceType.Normal;
 
             var piece = new Piece(pieceId, type);
             _board.Pieces.Add(pieceId, piece);
@@ -44,8 +44,7 @@ namespace GameMaster
                 var randomX = _random.Next(taskAreaBottomLeftCorner.X, taskAreaTopRightCorner.X + 1);
                 var randomY = _random.Next(taskAreaBottomLeftCorner.Y, taskAreaTopRightCorner.Y + 1);
                 location = new Location(randomX, randomY);
-            }
-            while (_board.GetPieceFromBoard(location) != null);
+            } while (_board.GetPieceFromBoard(location) != null);
 
             return location;
         }

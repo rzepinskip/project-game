@@ -1,6 +1,6 @@
 ﻿namespace Shared.ActionAvailability.AvailabilityChain
 {
-    interface IAvailabilityChain
+    internal interface IAvailabilityChain
     {
         bool ActionAvailable();
     }

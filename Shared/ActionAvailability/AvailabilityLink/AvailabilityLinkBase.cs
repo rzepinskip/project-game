@@ -1,10 +1,10 @@
 ﻿namespace Shared.ActionAvailability.AvailabilityLink
 {
-    abstract class AvailabilityLinkBase
+    internal abstract class AvailabilityLinkBase
     {
         protected AvailabilityLinkBase nextLink;
 
-        abstract protected bool Validate();
+        protected abstract bool Validate();
 
         public void SetNextLink(AvailabilityLinkBase nextLink)
         {
@@ -14,13 +14,11 @@
         public bool ValidateLink()
         {
             var result = false;
-            if (this.Validate())
-            {
+            if (Validate())
                 if (nextLink == null)
                     result = true;
                 else
                     result = nextLink.ValidateLink();
-            }
             return result;
         }
     }

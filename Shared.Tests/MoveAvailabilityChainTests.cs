@@ -1,109 +1,49 @@
-﻿using Xunit;
+﻿using Shared.ActionAvailability.AvailabilityChain;
+using Shared.BoardObjects;
+using Xunit;
 using static Shared.CommonResources;
-using Shared.ActionAvailability.AvailabilityChain;
 
 namespace Shared.Tests
 {
     public class MoveAvailabilityChainTests
     {
-        private int goalAreaSize = 2;
-        private int taskAreaSize = 4;
-        private Shared.BoardObjects.Location locationFail;
-        private Shared.BoardObjects.Location locationSuccess;
-        private Shared.BoardObjects.Board board;
-        private TeamColour team = TeamColour.Blue;
-        private TeamColour opposingTeam = TeamColour.Red;
-
-        public MoveAvailabilityChainTests() 
+        public MoveAvailabilityChainTests()
         {
-            board = new Shared.BoardObjects.Board(5, taskAreaSize, goalAreaSize);
+            board = new Board(5, taskAreaSize, goalAreaSize);
             board.Content[1, 3].PlayerId = 1;
             board.Content[3, 3].PlayerId = 2;
             board.Content[2, 4].PlayerId = 3;
             board.Content[2, 2].PlayerId = 4;
-            locationFail = new Shared.BoardObjects.Location(2, 3);
-            locationSuccess = new Shared.BoardObjects.Location(1, 1);
+            locationFail = new Location(2, 3);
+            locationSuccess = new Location(1, 1);
         }
 
-        [Fact]
-        public void MovingLeftAndLeavingBoard() 
-        {
-            var l = new Shared.BoardObjects.Location(0, 0);
-            var moveAvailabilityChain = new MoveAvailabilityChain(l, MoveType.Left, team, board);
-            Assert.False(moveAvailabilityChain.ActionAvailable());
-        }
+        private readonly int goalAreaSize = 2;
+        private readonly int taskAreaSize = 4;
+        private readonly Location locationFail;
+        private readonly Location locationSuccess;
+        private readonly Board board;
+        private readonly TeamColour team = TeamColour.Blue;
+        private readonly TeamColour opposingTeam = TeamColour.Red;
 
         [Fact]
-        public void MovingRightAndLeavingBoard()
+        public void BlueMovingUpToRedGoal()
         {
-            var l = new Shared.BoardObjects.Location(4, 0);
-            var moveAvailabilityChain = new MoveAvailabilityChain(l, MoveType.Right, team, board);
-            Assert.False(moveAvailabilityChain.ActionAvailable());
-        }
-
-        [Fact]
-        public void MovingDownAndLeavingBoard()
-        {
-            var l = new Shared.BoardObjects.Location(0, 0);
-            var moveAvailabilityChain = new MoveAvailabilityChain(l, MoveType.Down, team, board);
-            Assert.False(moveAvailabilityChain.ActionAvailable());
-        }
-
-        [Fact]
-        public void MovingUpAndLeavingBoard()
-        {
-            var l = new Shared.BoardObjects.Location(0, 7);
-            var moveAvailabilityChain = new MoveAvailabilityChain(l, MoveType.Up, opposingTeam, board);
-            Assert.False(moveAvailabilityChain.ActionAvailable());
-        }
-
-        [Fact]
-        public void BlueMovingUpToRedGoal() 
-        {
-            var l = new Shared.BoardObjects.Location(0, 5);
+            var l = new Location(0, 5);
             var moveAvailabilityChain = new MoveAvailabilityChain(l, MoveType.Up, team, board);
             Assert.False(moveAvailabilityChain.ActionAvailable());
         }
 
         [Fact]
-        public void RedMovingDownToBlueGoal()
+        public void MoveAvailableDown()
         {
-            var l = new Shared.BoardObjects.Location(0, 2);
-            var moveAvailabilityChain = new MoveAvailabilityChain(l, MoveType.Down, opposingTeam, board);
-            Assert.False(moveAvailabilityChain.ActionAvailable());
-        }
-
-        [Fact]
-        public void MovingLeftToFieldWithPlayer() 
-        {
-            var moveAvailabilityChain = new MoveAvailabilityChain(locationFail, MoveType.Left, team, board);
-            Assert.False(moveAvailabilityChain.ActionAvailable());
-        }
-
-        [Fact]
-        public void MovingRightToFieldWithPlayer()
-        {
-            var moveAvailabilityChain = new MoveAvailabilityChain(locationFail, MoveType.Right, team, board);
-            Assert.False(moveAvailabilityChain.ActionAvailable());
-        }
-
-        [Fact]
-        public void MovingUpToFieldWithPlayer()
-        {
-            var moveAvailabilityChain = new MoveAvailabilityChain(locationFail, MoveType.Up, team, board);
-            Assert.False(moveAvailabilityChain.ActionAvailable());
-        }
-
-        [Fact]
-        public void MovingDownToFieldWithPlayer()
-        {
-            var moveAvailabilityChain = new MoveAvailabilityChain(locationFail, MoveType.Down, team, board);
-            Assert.False(moveAvailabilityChain.ActionAvailable());
+            var moveAvailabilityChain = new MoveAvailabilityChain(locationSuccess, MoveType.Down, team, board);
+            Assert.True(moveAvailabilityChain.ActionAvailable());
         }
 
 
         [Fact]
-        public void MoveAvailableLeft() 
+        public void MoveAvailableLeft()
         {
             var moveAvailabilityChain = new MoveAvailabilityChain(locationSuccess, MoveType.Left, team, board);
             Assert.True(moveAvailabilityChain.ActionAvailable());
@@ -124,11 +64,71 @@ namespace Shared.Tests
         }
 
         [Fact]
-        public void MoveAvailableDown()
+        public void MovingDownAndLeavingBoard()
         {
-            var moveAvailabilityChain = new MoveAvailabilityChain(locationSuccess, MoveType.Down, team, board);
-            Assert.True(moveAvailabilityChain.ActionAvailable());
+            var l = new Location(0, 0);
+            var moveAvailabilityChain = new MoveAvailabilityChain(l, MoveType.Down, team, board);
+            Assert.False(moveAvailabilityChain.ActionAvailable());
+        }
+
+        [Fact]
+        public void MovingDownToFieldWithPlayer()
+        {
+            var moveAvailabilityChain = new MoveAvailabilityChain(locationFail, MoveType.Down, team, board);
+            Assert.False(moveAvailabilityChain.ActionAvailable());
+        }
+
+        [Fact]
+        public void MovingLeftAndLeavingBoard()
+        {
+            var l = new Location(0, 0);
+            var moveAvailabilityChain = new MoveAvailabilityChain(l, MoveType.Left, team, board);
+            Assert.False(moveAvailabilityChain.ActionAvailable());
+        }
+
+        [Fact]
+        public void MovingLeftToFieldWithPlayer()
+        {
+            var moveAvailabilityChain = new MoveAvailabilityChain(locationFail, MoveType.Left, team, board);
+            Assert.False(moveAvailabilityChain.ActionAvailable());
+        }
+
+        [Fact]
+        public void MovingRightAndLeavingBoard()
+        {
+            var l = new Location(4, 0);
+            var moveAvailabilityChain = new MoveAvailabilityChain(l, MoveType.Right, team, board);
+            Assert.False(moveAvailabilityChain.ActionAvailable());
+        }
+
+        [Fact]
+        public void MovingRightToFieldWithPlayer()
+        {
+            var moveAvailabilityChain = new MoveAvailabilityChain(locationFail, MoveType.Right, team, board);
+            Assert.False(moveAvailabilityChain.ActionAvailable());
+        }
+
+        [Fact]
+        public void MovingUpAndLeavingBoard()
+        {
+            var l = new Location(0, 7);
+            var moveAvailabilityChain = new MoveAvailabilityChain(l, MoveType.Up, opposingTeam, board);
+            Assert.False(moveAvailabilityChain.ActionAvailable());
+        }
+
+        [Fact]
+        public void MovingUpToFieldWithPlayer()
+        {
+            var moveAvailabilityChain = new MoveAvailabilityChain(locationFail, MoveType.Up, team, board);
+            Assert.False(moveAvailabilityChain.ActionAvailable());
+        }
+
+        [Fact]
+        public void RedMovingDownToBlueGoal()
+        {
+            var l = new Location(0, 2);
+            var moveAvailabilityChain = new MoveAvailabilityChain(l, MoveType.Down, opposingTeam, board);
+            Assert.False(moveAvailabilityChain.ActionAvailable());
         }
     }
-
 }

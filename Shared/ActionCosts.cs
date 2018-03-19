@@ -12,11 +12,6 @@ namespace Shared
         public double PlacingDelay { get; set; }
         public double KnowledgeExchangeDelay { get; set; }
 
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as ActionCosts);
-        }
-
         public bool Equals(ActionCosts other)
         {
             return other != null &&
@@ -26,6 +21,11 @@ namespace Shared
                    PickUpDelay == other.PickUpDelay &&
                    PlacingDelay == other.PlacingDelay &&
                    KnowledgeExchangeDelay == other.KnowledgeExchangeDelay;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as ActionCosts);
         }
 
         public override int GetHashCode()

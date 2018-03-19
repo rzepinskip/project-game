@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Shared.BoardObjects;
+﻿using Shared.BoardObjects;
 
 namespace Shared.ResponseMessages
 {
     public class PlacePieceResponse : ResponseMessage
     {
         public GoalField GoalField { get; set; }
+
         public override void Update(Board board)
         {
-            var playerInfo = board.Players[this.PlayerId];
+            var playerInfo = board.Players[PlayerId];
             playerInfo.Piece = null;
             switch (GoalField.Type)
             {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml.Serialization;
 using static Shared.CommonResources;
 
@@ -11,23 +10,18 @@ namespace Shared.BoardObjects
     {
         public GoalField()
         {
-
         }
-        public GoalField(GoalFieldType type, TeamColour team, int? playerId, DateTime timestamp, int x, int y) : base(playerId, timestamp, x, y)
+
+        public GoalField(GoalFieldType type, TeamColour team, int? playerId, DateTime timestamp, int x, int y) : base(
+            playerId, timestamp, x, y)
         {
             Team = team;
             Type = type;
         }
 
-        [XmlAttribute("type")]
-        public Shared.CommonResources.GoalFieldType Type { get; set; }
-        [XmlAttribute("team")]
-        public Shared.CommonResources.TeamColour Team { get; set; }
+        [XmlAttribute("type")] public GoalFieldType Type { get; set; }
 
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as GoalField);
-        }
+        [XmlAttribute("team")] public TeamColour Team { get; set; }
 
         public bool Equals(GoalField other)
         {
@@ -35,6 +29,11 @@ namespace Shared.BoardObjects
                    base.Equals(other) &&
                    Type == other.Type &&
                    Team == other.Team;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as GoalField);
         }
 
         public override int GetHashCode()
@@ -57,4 +56,3 @@ namespace Shared.BoardObjects
         }
     }
 }
-

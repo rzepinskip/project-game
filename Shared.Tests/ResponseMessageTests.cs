@@ -1,19 +1,13 @@
-﻿using Xunit;
+﻿using System;
+using System.Collections.Generic;
 using Shared.BoardObjects;
 using Shared.ResponseMessages;
-using System.Collections.Generic;
-using System;
+using Xunit;
 
 namespace Shared.Tests
 {
     public class ResponseMessageTests
     {
-        private int boardWidth = 5;
-        private int goalAreaSize = 2;
-        private int taskAreaSize = 4;
-
-        private Board board;
-
         public ResponseMessageTests()
         {
             board = new Board(boardWidth, taskAreaSize, goalAreaSize);
@@ -28,7 +22,7 @@ namespace Shared.Tests
 
             var playerInfo1 = new PlayerInfo
             {
-                Location = new Location(1,2),
+                Location = new Location(1, 2),
                 Piece = null,
                 Team = CommonResources.TeamColour.Red
             };
@@ -44,6 +38,93 @@ namespace Shared.Tests
 
             board.Players.Add(1, playerInfo1);
             board.Pieces.Add(1, piece1);
+        }
+
+        private readonly int boardWidth = 5;
+        private readonly int goalAreaSize = 2;
+        private readonly int taskAreaSize = 4;
+
+        private readonly Board board;
+
+        [Fact]
+        public void CorrectDiscoverResponse()
+        {
+            //Arrange
+            var discoverResponce = new DiscoverResponse
+            {
+                GameFinished = false,
+                PlayerId = 1
+            };
+
+            var taskFields = new List<TaskField>();
+
+            for (var i = -1; i <= 1; ++i)
+            for (var j = 0; j <= 1; ++j)
+                taskFields.Add(new TaskField(
+                    -1,
+                    null,
+                    null,
+                    DateTime.Now,
+                    2 + i,
+                    3 + j
+                ));
+
+            discoverResponce.TaskFields = taskFields;
+
+            //Act
+            discoverResponce.Update(board);
+
+            //Assert
+            for (var i = 0; i < taskFields.Count; ++i)
+                Assert.Equal(taskFields[i], board.Content[taskFields[i].X, taskFields[i].Y]);
+        }
+
+        [Fact]
+        public void CorrectPickUpPieceResponse()
+        {
+            //Arrange
+            var piece = board.Pieces[1];
+            var pickUpResponse = new PickUpPieceResponse
+            {
+                Piece = piece,
+                GameFinished = false,
+                PlayerId = 1
+            };
+
+            //Act
+            pickUpResponse.Update(board);
+
+            //Assert
+            Assert.Equal(1, piece.PlayerId);
+            Assert.Equal(piece, board.Players[1].Piece);
+        }
+
+        [Fact]
+        public void CorrectPlacePieceResponse()
+        {
+            //Arrange
+            var goalField = new GoalField
+            {
+                PlayerId = null,
+                X = 2,
+                Y = 1,
+                Type = CommonResources.GoalFieldType.Goal
+            };
+
+            var placePieceResponse = new PlacePieceResponse
+            {
+                GameFinished = false,
+                GoalField = goalField,
+                PlayerId = 1
+            };
+
+            //Act
+            placePieceResponse.Update(board);
+
+            //Arrange
+            Assert.Null(board.Players[1].Piece);
+            var boardGoalField = board.Content[goalField.X, goalField.Y] as GoalField;
+            Assert.Equal(CommonResources.GoalFieldType.NonGoal, boardGoalField.Type);
         }
 
         [Fact]
@@ -82,26 +163,6 @@ namespace Shared.Tests
         }
 
         [Fact]
-        public void CorrectPickUpPieceResponse()
-        {
-            //Arrange
-            var piece = board.Pieces[1];
-            var pickUpResponse = new PickUpPieceResponse
-            {
-                Piece = piece,
-                GameFinished = false,
-                PlayerId = 1
-            };
-
-            //Act
-            pickUpResponse.Update(board);
-
-            //Assert
-            Assert.Equal(1, piece.PlayerId);
-            Assert.Equal(piece, board.Players[1].Piece);
-        }
-
-        [Fact]
         public void CorrectTestPieceResponse()
         {
             //Arrange
@@ -119,67 +180,6 @@ namespace Shared.Tests
 
             //Assert
             Assert.Equal(piece, testPieceResponse.Piece);
-        }
-
-        [Fact]
-        public void CorrectDiscoverResponse()
-        {
-            //Arrange
-            var discoverResponce = new DiscoverResponse
-            {
-                GameFinished = false,
-                PlayerId = 1,
-            };
-
-            var taskFields = new List<TaskField>();
-
-            for (int i = -1; i <= 1; ++i)
-                for (int j = 0; j <= 1; ++j)
-                    taskFields.Add(new TaskField(
-                        -1,
-                        null,
-                        null,
-                        DateTime.Now,
-                        2 + i,
-                        3 + j
-                    ));
-
-            discoverResponce.TaskFields = taskFields;
-
-            //Act
-            discoverResponce.Update(board);
-
-            //Assert
-            for (int i = 0; i < taskFields.Count; ++i)
-                Assert.Equal(taskFields[i], board.Content[taskFields[i].X, taskFields[i].Y]);
-        }
-
-        [Fact]
-        public void CorrectPlacePieceResponse()
-        {
-            //Arrange
-            var goalField = new GoalField
-            {
-                PlayerId = null,
-                X = 2,
-                Y = 1,
-                Type = CommonResources.GoalFieldType.Goal
-            };
-
-            var placePieceResponse = new PlacePieceResponse
-            {
-                GameFinished = false,
-                GoalField = goalField,
-                PlayerId = 1
-            };
-
-            //Act
-            placePieceResponse.Update(board);
-
-            //Arrange
-            Assert.Null(board.Players[1].Piece);
-            var boardGoalField = board.Content[goalField.X, goalField.Y] as GoalField;
-            Assert.Equal(CommonResources.GoalFieldType.NonGoal, boardGoalField.Type);
         }
     }
 }

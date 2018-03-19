@@ -1,5 +1,4 @@
 ﻿using Shared.BoardObjects;
-using Shared;
 
 namespace Shared.ActionAvailability.ActionAvailabilityHelpers
 {
@@ -13,26 +12,23 @@ namespace Shared.ActionAvailability.ActionAvailabilityHelpers
                 response = false;
             return response;
         }
-        public bool IsAvailableTeamArea(Location l, CommonResources.TeamColour team, CommonResources.MoveType direction, int GoalAreaSize, int TaskAreaSize )
+
+        public bool IsAvailableTeamArea(Location l, CommonResources.TeamColour team, CommonResources.MoveType direction,
+            int GoalAreaSize, int TaskAreaSize)
         {
             var response = true;
             if (team == CommonResources.TeamColour.Blue)
             {
-                if(l.GetNewLocation(direction).Y > TaskAreaSize + GoalAreaSize - 1)
-                {
-                    response = false;
-                }
+                if (l.GetNewLocation(direction).Y > TaskAreaSize + GoalAreaSize - 1) response = false;
             }
             else
             {
-                if(l.GetNewLocation(direction).Y < GoalAreaSize)
-                {
-                    response = false;
-                }
+                if (l.GetNewLocation(direction).Y < GoalAreaSize) response = false;
             }
-            return response;
 
+            return response;
         }
+
         public bool IsFieldPlayerUnoccupied(Location l, CommonResources.MoveType direction, Board board)
         {
             var response = true;

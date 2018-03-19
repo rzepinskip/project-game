@@ -1,5 +1,5 @@
-﻿using System.Xml.Serialization;
-using System.IO;
+﻿using System.IO;
+using System.Xml.Serialization;
 
 namespace GameMaster.Configuration
 {
@@ -7,9 +7,9 @@ namespace GameMaster.Configuration
     {
         public GameConfiguration LoadConfigurationFromFile(string filepath)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(GameConfiguration));
-            StreamReader reader = new StreamReader(filepath);
-            var conf = (GameConfiguration)serializer.Deserialize(reader);
+            var serializer = new XmlSerializer(typeof(GameConfiguration));
+            var reader = new StreamReader(filepath);
+            var conf = (GameConfiguration) serializer.Deserialize(reader);
             reader.Close();
 
             return conf;
@@ -17,9 +17,9 @@ namespace GameMaster.Configuration
 
         public GameConfiguration LoadConfigurationFromText(string filecontent)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(GameConfiguration));
-            StringReader reader = new StringReader(filecontent);
-            var conf = (GameConfiguration)serializer.Deserialize(reader);
+            var serializer = new XmlSerializer(typeof(GameConfiguration));
+            var reader = new StringReader(filecontent);
+            var conf = (GameConfiguration) serializer.Deserialize(reader);
             reader.Close();
 
             return conf;

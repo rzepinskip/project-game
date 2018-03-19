@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml.Serialization;
-using Shared.BoardObjects;
 using Shared;
 
 namespace GameMaster.Configuration
@@ -13,16 +11,9 @@ namespace GameMaster.Configuration
         public GameDefinition GameDefinition { get; set; }
         public ActionCosts ActionCosts { get; set; }
 
-        [XmlAttribute]
-        public double KeepAliveInterval { get; set; }
+        [XmlAttribute] public double KeepAliveInterval { get; set; }
 
-        [XmlAttribute]
-        public double RetryRegisterGameInterval { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as GameConfiguration);
-        }
+        [XmlAttribute] public double RetryRegisterGameInterval { get; set; }
 
         public bool Equals(GameConfiguration other)
         {
@@ -31,6 +22,11 @@ namespace GameMaster.Configuration
                    ActionCosts == other.ActionCosts &&
                    KeepAliveInterval == other.KeepAliveInterval &&
                    RetryRegisterGameInterval == other.RetryRegisterGameInterval;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as GameConfiguration);
         }
 
         public override int GetHashCode()
@@ -53,7 +49,4 @@ namespace GameMaster.Configuration
             return !(configuration1 == configuration2);
         }
     }
-
-    
-
 }

@@ -3,10 +3,11 @@ using Shared.BoardObjects;
 
 namespace Shared.ActionAvailability.AvailabilityLink
 {
-    class IsNoPiecePlacedLink : AvailabilityLinkBase
+    internal class IsNoPiecePlacedLink : AvailabilityLinkBase
     {
-        private Location location;
-        private Board board;
+        private readonly Board board;
+        private readonly Location location;
+
         public IsNoPiecePlacedLink(Location location, Board board)
         {
             this.location = location;

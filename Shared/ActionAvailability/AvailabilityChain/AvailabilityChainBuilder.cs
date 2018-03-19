@@ -1,25 +1,27 @@
 ﻿using Shared.ActionAvailability.AvailabilityLink;
 
-
 namespace Shared.ActionAvailability.AvailabilityChain
 {
-    class AvailabilityChainBuilder
+    internal class AvailabilityChainBuilder
     {
-        private AvailabilityLinkBase first;
+        private readonly AvailabilityLinkBase first;
         private AvailabilityLinkBase last;
 
-        public AvailabilityChainBuilder(AvailabilityLinkBase first) {
+        public AvailabilityChainBuilder(AvailabilityLinkBase first)
+        {
             this.first = first;
-            this.last = first;
+            last = first;
         }
 
-        public AvailabilityChainBuilder AddNextLink(AvailabilityLinkBase nextLink) {
-            this.last.SetNextLink(nextLink);
-            this.last = nextLink;
+        public AvailabilityChainBuilder AddNextLink(AvailabilityLinkBase nextLink)
+        {
+            last.SetNextLink(nextLink);
+            last = nextLink;
             return this;
         }
 
-        public AvailabilityLinkBase Build() {
+        public AvailabilityLinkBase Build()
+        {
             return first;
         }
     }

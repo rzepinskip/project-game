@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Shared;
-using Shared.GameMessages;
 
 namespace Shared
 {
     public class ActionLog
     {
-        public ActionLog(int playerId, int gameId, string playerGuid,PlayerInfo playerInfo, CommonResources.ActionType actionType)
+        public ActionLog(int playerId, int gameId, string playerGuid, PlayerInfo playerInfo,
+            CommonResources.ActionType actionType)
         {
             ActionType = actionType;
             Timestamp = DateTime.Now;

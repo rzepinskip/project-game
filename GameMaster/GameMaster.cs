@@ -1,27 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using CsvHelper;
+using GameMaster.Configuration;
 using Shared;
 using Shared.BoardObjects;
 using Shared.GameMessages;
-using CsvHelper;
 using Shared.ResponseMessages;
-using GameMaster.Configuration;
-using System;
-using System.Threading;
 
 namespace GameMaster
-{   
+{
     public class GameMaster
     {
-        public Dictionary<int, ObservableQueue<GameMessage>> RequestsQueues { get; set; } = new Dictionary<int, ObservableQueue<GameMessage>>();
-        public Dictionary<int, ObservableQueue<ResponseMessage>> ResponsesQueues { get; set; } = new Dictionary<int, ObservableQueue<ResponseMessage>>();
-        public Board Board { get; set; }
-        public GameConfiguration GameConfiguration { get; private set; }
-        private Dictionary<string, int> PlayerGuidToId { get; }
-
-        public virtual event EventHandler<GameFinishedEventArgs> GameFinished;
-
-
         public GameMaster(GameConfiguration gameConfiguration)
         {
             GameConfiguration = gameConfiguration;
@@ -29,6 +20,18 @@ namespace GameMaster
             var boardGenerator = new BoardGenerator();
             Board = boardGenerator.InitializeBoard(GameConfiguration.GameDefinition);
         }
+
+        public Dictionary<int, ObservableQueue<GameMessage>> RequestsQueues { get; set; } =
+            new Dictionary<int, ObservableQueue<GameMessage>>();
+
+        public Dictionary<int, ObservableQueue<ResponseMessage>> ResponsesQueues { get; set; } =
+            new Dictionary<int, ObservableQueue<ResponseMessage>>();
+
+        public Board Board { get; set; }
+        public GameConfiguration GameConfiguration { get; }
+        private Dictionary<string, int> PlayerGuidToId { get; }
+
+        public virtual event EventHandler<GameFinishedEventArgs> GameFinished;
 
         public void PutLog(string filename, ActionLog log)
         {
@@ -53,18 +56,12 @@ namespace GameMaster
             var redRemainingGoalsCount = 0;
 
             foreach (var field in Board.Content)
-            {
                 if (field is GoalField goalField)
-                {
                     if (goalField.Type == CommonResources.GoalFieldType.Goal)
-                    {
                         if (goalField.Team == CommonResources.TeamColour.Red)
                             redRemainingGoalsCount++;
                         else
                             blueRemainingGoalsCount++;
-                    }
-                }
-            }
             return blueRemainingGoalsCount == 0 || redRemainingGoalsCount == 0;
         }
 
@@ -74,25 +71,18 @@ namespace GameMaster
             var redRemainingGoalsCount = 0;
 
             foreach (var field in Board.Content)
-            {
                 if (field is GoalField goalField)
-                {
                     if (goalField.Type == CommonResources.GoalFieldType.Goal)
-                    {
                         if (goalField.Team == CommonResources.TeamColour.Red)
                             redRemainingGoalsCount++;
                         else
                             blueRemainingGoalsCount++;
-                    }
-                }
-            }
 
             if (blueRemainingGoalsCount == 0)
                 return CommonResources.TeamColour.Blue;
-            else if (redRemainingGoalsCount == 0)
+            if (redRemainingGoalsCount == 0)
                 return CommonResources.TeamColour.Red;
-            else
-                throw new InvalidOperationException();
+            throw new InvalidOperationException();
         }
 
         public void HandleMessagesFromPlayer(int playerId)
@@ -118,22 +108,20 @@ namespace GameMaster
         public void StartListeningToRequests()
         {
             foreach (var queue in RequestsQueues)
-            {
                 queue.Value.CollectionChanged += (sender, args) =>
                 {
                     new Thread(() => HandleMessagesFromPlayer(queue.Value.Peek().PlayerId)).Start();
                 };
-            }
         }
     }
 
     public class GameFinishedEventArgs : EventArgs
     {
-        public CommonResources.TeamColour Winners { get; set; }
-
         public GameFinishedEventArgs(CommonResources.TeamColour winners)
         {
             Winners = winners;
         }
+
+        public CommonResources.TeamColour Winners { get; set; }
     }
 }

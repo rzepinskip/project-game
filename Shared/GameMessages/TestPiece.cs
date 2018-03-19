@@ -15,15 +15,15 @@ namespace Shared.GameMessages.PieceActions
             if (playerPiece.Type == CommonResources.PieceType.Sham)
                 player.Piece = null;
 
-            var response = new TestPieceResponse()
+            var response = new TestPieceResponse
             {
-                PlayerId = this.PlayerId,
+                PlayerId = PlayerId,
                 Piece = playerPiece
             };
 
             return response;
         }
-        
+
         public override ActionLog ToLog(int playerId, PlayerInfo playerInfo)
         {
             return new ActionLog(playerId, GameId, PlayerGuid, playerInfo, CommonResources.ActionType.Test);

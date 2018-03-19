@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Text;
 
 namespace Shared
 {
@@ -25,10 +23,20 @@ namespace Shared
         }
 
 
+        public virtual event NotifyCollectionChangedEventHandler CollectionChanged;
+
+
+        event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
+        {
+            add => PropertyChanged += value;
+            remove => PropertyChanged -= value;
+        }
+
+
         public new virtual void Clear()
         {
             base.Clear();
-            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         public new virtual T Dequeue()
@@ -42,21 +50,18 @@ namespace Shared
         {
             base.Enqueue(item);
             if (Count == 1)
-                this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
         }
-
-
-        public virtual event NotifyCollectionChangedEventHandler CollectionChanged;
 
 
         protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            this.RaiseCollectionChanged(e);
+            RaiseCollectionChanged(e);
         }
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            this.RaisePropertyChanged(e);
+            RaisePropertyChanged(e);
         }
 
 
@@ -65,21 +70,14 @@ namespace Shared
 
         private void RaiseCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            if (this.CollectionChanged != null)
+            if (CollectionChanged != null)
                 CollectionChanged(this, e);
         }
 
         private void RaisePropertyChanged(PropertyChangedEventArgs e)
         {
-            if (this.PropertyChanged != null)
+            if (PropertyChanged != null)
                 PropertyChanged(this, e);
-        }
-
-
-        event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
-        {
-            add { this.PropertyChanged += value; }
-            remove { this.PropertyChanged -= value; }
         }
     }
 }

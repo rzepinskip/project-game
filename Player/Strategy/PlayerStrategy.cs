@@ -1,31 +1,13 @@
-﻿using Player.Strategy.StateTransition.Factory;
+﻿using System.Collections.Generic;
+using Player.Strategy.StateTransition.Factory;
+using Shared;
 using Shared.BoardObjects;
 using Shared.GameMessages;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Player.Strategy
 {
     public class PlayerStrategy
     {
-        private List<GoalField> undiscoveredGoalFields = new List<GoalField>();
-        private StateTranstitionFactory stateTransitionFactory;
-        public PlayerStrategy(Board board, Shared.CommonResources.TeamColour team, int playerId)
-        {
-            currentState = PlayerState.InitState;
-
-            int teamCoefficient = team == Shared.CommonResources.TeamColour.Blue ? 0 : 1;
-            int offset = teamCoefficient * (board.TaskAreaSize + board.GoalAreaSize);
-
-            for (var i = 0; i < board.Width; ++i)
-            {
-                for (var j = offset; j < offset +  board.GoalAreaSize; ++j)
-                    undiscoveredGoalFields.Add(board.Content[i, j] as GoalField);
-            }
-
-            this.stateTransitionFactory = new StateTranstitionFactory(board, playerId, team, undiscoveredGoalFields);
-        }
         public enum PlayerState
         {
             InitState,
@@ -38,18 +20,34 @@ namespace Player.Strategy
             MoveToGoalArea,
             MoveToUndiscoveredGoal,
             Place
-            
         }
+
+        private readonly StateTranstitionFactory stateTransitionFactory;
+        private readonly List<GoalField> undiscoveredGoalFields = new List<GoalField>();
+
         private PlayerState currentState;
 
-        
+        public PlayerStrategy(Board board, CommonResources.TeamColour team, int playerId)
+        {
+            currentState = PlayerState.InitState;
+
+            var teamCoefficient = team == CommonResources.TeamColour.Blue ? 0 : 1;
+            var offset = teamCoefficient * (board.TaskAreaSize + board.GoalAreaSize);
+
+            for (var i = 0; i < board.Width; ++i)
+            for (var j = offset; j < offset + board.GoalAreaSize; ++j)
+                undiscoveredGoalFields.Add(board.Content[i, j] as GoalField);
+
+            stateTransitionFactory = new StateTranstitionFactory(board, playerId, team, undiscoveredGoalFields);
+        }
+
+
         public GameMessage NextMove(Location location)
         {
             var transition = stateTransitionFactory.GetNextTranstition(currentState, location);
-            GameMessage gameMessage = transition.ExecuteStrategy();
+            var gameMessage = transition.ExecuteStrategy();
             currentState = transition.ChangeState;
             return gameMessage;
-
         }
     }
 }
