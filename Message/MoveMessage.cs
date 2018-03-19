@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml.Serialization;
 using Common;
 using Shared;
@@ -9,8 +7,7 @@ namespace Message
 {
     public class MoveMessage : Request
     {
-        [XmlAttribute]
-        public CommonResources.MoveType Direction { get; set; }
+        [XmlAttribute] public CommonResources.MoveType Direction { get; set; }
 
         public override IMessage Process(IGameMaster gameMaster)
         {
