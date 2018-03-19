@@ -2,6 +2,6 @@
 {
     public interface IPlayer
     {
-        void Update(IMessage message);
+        IPlayerBoard Board { get; }
     }
 }

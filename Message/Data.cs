@@ -28,7 +28,8 @@ namespace Message
 
         public Location PlayerLocation { get; set; }
 
-        [XmlAttribute] public bool GameFinished { get; set; }
+        [XmlAttribute]
+        public bool GameFinished { get; set; }
 
         public override IMessage Process(IGameMaster gameMaster)
         {
@@ -37,7 +38,22 @@ namespace Message
 
         public override void Process(IPlayer player)
         {
-            player.Update(this);
+            foreach (var taskField in TaskFields)
+            {
+                player.Board.HandleTaskField(taskField);
+            }
+
+            foreach (var goalField in GoalFields)
+            {
+                player.Board.HandleGoalField(goalField);
+            }
+
+            foreach (var piece in Pieces)
+            {
+                player.Board.HandlePiece(piece);
+            }
+
+            player.Board.HandlePlayerLocation(PlayerLocation);
         }
     }
 }
