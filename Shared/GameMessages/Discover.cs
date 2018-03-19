@@ -23,8 +23,8 @@ namespace Shared.GameMessages
             var downLeftCorner = new Location { X = Math.Max(player.Location.X - 1, 0), Y = Math.Max(player.Location.Y - 1, 0) };
             var upRightCorner = new Location { X = Math.Min(player.Location.X + 1, board.Width), Y = Math.Min(player.Location.Y + 1, board.Height) };
 
-            for (int i = downLeftCorner.X; i < upRightCorner.X + 1; i++)
-                for (int j = downLeftCorner.Y; j < upRightCorner.Y + 1; j++)
+            for (int i = downLeftCorner.X; i < Math.Min(upRightCorner.X + 1, board.Width); i++)
+                for (int j = downLeftCorner.Y; j < Math.Min(upRightCorner.Y + 1, board.Height); j++)
                     if (board.Content[i, j] is TaskField taskfield)
                     {
                         taskfield.DistanceToPiece = board.GetDistanceToPiece(taskfield);

@@ -7,7 +7,7 @@ namespace GameSimulation
     {
         static void Main(string[] args)
         {
-            var iterations = 100;
+            var iterations = 1000;
             var simulation = new GameSimulation(iterations);
             simulation.StartSimulation();
 

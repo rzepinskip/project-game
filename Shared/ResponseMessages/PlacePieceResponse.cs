@@ -10,6 +10,8 @@ namespace Shared.ResponseMessages
         public GoalField GoalField { get; set; }
         public override void Update(Board board)
         {
+            var playerInfo = board.Players[this.PlayerId];
+            playerInfo.Piece = null;
             switch (GoalField.Type)
             {
                 case CommonResources.GoalFieldType.NonGoal:
@@ -17,8 +19,6 @@ namespace Shared.ResponseMessages
                     break;
 
                 case CommonResources.GoalFieldType.Goal:
-                    var playerInfo = board.Players[this.PlayerId];
-                    playerInfo.Piece = null;
                     var currentGoalField = board.Content[GoalField.X, GoalField.Y] as GoalField;
                     currentGoalField.Type = CommonResources.GoalFieldType.NonGoal;
                     break;

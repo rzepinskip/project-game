@@ -58,6 +58,7 @@ namespace GameSimulation
             gameMaster.PrepareBoard(_configFilePath);
 
             return gameMaster;
+
         }
 
         private List<Player.Player> GeneratePlayers(GameMaster.GameMaster gameMaster)
@@ -98,15 +99,43 @@ namespace GameSimulation
 
         public void PlayerGameplay(Player.Player player)
         {
+            //var initMessage = new Move()
+            //{
+            //    PlayerId = player.Id,
+            //    Direction = player.Team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up,
+            //};
+            //player.RequestsQueue.Enqueue(initMessage);
+            player.RequestsQueue.Enqueue(player.GetNextRequestMessage());
             for (int i = 0; i < _iterations; i++)
             {
-                Thread.Sleep(_random.Next(_minInterval, _maxInterval));
-                var message = new Move()
+                bool gotNewResponse = false;
+                while (!gotNewResponse)
                 {
-                    PlayerId = player.Id,
-                    Direction = player.Team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up,
-                };
-                player.RequestsQueue.Enqueue(message);
+                    Thread.Sleep(_random.Next(_minInterval, _maxInterval));
+                    if (player.ResponsesQueue.Count != 0)
+                    {
+                        gotNewResponse = true;
+                        player.UpdateBoard(player.ResponsesQueue.Dequeue());
+                        //
+                        //change board state based on response 
+                        //  - update method in Response Message
+                        //based on board state change strategy state
+                        //  - implement strategy
+                        //  - hold current state
+                        //  - implement state changing action (stateless in next iteration) which return new message
+                        //
+                        //var message = new Move()
+                        //{
+                        //    PlayerId = player.Id,
+                        //    Direction = player.Team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up,
+                        //};
+                        player.RequestsQueue.Enqueue(player.GetNextRequestMessage());
+
+                    }
+
+                    
+
+                }
             }
         }
         public void GameMasterGameplay(GameMaster.GameMaster gameMaster)
