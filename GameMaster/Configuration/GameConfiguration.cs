@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 using Shared.BoardObjects;
+using Shared;
 
 namespace GameMaster.Configuration
 {

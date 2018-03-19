@@ -1,4 +1,6 @@
-﻿using Player;
+﻿using GameMaster;
+using GameMaster.Configuration;
+using Player;
 using Shared;
 using Shared.BoardObjects;
 using Shared.GameMessages;
@@ -7,58 +9,65 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace GameSimulation
 {
     class GameSimulation
     {
-        public GameMaster.GameMaster GameMaster { get; set; }
-        public List<Player.Player> Players { get; set; }
+        public GameMaster.GameMaster GameMaster { get; private set; }
+        public List<Player.Player> Players { get; private set; }
+        public PieceGenerator PieceGenerator { get; private set; }
 
-        private int _iterations;
-        private int _minInterval = 500;
-        private int _maxInterval = 2000;
-        private const string _configFilePath = "Resources/ExampleConfig.xml";
+        private int _spawnPieceFrequency;
         private Random _random = new Random();
 
-        private Thread _gameMasterThread;
-        private List<Thread> _playerThreads = new List<Thread>();
+        public bool GameFinished { get; private set; } = false;
+        public CommonResources.TeamColour Winners { get; private set; }
 
-        public GameSimulation(int iterations)
-        {
-            _iterations = iterations;
-        }
+        private Thread _pieceGeneratorThread;
 
-        public void StartSimulation()
+        public GameSimulation(string configFilePath)
         {
-            GameMaster = GenerateGameMaster();
+            var configLoader = new ConfigurationLoader();
+            var config = configLoader.LoadConfigurationFromFile(configFilePath);
+
+            _spawnPieceFrequency = Convert.ToInt32(config.GameDefinition.PlacingNewPiecesFrequency);
+
+            GameMaster = GenerateGameMaster(config);
+            PieceGenerator = GameMaster.CreatePieceGenerator(GameMaster.Board);
             Players = GeneratePlayers(GameMaster);
 
-            CreateQueues(GameMaster, Players);
+            GameMaster.GameFinished += GameMaster_GameFinished;
 
-            GenerateThreads(GameMaster, Players);
-            RunThreads();
+            CreateQueues(GameMaster, Players);
+            _pieceGeneratorThread = new Thread(() => PieceGeneratorGameplay(PieceGenerator));
+        }
+
+        private void GameMaster_GameFinished(object sender, GameFinishedEventArgs e)
+        {
+            //should wait for all threads end
+            Winners = e.Winners;
+            GameFinished = true;
         }
 
         private void CreateQueues(GameMaster.GameMaster gameMaster, List<Player.Player> players)
         {
             foreach (var player in players)
             {
-                player.RequestsQueue = new Queue<GameMessage>();
-                player.ResponsesQueue = new Queue<ResponseMessage>();
+                player.RequestsQueue = new ObservableQueue<GameMessage>();
+                player.ResponsesQueue = new ObservableQueue<ResponseMessage>();
 
-                gameMaster.RequestsQueues.Add(player.RequestsQueue);
-                gameMaster.ResponsesQueues.Add(player.ResponsesQueue);
+                gameMaster.RequestsQueues.Add(player.Id, player.RequestsQueue);
+                gameMaster.ResponsesQueues.Add(player.Id, player.ResponsesQueue);
             }
         }
 
-        private GameMaster.GameMaster GenerateGameMaster()
+        private GameMaster.GameMaster GenerateGameMaster(GameConfiguration config)
         {
-            var gameMaster = new GameMaster.GameMaster();
-            gameMaster.PrepareBoard(_configFilePath);
+            var gameMaster = new GameMaster.GameMaster(config);
 
             return gameMaster;
-
         }
 
         private List<Player.Player> GeneratePlayers(GameMaster.GameMaster gameMaster)
@@ -71,90 +80,33 @@ namespace GameSimulation
                 var playerBoard = new Board(gameMaster.Board.Width, gameMaster.Board.TaskAreaSize, gameMaster.Board.GoalAreaSize);
                 var playerInfo = gameMaster.Board.Players[i];
                 var player = new Player.Player();
-                player.InitializePlayer(i, playerInfo.Team, playerInfo.Role ,playerBoard, playerInfo.Location);
+                player.InitializePlayer(i, playerInfo.Team, playerInfo.Role, playerBoard, playerInfo.Location);
                 players.Add(player);
             }
 
             return players;
         }
 
-        private void GenerateThreads(GameMaster.GameMaster gameMaster, List<Player.Player> players)
+        public void StartSimulation()
         {
-            _gameMasterThread = new Thread(() => GameMasterGameplay(gameMaster));
+            _pieceGeneratorThread.Start();
 
-            foreach (var player in players)
-            {
-                _playerThreads.Add(new Thread(() => PlayerGameplay(player)));
-            }
-        }
-        private void RunThreads()
-        {
-            _gameMasterThread.Start();
+            GameMaster.StartListeningToRequests();
 
-            foreach (var playerThread in _playerThreads)
+            foreach (var player in Players)
             {
-                playerThread.Start();
+                player.StartListeningToResponses();
+                player.RequestsQueue.Enqueue(player.GetNextRequestMessage());
             }
         }
 
-        public void PlayerGameplay(Player.Player player)
+        private void PieceGeneratorGameplay(PieceGenerator pieceGenerator)
         {
-            //var initMessage = new Move()
-            //{
-            //    PlayerId = player.Id,
-            //    Direction = player.Team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up,
-            //};
-            //player.RequestsQueue.Enqueue(initMessage);
-            player.RequestsQueue.Enqueue(player.GetNextRequestMessage());
-            for (int i = 0; i < _iterations; i++)
+            while (!GameFinished)
             {
-                bool gotNewResponse = false;
-                while (!gotNewResponse)
-                {
-                    Thread.Sleep(_random.Next(_minInterval, _maxInterval));
-                    if (player.ResponsesQueue.Count != 0)
-                    {
-                        gotNewResponse = true;
-                        player.UpdateBoard(player.ResponsesQueue.Dequeue());
-                        //
-                        //change board state based on response 
-                        //  - update method in Response Message
-                        //based on board state change strategy state
-                        //  - implement strategy
-                        //  - hold current state
-                        //  - implement state changing action (stateless in next iteration) which return new message
-                        //
-                        //var message = new Move()
-                        //{
-                        //    PlayerId = player.Id,
-                        //    Direction = player.Team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up,
-                        //};
-                        player.RequestsQueue.Enqueue(player.GetNextRequestMessage());
-
-                    }
-
-                    
-
-                }
+                Thread.Sleep(_spawnPieceFrequency);
+                pieceGenerator.SpawnPiece();
             }
         }
-        public void GameMasterGameplay(GameMaster.GameMaster gameMaster)
-        {
-            for (int i = 0; i < _iterations; i++)
-            {
-                Thread.Sleep(_random.Next(_minInterval, _maxInterval));
-                foreach (var queue in gameMaster.RequestsQueues)
-                {
-                    if (queue.Count > 0)
-                    {
-                        var request = queue.Dequeue();
-                        var requesterInfo = gameMaster.Board.Players[request.PlayerId];
-                        var response = request.Execute(gameMaster.Board);
-                        gameMaster.ResponsesQueues[request.PlayerId].Enqueue(response);
-                    }
-                }
-            }
-        }
-
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GameMaster.Configuration
+namespace Shared
 {
     public class ActionCosts : IEquatable<ActionCosts>
     {

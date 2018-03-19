@@ -4,13 +4,14 @@ using Shared.BoardObjects;
 using Shared.GameMessages;
 using Shared.ResponseMessages;
 using Player.Strategy;
+using System.Threading;
 
 namespace Player
 {
     public class Player : PlayerBase
     {
-        public Queue<GameMessage> RequestsQueue { get; set; }
-        public Queue<ResponseMessage> ResponsesQueue { get; set; }
+        public ObservableQueue<GameMessage> RequestsQueue { get; set; }
+        public ObservableQueue<ResponseMessage> ResponsesQueue { get; set; }
 
         private string PlayerGuid { get; set; }
         private Board Board { get; set; }
@@ -40,5 +41,32 @@ namespace Player
             responseMessage.Update(Board);
         }
 
+
+        public void HandleResponse(ResponseMessage response)
+        {
+            UpdateBoard(response);
+            //
+            //change board state based on response 
+            //  - update method in Response Message
+            //based on board state change strategy state
+            //  - implement strategy
+            //  - hold current state
+            //  - implement state changing action (stateless in next iteration) which return new message
+            //
+            //var message = new Move()
+            //{
+            //    PlayerId = player.Id,
+            //    Direction = player.Team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up,
+            //};
+            RequestsQueue.Enqueue(GetNextRequestMessage());
+        }
+
+        public void StartListeningToResponses()
+        {
+            ResponsesQueue.CollectionChanged += (sender, args) =>
+            {
+                new Thread(() => HandleResponse(ResponsesQueue.Dequeue())).Start();
+            };
+        }
     }
 }

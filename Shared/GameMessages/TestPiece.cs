@@ -28,5 +28,10 @@ namespace Shared.GameMessages.PieceActions
         {
             return new ActionLog(playerId, GameId, PlayerGuid, playerInfo, CommonResources.ActionType.Test);
         }
+
+        public override double GetDelay(ActionCosts actionCosts)
+        {
+            return actionCosts.TestDelay;
+        }
     }
 }

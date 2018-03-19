@@ -7,18 +7,20 @@ namespace GameSimulation
     {
         static void Main(string[] args)
         {
-            var iterations = 1000;
-            var simulation = new GameSimulation(iterations);
+            var simulation = new GameSimulation( "Resources/ExampleConfig.xml");
             simulation.StartSimulation();
 
             var boardVisualizer = new BoardVisualizer();
-            for (int i = 0; i < iterations*10; i++)
+            for (int i = 0;; i++)
             {
+                if (simulation.GameFinished)
+                    break;
+
                 Thread.Sleep(200);
                 boardVisualizer.VisualizeBoard(simulation.GameMaster.Board);
                 Console.WriteLine(i);
             }
+            Console.WriteLine($"Game finished - team {simulation.Winners} won!");
         }
-
     }
 }

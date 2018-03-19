@@ -41,6 +41,11 @@ namespace Shared.GameMessages.PieceActions
         {
             return new ActionLog(playerId, GameId, PlayerGuid, playerInfo, CommonResources.ActionType.Place);
         }
+
+        public override double GetDelay(ActionCosts actionCosts)
+        {
+            return actionCosts.PlacingDelay;
+        }
     }
 
 }

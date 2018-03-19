@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 namespace Shared.GameMessages
 {
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
-    public abstract class GameMessage : ILoggable
+    public abstract class GameMessage : ILoggable, IDelayed
     {
 
         [XmlAttribute()]
@@ -23,5 +23,6 @@ namespace Shared.GameMessages
 
         public abstract ActionLog ToLog(int playerId, PlayerInfo playeInfo);
 
+        public abstract double GetDelay(ActionCosts actionCosts);
     }
 }

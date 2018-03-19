@@ -38,6 +38,12 @@ namespace Shared.GameMessages
                     }
             return response;
         }
+
+        public override double GetDelay(ActionCosts actionCosts)
+        {
+            return actionCosts.DiscoverDelay;
+        }
+
         public override ActionLog ToLog(int playerId, PlayerInfo playerInfo)
         {
             return new ActionLog(playerId, GameId, PlayerGuid, playerInfo, CommonResources.ActionType.Discover);
