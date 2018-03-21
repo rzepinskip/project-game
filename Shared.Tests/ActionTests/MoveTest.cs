@@ -26,8 +26,8 @@ namespace Shared.Tests.ActionTests
             SetTestedPlayerLocation(new Location(1, 3));
 
             var message = GetMoveMessage(CommonResources.MoveType.Right);
-            if (message.Execute(_gameMasterBoard) is MoveResponse response)
-                response.Update(_playerBoard);
+            if (message.Execute(GameMasterBoard) is MoveResponse response)
+                response.Update(PlayerBoard);
 
             AssertPlayerLocation(new Location(2, 3), PlayerId);
         }
@@ -38,8 +38,8 @@ namespace Shared.Tests.ActionTests
             SetTestedPlayerLocation(new Location(1, 2));
 
             var message = GetMoveMessage(CommonResources.MoveType.Right);
-            if (message.Execute(_gameMasterBoard) is MoveResponse response)
-                response.Update(_playerBoard);
+            if (message.Execute(GameMasterBoard) is MoveResponse response)
+                response.Update(PlayerBoard);
 
             AssertPlayerLocation(new Location(2, 2), PlayerId);
             AssertPiece(new Location(2, 2), 2);
@@ -52,8 +52,8 @@ namespace Shared.Tests.ActionTests
             SetTestedPlayerLocation(new Location(0, 3));
 
             var message = GetMoveMessage(CommonResources.MoveType.Left);
-            if (message.Execute(_gameMasterBoard) is MoveResponse response)
-                response.Update(_playerBoard);
+            if (message.Execute(GameMasterBoard) is MoveResponse response)
+                response.Update(PlayerBoard);
 
             AssertPlayerLocation(new Location(0, 3), PlayerId);
         }
@@ -64,8 +64,8 @@ namespace Shared.Tests.ActionTests
             SetTestedPlayerLocation(new Location(1, 2));
 
             var message = GetMoveMessage(CommonResources.MoveType.Down);
-            if (message.Execute(_gameMasterBoard) is MoveResponse response)
-                response.Update(_playerBoard);
+            if (message.Execute(GameMasterBoard) is MoveResponse response)
+                response.Update(PlayerBoard);
 
             AssertPlayerLocation(new Location(1, 2), PlayerId);
         }
@@ -76,10 +76,12 @@ namespace Shared.Tests.ActionTests
             SetTestedPlayerLocation(new Location(1, 4));
 
             var message = GetMoveMessage(CommonResources.MoveType.Left);
-            if (message.Execute(_gameMasterBoard) is MoveResponse response)
-                response.Update(_playerBoard);
+            if (message.Execute(GameMasterBoard) is MoveResponse response)
+                response.Update(PlayerBoard);
 
             AssertPlayerLocation(new Location(1, 4), PlayerId);
+            AssertPlayerLocation(new Location(0, 4), OtherPlayerId);
+
         }
     }
 }

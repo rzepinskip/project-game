@@ -9,14 +9,15 @@ namespace Shared.Tests.ActionTests
     public class ActionTest
     {
         protected int PlayerId = 1;
+        protected int OtherPlayerId = 2;
 
-        protected Board _gameMasterBoard;
-        protected Board _playerBoard;
+        protected Board GameMasterBoard;
+        protected Board PlayerBoard;
 
         public ActionTest()
         {
-            _gameMasterBoard = GenerateGameMasterBoard();
-            _playerBoard = BoardGeneratePlayerBoard();
+            GameMasterBoard = GenerateGameMasterBoard();
+            PlayerBoard = BoardGeneratePlayerBoard();
         }
 
         private Board GenerateGameMasterBoard()
@@ -46,15 +47,14 @@ namespace Shared.Tests.ActionTests
             };
             board.Players.Add(PlayerId, testedPlayerInfo);
 
-            var playerId = 2;
             var playerInfo = new PlayerInfo
             {
                 Team = CommonResources.TeamColour.Blue,
                 Location = new Location(0,4),
                 
             };
-            board.Players.Add(playerId, playerInfo);
-            board.Content[playerInfo.Location.X, playerInfo.Location.Y].PlayerId = playerId;
+            board.Players.Add(OtherPlayerId, playerInfo);
+            board.Content[playerInfo.Location.X, playerInfo.Location.Y].PlayerId = OtherPlayerId;
 
 
             return board;
@@ -82,18 +82,18 @@ namespace Shared.Tests.ActionTests
 
         protected void SetTestedPlayerLocation(Location location)
         {
-            _gameMasterBoard.Content[location.X, location.Y].PlayerId = PlayerId;
-            _playerBoard.Content[location.X, location.Y].PlayerId = PlayerId;
+            GameMasterBoard.Content[location.X, location.Y].PlayerId = PlayerId;
+            PlayerBoard.Content[location.X, location.Y].PlayerId = PlayerId;
 
-            _gameMasterBoard.Players[PlayerId].Location = location;
-            _playerBoard.Players[PlayerId].Location = location;
+            GameMasterBoard.Players[PlayerId].Location = location;
+            PlayerBoard.Players[PlayerId].Location = location;
         }
 
 
         protected void AssertPlayerLocation(Location location, int playerId)
         {
-            AssertPlayerLocationOnBoard(location, _gameMasterBoard, playerId);
-            AssertPlayerLocationOnBoard(location, _playerBoard, playerId);
+            AssertPlayerLocationOnBoard(location, GameMasterBoard, playerId);
+            AssertPlayerLocationOnBoard(location, PlayerBoard, playerId);
         }
         protected void AssertPlayerLocationOnBoard(Location location, Board board, int playerId)
         {
@@ -108,10 +108,10 @@ namespace Shared.Tests.ActionTests
 
         protected void AssertPiece(Location location, int pieceId)
         {
-            var piece = _playerBoard.Pieces[pieceId];
+            var piece = PlayerBoard.Pieces[pieceId];
             Assert.Equal(pieceId, piece.Id);
 
-            var taskField = _playerBoard.Content[location.X, location.Y] as TaskField;
+            var taskField = PlayerBoard.Content[location.X, location.Y] as TaskField;
             Assert.Equal(pieceId, taskField.PieceId);
         }
     }
