@@ -1,11 +1,9 @@
-﻿using Shared;
-
-namespace Common
+﻿namespace Common
 {
     public interface IGameMaster
     {
         IMessage Discover(string playerGuid);
-        IMessage Move(string playerGuid, CommonResources.MoveType direction);
+        IMessage Move(string playerGuid, Direction direction);
         IMessage PickUpPiece(string playerGuid);
         IMessage PlacePiece(string playerGuid);
         IMessage TestPiece(string playerGuid);

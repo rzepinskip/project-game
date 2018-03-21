@@ -1,4 +1,4 @@
-﻿using Shared.BoardObjects;
+﻿using Common.BoardObjects;
 
 namespace Common
 {

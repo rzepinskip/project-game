@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Common.BoardObjects;
 
 namespace Common
 {
@@ -17,13 +18,13 @@ namespace Common
             for (var i = 0; i < boardWidth; ++i)
             {
                 for (var j = 0; j < goalAreaSize; ++j)
-                    Content[i, j] = new GoalField(CommonResources.GoalFieldType.Unknown,
-                        CommonResources.TeamColour.Blue, null, DateTime.Now, i, j);
+                    Content[i, j] = new GoalField(new Location(i, j), TeamColor.Blue);
+
                 for (var j = goalAreaSize; j < taskAreaSize + goalAreaSize; ++j)
-                    Content[i, j] = new TaskField(-1, null, null, DateTime.Now, i, j);
+                    Content[i, j] = new TaskField(new Location(i, j));
+
                 for (var j = taskAreaSize + goalAreaSize; j < Height; ++j)
-                    Content[i, j] = new GoalField(CommonResources.GoalFieldType.Unknown, CommonResources.TeamColour.Red,
-                        null, DateTime.Now, i, j);
+                    Content[i, j] = new GoalField(new Location(i, j), TeamColor.Red);
             }
         }
 
