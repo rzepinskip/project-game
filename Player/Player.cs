@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Common;
+using System.Threading.Tasks;
 using Common.BoardObjects;
 using Messaging;
 using Messaging.Requests;
@@ -11,8 +13,8 @@ namespace Player
 {
     public class Player : PlayerBase
     {
-        public ObservableQueue<Request> RequestsQueue { get; set; }
-        public ObservableQueue<Response> ResponsesQueue { get; set; }
+        public ObservableConcurrentQueue<Request> RequestsQueue { get; set; }
+        public ObservableConcurrentQueue<Response> ResponsesQueue { get; set; }
 
         private string PlayerGuid { get; set; }
         private PlayerBoard PlayerBoard { get; set; }
@@ -40,15 +42,16 @@ namespace Player
             return PlayerStrategy.NextMove(currentLocation);
         }
 
-        public void UpdateBoard(Response responseMessage)
+        private async void HandleResponse()
         {
-            responseMessage.Update(PlayerBoard);
-        }
+            ResponseMessage response;
 
+            while (!ResponsesQueue.TryDequeue(out response))
+            {
+                await Task.Delay(10);
+            }
 
-        public void HandleResponse(Response response)
-        {
-            UpdateBoard(response);
+            response.Update(Board);
             //
             //change board state based on response 
             //  - update method in Response Message
@@ -67,9 +70,9 @@ namespace Player
 
         public void StartListeningToResponses()
         {
-            ResponsesQueue.CollectionChanged += (sender, args) =>
+            ResponsesQueue.FirstItemEnqueued += (sender, args) =>
             {
-                new Thread(() => HandleResponse(ResponsesQueue.Dequeue())).Start();
+                Task.Run(() => HandleResponse());
             };
         }
     }

@@ -17,7 +17,6 @@ namespace GameSimulation
         private readonly Thread _pieceGeneratorThread;
 
         private readonly int _spawnPieceFrequency;
-        private Random _random = new Random();
 
         public GameSimulation(string configFilePath)
         {
@@ -45,17 +44,17 @@ namespace GameSimulation
 
         private void GameMaster_GameFinished(object sender, GameFinishedEventArgs e)
         {
-            //should wait for all threads end
             Winners = e.Winners;
             GameFinished = true;
+            _pieceGeneratorThread.Join();
         }
 
         private void CreateQueues(GameMaster.GameMaster gameMaster, List<Player.Player> players)
         {
             foreach (var player in players)
             {
-                player.RequestsQueue = new ObservableQueue<Request>();
-                player.ResponsesQueue = new ObservableQueue<Response>();
+                player.RequestsQueue = new ObservableConcurrentQueue<Request>();
+                player.ResponsesQueue = new ObservableConcurrentQueue<Response>();
 
                 gameMaster.RequestsQueues.Add(player.Id, player.RequestsQueue);
                 gameMaster.ResponsesQueues.Add(player.Id, player.ResponsesQueue);

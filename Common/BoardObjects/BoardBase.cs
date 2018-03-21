@@ -43,6 +43,7 @@ namespace Common.BoardObjects
 
         public Dictionary<int, PlayerInfo> Players { get; }
         public Dictionary<int, Piece> Pieces { get; }
+        public object Lock { get; set; } = new object();
 
         public IEnumerator GetEnumerator()
         {

@@ -24,11 +24,11 @@ namespace GameMaster
             Board = boardGenerator.InitializeBoard(GameConfiguration.GameDefinition);
         }
 
-        public Dictionary<int, ObservableQueue<Request>> RequestsQueues { get; set; } =
-            new Dictionary<int, ObservableQueue<Request>>();
+        public Dictionary<int, ObservableConcurrentQueue<Request>> RequestsQueues { get; set; } =
+            new Dictionary<int, ObservableConcurrentQueue<Request>>();
 
-        public Dictionary<int, ObservableQueue<Response>> ResponsesQueues { get; set; } =
-            new Dictionary<int, ObservableQueue<Response>>();
+        public Dictionary<int, ObservableConcurrentQueue<Response>> ResponsesQueues { get; set; } =
+            new Dictionary<int, ObservableConcurrentQueue<Response>>();
 
         public GameConfiguration GameConfiguration { get; }
         private Dictionary<string, int> PlayerGuidToId { get; }
@@ -88,33 +88,50 @@ namespace GameMaster
             throw new InvalidOperationException();
         }
 
-        public void HandleMessagesFromPlayer(int playerId)
+        private async void HandleMessagesFromPlayer(int playerId)
         {
             var requestQueue = RequestsQueues[playerId];
             while (requestQueue.Count > 0)
             {
-                var request = requestQueue.Peek();
-                var delay = Convert.ToInt32(request.GetDelay(GameConfiguration.ActionCosts));
-                Thread.Sleep(delay);
+                GameMessage request;
+                while (!requestQueue.TryPeek(out request))
+                {
+                    await Task.Delay(10);
+                }
 
-                var requesterInfo = Board.Players[request.PlayerId];
-                var response = request.Execute(Board);
+                var timeSpan = Convert.ToInt32(request.GetDelay(GameConfiguration.ActionCosts));
+                await Task.Delay(timeSpan);
+
+                ResponseMessage response;
+                lock (Board.Lock)
+                {
+                    response = request.Execute(Board);
+
+                    if (IsGameFinished())
+                    {
+                        GameFinished(this, new GameFinishedEventArgs(CheckWinner()));
+                        response.GameFinished = true;
+                    }
+                }
+
                 ResponsesQueues[request.PlayerId].Enqueue(response);
 
-                if (IsGameFinished())
-                    GameFinished(this, new GameFinishedEventArgs(CheckWinner()));
-
-                RequestsQueues[request.PlayerId].Dequeue();
+                while (!RequestsQueues[request.PlayerId].TryDequeue(out var result))
+                {
+                    await Task.Delay(10);
+                }
             }
         }
 
         public void StartListeningToRequests()
         {
-            foreach (var queue in RequestsQueues)
-                queue.Value.CollectionChanged += (sender, args) =>
+            foreach (var queue in RequestsQueues.Values)
+            {
+                queue.FirstItemEnqueued += (sender, args) =>
                 {
-                    new Thread(() => HandleMessagesFromPlayer(queue.Value.Peek().PlayerId)).Start();
+                    Task.Run(() => HandleMessagesFromPlayer(args.Item.PlayerId));
                 };
+            }
         }
     }
 

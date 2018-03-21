@@ -12,7 +12,6 @@ namespace GameMaster
         private readonly Random _random = new Random();
         private readonly double _shamProbability;
 
-
         public PieceGenerator(IBoard board, double shamProbability)
         {
             _board = board;
@@ -21,17 +20,20 @@ namespace GameMaster
 
         public void SpawnPiece()
         {
-            var location = GetLocationWithoutPiece();
+            lock (_board.Lock)
+            {
+                var location = GetLocationWithoutPiece();
             var taskField = _board[location] as TaskField;
 
-            var pieceId = _board.Pieces.Count > 0 ? _board.Pieces.Keys.ToList().Max() + 1 : 0;
-            var type = _random.NextDouble() <= _shamProbability
+                var pieceId = _board.Pieces.Count > 0 ? _board.Pieces.Keys.ToList().Max() + 1 : 0;
+                var type = _random.NextDouble() <= _shamProbability
                 ? PieceType.Sham
                 : PieceType.Normal;
 
-            var piece = new Piece(pieceId, type);
-            _board.Pieces.Add(pieceId, piece);
-            taskField.PieceId = pieceId;
+                var piece = new Piece(pieceId, type);
+                _board.Pieces.Add(pieceId, piece);
+                taskField.PieceId = pieceId;
+            }
         }
 
         private Location GetLocationWithoutPiece()
