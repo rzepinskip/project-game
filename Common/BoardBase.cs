@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Shared;
-using Shared.BoardObjects;
 
 namespace Common
 {
@@ -30,18 +28,18 @@ namespace Common
         }
 
         protected Field[,] Content { get; }
+        public Field this[Location location]
+        {
+            get => Content[location.X, location.Y];
+            protected set => Content[location.X, location.Y] = value;
+        }
+
         public int TaskAreaSize { get; }
         public int GoalAreaSize { get; }
         public int Width { get; }
-
         public int Height => 2 * GoalAreaSize + TaskAreaSize;
 
         public Dictionary<int, PlayerInfo> Players { get; }
         public Dictionary<int, Piece> Pieces { get; }
-
-        public Field GetField(Location location)
-        {
-            return Content[location.X, location.Y];
-        }
     }
 }
