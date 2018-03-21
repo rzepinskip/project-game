@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using Shared.BoardObjects;
+using Common.BoardObjects;
 
 namespace GameMaster.Configuration
 {
     public class GameDefinition : IEquatable<GameDefinition>
     {
-        [XmlElement] public List<GoalField> Goals { get; set; }
+        [XmlElement]
+        public List<GoalField> Goals { get; set; }
 
         public double ShamProbability { get; set; }
 

@@ -32,7 +32,7 @@ namespace Common
         public Field this[Location location]
         {
             get => Content[location.X, location.Y];
-            protected set => Content[location.X, location.Y] = value;
+            set => Content[location.X, location.Y] = value;
         }
 
         public int TaskAreaSize { get; }

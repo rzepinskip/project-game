@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using Common;
+using Common.BoardObjects;
 using CsvHelper;
 using GameMaster.Configuration;
 using Shared;
@@ -11,7 +13,7 @@ using Shared.ResponseMessages;
 
 namespace GameMaster
 {
-    public class GameMaster
+    public class GameMaster : IGameMaster
     {
         public GameMaster(GameConfiguration gameConfiguration)
         {
@@ -27,9 +29,9 @@ namespace GameMaster
         public Dictionary<int, ObservableQueue<ResponseMessage>> ResponsesQueues { get; set; } =
             new Dictionary<int, ObservableQueue<ResponseMessage>>();
 
-        public Board Board { get; set; }
         public GameConfiguration GameConfiguration { get; }
         private Dictionary<string, int> PlayerGuidToId { get; }
+        public IGameMasterBoard Board { get; set; }
 
         public virtual event EventHandler<GameFinishedEventArgs> GameFinished;
 
@@ -55,7 +57,7 @@ namespace GameMaster
             var blueRemainingGoalsCount = 0;
             var redRemainingGoalsCount = 0;
 
-            foreach (var field in Board.Content)
+            foreach (var field in Board)
                 if (field is GoalField goalField)
                     if (goalField.Type == CommonResources.GoalFieldType.Goal)
                         if (goalField.Team == CommonResources.TeamColour.Red)
@@ -112,6 +114,36 @@ namespace GameMaster
                 {
                     new Thread(() => HandleMessagesFromPlayer(queue.Value.Peek().PlayerId)).Start();
                 };
+        }
+
+        public bool IsDiscoverPossible(string playerGuid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsMovePossible(string playerGuid, Direction direction)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsPickUpPiecePossible(string playerGuid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsPlacePiecePossible(string playerGuid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsTestPiecePossible(string playerGuid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Common.BoardObjects.Location GetPlayerLocation(string playerGuid)
+        {
+            throw new NotImplementedException();
         }
     }
 

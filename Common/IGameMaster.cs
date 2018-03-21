@@ -1,11 +1,18 @@
-﻿namespace Common
+﻿using System.Collections.Generic;
+using Common.BoardObjects;
+
+namespace Common
 {
     public interface IGameMaster
     {
-        IMessage Discover(string playerGuid);
-        IMessage Move(string playerGuid, Direction direction);
-        IMessage PickUpPiece(string playerGuid);
-        IMessage PlacePiece(string playerGuid);
-        IMessage TestPiece(string playerGuid);
+        IGameMasterBoard Board { get; set; }
+
+        bool IsDiscoverPossible(string playerGuid);
+        bool IsMovePossible(string playerGuid, Direction direction);
+        bool IsPickUpPiecePossible(string playerGuid);
+        bool IsPlacePiecePossible(string playerGuid);
+        bool IsTestPiecePossible(string playerGuid);
+
+        Location GetPlayerLocation(string playerGuid);
     }
 }

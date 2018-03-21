@@ -11,7 +11,8 @@ namespace Message
             PlayerId = playerId;
         }
 
-        [XmlAttribute] public int PlayerId { get; set; }
+        [XmlAttribute]
+        public int PlayerId { get; set; }
 
         public abstract IMessage Process(IGameMaster gameMaster);
         public abstract void Process(IPlayer player);
