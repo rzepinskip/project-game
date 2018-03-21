@@ -103,6 +103,43 @@ namespace Shared.Tests.ActionTests
             AssertTaskFields(response.TaskFields);
         }
 
+        [Fact]
+        public void DiscoverOnGoalAreaCorner()
+        {
+            var location = new Location(0, 6);
+            SetTestedPlayerLocation(location);
+
+            var message = GetDiscoverMessage();
+            var response = message.Execute(GameMasterBoard) as DiscoverResponse;
+
+            Assert.Equal(2, response.TaskFields.Count());
+            AssertTaskFields(response.TaskFields);
+        }
+        [Fact]
+        public void DiscoverOnTaskAreaCorner()
+        {
+            var location = new Location(0, 2);
+            SetTestedPlayerLocation(location);
+
+            var message = GetDiscoverMessage();
+            var response = message.Execute(GameMasterBoard) as DiscoverResponse;
+
+            Assert.Equal(4, response.TaskFields.Count());
+            AssertTaskFields(response.TaskFields);
+        }
+
+        [Fact]
+        public void DiscoverOnGoalArea()
+        {
+            var location = new Location(1, 7);
+            SetTestedPlayerLocation(location);
+
+            var message = GetDiscoverMessage();
+            var response = message.Execute(GameMasterBoard) as DiscoverResponse;
+
+            Assert.Empty(response.TaskFields);
+        }
+
         private void AssertTaskFields(IEnumerable<TaskField> taskfields)
         {
             foreach (var field in taskfields)
