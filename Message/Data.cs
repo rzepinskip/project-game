@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using Common;
 using Common.BoardObjects;
+using Common.Interfaces;
 
 namespace Message
 {

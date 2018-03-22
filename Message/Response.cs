@@ -1,5 +1,6 @@
 ﻿using System.Xml.Serialization;
 using Common;
+using Common.Interfaces;
 
 namespace Message
 {

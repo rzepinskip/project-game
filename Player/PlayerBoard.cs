@@ -1,6 +1,7 @@
 ﻿using Common;
 using System;
 using Common.BoardObjects;
+using Common.Interfaces;
 
 namespace Player
 {

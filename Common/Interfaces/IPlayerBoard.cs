@@ -1,6 +1,6 @@
 ﻿using Common.BoardObjects;
 
-namespace Common
+namespace Common.Interfaces
 {
     public interface IPlayerBoard
     {

@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 using Common;
 using Common.BoardObjects;
+using Common.Interfaces;
 using CsvHelper;
 using GameMaster.Configuration;
 using Shared;

@@ -1,4 +1,6 @@
 ﻿using Common;
+using Common.BoardObjects;
+using Common.Interfaces;
 
 namespace GameMaster
 {

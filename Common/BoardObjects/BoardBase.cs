@@ -1,10 +1,10 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
-using Common.BoardObjects;
+using Common.Interfaces;
 
-namespace Common
+namespace Common.BoardObjects
 {
-    public abstract class BoardBase
+    public abstract class BoardBase : IBoard
     {
         protected BoardBase(int boardWidth, int taskAreaSize, int goalAreaSize)
         {
@@ -42,5 +42,10 @@ namespace Common
 
         public Dictionary<int, PlayerInfo> Players { get; }
         public Dictionary<int, Piece> Pieces { get; }
+
+        public IEnumerator GetEnumerator()
+        {
+            return Content.GetEnumerator();
+        }
     }
 }

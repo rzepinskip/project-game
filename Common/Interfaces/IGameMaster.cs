@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using Common.BoardObjects;
+﻿using Common.BoardObjects;
 
-namespace Common
+namespace Common.Interfaces
 {
     public interface IGameMaster
     {

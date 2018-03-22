@@ -1,8 +1,6 @@
-﻿using System.Collections;
-
-namespace Common
+﻿namespace Common.Interfaces
 {
-    public interface IGameMasterBoard
+    public interface IGameMasterBoard : IBoard
     {
         IMessage Discover(string playerGuid);
         IMessage Move(string playerGuid, Direction direction);
