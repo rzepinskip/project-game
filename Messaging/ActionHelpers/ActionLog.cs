@@ -1,6 +1,7 @@
 ﻿using System;
+using Common;
 
-namespace Common.ActionHelpers
+namespace Messaging.ActionHelpers
 {
     public class ActionLog
     {

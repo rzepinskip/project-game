@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Common.ActionHelpers
+namespace Messaging.ActionHelpers
 {
     public class ActionCosts : IEquatable<ActionCosts>
     {
