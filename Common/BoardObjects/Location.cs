@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
 namespace Common.BoardObjects
@@ -9,6 +10,10 @@ namespace Common.BoardObjects
     [DebuggerDisplay("[X = {X}, Y = {Y}]")]
     public class Location : IEquatable<Location>
     {
+        protected Location()
+        {
+        }
+
         public Location(int x, int y)
         {
             X = x;
@@ -16,10 +21,10 @@ namespace Common.BoardObjects
         }
 
         [XmlAttribute("x")]
-        public int X { get; private set; }
+        public int X { get; set; }
 
         [XmlAttribute("y")]
-        public int Y { get; private set; }
+        public int Y { get; set; }
 
         public bool Equals(Location other)
         {
@@ -35,20 +40,21 @@ namespace Common.BoardObjects
 
         public Location GetNewLocation(Direction direction)
         {
-            var nl = new Location(X, Y);
+            Location nl = null;
+
             switch (direction)
             {
                 case Direction.Down:
-                    nl.Y = Y - 1;
+                    nl = new Location(X, Y - 1);
                     break;
                 case Direction.Left:
-                    nl.X = X - 1;
+                    nl = new Location(X - 1, Y);
                     break;
                 case Direction.Right:
-                    nl.X = X + 1;
+                    nl = new Location(X + 1, Y);
                     break;
                 case Direction.Up:
-                    nl.Y = Y + 1;
+                    nl = new Location(X, Y + 1);
                     break;
                 default:
                     break;

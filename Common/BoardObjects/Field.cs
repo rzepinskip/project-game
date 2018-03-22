@@ -6,6 +6,10 @@ namespace Common.BoardObjects
     [Serializable]
     public abstract class Field : Location, IEquatable<Field>
     {
+        protected Field()
+        {
+        }
+
         public Field(Location location) : this(location, null, DateTime.Now)
         {
         }

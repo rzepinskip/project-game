@@ -7,6 +7,10 @@ namespace Common.BoardObjects
     [Serializable]
     public class GoalField : Field, IEquatable<GoalField>
     {
+        private GoalField()
+        {
+        }
+
         public GoalField(Location location, TeamColor team, GoalFieldType type = GoalFieldType.Unknown,
             int? player = null) : this(location, team, type, player, DateTime.Now)
         {
@@ -23,7 +27,7 @@ namespace Common.BoardObjects
         public GoalFieldType Type { get; set; }
 
         [XmlAttribute("team")]
-        public TeamColor Team { get; }
+        public TeamColor Team { get; set; }
 
         public bool Equals(GoalField other)
         {
