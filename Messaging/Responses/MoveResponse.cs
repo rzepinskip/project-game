@@ -4,7 +4,7 @@ using Common.Interfaces;
 
 namespace Messaging.Responses
 {
-    internal class MoveResponse : Response
+    public class MoveResponse : Response
     {
         public MoveResponse(int playerId, Location newPlayerLocation, IEnumerable<TaskField> taskFields,
             IEnumerable<Piece> pieces, bool isGameFinished = false) : base(playerId, isGameFinished)

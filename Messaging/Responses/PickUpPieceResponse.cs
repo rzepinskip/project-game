@@ -3,7 +3,7 @@ using Common.Interfaces;
 
 namespace Messaging.Responses
 {
-    internal class PickUpPieceResponse : Response
+    public class PickUpPieceResponse : Response
     {
         public PickUpPieceResponse(int playerId, Piece piece = null, bool isGameFinished = false) : base(playerId,
             isGameFinished)

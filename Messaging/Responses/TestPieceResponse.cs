@@ -4,7 +4,7 @@ using Common.Interfaces;
 
 namespace Messaging.Responses
 {
-    internal class TestPieceResponse : Response
+    public class TestPieceResponse : Response
     {
         public TestPieceResponse(int playerId, Piece piece, bool isGameFinished = false) : base(playerId,
             isGameFinished)
