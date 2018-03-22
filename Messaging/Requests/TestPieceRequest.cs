@@ -9,6 +9,10 @@ namespace Messaging.Requests
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
     public class TestPieceRequest : Request
     {
+        protected TestPieceRequest(int playerId) : base(playerId)
+        {
+        }
+
         public override Response Execute(IBoard board)
         {
             var player = board.Players[PlayerId];

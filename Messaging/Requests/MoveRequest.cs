@@ -12,10 +12,13 @@ namespace Messaging.Requests
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
     public class MoveRequest : Request
     {
-        [XmlAttribute] public bool DirectionFieldSpecified;
+        public MoveRequest(int playerId, Direction direction) : base(playerId)
+        {
+            Direction = direction;
+        }
 
         [XmlAttribute]
-        public Direction Direction { get; set; }
+        public Direction Direction { get; }
 
         public override Response Execute(IBoard board)
         {

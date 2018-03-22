@@ -9,13 +9,19 @@ namespace Messaging.Requests
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
     public abstract class Request : ILoggable, IDelayed
     {
-        [XmlAttribute]
-        public int PlayerId { get; set; }
+        // TODO Guid and GameId handling
+        protected Request(int playerId)
+        {
+            PlayerId = playerId;
+        }
 
-        public string PlayerGuid { get; set; }
+        [XmlAttribute]
+        public int PlayerId { get; }
+
+        public string PlayerGuid { get; }
 
         [XmlAttribute]
-        public int GameId { get; set; }
+        public int GameId { get; }
 
         public abstract double GetDelay(ActionCosts actionCosts);
 

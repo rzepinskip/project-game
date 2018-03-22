@@ -10,6 +10,10 @@ namespace Messaging.Requests
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
     public class PlacePieceRequest : Request
     {
+        protected PlacePieceRequest(int playerId) : base(playerId)
+        {
+        }
+
         public override Response Execute(IBoard board)
         {
             ///TODO: different action on TaskField
