@@ -1,0 +1,165 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using GameMaster.Configuration;
+using Shared;
+using Shared.BoardObjects;
+using Xunit;
+
+namespace GameMaster.Tests
+{
+    public class ConfigurationLoaderTests
+    {
+        public ConfigurationLoaderTests()
+        {
+            confTest = new GameConfiguration
+            {
+                KeepAliveInterval = 500,
+                RetryRegisterGameInterval = 60000,
+                ActionCosts = new ActionCosts
+                {
+                    MoveDelay = 10,
+                    DiscoverDelay = 45,
+                    TestDelay = 50,
+                    PickUpDelay = 10,
+                    PlacingDelay = 10,
+                    KnowledgeExchangeDelay = 500
+                },
+                GameDefinition = new GameDefinition
+                {
+                    ShamProbability = 0.33,
+                    PlacingNewPiecesFrequency = 200,
+                    InitialNumberOfPieces = 10,
+                    BoardWidth = 10,
+                    TaskAreaLength = 10,
+                    GoalAreaLength = 3,
+                    NumberOfPlayersPerTeam = 8,
+                    GameName = "Endgame",
+                    Goals = new List<GoalField>
+                    {
+                        new GoalField(CommonResources.GoalFieldType.Goal, CommonResources.TeamColour.Red, null,
+                            DateTime.MinValue, 4, 15),
+                        new GoalField(CommonResources.GoalFieldType.Goal, CommonResources.TeamColour.Blue, null,
+                            DateTime.MinValue, 6, 1)
+                    }
+                }
+            };
+
+            var cl = new ConfigurationLoader();
+            conf = cl.LoadConfigurationFromFile("Resources/ConfigurationLoaderTestsData.xml");
+        }
+
+        private readonly GameConfiguration conf;
+        private readonly GameConfiguration confTest;
+
+        [Fact]
+        public void BoardWidthLoaded()
+        {
+            Assert.Equal(confTest.GameDefinition.BoardWidth, conf.GameDefinition.BoardWidth);
+        }
+
+        [Fact]
+        public void DiscoverDelayLoaded()
+        {
+            Assert.Equal(confTest.ActionCosts.DiscoverDelay, conf.ActionCosts.DiscoverDelay);
+        }
+
+        [Fact]
+        public void GameNameLoaded()
+        {
+            Assert.Equal(confTest.GameDefinition.GameName, conf.GameDefinition.GameName);
+        }
+
+        [Fact]
+        public void GoalAreaLengthLoaded()
+        {
+            Assert.Equal(confTest.GameDefinition.GoalAreaLength, conf.GameDefinition.GoalAreaLength);
+        }
+
+        [Fact]
+        public void GoalsLoaded()
+        {
+            Assert.True(confTest.GameDefinition.Goals == null && conf.GameDefinition.Goals == null ||
+                        confTest.GameDefinition.Goals != null && conf.GameDefinition.Goals != null);
+            Assert.Equal(confTest.GameDefinition.Goals.Count, conf.GameDefinition.Goals.Count);
+
+            var result = confTest.GameDefinition.Goals.Zip(conf.GameDefinition.Goals, (a, b) => a == b)
+                .Aggregate((a, b) => a && b);
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void InitialNumberOfPiecesLoaded()
+        {
+            Assert.Equal(confTest.GameDefinition.InitialNumberOfPieces, conf.GameDefinition.InitialNumberOfPieces);
+        }
+
+        [Fact]
+        public void KeepAliveIntervalLoaded()
+        {
+            Assert.Equal(confTest.KeepAliveInterval, conf.KeepAliveInterval);
+        }
+
+        [Fact]
+        public void KnowledgeExchangeDelayLoaded()
+        {
+            Assert.Equal(confTest.ActionCosts.KnowledgeExchangeDelay, conf.ActionCosts.KnowledgeExchangeDelay);
+        }
+
+        [Fact]
+        public void MoveDelayLoaded()
+        {
+            Assert.Equal(confTest.ActionCosts.MoveDelay, conf.ActionCosts.MoveDelay);
+        }
+
+        [Fact]
+        public void NumberOfPlayersPerTeamLoaded()
+        {
+            Assert.Equal(confTest.GameDefinition.NumberOfPlayersPerTeam, conf.GameDefinition.NumberOfPlayersPerTeam);
+        }
+
+        [Fact]
+        public void PickUpDelayLoaded()
+        {
+            Assert.Equal(confTest.ActionCosts.PickUpDelay, conf.ActionCosts.PickUpDelay);
+        }
+
+        [Fact]
+        public void PlacingDelayLoaded()
+        {
+            Assert.Equal(confTest.ActionCosts.PlacingDelay, conf.ActionCosts.PlacingDelay);
+        }
+
+        [Fact]
+        public void PlacingNewPiecesFrequencyLoaded()
+        {
+            Assert.Equal(confTest.GameDefinition.PlacingNewPiecesFrequency,
+                conf.GameDefinition.PlacingNewPiecesFrequency);
+        }
+
+        [Fact]
+        public void RetryRegisterGameIntervalLoaded()
+        {
+            Assert.Equal(confTest.RetryRegisterGameInterval, conf.RetryRegisterGameInterval);
+        }
+
+        [Fact]
+        public void ShamProbabilityLoaded()
+        {
+            Assert.Equal(confTest.GameDefinition.ShamProbability, conf.GameDefinition.ShamProbability);
+        }
+
+        [Fact]
+        public void TaskAreaLengthLoaded()
+        {
+            Assert.Equal(confTest.GameDefinition.TaskAreaLength, conf.GameDefinition.TaskAreaLength);
+        }
+
+
+        [Fact]
+        public void TestDelayLoaded()
+        {
+            Assert.Equal(confTest.ActionCosts.TestDelay, conf.ActionCosts.TestDelay);
+        }
+    }
+}
