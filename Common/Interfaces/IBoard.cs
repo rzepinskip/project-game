@@ -11,12 +11,13 @@ namespace Common.Interfaces
 
         int TaskAreaSize { get; }
         int GoalAreaSize { get; }
-
-        int? GetPieceIdAt(Location llocation);
-
         int Width { get; }
         int Height { get; }
 
         Field this[Location location] { get; set; }
+
+        int? GetPieceIdAt(Location llocation);
+        bool IsLocationInTaskArea(Location location);
+        int DistanceToPieceFrom(Location location);
     }
 }

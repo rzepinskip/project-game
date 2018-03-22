@@ -59,7 +59,29 @@ namespace Common.BoardObjects
             return pieceId;
         }
 
-        private bool IsLocationInTaskArea(Location location)
+
+        public int DistanceToPieceFrom(Location location)
+        {
+            var min = int.MaxValue;
+            for (var i = 0; i < Width; ++i)
+            for (var j = GoalAreaSize; j < TaskAreaSize + GoalAreaSize; ++j)
+            {
+                var field = Content[i, j] as TaskField;
+                if (field.PieceId != null)
+                {
+                    var distance = field.ManhattanDistanceTo(location);
+                    if (distance < min)
+                        min = distance;
+                }
+            }
+
+            if (min == int.MaxValue)
+                min = -1;
+
+            return min;
+        }
+
+        public bool IsLocationInTaskArea(Location location)
         {
             if (location.Y <= TaskAreaSize + GoalAreaSize - 1 && location.Y >= GoalAreaSize)
                 return true;
