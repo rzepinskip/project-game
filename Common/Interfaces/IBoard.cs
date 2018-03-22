@@ -8,5 +8,10 @@ namespace Common.Interfaces
     {
         Dictionary<int, PlayerInfo> Players { get; }
         Dictionary<int, Piece> Pieces { get; }
+
+        int TaskAreaSize { get; }
+        int GoalAreaSize { get; }
+        int Width { get; }
+        int Height { get; }
     }
 }
