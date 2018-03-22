@@ -12,7 +12,7 @@ namespace Messaging.Requests
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
     public class DiscoverRequest : Request
     {
-        protected DiscoverRequest(int playerId) : base(playerId)
+        public DiscoverRequest(int playerId) : base(playerId)
         {
         }
 

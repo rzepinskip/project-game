@@ -10,7 +10,7 @@ namespace Messaging.Requests
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
     public class PickUpPieceRequest : Request
     {
-        protected PickUpPieceRequest(int playerId) : base(playerId)
+        public PickUpPieceRequest(int playerId) : base(playerId)
         {
         }
 
