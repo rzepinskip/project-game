@@ -1,10 +1,11 @@
 ﻿using System.Xml.Serialization;
+using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
 using Messaging.ActionHelpers;
 using Messaging.Responses;
 
-namespace Common.GameMessages.PieceActions
+namespace Messaging.Requests
 {
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
     public class PlacePieceRequest : Request
@@ -18,7 +19,7 @@ namespace Common.GameMessages.PieceActions
             player.Piece = null;
 
             if (piece.Type == PieceType.Sham)
-                return new PlacePieceResponse();
+                return new PlacePieceResponse(PlayerId);
 
             var playerGoalField = board[player.Location];
             var goalField = playerGoalField as GoalField;
@@ -27,11 +28,7 @@ namespace Common.GameMessages.PieceActions
             ///TODO: GameMaster counter
             if (goalField != null) goalField.Type = GoalFieldType.NonGoal;
 
-            var response = new PlacePieceResponse
-            {
-                PlayerId = PlayerId,
-                GoalField = playerGoalField as GoalField
-            };
+            var response = new PlacePieceResponse(PlayerId, playerGoalField as GoalField);
 
             return response;
         }

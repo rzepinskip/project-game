@@ -1,17 +1,18 @@
 ﻿using System.Xml.Serialization;
+using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
 using Messaging.ActionHelpers;
 using Messaging.Responses;
 
-namespace Common.GameMessages
+namespace Messaging.Requests
 {
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
     public class PickUpPieceRequest : Request
     {
         public override Response Execute(IBoard board)
         {
-            var response = new PickUpPieceResponse();
+            var response = new PickUpPieceResponse(PlayerId);
 
             var player = board.Players[PlayerId];
             if (!board.IsLocationInTaskArea(player.Location))
@@ -28,11 +29,7 @@ namespace Common.GameMessages
             player.Piece = piece;
             playerField.PieceId = null;
 
-            response = new PickUpPieceResponse
-            {
-                PlayerId = PlayerId,
-                Piece = new Piece(piece.Id, PieceType.Unknown, piece.PlayerId)
-            };
+            response = new PickUpPieceResponse(PlayerId, new Piece(piece.Id, PieceType.Unknown, piece.PlayerId));
 
             return response;
         }

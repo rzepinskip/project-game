@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
+using Common;
 using Common.ActionAvailability.AvailabilityChain;
 using Common.BoardObjects;
 using Common.Interfaces;
 using Messaging.ActionHelpers;
 using Messaging.Responses;
 
-namespace Common.GameMessages
+namespace Messaging.Requests
 {
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
     public class MoveRequest : Request
@@ -22,8 +23,7 @@ namespace Common.GameMessages
 
             var taskFields = new List<TaskField>();
             var pieces = new List<Piece>();
-            var response = new MoveResponse {PlayerId = PlayerId, TaskFields = taskFields, Pieces = pieces};
-
+            Location newPlayerLocation;
             var actionAvailability = new MoveAvailabilityChain(player.Location, Direction, player.Team, board);
             if (actionAvailability.ActionAvailable())
             {
@@ -33,7 +33,7 @@ namespace Common.GameMessages
                 field.PlayerId = PlayerId;
                 player.Location = newLocation;
 
-                response.NewPlayerLocation = newLocation;
+                newPlayerLocation = newLocation;
                 if (field is TaskField taskField)
                 {
                     taskField.DistanceToPiece = board.DistanceToPieceFrom(taskField);
@@ -48,8 +48,10 @@ namespace Common.GameMessages
             }
             else
             {
-                response.NewPlayerLocation = player.Location;
+                newPlayerLocation = player.Location;
             }
+
+            var response = new MoveResponse(PlayerId, newPlayerLocation, taskFields, pieces);
 
             return response;
         }

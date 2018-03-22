@@ -1,9 +1,10 @@
 ﻿using System.Xml.Serialization;
+using Common;
 using Common.Interfaces;
 using Messaging.ActionHelpers;
 using Messaging.Responses;
 
-namespace Common.GameMessages
+namespace Messaging.Requests
 {
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
     public abstract class Request : ILoggable, IDelayed

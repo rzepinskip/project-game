@@ -1,9 +1,10 @@
 ﻿using System.Xml.Serialization;
+using Common;
 using Common.Interfaces;
 using Messaging.ActionHelpers;
 using Messaging.Responses;
 
-namespace Common.GameMessages.PieceActions
+namespace Messaging.Requests
 {
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
     public class TestPieceRequest : Request
@@ -16,11 +17,7 @@ namespace Common.GameMessages.PieceActions
             if (playerPiece.Type == PieceType.Sham)
                 player.Piece = null;
 
-            var response = new TestPieceResponse
-            {
-                PlayerId = PlayerId,
-                Piece = playerPiece
-            };
+            var response = new TestPieceResponse(PlayerId, playerPiece);
 
             return response;
         }
