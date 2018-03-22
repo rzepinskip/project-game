@@ -42,7 +42,7 @@ namespace Common.GameMessages
                     if (taskField.PieceId.HasValue)
                     {
                         var piece = board.Pieces[taskField.PieceId.Value];
-                        pieces.Add(new Piece (piece.Id, PieceType.Unknown, piece.PlayerId));
+                        pieces.Add(new Piece(piece.Id, PieceType.Unknown, piece.PlayerId));
                     }
                 }
             }
