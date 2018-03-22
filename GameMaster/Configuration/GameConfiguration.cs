@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using Shared;
+using Messaging.ActionHelpers;
 
 namespace GameMaster.Configuration
 {
@@ -11,9 +11,11 @@ namespace GameMaster.Configuration
         public GameDefinition GameDefinition { get; set; }
         public ActionCosts ActionCosts { get; set; }
 
-        [XmlAttribute] public double KeepAliveInterval { get; set; }
+        [XmlAttribute]
+        public double KeepAliveInterval { get; set; }
 
-        [XmlAttribute] public double RetryRegisterGameInterval { get; set; }
+        [XmlAttribute]
+        public double RetryRegisterGameInterval { get; set; }
 
         public bool Equals(GameConfiguration other)
         {

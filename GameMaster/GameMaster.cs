@@ -7,14 +7,14 @@ using Common.BoardObjects;
 using Common.Interfaces;
 using CsvHelper;
 using GameMaster.Configuration;
-using Shared;
-using Shared.BoardObjects;
-using Shared.GameMessages;
-using Shared.ResponseMessages;
+using Messaging;
+using Messaging.ActionHelpers;
+using Messaging.Requests;
+using Messaging.Responses;
 
 namespace GameMaster
 {
-    public class GameMaster : IGameMaster
+    public class GameMaster
     {
         public GameMaster(GameConfiguration gameConfiguration)
         {
@@ -24,15 +24,15 @@ namespace GameMaster
             Board = boardGenerator.InitializeBoard(GameConfiguration.GameDefinition);
         }
 
-        public Dictionary<int, ObservableQueue<GameMessage>> RequestsQueues { get; set; } =
-            new Dictionary<int, ObservableQueue<GameMessage>>();
+        public Dictionary<int, ObservableQueue<Request>> RequestsQueues { get; set; } =
+            new Dictionary<int, ObservableQueue<Request>>();
 
-        public Dictionary<int, ObservableQueue<ResponseMessage>> ResponsesQueues { get; set; } =
-            new Dictionary<int, ObservableQueue<ResponseMessage>>();
+        public Dictionary<int, ObservableQueue<Response>> ResponsesQueues { get; set; } =
+            new Dictionary<int, ObservableQueue<Response>>();
 
         public GameConfiguration GameConfiguration { get; }
         private Dictionary<string, int> PlayerGuidToId { get; }
-        public IGameMasterBoard Board { get; set; }
+        public GameMasterBoard Board { get; set; }
 
         public virtual event EventHandler<GameFinishedEventArgs> GameFinished;
 
@@ -48,7 +48,7 @@ namespace GameMaster
             }
         }
 
-        public PieceGenerator CreatePieceGenerator(Board board)
+        public PieceGenerator CreatePieceGenerator(IBoard board)
         {
             return new PieceGenerator(board, GameConfiguration.GameDefinition.ShamProbability);
         }
@@ -60,31 +60,31 @@ namespace GameMaster
 
             foreach (var field in Board)
                 if (field is GoalField goalField)
-                    if (goalField.Type == CommonResources.GoalFieldType.Goal)
-                        if (goalField.Team == CommonResources.TeamColour.Red)
+                    if (goalField.Type == GoalFieldType.Goal)
+                        if (goalField.Team == TeamColor.Red)
                             redRemainingGoalsCount++;
                         else
                             blueRemainingGoalsCount++;
             return blueRemainingGoalsCount == 0 || redRemainingGoalsCount == 0;
         }
 
-        public CommonResources.TeamColour CheckWinner()
+        public TeamColor CheckWinner()
         {
             var blueRemainingGoalsCount = 0;
             var redRemainingGoalsCount = 0;
 
-            foreach (var field in Board.Content)
+            foreach (var field in Board)
                 if (field is GoalField goalField)
-                    if (goalField.Type == CommonResources.GoalFieldType.Goal)
-                        if (goalField.Team == CommonResources.TeamColour.Red)
+                    if (goalField.Type == GoalFieldType.Goal)
+                        if (goalField.Team == TeamColor.Red)
                             redRemainingGoalsCount++;
                         else
                             blueRemainingGoalsCount++;
 
             if (blueRemainingGoalsCount == 0)
-                return CommonResources.TeamColour.Blue;
+                return TeamColor.Blue;
             if (redRemainingGoalsCount == 0)
-                return CommonResources.TeamColour.Red;
+                return TeamColor.Red;
             throw new InvalidOperationException();
         }
 
@@ -116,45 +116,15 @@ namespace GameMaster
                     new Thread(() => HandleMessagesFromPlayer(queue.Value.Peek().PlayerId)).Start();
                 };
         }
-
-        public bool IsDiscoverPossible(string playerGuid)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsMovePossible(string playerGuid, Direction direction)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsPickUpPiecePossible(string playerGuid)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsPlacePiecePossible(string playerGuid)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsTestPiecePossible(string playerGuid)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Common.BoardObjects.Location GetPlayerLocation(string playerGuid)
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public class GameFinishedEventArgs : EventArgs
     {
-        public GameFinishedEventArgs(CommonResources.TeamColour winners)
+        public GameFinishedEventArgs(TeamColor winners)
         {
             Winners = winners;
         }
 
-        public CommonResources.TeamColour Winners { get; set; }
+        public TeamColor Winners { get; set; }
     }
 }

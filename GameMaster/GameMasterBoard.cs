@@ -1,38 +1,12 @@
-﻿using Common;
-using Common.BoardObjects;
+﻿using Common.BoardObjects;
 using Common.Interfaces;
 
 namespace GameMaster
 {
-    public class GameMasterBoard : BoardBase, IGameMasterBoard
+    public class GameMasterBoard : BoardBase, IBoard
     {
         public GameMasterBoard(int boardWidth, int taskAreaSize, int goalAreaSize) : base(boardWidth, taskAreaSize, goalAreaSize)
         {
-        }
-
-        public IMessage Discover(string playerGuid)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public IMessage Move(string playerGuid, Direction direction)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public IMessage PickUpPiece(string playerGuid)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public IMessage PlacePiece(string playerGuid)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public IMessage TestPiece(string playerGuid)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }
