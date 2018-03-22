@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Common.ActionAvailability.ActionAvailabilityHelpers;
+using Common.ActionAvailability.Helpers;
 
 namespace Common.ActionAvailability.AvailabilityLink
 {

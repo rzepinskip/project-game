@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using Common.ActionAvailability.ActionAvailabilityHelpers;
-using Common.ActionAvailability.AvailabilityLink;
+using Common.ActionAvailability.Helpers;
 
-namespace Commons.ActionAvailability.AvailabilityLink
+namespace Common.ActionAvailability.AvailabilityLink
 {
     internal class HasPlayerEmptySlotForPieceLink : AvailabilityLinkBase
     {

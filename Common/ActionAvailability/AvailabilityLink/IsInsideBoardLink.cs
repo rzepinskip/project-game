@@ -1,4 +1,4 @@
-﻿using Common.ActionAvailability.ActionAvailabilityHelpers;
+﻿using Common.ActionAvailability.Helpers;
 using Common.BoardObjects;
 
 namespace Common.ActionAvailability.AvailabilityLink

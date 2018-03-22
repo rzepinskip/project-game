@@ -2,7 +2,6 @@
 using Common.ActionAvailability.AvailabilityLink;
 using Common.BoardObjects;
 using Common.Interfaces;
-using Commons.ActionAvailability.AvailabilityLink;
 
 namespace Common.ActionAvailability.AvailabilityChain
 {

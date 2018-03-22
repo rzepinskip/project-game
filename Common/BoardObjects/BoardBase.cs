@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Common.Interfaces;
 
@@ -46,6 +47,24 @@ namespace Common.BoardObjects
         public IEnumerator GetEnumerator()
         {
             return Content.GetEnumerator();
+        }
+
+        public int? GetPieceIdAt(Location location)
+        {
+            int? pieceId = null;
+
+            if (IsLocationInTaskArea(location))
+                pieceId = (this[location] as TaskField).PieceId;
+
+            return pieceId;
+        }
+
+        private bool IsLocationInTaskArea(Location location)
+        {
+            if (location.Y <= TaskAreaSize + GoalAreaSize - 1 && location.Y >= GoalAreaSize)
+                return true;
+
+            return false;
         }
     }
 }
