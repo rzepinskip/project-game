@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Common;
+using Common.Interfaces;
 using GameMaster;
 using GameMaster.Configuration;
-using Shared;
-using Shared.BoardObjects;
-using Shared.GameMessages;
-using Shared.ResponseMessages;
+using Messaging;
+using Messaging.Requests;
+using Messaging.Responses;
+using Player;
 
 namespace GameSimulation
 {
@@ -39,7 +41,7 @@ namespace GameSimulation
         public PieceGenerator PieceGenerator { get; }
 
         public bool GameFinished { get; private set; }
-        public CommonResources.TeamColour Winners { get; private set; }
+        public TeamColor Winners { get; private set; }
 
         private void GameMaster_GameFinished(object sender, GameFinishedEventArgs e)
         {
@@ -52,8 +54,8 @@ namespace GameSimulation
         {
             foreach (var player in players)
             {
-                player.RequestsQueue = new ObservableQueue<GameMessage>();
-                player.ResponsesQueue = new ObservableQueue<ResponseMessage>();
+                player.RequestsQueue = new ObservableQueue<Request>();
+                player.ResponsesQueue = new ObservableQueue<Response>();
 
                 gameMaster.RequestsQueues.Add(player.Id, player.RequestsQueue);
                 gameMaster.ResponsesQueues.Add(player.Id, player.ResponsesQueue);
@@ -74,7 +76,7 @@ namespace GameSimulation
 
             for (var i = 0; i < playersCount; i++)
             {
-                var playerBoard = new Board(gameMaster.Board.Width, gameMaster.Board.TaskAreaSize,
+                var playerBoard = new PlayerBoard(gameMaster.Board.Width, gameMaster.Board.TaskAreaSize,
                     gameMaster.Board.GoalAreaSize);
                 var playerInfo = gameMaster.Board.Players[i];
                 var player = new Player.Player();

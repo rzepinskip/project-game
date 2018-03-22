@@ -1,27 +1,29 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using Common;
+using Common.BoardObjects;
+using Common.Interfaces;
+using Messaging;
+using Messaging.Requests;
+using Messaging.Responses;
 using Player.Strategy;
-using Shared;
-using Shared.BoardObjects;
-using Shared.GameMessages;
-using Shared.ResponseMessages;
 
 namespace Player
 {
     public class Player : PlayerBase
     {
-        public ObservableQueue<GameMessage> RequestsQueue { get; set; }
-        public ObservableQueue<ResponseMessage> ResponsesQueue { get; set; }
+        public ObservableQueue<Request> RequestsQueue { get; set; }
+        public ObservableQueue<Response> ResponsesQueue { get; set; }
 
         private string PlayerGuid { get; set; }
-        private Board Board { get; set; }
+        private PlayerBoard Board { get; set; }
 
         private List<PlayerBase> Players { get; set; }
 
         //public Location Location { get; set; }
         private PlayerStrategy PlayerStrategy { get; set; }
 
-        public void InitializePlayer(int id, CommonResources.TeamColour team, PlayerType type, Board board,
+        public void InitializePlayer(int id, TeamColor team, PlayerType type, IBoard board,
             Location location)
         {
             Id = id;
@@ -33,19 +35,19 @@ namespace Player
             Board.Players.Add(id, new PlayerInfo(team, PlayerType.Leader, location));
         }
 
-        public GameMessage GetNextRequestMessage()
+        public Request GetNextRequestMessage()
         {
             var currentLocation = Board.Players[Id].Location;
             return PlayerStrategy.NextMove(currentLocation);
         }
 
-        public void UpdateBoard(ResponseMessage responseMessage)
+        public void UpdateBoard(Response responseMessage)
         {
             responseMessage.Update(Board);
         }
 
 
-        public void HandleResponse(ResponseMessage response)
+        public void HandleResponse(Response response)
         {
             UpdateBoard(response);
             //
