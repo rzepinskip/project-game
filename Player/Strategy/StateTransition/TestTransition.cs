@@ -1,45 +1,38 @@
-﻿using Shared;
-using Shared.BoardObjects;
-using Shared.GameMessages;
+﻿using Common;
+using Common.BoardObjects;
+using Messaging.Requests;
 
 namespace Player.Strategy.StateTransition
 {
     internal class TestTransition : BaseTransition
     {
-        public TestTransition(Location location, CommonResources.TeamColour team, int playerId, Board board) : base(
+        public TestTransition(Location location, TeamColor team, int playerId, PlayerBoard board) : base(
             location, team, playerId, board)
         {
         }
 
-        public override GameMessage ExecuteStrategy()
+        public override Request ExecuteStrategy()
         {
             var playerInfo = board.Players[playerId];
 
             if (playerInfo.Piece == null)
             {
-                ChangeState = PlayerStrategy.PlayerState.Discover;
-                return new Discover
-                {
-                    PlayerId = playerId
-                };
+                ChangeState = PlayerState.Discover;
+                return new DiscoverRequest(playerId);
             }
 
-            ChangeState = PlayerStrategy.PlayerState.MoveToGoalArea;
-            var direction = team == CommonResources.TeamColour.Red
-                ? CommonResources.MoveType.Up
-                : CommonResources.MoveType.Down;
-            return new Move
-            {
-                Direction = direction,
-                PlayerId = playerId
-            };
+            ChangeState = PlayerState.MoveToGoalArea;
+            var direction = team == TeamColor.Red
+                ? Direction.Up
+                : Direction.Down;
+            return new MoveRequest(playerId, direction);
 
             //switch (playerInfo.Piece.Type)
             //{
-            //    case CommonResources.PieceType.Sham:
+            //    case PieceType.Sham:
 
 
-            //    case CommonResources.PieceType.Normal:
+            //    case PieceType.Normal:
 
 
             //    default:

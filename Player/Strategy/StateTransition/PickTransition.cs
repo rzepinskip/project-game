@@ -1,24 +1,20 @@
-﻿using Shared;
-using Shared.BoardObjects;
-using Shared.GameMessages;
-using Shared.GameMessages.PieceActions;
+﻿using Common;
+using Common.BoardObjects;
+using Messaging.Requests;
 
 namespace Player.Strategy.StateTransition
 {
     internal class PickTransition : BaseTransition
     {
-        public PickTransition(Location location, CommonResources.TeamColour team, int playerId, Board board) : base(
+        public PickTransition(Location location, TeamColor team, int playerId, PlayerBoard board) : base(
             location, team, playerId, board)
         {
         }
 
-        public override GameMessage ExecuteStrategy()
+        public override Request ExecuteStrategy()
         {
-            ChangeState = PlayerStrategy.PlayerState.Test;
-            return new TestPiece
-            {
-                PlayerId = playerId
-            };
+            ChangeState = PlayerState.Test;
+            return new TestPieceRequest(playerId);
         }
     }
 }

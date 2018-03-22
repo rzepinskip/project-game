@@ -1,18 +1,17 @@
-﻿using Shared.BoardObjects;
-using Shared.GameMessages;
-using static Player.Strategy.PlayerStrategy;
-using static Shared.CommonResources;
+﻿using Common;
+using Common.BoardObjects;
+using Messaging.Requests;
 
 namespace Player.Strategy.StateTransition
 {
     public abstract class BaseTransition
     {
-        protected Board board;
+        protected PlayerBoard board;
         protected Location location;
         protected int playerId;
-        protected TeamColour team;
+        protected TeamColor team;
 
-        public BaseTransition(Location location, TeamColour team, int playerId, Board board)
+        public BaseTransition(Location location, TeamColor team, int playerId, PlayerBoard board)
         {
             this.location = location;
             this.team = team;
@@ -22,6 +21,6 @@ namespace Player.Strategy.StateTransition
 
         public PlayerState ChangeState { get; set; }
 
-        public abstract GameMessage ExecuteStrategy();
+        public abstract Request ExecuteStrategy();
     }
 }

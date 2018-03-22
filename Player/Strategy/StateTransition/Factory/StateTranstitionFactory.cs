@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using Shared;
-using Shared.BoardObjects;
-using static Player.Strategy.PlayerStrategy;
+using Common;
+using Common.BoardObjects;
 
 namespace Player.Strategy.StateTransition.Factory
 {
     public class StateTranstitionFactory
     {
-        private readonly Board board;
+        private readonly PlayerBoard board;
         private readonly int playerId;
-        private readonly CommonResources.TeamColour teamColour;
+        private readonly TeamColor teamColour;
         private readonly List<GoalField> undiscoveredGoalFields;
 
-        public StateTranstitionFactory(Board board, int playerId, CommonResources.TeamColour teamColour,
+        public StateTranstitionFactory(PlayerBoard board, int playerId, TeamColor teamColour,
             List<GoalField> undiscoveredGoalFields)
         {
             this.board = board;
