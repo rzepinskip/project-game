@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
+using Common.ActionInfo;
+using Common.Logging;
+using GameMaster.ActionHandlers;
 using GameMaster.Configuration;
-using Messaging.ActionHelpers;
-using Messaging.Requests;
-using Messaging.Responses;
 using NLog;
 
 namespace GameMaster
 {
-    public class GameMaster
+    public class GameMaster : IGameMaster
     {
         private static Logger _logger = LogManager.GetCurrentClassLogger();
         public GameMaster(GameConfiguration gameConfiguration)
@@ -20,6 +20,11 @@ namespace GameMaster
 
             var boardGenerator = new BoardGenerator();
             Board = boardGenerator.InitializeBoard(GameConfiguration.GameDefinition);
+
+            foreach (var player in Board.Players)
+            {
+                PlayerGuidToId.Add(Guid.NewGuid().ToString(), player.Key);
+            }
         }
 
         public Dictionary<int, ObservableConcurrentQueue<Request>> RequestsQueues { get; set; } =
@@ -32,8 +37,17 @@ namespace GameMaster
         public Dictionary<int, object> IsPlayerQueueProcessedLock { get; set; } = new Dictionary<int, object>();
 
         public GameConfiguration GameConfiguration { get; }
-        private Dictionary<string, int> PlayerGuidToId { get; }
+        public Dictionary<string, int> PlayerGuidToId { get; } = new Dictionary<string, int>();
         public GameMasterBoard Board { get; set; }
+
+        public (DataFieldSet data, bool isGameFinished) EvaluateAction(ActionInfo actionInfo)
+        {
+            var playerId = PlayerGuidToId[actionInfo.PlayerGuid];
+            var action = new ActionHandlerDispatcher((dynamic)actionInfo, Board, playerId);
+            var responseData = action.Execute();
+            var _isGameFinished = IsGameFinished();
+            return (data: responseData, isGameFinished: _isGameFinished);
+        }
 
         public virtual event EventHandler<GameFinishedEventArgs> GameFinished;
 
@@ -91,7 +105,7 @@ namespace GameMaster
                     }
                 }
                 
-                ResponsesQueues[request.PlayerId].Enqueue(response);
+                // TODO Event handler
             }
         }
 

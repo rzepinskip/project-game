@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Common;
 using Common.BoardObjects;
 using GameMaster.Configuration;
@@ -9,34 +10,29 @@ namespace GameMaster
     public class BoardGenerator
     {
         private readonly Random _random = new Random();
-        private GameMasterBoard _board;
+        protected GameMasterBoard Board;
 
         public GameMasterBoard InitializeBoard(GameDefinition gameDefinition)
         {
-            _board = new GameMasterBoard(gameDefinition.BoardWidth, gameDefinition.TaskAreaLength,
+            Board = new GameMasterBoard(gameDefinition.BoardWidth, gameDefinition.TaskAreaLength,
                 gameDefinition.GoalAreaLength);
-            PlaceInitialPieces(gameDefinition.InitialNumberOfPieces, gameDefinition.ShamProbability);
+
+            var pieces = GeneratePieces(gameDefinition.InitialNumberOfPieces, gameDefinition.ShamProbability);
+            var piecesLocations = GenerateLocationsForPieces(gameDefinition.InitialNumberOfPieces);
+            PlacePieces(pieces, piecesLocations);
 
             PlaceGoals(gameDefinition.Goals);
 
             var players = GeneratePlayers(gameDefinition.NumberOfPlayersPerTeam);
+            var playersLocations = GenerateLocationsForPlayers(gameDefinition.NumberOfPlayersPerTeam);
+            PlacePlayers(players, playersLocations);
 
-            for (var i = 0; i < players.Count; i++)
-            {
-                var player = players[i];
-                _board.Players.Add(i, player);
-                _board[player.Location].PlayerId = i;
-            }
-
-            return _board;
+            return Board;
         }
 
-        private void PlaceInitialPieces(int count, double shamProbability)
+        protected List<Piece> GeneratePieces(int count, double shamProbability)
         {
-            var taskAreaBottomLeftCorner = new Location(0, _board.GoalAreaSize);
-            var taskAreaTopRightCorner = new Location(_board.Width - 1, _board.Height - (_board.GoalAreaSize + 1));
-            var locations = GenerateLocationsOnRectangle(count, taskAreaBottomLeftCorner, taskAreaTopRightCorner);
-
+            var pieces = new List<Piece>(count);
             for (var i = 0; i < count; i++)
             {
                 var type = _random.NextDouble() <= shamProbability
@@ -44,34 +40,60 @@ namespace GameMaster
                     : PieceType.Normal;
                 var piece = new Piece(i, type);
 
-                var location = locations.Pop();
-                var taskField = _board[location] as TaskField;
-                taskField.DistanceToPiece = 0;
-                taskField.PieceId = i;
-
-                _board.Pieces.Add(i, piece);
+                pieces.Add(piece);
             }
+
+            return pieces;
         }
 
-        private void PlaceGoals(List<GoalField> goals)
+        protected List<Location> GenerateLocationsForPieces(int count)
         {
-            foreach (var goal in goals) _board[goal] = goal;
+            var taskAreaBottomLeftCorner = new Location(0, Board.GoalAreaSize);
+            var taskAreaTopRightCorner = new Location(Board.Width - 1, Board.Height - (Board.GoalAreaSize + 1));
+            var locations = GenerateLocationsOnRectangle(count, taskAreaBottomLeftCorner, taskAreaTopRightCorner);
 
-            foreach (var goalField in goals)
+            return locations;
+        }
+
+        protected void PlacePieces(List<Piece> pieces, List<Location> locations)
+        {
+            for (var i = 0; i < locations.Count(); i++)
             {
-                switch (goalField.Team)
-                {
-                    case TeamColor.Blue:
-                        _board.UncompletedBlueGoalsLocations.Add(goalField);
-                        break;
-                    case TeamColor.Red:
-                        _board.UncompletedRedGoalsLocations.Add(goalField);
-                        break;
-                }
+                var taskFieldToFill = Board[locations[i]] as TaskField;
+                taskFieldToFill.DistanceToPiece = 0;
+                taskFieldToFill.PieceId = pieces[i].Id;
+
+                Board.Pieces.Add(i, pieces[i]);
             }
         }
 
-        private List<PlayerInfo> GeneratePlayers(int teamPlayerCount)
+        protected void PlaceGoals(IEnumerable<GoalField> goals)
+        {
+            foreach (var goal in goals) Board[goal] = goal;
+        }
+
+        protected Dictionary<TeamColor, List<Location>> GenerateLocationsForPlayers(int teamPlayerCount)
+        {
+            var redBottomLeftCorner = new Location(0, Board.Height - Board.GoalAreaSize);
+            var redTopRightCorner = new Location(Board.Width - 1, Board.Height - 1);
+            var redTeamLocations =
+                GenerateLocationsOnRectangle(teamPlayerCount, redBottomLeftCorner, redTopRightCorner);
+
+            var blueBottomLeftCorner = new Location(0, 0);
+            var blueTopRightCorner = new Location(Board.Width - 1, Board.GoalAreaSize - 1);
+            var blueTeamLocations =
+                GenerateLocationsOnRectangle(teamPlayerCount, blueBottomLeftCorner, blueTopRightCorner);
+
+            var playersLocations = new Dictionary<TeamColor, List<Location>>
+            {
+                {TeamColor.Blue, blueTeamLocations},
+                {TeamColor.Red, redTeamLocations}
+            };
+
+            return playersLocations;
+        }
+
+        protected List<PlayerInfo> GeneratePlayers(int teamPlayerCount)
         {
             var playersCount = 2 * teamPlayerCount;
             var players = new List<PlayerInfo>(playersCount);
@@ -84,35 +106,39 @@ namespace GameMaster
                 if (i < 2)
                     role = PlayerType.Leader;
 
-                var player = new PlayerInfo(team, role, null);
+                var player = new PlayerInfo(i, team, role, null);
                 players.Add(player);
             }
-
-            AssignStartingLocations(players);
 
             return players;
         }
 
-        private void AssignStartingLocations(List<PlayerInfo> players)
+        protected void PlacePlayers(List<PlayerInfo> players, Dictionary<TeamColor, List<Location>> locations)
         {
-            var redBottomLeftCorner = new Location(0, _board.Height - _board.GoalAreaSize);
-            var redTopRightCorner = new Location(_board.Width - 1, _board.Height - 1);
-            var redTeamLocations =
-                GenerateLocationsOnRectangle(players.Count / 2, redBottomLeftCorner, redTopRightCorner);
-
-            var blueBottomLeftCorner = new Location(0, 0);
-            var blueTopRightCorner = new Location(_board.Width - 1, _board.GoalAreaSize - 1);
-            var blueTeamLocations =
-                GenerateLocationsOnRectangle(players.Count / 2, blueBottomLeftCorner, blueTopRightCorner);
-
+            var redCounter = 0;
+            var blueCounter = 0;
             foreach (var player in players)
-                if (player.Team == TeamColor.Red)
-                    player.Location = redTeamLocations.Pop();
-                else if (player.Team == TeamColor.Blue)
-                    player.Location = blueTeamLocations.Pop();
+                switch (player.Team)
+                {
+                    case TeamColor.Red:
+                        player.Location = locations[TeamColor.Red][redCounter];
+                        redCounter++;
+                        break;
+                    case TeamColor.Blue:
+                        player.Location = locations[TeamColor.Blue][blueCounter];
+                        blueCounter++;
+                        break;
+                }
+
+            for (var i = 0; i < players.Count; i++)
+            {
+                var player = players[i];
+                Board.Players.Add(i, player);
+                Board[player.Location].PlayerId = i;
+            }
         }
 
-        private Stack<Location> GenerateLocationsOnRectangle(int count, Location bottomLeftCorner,
+        protected List<Location> GenerateLocationsOnRectangle(int count, Location bottomLeftCorner,
             Location topRightCorner)
         {
             var randomLocations = new HashSet<Location>();
@@ -129,7 +155,7 @@ namespace GameMaster
                 } while (!randomLocations.Add(location));
             }
 
-            return new Stack<Location>(randomLocations);
+            return new List<Location>(randomLocations);
         }
     }
 }

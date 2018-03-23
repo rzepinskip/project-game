@@ -1,7 +1,7 @@
 ﻿using System.Xml.Serialization;
 using Common;
 using Common.ActionInfo;
-using Common.Interfaces;
+using Common.Logging;
 
 namespace Messaging.Requests
 {
