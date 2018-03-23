@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Common.Interfaces;
 
@@ -30,6 +29,7 @@ namespace Common.BoardObjects
         }
 
         protected Field[,] Content { get; }
+
         public Field this[Location location]
         {
             get => Content[location.X, location.Y];

@@ -4,8 +4,7 @@ using System.Linq;
 using GameMaster.Configuration;
 using Common;
 using Common.BoardObjects;
-using Messaging.ActionHelpers;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.Resources;
+using GameMaster.Delays;
 using Xunit;
 
 namespace GameMaster.Tests

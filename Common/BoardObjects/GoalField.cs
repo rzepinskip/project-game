@@ -23,11 +23,9 @@ namespace Common.BoardObjects
             Type = type;
         }
 
-        [XmlAttribute("type")]
-        public GoalFieldType Type { get; set; }
+        [XmlAttribute("type")] public GoalFieldType Type { get; set; }
 
-        [XmlAttribute("team")]
-        public TeamColor Team { get; set; }
+        [XmlAttribute("team")] public TeamColor Team { get; set; }
 
         public bool Equals(GoalField other)
         {

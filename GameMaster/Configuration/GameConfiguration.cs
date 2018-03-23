@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using Messaging.ActionHelpers;
+using GameMaster.Delays;
 
 namespace GameMaster.Configuration
 {

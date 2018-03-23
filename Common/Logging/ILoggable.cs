@@ -1,6 +1,4 @@
-﻿using Common;
-
-namespace Messaging.ActionHelpers
+﻿namespace Common.Logging
 {
     public interface ILoggable
     {

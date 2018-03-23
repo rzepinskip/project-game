@@ -13,58 +13,44 @@ namespace Common
 
     public enum GoalFieldType
     {
-        [XmlEnum("non-goal")]
-        NonGoal,
+        [XmlEnum("non-goal")] NonGoal,
 
-        [XmlEnum("goal")]
-        Goal,
+        [XmlEnum("goal")] Goal,
 
-        [XmlEnum("unknown")]
-        Unknown
+        [XmlEnum("unknown")] Unknown
     }
 
     public enum Direction
     {
-        [XmlEnum("up")]
-        Up,
+        [XmlEnum("up")] Up,
 
-        [XmlEnum("down")]
-        Down,
+        [XmlEnum("down")] Down,
 
-        [XmlEnum("left")]
-        Left,
+        [XmlEnum("left")] Left,
 
-        [XmlEnum("right")]
-        Right
+        [XmlEnum("right")] Right
     }
 
     public enum PieceType
     {
-        [XmlEnum("unknown")]
-        Unknown,
+        [XmlEnum("unknown")] Unknown,
 
-        [XmlEnum("sham")]
-        Sham,
+        [XmlEnum("sham")] Sham,
 
-        [XmlEnum("normal")]
-        Normal
+        [XmlEnum("normal")] Normal
     }
 
     public enum TeamColor
     {
-        [XmlEnum("red")]
-        Red,
+        [XmlEnum("red")] Red,
 
-        [XmlEnum("blue")]
-        Blue
+        [XmlEnum("blue")] Blue
     }
 
     public enum PlayerType
     {
-        [XmlEnum(Name = "member")]
-        Member,
+        [XmlEnum(Name = "member")] Member,
 
-        [XmlEnum(Name = "leader")]
-        Leader
+        [XmlEnum(Name = "leader")] Leader
     }
 }

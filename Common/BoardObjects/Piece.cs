@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Common.BoardObjects
 {
+    [DebuggerDisplay("[Id = {Id}, PlayerId = {PlayerId}]")]
     public class Piece
     {
         public Piece(int id, PieceType type, int? playerId = null) : this(id, type, playerId, DateTime.Now)
