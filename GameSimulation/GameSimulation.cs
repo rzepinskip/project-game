@@ -81,7 +81,18 @@ namespace GameSimulation
                     gameMaster.Board.GoalAreaSize);
                 var playerInfo = gameMaster.Board.Players[i];
                 var player = new Player.Player();
-                player.InitializePlayer(i, playerInfo.Team, playerInfo.Role, playerBoard, playerInfo.Location);
+
+                string playerGuid = "";
+                foreach (var guidIdPair in GameMaster.PlayerGuidToId)
+                {
+                    if (guidIdPair.Value == i)
+                    {
+                        playerGuid = guidIdPair.Key;
+                        break;
+                    }
+                }
+
+                player.InitializePlayer(i, playerGuid, playerInfo.Team, playerInfo.Role, playerBoard, playerInfo.Location);
                 players.Add(player);
             }
 
