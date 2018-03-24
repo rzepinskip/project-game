@@ -23,6 +23,8 @@ namespace Player.Strategy
             for (var j = offset; j < offset + board.GoalAreaSize; ++j)
                 undiscoveredGoalFields.Add(board[new Location(i, j)] as GoalField);
 
+            undiscoveredGoalFields.Shuffle();
+
             strategyInfo = new StrategyInfo(null, board, playerId, team, undiscoveredGoalFields);
             currentState = new InitState(strategyInfo);
         }
