@@ -21,7 +21,9 @@ namespace Player.Strategy.Conditions
 
         public override Request GetNextMessage(State fromState)
         {
-            return new MoveRequest(StrategyInfo.PlayerId, StrategyInfo.FromLocation.DirectionToTask(StrategyInfo.Team));
+            var direction = StrategyInfo.FromLocation.DirectionToTask(StrategyInfo.Team);
+            StrategyInfo.ToLocation = StrategyInfo.FromLocation.GetNewLocation(direction);
+            return new MoveRequest(StrategyInfo.PlayerId, direction);
         }
     }
 }

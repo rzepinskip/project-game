@@ -40,6 +40,7 @@ namespace Player.Strategy.Conditions
             var direction = _directionGenerator.Next() % 2 == 0
                 ? Direction.Left
                 : Direction.Right;
+            StrategyInfo.ToLocation = StrategyInfo.FromLocation.GetNewLocation(direction);
             return new MoveRequest(StrategyInfo.PlayerId, direction);
         }
     }
