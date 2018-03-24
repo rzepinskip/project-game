@@ -20,6 +20,9 @@ namespace Messaging.Responses
         {
             foreach (var taskField in TaskFields)
                 board[taskField] = taskField;
+
+            foreach (var piece in Pieces)
+                board.Pieces[piece.Id] = piece;
         }
     }
 }

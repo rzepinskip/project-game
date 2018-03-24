@@ -17,7 +17,7 @@ namespace GameSimulation
                 {
                     var symbol = new ColoredString("");
 
-                    var field = board[new Location(j, i)];
+                    var field = board[new Location(x, y)];
                     if (field.PlayerId != null)
                     {
                         var player = board.Players[field.PlayerId.Value];
