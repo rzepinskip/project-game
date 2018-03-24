@@ -1,17 +1,13 @@
 ﻿using System;
 using Common;
 using Common.ActionAvailability.AvailabilityChain;
-using Common.ActionAvailability.Helpers;
-using Common.BoardObjects;
 using Messaging.Requests;
-using Messaging.Responses;
 using Player.Strategy.States;
 
 namespace Player.Strategy.Conditions
 {
-    class IsPlayerBlocked : Condition
+    internal class IsPlayerBlocked : Condition
     {
-
         private readonly Random _directionGenerator;
 
         public IsPlayerBlocked(StrategyInfo strategyInfo) : base(strategyInfo)
@@ -28,21 +24,20 @@ namespace Player.Strategy.Conditions
         {
             switch (fromState)
             {
-            case InGoalAreaMovingToTaskState inGoalAreaMovingToTaskState:
-                return new InGoalAreaMovingToTaskState(StrategyInfo);
-            case MoveToPieceState moveToPieceState:
-                return new MoveToPieceState(StrategyInfo);
-            case MoveToUndiscoveredGoalState moveToUndiscoveredGoalState:
-                return new MoveToUndiscoveredGoalState(StrategyInfo);
-            default:
-                throw new StrategyException("Unknown state", fromState, StrategyInfo);
+                case InGoalAreaMovingToTaskState inGoalAreaMovingToTaskState:
+                    return new InGoalAreaMovingToTaskState(StrategyInfo);
+                case MoveToPieceState moveToPieceState:
+                    return new MoveToPieceState(StrategyInfo);
+                case MoveToUndiscoveredGoalState moveToUndiscoveredGoalState:
+                    return new MoveToUndiscoveredGoalState(StrategyInfo);
+                default:
+                    throw new StrategyException("Unknown state", fromState, StrategyInfo);
             }
         }
 
         public override Request GetNextMessage(State fromState)
         {
             var direction = default(Direction);
-            var currentLocation = StrategyInfo.FromLocation;
             var onlyTaskArea = false;
             switch (fromState)
             {
@@ -58,6 +53,7 @@ namespace Player.Strategy.Conditions
                 default:
                     throw new StrategyException("Unknown state", fromState, StrategyInfo);
             }
+
             direction = Randomize4WayDirection(StrategyInfo, onlyTaskArea);
             StrategyInfo.ToLocation = StrategyInfo.FromLocation.GetNewLocation(direction);
             return new MoveRequest(StrategyInfo.PlayerId, direction);
@@ -67,13 +63,15 @@ namespace Player.Strategy.Conditions
         {
             var currentLocation = strategyInfo.FromLocation;
             var desiredLocation = strategyInfo.ToLocation;
-            var directionValue = (_directionGenerator.Next() % 4);
-            var direction = (Direction)directionValue;
+            var directionValue = _directionGenerator.Next() % 4;
+            var direction = (Direction) directionValue;
             var newLocation = currentLocation.GetNewLocation(direction);
-            while (desiredLocation.Equals(currentLocation.GetNewLocation(direction)) || !new MoveAvailabilityChain(currentLocation, direction, StrategyInfo.Team, StrategyInfo.Board).ActionAvailable() || (onlyTaskArea && !StrategyInfo.Board.IsLocationInTaskArea(newLocation)))
+            while (desiredLocation.Equals(currentLocation.GetNewLocation(direction)) ||
+                   !new MoveAvailabilityChain(currentLocation, direction, StrategyInfo.Team, StrategyInfo.Board)
+                       .ActionAvailable() || onlyTaskArea && !StrategyInfo.Board.IsLocationInTaskArea(newLocation))
             {
                 directionValue = (directionValue + 1) % 4;
-                direction = (Direction)directionValue;
+                direction = (Direction) directionValue;
                 newLocation = currentLocation.GetNewLocation(direction);
             }
 

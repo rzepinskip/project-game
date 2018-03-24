@@ -1,7 +1,4 @@
-﻿using Player.Strategy.Conditions;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using Player.Strategy.States;
 
 namespace Player.Strategy
@@ -11,13 +8,11 @@ namespace Player.Strategy
         public StrategyException(string message, StrategyInfo context)
             : base(message + '\n' + context)
         {
-
         }
 
         public StrategyException(string message, State currentState, StrategyInfo context)
             : base(string.Join("\n", message, "State: " + currentState, context))
         {
-
         }
     }
 }
