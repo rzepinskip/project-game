@@ -27,6 +27,6 @@ namespace Messaging.Requests
 
         public abstract ActionLog ToLog(int playerId, PlayerInfo playeInfo);
 
-        public abstract Response Execute(IBoard board);
+        public abstract Response Execute(IGameMasterBoard board);
     }
 }
