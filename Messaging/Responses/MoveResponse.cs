@@ -25,8 +25,6 @@ namespace Messaging.Responses
             board[currentLocation].PlayerId = null;
 
             playerInfo.Location = NewPlayerLocation;
-            board[NewPlayerLocation].PlayerId = PlayerId;
-
 
             foreach (var taskField in TaskFields)
                 board[taskField] = taskField;

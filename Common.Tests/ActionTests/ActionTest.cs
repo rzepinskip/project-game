@@ -47,15 +47,13 @@ namespace Common.Tests.ActionTests
 
         protected void SetTestedPlayerLocation(Location location)
         {
-            var testedPlayerInfo = new PlayerInfo(TeamColor.Red, PlayerType.Member, location);
-            GameMasterBoard.Players.Add(PlayerId, testedPlayerInfo);
-            PlayerBoard.Players.Add(PlayerId, testedPlayerInfo);
+            //different instances of PlayerInfo for Gm and Player
+            GameMasterBoard.Players.Add(PlayerId, new PlayerInfo(TeamColor.Red, PlayerType.Member, location));
+            PlayerBoard.Players.Add(PlayerId, new PlayerInfo(TeamColor.Red, PlayerType.Member, location));
 
             GameMasterBoard[location].PlayerId = PlayerId;
             PlayerBoard[location].PlayerId = PlayerId;
 
-            GameMasterBoard.Players[PlayerId].Location = location;
-            PlayerBoard.Players[PlayerId].Location = location;
         }
 
 
