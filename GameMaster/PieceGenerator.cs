@@ -8,11 +8,11 @@ namespace GameMaster
 {
     public class PieceGenerator
     {
-        private readonly IBoard _board;
+        private readonly GameMasterBoard _board;
         private readonly Random _random = new Random();
         private readonly double _shamProbability;
 
-        public PieceGenerator(IBoard board, double shamProbability)
+        public PieceGenerator(GameMasterBoard board, double shamProbability)
         {
             _board = board;
             _shamProbability = shamProbability;

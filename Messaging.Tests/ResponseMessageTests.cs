@@ -8,12 +8,12 @@ using Messaging.Responses;
 
 namespace Messaging.Tests
 {
-    public class ResponseMessageTests
+    public class ResponseTests
     {
         private readonly int _playerId = 1;
         private readonly int _pieceId = 2;
 
-        public ResponseMessageTests()
+        public ResponseTests()
         {
             _board = new MockBoard(_boardWidth, _taskAreaSize, _goalAreaSize);
 

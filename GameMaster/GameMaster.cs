@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
+using System.Threading.Tasks;
 using Common;
 using Common.BoardObjects;
-using Common.Interfaces;
 using CsvHelper;
 using GameMaster.Configuration;
-using Messaging;
 using Messaging.ActionHelpers;
 using Messaging.Requests;
 using Messaging.Responses;
@@ -48,7 +46,7 @@ namespace GameMaster
             }
         }
 
-        public PieceGenerator CreatePieceGenerator(IBoard board)
+        public PieceGenerator CreatePieceGenerator(GameMasterBoard board)
         {
             return new PieceGenerator(board, GameConfiguration.GameDefinition.ShamProbability);
         }
@@ -93,7 +91,7 @@ namespace GameMaster
             var requestQueue = RequestsQueues[playerId];
             while (requestQueue.Count > 0)
             {
-                GameMessage request;
+                Request request;
                 while (!requestQueue.TryPeek(out request))
                 {
                     await Task.Delay(10);
@@ -102,7 +100,7 @@ namespace GameMaster
                 var timeSpan = Convert.ToInt32(request.GetDelay(GameConfiguration.ActionCosts));
                 await Task.Delay(timeSpan);
 
-                ResponseMessage response;
+                Response response;
                 lock (Board.Lock)
                 {
                     response = request.Execute(Board);
@@ -110,7 +108,7 @@ namespace GameMaster
                     if (IsGameFinished())
                     {
                         GameFinished(this, new GameFinishedEventArgs(CheckWinner()));
-                        response.GameFinished = true;
+                        response.IsGameFinished = true;
                     }
                 }
 

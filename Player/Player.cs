@@ -44,14 +44,14 @@ namespace Player
 
         private async void HandleResponse()
         {
-            ResponseMessage response;
+            Response response;
 
             while (!ResponsesQueue.TryDequeue(out response))
             {
                 await Task.Delay(10);
             }
 
-            response.Update(Board);
+            response.Update(PlayerBoard);
             //
             //change board state based on response 
             //  - update method in Response Message
