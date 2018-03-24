@@ -52,8 +52,8 @@ namespace Messaging.Requests
             else
             {
                 var stepActionAvailability = new StepOnPlayerAvailabilityChain(player.Location, Direction, player.Team, board);
-                if (stepActionAvailability.ActionAvailable())
-                    taskFields.Add((TaskField)board[newLocation]);
+                if (stepActionAvailability.ActionAvailable() && board[newLocation] is TaskField taskField)
+                    taskFields.Add(taskField);
 
                 newLocation = player.Location;
             }
