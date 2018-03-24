@@ -42,13 +42,13 @@ namespace Player
             return PlayerStrategy.NextMove(currentLocation);
         }
 
-        private async void HandleResponse()
+        private void HandleResponse()
         {
             Response response;
 
-            while (!ResponsesQueue.TryDequeue(out response))
+            if (!ResponsesQueue.TryDequeue(out response))
             {
-                await Task.Delay(10);
+                throw new ConcurencyException();
             }
 
             response.Update(PlayerBoard);

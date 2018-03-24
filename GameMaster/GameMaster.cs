@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using Common;
 using Common.BoardObjects;
@@ -92,9 +93,9 @@ namespace GameMaster
             while (requestQueue.Count > 0)
             {
                 Request request;
-                while (!requestQueue.TryPeek(out request))
+                if (!requestQueue.TryPeek(out request))
                 {
-                    await Task.Delay(10);
+                    throw new ConcurencyException();
                 }
 
                 var timeSpan = Convert.ToInt32(request.GetDelay(GameConfiguration.ActionCosts));
@@ -114,9 +115,9 @@ namespace GameMaster
 
                 ResponsesQueues[request.PlayerId].Enqueue(response);
 
-                while (!RequestsQueues[request.PlayerId].TryDequeue(out var result))
+                if (!RequestsQueues[request.PlayerId].TryDequeue(out var result))
                 {
-                    await Task.Delay(10);
+                    throw new ConcurencyException();
                 }
             }
         }
