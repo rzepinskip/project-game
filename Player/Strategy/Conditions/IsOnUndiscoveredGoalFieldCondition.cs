@@ -1,6 +1,5 @@
-﻿using Player.Strategy.States;
-using Shared.GameMessages;
-using Shared.GameMessages.PieceActions;
+﻿using Messaging.Requests;
+using Player.Strategy.States;
 
 namespace Player.Strategy.Conditions
 {
@@ -22,13 +21,10 @@ namespace Player.Strategy.Conditions
             return new InGoalAreaMovingToTaskState(StrategyInfo);
         }
 
-        public override GameMessage GetNextMessage(State fromState)
+        public override Request GetNextMessage(State fromState)
         {
             StrategyInfo.UndiscoveredGoalFields.RemoveAt(0);
-            return new PlacePiece
-            {
-                PlayerId = StrategyInfo.PlayerId
-            };
+            return new PlacePieceRequest(StrategyInfo.PlayerId);
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using Player.Strategy.States;
-using Shared.GameMessages;
+﻿using Messaging.Requests;
+using Player.Strategy.States;
 
 namespace Player.Strategy.Conditions
 {
@@ -14,6 +14,6 @@ namespace Player.Strategy.Conditions
 
         public abstract bool CheckCondition();
         public abstract State GetNextState(State fromState);
-        public abstract GameMessage GetNextMessage(State fromState);
+        public abstract Request GetNextMessage(State fromState);
     }
 }

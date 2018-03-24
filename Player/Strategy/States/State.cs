@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Messaging.Requests;
 using Player.Strategy.Conditions;
-using Shared.GameMessages;
 
 namespace Player.Strategy.States
 {
@@ -22,7 +21,7 @@ namespace Player.Strategy.States
 
         protected StrategyInfo StrategyInfo { get; }
 
-        public GameMessage GetNextMessage()
+        public Request GetNextMessage()
         {
             foreach (var condition in conditions)
                 if (condition.CheckCondition())

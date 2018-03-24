@@ -1,6 +1,6 @@
-﻿using Player.Strategy.States;
-using Shared.BoardObjects;
-using Shared.GameMessages;
+﻿using Common.BoardObjects;
+using Messaging.Requests;
+using Player.Strategy.States;
 
 namespace Player.Strategy.Conditions
 {
@@ -13,7 +13,7 @@ namespace Player.Strategy.Conditions
         public override bool CheckCondition()
         {
             var taskField =
-                StrategyInfo.Board.Content[StrategyInfo.FromLocation.X, StrategyInfo.FromLocation.Y] as TaskField;
+                StrategyInfo.Board[StrategyInfo.FromLocation] as TaskField;
             var result = false;
             if (taskField != null)
             {
@@ -30,12 +30,9 @@ namespace Player.Strategy.Conditions
             return new PickupPieceState(StrategyInfo);
         }
 
-        public override GameMessage GetNextMessage(State fromState)
+        public override Request GetNextMessage(State fromState)
         {
-            return new PickUpPiece
-            {
-                PlayerId = StrategyInfo.PlayerId
-            };
+            return new PickUpPieceRequest(StrategyInfo.PlayerId);
         }
     }
 }

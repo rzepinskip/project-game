@@ -1,6 +1,5 @@
-﻿using Player.Strategy.States;
-using Shared.GameMessages;
-using Shared.GameMessages.PieceActions;
+﻿using Messaging.Requests;
+using Player.Strategy.States;
 
 namespace Player.Strategy.Conditions
 {
@@ -20,12 +19,9 @@ namespace Player.Strategy.Conditions
             return new TestPieceState(StrategyInfo);
         }
 
-        public override GameMessage GetNextMessage(State fromState)
+        public override Request GetNextMessage(State fromState)
         {
-            return new TestPiece
-            {
-                PlayerId = StrategyInfo.PlayerId
-            };
+            return new TestPieceRequest(StrategyInfo.PlayerId);
         }
     }
 }

@@ -1,10 +1,10 @@
-﻿using Shared.BoardObjects;
-using Shared.GameMessages;
+﻿using Common.BoardObjects;
+using Messaging.Requests;
 
 namespace Player.Strategy
 {
     public interface IStrategy
     {
-        GameMessage NextMove(Location location);
+        Request NextMove(Location location);
     }
 }

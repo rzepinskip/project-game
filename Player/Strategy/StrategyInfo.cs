@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using Shared;
-using Shared.BoardObjects;
+﻿using System.Collections.Generic;
+using Common;
+using Common.BoardObjects;
 
 namespace Player.Strategy
 {
     public class StrategyInfo
     {
-        public StrategyInfo(Location fromLocation, Board board, int playerId, CommonResources.TeamColour team,
+        public StrategyInfo(Location fromLocation, BoardBase board, int playerId, TeamColor team,
             List<GoalField> undiscoveredGoalFields = null, Location toLocation = null)
         {
             FromLocation = fromLocation;
@@ -30,9 +29,9 @@ namespace Player.Strategy
 
         public Location FromLocation { get; set; }
         public Location ToLocation { get; set; }
-        public Board Board { get; set; }
+        public BoardBase Board { get; set; }
         public int PlayerId { get; set; }
-        public CommonResources.TeamColour Team { get; set; }
+        public TeamColor Team { get; set; }
         public List<GoalField> UndiscoveredGoalFields { get; set; }
 
         public override string ToString()

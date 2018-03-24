@@ -1,8 +1,8 @@
 ﻿using System;
+using Common;
+using Common.BoardObjects;
+using Messaging.Requests;
 using Player.Strategy.States;
-using Shared;
-using Shared.BoardObjects;
-using Shared.GameMessages;
 
 namespace Player.Strategy.Conditions
 {
@@ -18,7 +18,7 @@ namespace Player.Strategy.Conditions
         public override bool CheckCondition()
         {
             var taskField =
-                StrategyInfo.Board.Content[StrategyInfo.FromLocation.X, StrategyInfo.FromLocation.Y] as TaskField;
+                StrategyInfo.Board[StrategyInfo.FromLocation] as TaskField;
             var result = false;
             if (taskField != null)
             {
@@ -35,16 +35,12 @@ namespace Player.Strategy.Conditions
             return new MoveToPieceState(StrategyInfo);
         }
 
-        public override GameMessage GetNextMessage(State fromState)
+        public override Request GetNextMessage(State fromState)
         {
             var direction = _directionGenerator.Next() % 2 == 0
-                ? CommonResources.MoveType.Left
-                : CommonResources.MoveType.Right;
-            return new Move
-            {
-                Direction = direction,
-                PlayerId = StrategyInfo.PlayerId
-            };
+                ? Direction.Left
+                : Direction.Right;
+            return new MoveRequest(StrategyInfo.PlayerId, direction);
         }
     }
 }

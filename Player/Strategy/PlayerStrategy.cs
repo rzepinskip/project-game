@@ -8,8 +8,6 @@ namespace Player.Strategy
 {
     public class PlayerStrategy : IStrategy
     {
-    public class PlayerStrategy
-    {
         private readonly List<GoalField> undiscoveredGoalFields = new List<GoalField>();
 
         private State currentState;

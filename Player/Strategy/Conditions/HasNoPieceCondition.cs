@@ -1,5 +1,5 @@
-﻿using Player.Strategy.States;
-using Shared.GameMessages;
+﻿using Messaging.Requests;
+using Player.Strategy.States;
 
 namespace Player.Strategy.Conditions
 {
@@ -20,12 +20,9 @@ namespace Player.Strategy.Conditions
             return new DiscoverState(StrategyInfo);
         }
 
-        public override GameMessage GetNextMessage(State fromState)
+        public override Request GetNextMessage(State fromState)
         {
-            return new Discover
-            {
-                PlayerId = StrategyInfo.PlayerId
-            };
+            return new DiscoverRequest(StrategyInfo.PlayerId);
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using Player.Strategy.States;
-using Shared;
-using Shared.ActionAvailability.ActionAvailabilityHelpers;
-using Shared.BoardObjects;
-using Shared.GameMessages;
+﻿using Common;
+using Common.ActionAvailability.Helpers;
+using Common.BoardObjects;
+using Messaging.Requests;
+using Player.Strategy.States;
 
 namespace Player.Strategy.Conditions
 {
@@ -22,43 +22,39 @@ namespace Player.Strategy.Conditions
             return new MoveToPieceState(StrategyInfo);
         }
 
-        public override GameMessage GetNextMessage(State fromState)
+        public override Request GetNextMessage(State fromState)
         {
-            var directionToNearest = CommonResources.MoveType.Left;
+            var directionToNearest = Direction.Left;
             var distanceToNearest = int.MaxValue;
             var currentLocation = StrategyInfo.FromLocation;
             var boardWidth = StrategyInfo.Board.Width;
             var boardHeight = StrategyInfo.Board.Height;
             var board = StrategyInfo.Board;
             //New chain of resposibility, maybe (?)
-            if (new MoveAvailability().IsInsideBoard(currentLocation, CommonResources.MoveType.Left, boardWidth,
+            if (new MoveAvailability().IsInsideBoard(currentLocation, Direction.Left, boardWidth,
                 boardHeight))
                 CheckIfCloser(board, new Location(currentLocation.X - 1, currentLocation.Y), ref distanceToNearest,
-                    CommonResources.MoveType.Left, ref directionToNearest);
-            if (new MoveAvailability().IsInsideBoard(currentLocation, CommonResources.MoveType.Right, boardWidth,
+                    Direction.Left, ref directionToNearest);
+            if (new MoveAvailability().IsInsideBoard(currentLocation, Direction.Right, boardWidth,
                 boardHeight))
                 CheckIfCloser(board, new Location(currentLocation.X + 1, currentLocation.Y), ref distanceToNearest,
-                    CommonResources.MoveType.Right, ref directionToNearest);
-            if (new MoveAvailability().IsInsideBoard(currentLocation, CommonResources.MoveType.Down, boardWidth,
+                    Direction.Right, ref directionToNearest);
+            if (new MoveAvailability().IsInsideBoard(currentLocation, Direction.Down, boardWidth,
                 boardHeight))
                 CheckIfCloser(board, new Location(currentLocation.X, currentLocation.Y - 1), ref distanceToNearest,
-                    CommonResources.MoveType.Down, ref directionToNearest);
-            if (new MoveAvailability().IsInsideBoard(currentLocation, CommonResources.MoveType.Up, boardWidth,
+                    Direction.Down, ref directionToNearest);
+            if (new MoveAvailability().IsInsideBoard(currentLocation, Direction.Up, boardWidth,
                 boardHeight))
                 CheckIfCloser(board, new Location(currentLocation.X, currentLocation.Y + 1), ref distanceToNearest,
-                    CommonResources.MoveType.Up, ref directionToNearest);
+                    Direction.Up, ref directionToNearest);
 
-            return new Move
-            {
-                Direction = directionToNearest,
-                PlayerId = StrategyInfo.PlayerId
-            };
+            return new MoveRequest(StrategyInfo.PlayerId, directionToNearest);
         }
 
-        private void CheckIfCloser(Board board, Location newLocation, ref int distanceToNearest,
-            CommonResources.MoveType direction, ref CommonResources.MoveType directionToNearest)
+        private void CheckIfCloser(BoardBase board, Location newLocation, ref int distanceToNearest,
+            Direction direction, ref Direction directionToNearest)
         {
-            var taskField = board.Content[newLocation.X, newLocation.Y] as TaskField;
+            var taskField = board[newLocation] as TaskField;
             if (taskField != null)
                 if (taskField.DistanceToPiece < distanceToNearest)
                 {

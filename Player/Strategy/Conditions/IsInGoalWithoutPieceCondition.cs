@@ -1,5 +1,5 @@
-﻿using Player.Strategy.States;
-using Shared.GameMessages;
+﻿using Messaging.Requests;
+using Player.Strategy.States;
 
 namespace Player.Strategy.Conditions
 {
@@ -19,13 +19,9 @@ namespace Player.Strategy.Conditions
             return new InGoalAreaMovingToTaskState(StrategyInfo);
         }
 
-        public override GameMessage GetNextMessage(State fromState)
+        public override Request GetNextMessage(State fromState)
         {
-            return new Move
-            {
-                PlayerId = StrategyInfo.PlayerId,
-                Direction = StrategyInfo.FromLocation.DirectionToTask(StrategyInfo.Team)
-            };
+            return new MoveRequest(StrategyInfo.PlayerId, StrategyInfo.FromLocation.DirectionToTask(StrategyInfo.Team));
         }
     }
 }

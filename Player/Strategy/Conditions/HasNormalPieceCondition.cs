@@ -1,6 +1,6 @@
-﻿using Player.Strategy.States;
-using Shared;
-using Shared.GameMessages;
+﻿using Common;
+using Messaging.Requests;
+using Player.Strategy.States;
 
 namespace Player.Strategy.Conditions
 {
@@ -18,7 +18,7 @@ namespace Player.Strategy.Conditions
             var piece = playerInfo.Piece;
             var result = false;
             if (piece != null && !currentLocation.Equals(goalLocation))
-                if (piece.Type == CommonResources.PieceType.Normal)
+                if (piece.Type == PieceType.Normal)
                     result = true;
             return result;
         }
@@ -28,15 +28,12 @@ namespace Player.Strategy.Conditions
             return new MoveToUndiscoveredGoalState(StrategyInfo);
         }
 
-        public override GameMessage GetNextMessage(State fromState)
+        public override Request GetNextMessage(State fromState)
         {
             var undiscoveredGoalLocation = StrategyInfo.UndiscoveredGoalFields[0];
 
-            return new Move
-            {
-                PlayerId = StrategyInfo.PlayerId,
-                Direction = undiscoveredGoalLocation.GetDirectionFrom(StrategyInfo.FromLocation)
-            };
+            return new MoveRequest(StrategyInfo.PlayerId,
+                undiscoveredGoalLocation.GetDirectionFrom(StrategyInfo.FromLocation));
         }
     }
 }
