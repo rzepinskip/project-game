@@ -1,50 +1,40 @@
 ﻿using System;
-using Shared;
-using Shared.BoardObjects;
-using Shared.GameMessages;
+using Common;
+using Common.BoardObjects;
+using Messaging.Requests;
 
 namespace Player.Strategy.StateTransition
 {
     internal class RandomWalkTransition : BaseTransition
     {
-        public RandomWalkTransition(Location location, CommonResources.TeamColour team, int playerId, Board board) :
+        public RandomWalkTransition(Location location, TeamColor team, int playerId, PlayerBoard board) :
             base(location, team, playerId, board)
         {
         }
 
-        public override GameMessage ExecuteStrategy()
+        public override Request ExecuteStrategy()
         {
-            var taskField = board.Content[location.X, location.Y] as TaskField;
+            var taskField = board[location] as TaskField;
             var distanceToNearestPiece = taskField.DistanceToPiece;
 
             if (distanceToNearestPiece == -1)
             {
                 //random move
                 var r = new Random();
-                var direction = r.Next() % 2 == 0 ? CommonResources.MoveType.Left : CommonResources.MoveType.Right;
+                var direction = r.Next() % 2 == 0 ? Direction.Left : Direction.Right;
 
-                ChangeState = PlayerStrategy.PlayerState.RandomWalk;
-                return new Move
-                {
-                    Direction = direction,
-                    PlayerId = playerId
-                };
+                ChangeState = PlayerState.RandomWalk;
+                return new MoveRequest(playerId, direction);
             }
 
             if (distanceToNearestPiece == 0)
             {
-                ChangeState = PlayerStrategy.PlayerState.Pick;
-                return new PickUpPiece
-                {
-                    PlayerId = playerId
-                };
+                ChangeState = PlayerState.Pick;
+                return new PickUpPieceRequest(playerId);
             }
 
-            ChangeState = PlayerStrategy.PlayerState.Discover;
-            return new Discover
-            {
-                PlayerId = playerId
-            };
+            ChangeState = PlayerState.Discover;
+            return new DiscoverRequest(playerId);
         }
     }
 }

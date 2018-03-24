@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using Shared;
-using Shared.BoardObjects;
-using Shared.GameMessages;
-using Shared.GameMessages.PieceActions;
+using Common;
+using Common.BoardObjects;
+using Messaging.Requests;
 
 namespace Player.Strategy.StateTransition
 {
@@ -11,35 +10,28 @@ namespace Player.Strategy.StateTransition
         private readonly List<GoalField> undiscoveredGoalFields;
 
         public MoveToUndiscoveredGoalTransition(List<GoalField> undiscoveredGoalFields, Location location,
-            CommonResources.TeamColour team, int playerId, Board board) : base(location, team, playerId, board)
+            TeamColor team, int playerId, PlayerBoard board) : base(location, team, playerId, board)
         {
             this.undiscoveredGoalFields = undiscoveredGoalFields;
         }
 
-        public override GameMessage ExecuteStrategy()
+        public override Request ExecuteStrategy()
         {
             Location undiscoveredGoalLocation = undiscoveredGoalFields[0];
 
             if (location.Equals(undiscoveredGoalLocation))
             {
-                ChangeState = PlayerStrategy.PlayerState.InGoalMovingToTask;
+                ChangeState = PlayerState.InGoalMovingToTask;
 
                 undiscoveredGoalFields.RemoveAt(0);
-                return new PlacePiece
-                {
-                    PlayerId = playerId
-                };
+                return new PlacePieceRequest(playerId);
             }
 
-            ChangeState = PlayerStrategy.PlayerState.MoveToUndiscoveredGoal;
+            ChangeState = PlayerState.MoveToUndiscoveredGoal;
 
             var direction = undiscoveredGoalLocation.GetLocationTo(location);
 
-            return new Move
-            {
-                Direction = direction,
-                PlayerId = playerId
-            };
+            return new MoveRequest(playerId, direction);
         }
     }
 }

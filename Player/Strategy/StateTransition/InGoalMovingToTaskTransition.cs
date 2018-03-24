@@ -1,39 +1,33 @@
-﻿using Shared;
-using Shared.BoardObjects;
-using Shared.GameMessages;
+﻿using Common;
+using Common.BoardObjects;
+using Messaging.Requests;
 
 namespace Player.Strategy.StateTransition
 {
     internal class InGoalMovingToTaskTransition : BaseTransition
     {
-        public InGoalMovingToTaskTransition(Location location, CommonResources.TeamColour team, int playerId,
-            Board board) : base(location, team, playerId, board)
+        public InGoalMovingToTaskTransition(Location location, TeamColor team, int playerId,
+            PlayerBoard board) : base(location, team, playerId, board)
         {
         }
 
-        public override GameMessage ExecuteStrategy()
+        public override Request ExecuteStrategy()
         {
-            var taskField = board.Content[location.X, location.Y] as TaskField;
+            var taskField = board[location] as TaskField;
 
             if (taskField == null)
             {
-                ChangeState = PlayerStrategy.PlayerState.InGoalMovingToTask;
-                var direction = team == CommonResources.TeamColour.Red
-                    ? CommonResources.MoveType.Down
-                    : CommonResources.MoveType.Up;
-                return new Move
-                {
-                    Direction = direction,
-                    PlayerId = playerId
-                };
+                ChangeState = PlayerState.InGoalMovingToTask;
+                var direction = team == TeamColor.Red
+                    ? Direction.Down
+                    : Direction.Up;
+
+                return new MoveRequest(playerId, direction);
             }
 
-            ChangeState = PlayerStrategy.PlayerState.Discover;
+            ChangeState = PlayerState.Discover;
 
-            return new Discover
-            {
-                PlayerId = playerId
-            };
+            return new DiscoverRequest(playerId);
         }
     }
 }

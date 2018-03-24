@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using Shared;
-using Shared.BoardObjects;
+using Common;
+using Common.BoardObjects;
+using Common.Interfaces;
 
 namespace GameSimulation
 {
     internal class BoardVisualizer
     {
-        public void VisualizeBoard(Board board)
+        public void VisualizeBoard(IBoard board)
         {
             var output = new List<ColoredString>(100);
             for (var i = board.Height - 1; i >= 0; i--)
@@ -16,11 +17,11 @@ namespace GameSimulation
                 {
                     var symbol = new ColoredString("");
 
-                    var field = board.Content[j, i];
+                    var field = board[new Location(j, i)];
                     if (field.PlayerId != null)
                     {
                         var player = board.Players[field.PlayerId.Value];
-                        if (player.Team == CommonResources.TeamColour.Red)
+                        if (player.Team == TeamColor.Red)
                             symbol = new ColoredString("R", ConsoleColor.DarkRed);
                         else
                             symbol = new ColoredString("B", ConsoleColor.DarkCyan);
@@ -32,7 +33,7 @@ namespace GameSimulation
                     }
                     else if (field is GoalField goalField)
                     {
-                        if (goalField.Type == CommonResources.GoalFieldType.Goal)
+                        if (goalField.Type == GoalFieldType.Goal)
                             symbol.Data = "G ";
                         else
                             symbol.Data = "+ ";
