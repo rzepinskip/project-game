@@ -25,11 +25,11 @@ namespace Common.Tests.ActionTests
             var piece1 = new Piece(1, PieceType.Sham);
             var piece2 = new Piece(2, PieceType.Normal);
 
-            board.Pieces.Add(piece1.Id,piece1);
-            ((TaskField) board[new Location(0, 5)]).PieceId = piece1.Id;
+            board.Pieces.Add(piece1.Id, piece1);
+            ((TaskField)board[new Location(0, 5)]).PieceId = piece1.Id;
 
             board.Pieces.Add(piece2.Id, piece2);
-            ((TaskField)board[new Location(2,2)]).PieceId = piece2.Id;
+            ((TaskField)board[new Location(2, 2)]).PieceId = piece2.Id;
 
             var playerInfo = new PlayerInfo(TeamColor.Red, PlayerType.Member, new Location(0, 4));
             board.Players.Add(OtherPlayerId, playerInfo);
@@ -38,11 +38,10 @@ namespace Common.Tests.ActionTests
 
             return board;
         }
+
         private IBoard GenerateBoard()
         {
-            var board = new MockBoard(4, 4, 2);
-
-            return board;
+            return new MockBoard(4, 4, 2);
         }
 
         protected void SetTestedPlayerLocation(Location location)
@@ -53,15 +52,14 @@ namespace Common.Tests.ActionTests
 
             GameMasterBoard[location].PlayerId = PlayerId;
             PlayerBoard[location].PlayerId = PlayerId;
-
         }
-
 
         protected void AssertPlayerLocation(Location location, int playerId)
         {
             AssertPlayerLocationOnBoard(location, GameMasterBoard, playerId);
             AssertPlayerLocationOnBoard(location, PlayerBoard, playerId);
         }
+
         protected void AssertPlayerLocationOnBoard(Location location, IBoard board, int playerId)
         {
             Assert.Equal(playerId, board[location].PlayerId);

@@ -15,7 +15,7 @@ namespace Common.Tests.ActionTests
         {
             SetTestedPlayerLocation(new Location(1, 3));
 
-            var message = new MoveRequest(PlayerId,Direction.Right);
+            var message = new MoveRequest(PlayerId, Direction.Right);
             if (message.Execute(GameMasterBoard) is MoveResponse response)
                 response.Update(PlayerBoard);
 
@@ -27,7 +27,7 @@ namespace Common.Tests.ActionTests
         {
             SetTestedPlayerLocation(new Location(1, 2));
 
-            var message = new MoveRequest(PlayerId,Direction.Right);
+            var message = new MoveRequest(PlayerId, Direction.Right);
             if (message.Execute(GameMasterBoard) is MoveResponse response)
                 response.Update(PlayerBoard);
 
@@ -35,13 +35,12 @@ namespace Common.Tests.ActionTests
             AssertPiece(new Location(2, 2), 2);
         }
 
-
         [Fact]
         public void MoveOutsideBoard()
         {
             SetTestedPlayerLocation(new Location(0, 3));
 
-            var message = new MoveRequest(PlayerId,Direction.Left);
+            var message = new MoveRequest(PlayerId, Direction.Left);
             if (message.Execute(GameMasterBoard) is MoveResponse response)
                 response.Update(PlayerBoard);
 
@@ -53,7 +52,7 @@ namespace Common.Tests.ActionTests
         {
             SetTestedPlayerLocation(new Location(1, 2));
 
-            var message = new MoveRequest(PlayerId,Direction.Down);
+            var message = new MoveRequest(PlayerId, Direction.Down);
             if (message.Execute(GameMasterBoard) is MoveResponse response)
                 response.Update(PlayerBoard);
 
@@ -65,7 +64,7 @@ namespace Common.Tests.ActionTests
         {
             SetTestedPlayerLocation(new Location(1, 4));
 
-            var message = new MoveRequest(PlayerId,Direction.Left);
+            var message = new MoveRequest(PlayerId, Direction.Left);
             if (message.Execute(GameMasterBoard) is MoveResponse response)
                 response.Update(PlayerBoard);
 

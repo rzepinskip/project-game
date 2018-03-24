@@ -27,7 +27,7 @@ namespace Messaging.Requests
 
             var taskFields = new List<TaskField>();
             var pieces = new List<Piece>();
-            Location newLocation = player.Location.GetNewLocation(Direction);
+            var newLocation = player.Location.GetNewLocation(Direction);
 
             var actionAvailability = new MoveAvailabilityChain(player.Location, Direction, player.Team, board);
             if (actionAvailability.ActionAvailable())
