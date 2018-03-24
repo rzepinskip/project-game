@@ -43,7 +43,10 @@ namespace Player
         {
             Response response;
 
-            if (!ResponsesQueue.TryDequeue(out response)) throw new ConcurrencyException();
+            while (!ResponsesQueue.TryDequeue(out response))
+            {
+                Task.Delay(10);
+            }
 
             response.Update(PlayerBoard);
             //

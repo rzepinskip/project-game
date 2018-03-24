@@ -58,9 +58,9 @@ namespace GameMaster
             while (requestQueue.Count > 0)
             {
                 Request request;
-                if (!requestQueue.TryPeek(out request))
+                while (!requestQueue.TryPeek(out request))
                 {
-                    throw new ConcurrencyException();
+                    Task.Delay(10);
                 }
 
                 var timeSpan = Convert.ToInt32(request.GetDelay(GameConfiguration.ActionCosts));
@@ -80,9 +80,9 @@ namespace GameMaster
 
                 ResponsesQueues[request.PlayerId].Enqueue(response);
 
-                if (!RequestsQueues[request.PlayerId].TryDequeue(out var result))
+                while (!RequestsQueues[request.PlayerId].TryDequeue(out var result))
                 {
-                    throw new ConcurrencyException();
+                    await Task.Delay(10);
                 }
             }
         }

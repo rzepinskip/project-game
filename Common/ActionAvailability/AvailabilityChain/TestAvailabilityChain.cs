@@ -5,18 +5,18 @@ namespace Common.ActionAvailability.AvailabilityChain
 {
     public class TestAvailabilityChain : IAvailabilityChain
     {
-        private readonly string playerGuid;
-        private readonly Dictionary<string, int> playerGuidToPiece;
+        private readonly int _playerId;
+        private readonly Dictionary<int, PlayerInfo> _players;
 
-        public TestAvailabilityChain(string playerGuid, Dictionary<string, int> playerGuidToPiece)
+        public TestAvailabilityChain(int playerId, Dictionary<int, PlayerInfo> players)
         {
-            this.playerGuid = playerGuid;
-            this.playerGuidToPiece = playerGuidToPiece;
+            _playerId = playerId;
+            _players = players;
         }
 
         public bool ActionAvailable()
         {
-            var builder = new AvailabilityChainBuilder(new IsPlayerCarryingPieceLink(playerGuid, playerGuidToPiece));
+            var builder = new AvailabilityChainBuilder(new IsPlayerCarryingPieceLink(_playerId, _players));
             return builder.Build().ValidateLink();
         }
     }

@@ -52,7 +52,7 @@ namespace Messaging.Tests
                 for (var j = 0; j <= 1; ++j)
                     taskFields.Add(new TaskField(new Location(2 + i, 3 + j)));
 
-            var discoverResponce = new DiscoverResponse(_playerId, taskFields, null);
+            var discoverResponce = new DiscoverResponse(_playerId, taskFields, new List<Piece>());
 
             //Act
             discoverResponce.Update(_board);
@@ -105,7 +105,7 @@ namespace Messaging.Tests
                 new TaskField(new Location(2,2))
             };
 
-            var moveResponse = new MoveResponse(_playerId, newLocation, taskFields, null);
+            var moveResponse = new MoveResponse(_playerId, newLocation, taskFields, new List<Piece>());
 
             //Act
             moveResponse.Update(_board);
