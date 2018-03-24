@@ -63,7 +63,7 @@ namespace Common.BoardObjects
             return nl;
         }
 
-        public Direction GetLocationTo(Location location)
+        public Direction GetDirectionFrom(Location location)
         {
             var dx = X - location.X;
             var dy = Y - location.Y;
@@ -101,18 +101,18 @@ namespace Common.BoardObjects
             return !(location1 == location2);
         }
 
-        public CommonResources.MoveType DirectionToTask(CommonResources.TeamColour team)
+        public Direction DirectionToTask(TeamColor team)
         {
-            return team == CommonResources.TeamColour.Red
-                ? CommonResources.MoveType.Down
-                : CommonResources.MoveType.Up;
+            return team == TeamColor.Red
+                ? Direction.Down
+                : Direction.Up;
         }
 
-        public CommonResources.MoveType DirectionToGoal(CommonResources.TeamColour team)
+        public Direction DirectionToGoal(TeamColor team)
         {
-            return team == CommonResources.TeamColour.Red
-                ? CommonResources.MoveType.Up
-                : CommonResources.MoveType.Down;
+            return team == TeamColor.Red
+                ? Direction.Up
+                : Direction.Down;
         }
 
         public override string ToString()
