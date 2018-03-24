@@ -20,7 +20,7 @@ namespace Player
         private List<PlayerBase> Players { get; set; }
 
         //public Location Location { get; set; }
-        private PlayerStrategy PlayerStrategy { get; set; }
+        private IStrategy PlayerStrategy { get; set; }
 
         public void InitializePlayer(int id, TeamColor team, PlayerType type, PlayerBoard board,
             Location location)

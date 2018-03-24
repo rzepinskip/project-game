@@ -100,5 +100,24 @@ namespace Common.BoardObjects
         {
             return !(location1 == location2);
         }
+
+        public CommonResources.MoveType DirectionToTask(CommonResources.TeamColour team)
+        {
+            return team == CommonResources.TeamColour.Red
+                ? CommonResources.MoveType.Down
+                : CommonResources.MoveType.Up;
+        }
+
+        public CommonResources.MoveType DirectionToGoal(CommonResources.TeamColour team)
+        {
+            return team == CommonResources.TeamColour.Red
+                ? CommonResources.MoveType.Up
+                : CommonResources.MoveType.Down;
+        }
+
+        public override string ToString()
+        {
+            return "(" + X + ", " + Y + ")";
+        }
     }
 }
