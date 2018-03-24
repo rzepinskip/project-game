@@ -42,12 +42,14 @@ namespace GameMaster
 
             var taskAreaBottomLeftCorner = new Location(0, _board.GoalAreaSize);
             var taskAreaTopRightCorner = new Location(_board.Width - 1, _board.Height - (_board.GoalAreaSize + 1));
+            var counter = 0;
             do
             {
                 var randomX = _random.Next(taskAreaBottomLeftCorner.X, taskAreaTopRightCorner.X + 1);
                 var randomY = _random.Next(taskAreaBottomLeftCorner.Y, taskAreaTopRightCorner.Y + 1);
                 location = new Location(randomX, randomY);
-            } while (_board.GetPieceIdAt(location) != null);
+                counter++;
+            } while (_board.GetPieceIdAt(location) != null && counter < 100);
 
             return location;
         }
