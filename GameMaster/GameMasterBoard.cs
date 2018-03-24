@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
@@ -12,8 +13,8 @@ namespace GameMaster
         {
         }
 
-        public HashSet<Location> UncompletedBlueGoalsLocations { get; set; } = new HashSet<Location>();
-        public HashSet<Location> UncompletedRedGoalsLocations { get; set; } = new HashSet<Location>();
+        public List<Location> UncompletedBlueGoalsLocations { get; set; } = new List<Location>();
+        public List<Location> UncompletedRedGoalsLocations { get; set; } = new List<Location>();
 
         public void MarkGoalAsCompleted(GoalField goal)
         {
@@ -30,6 +31,7 @@ namespace GameMaster
 
         public bool IsGameFinished()
         {
+            Debug.WriteLine($"R:{UncompletedRedGoalsLocations.Count} vs B:{UncompletedBlueGoalsLocations.Count}");
             return UncompletedBlueGoalsLocations.Count == 0 || UncompletedRedGoalsLocations.Count == 0;
         }
 

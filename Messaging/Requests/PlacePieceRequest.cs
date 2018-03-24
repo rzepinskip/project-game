@@ -29,17 +29,16 @@ namespace Messaging.Requests
                 if (piece.Type == PieceType.Sham)
                     return new PlacePieceResponse(PlayerId);
 
-                var playerGoalField = board[player.Location];
-                var goalField = playerGoalField as GoalField;
+                var playerGoalField = board[player.Location] as GoalField;
 
 
                 ///TODO: GameMaster counter
-            if (goalField != null)
-            {
-                board.MarkGoalAsCompleted(goalField);
-            }
+                if (playerGoalField != null && playerGoalField.Type == GoalFieldType.Goal)
+                {
+                    board.MarkGoalAsCompleted(playerGoalField);
+                }
 
-                response = new PlacePieceResponse(PlayerId, playerGoalField as GoalField);
+                response = new PlacePieceResponse(PlayerId, playerGoalField);
             }
 
             return response;
