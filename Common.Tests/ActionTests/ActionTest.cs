@@ -6,11 +6,10 @@ namespace Common.Tests.ActionTests
 {
     public class ActionTest
     {
-        protected int PlayerId = 1;
+        protected IGameMasterBoard GameMasterBoard;
         protected int OtherPlayerId = 2;
-
-        protected IBoard GameMasterBoard;
         protected IBoard PlayerBoard;
+        protected int PlayerId = 1;
 
         public ActionTest()
         {
@@ -18,7 +17,7 @@ namespace Common.Tests.ActionTests
             PlayerBoard = GenerateBoard();
         }
 
-        private IBoard GenerateGameMasterBoard()
+        private IGameMasterBoard GenerateGameMasterBoard()
         {
             var board = GenerateBoard();
 
@@ -26,10 +25,10 @@ namespace Common.Tests.ActionTests
             var piece2 = new Piece(2, PieceType.Normal);
 
             board.Pieces.Add(piece1.Id, piece1);
-            ((TaskField)board[new Location(0, 5)]).PieceId = piece1.Id;
+            ((TaskField) board[new Location(0, 5)]).PieceId = piece1.Id;
 
             board.Pieces.Add(piece2.Id, piece2);
-            ((TaskField)board[new Location(2, 2)]).PieceId = piece2.Id;
+            ((TaskField) board[new Location(2, 2)]).PieceId = piece2.Id;
 
             var playerInfo = new PlayerInfo(TeamColor.Red, PlayerType.Member, new Location(0, 4));
             board.Players.Add(OtherPlayerId, playerInfo);
@@ -39,7 +38,7 @@ namespace Common.Tests.ActionTests
             return board;
         }
 
-        private IBoard GenerateBoard()
+        private IGameMasterBoard GenerateBoard()
         {
             return new MockBoard(4, 4, 2);
         }
@@ -64,14 +63,14 @@ namespace Common.Tests.ActionTests
         {
             Assert.Equal(playerId, board[location].PlayerId);
 
-            for (int i = 0; i < board.Width; i++)
-                for (int j = 0; j < board.Height; j++)
-                {
-                    var field = board[new Location(i, j)];
+            for (var i = 0; i < board.Width; i++)
+            for (var j = 0; j < board.Height; j++)
+            {
+                var field = board[new Location(i, j)];
 
-                    if (field != location)
-                        Assert.NotEqual(playerId, field.PlayerId);
-                }
+                if (field != location)
+                    Assert.NotEqual(playerId, field.PlayerId);
+            }
         }
 
         protected void AssertPiece(Location location, int pieceId)

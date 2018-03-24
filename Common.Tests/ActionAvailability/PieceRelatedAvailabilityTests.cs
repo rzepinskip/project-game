@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Common.ActionAvailability.Helpers;
+﻿using Common.ActionAvailability.Helpers;
 using Common.BoardObjects;
 using Xunit;
 
@@ -21,7 +20,8 @@ namespace Common.Tests.ActionAvailability
             goalAreaLocation = new Location(1, 1);
 
             board.PlacePieceInTaskArea(1, locationSuccess);
-            board.Players.Add(playerIdFail, new PlayerInfo(TeamColor.Blue, PlayerType.Member, locationFail, new Piece(0, PieceType.Normal)));
+            board.Players.Add(playerIdFail,
+                new PlayerInfo(TeamColor.Blue, PlayerType.Member, locationFail, new Piece(0, PieceType.Normal)));
             board.Players.Add(playerIdSuccess, new PlayerInfo(TeamColor.Blue, PlayerType.Member, locationSuccess));
         }
 

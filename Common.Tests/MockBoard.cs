@@ -3,10 +3,14 @@ using Common.Interfaces;
 
 namespace Common.Tests
 {
-    public class MockBoard : BoardBase
+    public class MockBoard : BoardBase, IGameMasterBoard
     {
         public MockBoard(int boardWidth, int taskAreaSize, int goalAreaSize) : base(boardWidth, taskAreaSize,
             goalAreaSize)
+        {
+        }
+
+        public void MarkGoalAsCompleted(GoalField goal)
         {
         }
 

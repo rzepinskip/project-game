@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Threading.Tasks;
 using Common;
-using Common.BoardObjects;
 using CsvHelper;
 using GameMaster.Configuration;
 using Messaging.ActionHelpers;
@@ -58,10 +56,7 @@ namespace GameMaster
             while (requestQueue.Count > 0)
             {
                 Request request;
-                while (!requestQueue.TryPeek(out request))
-                {
-                    Task.Delay(10);
-                }
+                while (!requestQueue.TryPeek(out request)) await Task.Delay(10);
 
                 var timeSpan = Convert.ToInt32(request.GetDelay(GameConfiguration.ActionCosts));
                 await Task.Delay(timeSpan);
@@ -80,22 +75,17 @@ namespace GameMaster
 
                 ResponsesQueues[request.PlayerId].Enqueue(response);
 
-                while (!RequestsQueues[request.PlayerId].TryDequeue(out var result))
-                {
-                    await Task.Delay(10);
-                }
+                while (!RequestsQueues[request.PlayerId].TryDequeue(out var result)) await Task.Delay(10);
             }
         }
 
         public void StartListeningToRequests()
         {
             foreach (var queue in RequestsQueues.Values)
-            {
                 queue.FirstItemEnqueued += (sender, args) =>
                 {
                     Task.Run(() => HandleMessagesFromPlayer(args.Item.PlayerId));
                 };
-            }
         }
     }
 
