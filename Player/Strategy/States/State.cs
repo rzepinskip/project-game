@@ -27,7 +27,7 @@ namespace Player.Strategy.States
                 if (condition.CheckCondition())
                     return condition.GetNextMessage(this);
 
-            throw new StrategyException("GetNextMessage error", this, this.StrategyInfo);
+            throw new StrategyException("GetNextMessage error", this, StrategyInfo);
         }
 
         public State GetNextState()
@@ -36,7 +36,7 @@ namespace Player.Strategy.States
                 if (condition.CheckCondition())
                     return condition.GetNextState(this);
 
-            throw new StrategyException("GetNextState error", this.StrategyInfo);
+            throw new StrategyException("GetNextState error", StrategyInfo);
         }
     }
 }

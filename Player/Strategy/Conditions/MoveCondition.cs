@@ -48,6 +48,7 @@ namespace Player.Strategy.Conditions
                 CheckIfCloser(board, new Location(currentLocation.X, currentLocation.Y + 1), ref distanceToNearest,
                     Direction.Up, ref directionToNearest);
 
+            StrategyInfo.ToLocation = StrategyInfo.FromLocation.GetNewLocation(directionToNearest);
             return new MoveRequest(StrategyInfo.PlayerId, directionToNearest);
         }
 

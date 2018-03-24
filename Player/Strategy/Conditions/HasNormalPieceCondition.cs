@@ -31,9 +31,9 @@ namespace Player.Strategy.Conditions
         public override Request GetNextMessage(State fromState)
         {
             var undiscoveredGoalLocation = StrategyInfo.UndiscoveredGoalFields[0];
-
-            return new MoveRequest(StrategyInfo.PlayerId,
-                undiscoveredGoalLocation.GetDirectionFrom(StrategyInfo.FromLocation));
+            var direction = undiscoveredGoalLocation.GetDirectionFrom(StrategyInfo.FromLocation);
+            StrategyInfo.ToLocation = StrategyInfo.FromLocation.GetNewLocation(direction);
+            return new MoveRequest(StrategyInfo.PlayerId, direction);
         }
     }
 }

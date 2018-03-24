@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using Common;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Common;
 using Common.BoardObjects;
-using Messaging;
 using Messaging.Requests;
 using Messaging.Responses;
 using Player.Strategy;
@@ -46,10 +43,7 @@ namespace Player
         {
             Response response;
 
-            if (!ResponsesQueue.TryDequeue(out response))
-            {
-                throw new ConcurrencyException();
-            }
+            if (!ResponsesQueue.TryDequeue(out response)) throw new ConcurrencyException();
 
             response.Update(PlayerBoard);
             //
@@ -70,10 +64,7 @@ namespace Player
 
         public void StartListeningToResponses()
         {
-            ResponsesQueue.FirstItemEnqueued += (sender, args) =>
-            {
-                Task.Run(() => HandleResponse());
-            };
+            ResponsesQueue.FirstItemEnqueued += (sender, args) => { Task.Run(() => HandleResponse()); };
         }
     }
 }
