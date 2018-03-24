@@ -48,7 +48,7 @@ namespace Player
 
             if (!ResponsesQueue.TryDequeue(out response))
             {
-                throw new ConcurencyException();
+                throw new ConcurrencyException();
             }
 
             response.Update(PlayerBoard);

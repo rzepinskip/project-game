@@ -95,7 +95,7 @@ namespace GameMaster
                 Request request;
                 if (!requestQueue.TryPeek(out request))
                 {
-                    throw new ConcurencyException();
+                    throw new ConcurrencyException();
                 }
 
                 var timeSpan = Convert.ToInt32(request.GetDelay(GameConfiguration.ActionCosts));
@@ -117,7 +117,7 @@ namespace GameMaster
 
                 if (!RequestsQueues[request.PlayerId].TryDequeue(out var result))
                 {
-                    throw new ConcurencyException();
+                    throw new ConcurrencyException();
                 }
             }
         }
