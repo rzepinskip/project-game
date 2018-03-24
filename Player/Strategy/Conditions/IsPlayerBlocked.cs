@@ -43,29 +43,22 @@ namespace Player.Strategy.Conditions
         {
             var direction = default(Direction);
             var currentLocation = StrategyInfo.FromLocation;
-            
+            var onlyTaskArea = false;
             switch (fromState)
             {
-                case InGoalAreaMovingToTaskState inGoalAreaMovingToTaskState:
-                {
-                    direction = _directionGenerator.Next() % 2 == 0 ? Direction.Left : Direction.Right;
-                    break;
-                }
-
                 case MoveToPieceState moveToPieceState:
                 {
-                    direction = Randomize4WayDirection(StrategyInfo, true);
+                    onlyTaskArea = true;
                     break;
                 }
+                case InGoalAreaMovingToTaskState inGoalAreaMovingToTaskState:
                 case MoveToUndiscoveredGoalState moveToUndiscoveredGoalState:
-                {
-                    direction = Randomize4WayDirection(StrategyInfo, false);
                     break;
-                }
-                default:
-                    throw new StrategyException("Unknown state:", fromState, StrategyInfo);
-            }
 
+                default:
+                    throw new StrategyException("Unknown state", fromState, StrategyInfo);
+            }
+            direction = Randomize4WayDirection(StrategyInfo, onlyTaskArea);
             StrategyInfo.ToLocation = StrategyInfo.FromLocation.GetNewLocation(direction);
             return new MoveRequest(StrategyInfo.PlayerId, direction);
         }
