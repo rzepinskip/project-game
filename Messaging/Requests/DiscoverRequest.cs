@@ -27,18 +27,18 @@ namespace Messaging.Requests
                 Math.Min(player.Location.Y + 1, board.Height));
 
             for (var i = downLeftCorner.X; i < Math.Min(upRightCorner.X + 1, board.Width); i++)
-            for (var j = downLeftCorner.Y; j < Math.Min(upRightCorner.Y + 1, board.Height); j++)
-                if (board[new Location(i, j)] is TaskField taskfield)
-                {
-                    taskfield.DistanceToPiece = board.DistanceToPieceFrom(taskfield);
-                    taskFields.Add(taskfield);
-
-                    if (taskfield.PieceId.HasValue)
+                for (var j = downLeftCorner.Y; j < Math.Min(upRightCorner.Y + 1, board.Height); j++)
+                    if (board[new Location(i, j)] is TaskField taskfield)
                     {
-                        var piece = board.Pieces[taskfield.PieceId.Value];
-                        pieces.Add(new Piece(piece.Id, PieceType.Unknown, piece.PlayerId));
+                        taskfield.DistanceToPiece = board.DistanceToPieceFrom(taskfield);
+                        taskFields.Add(taskfield);
+
+                        if (taskfield.PieceId.HasValue)
+                        {
+                            var piece = board.Pieces[taskfield.PieceId.Value];
+                            pieces.Add(new Piece(piece.Id, PieceType.Unknown, piece.PlayerId));
+                        }
                     }
-                }
 
             var response = new DiscoverResponse(PlayerId, taskFields, pieces);
 

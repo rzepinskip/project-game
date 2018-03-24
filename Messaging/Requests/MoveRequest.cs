@@ -2,6 +2,7 @@
 using System.Xml.Serialization;
 using Common;
 using Common.ActionAvailability.AvailabilityChain;
+using Common.ActionAvailability.AvailabilityLink;
 using Common.BoardObjects;
 using Common.Interfaces;
 using Messaging.ActionHelpers;
@@ -26,17 +27,16 @@ namespace Messaging.Requests
 
             var taskFields = new List<TaskField>();
             var pieces = new List<Piece>();
-            Location newPlayerLocation;
+            var newLocation = player.Location.GetNewLocation(Direction);
+
             var actionAvailability = new MoveAvailabilityChain(player.Location, Direction, player.Team, board);
             if (actionAvailability.ActionAvailable())
             {
                 board[player.Location].PlayerId = null;
-                var newLocation = player.Location.GetNewLocation(Direction);
                 var field = board[newLocation];
                 field.PlayerId = PlayerId;
                 player.Location = newLocation;
 
-                newPlayerLocation = newLocation;
                 if (field is TaskField taskField)
                 {
                     taskField.DistanceToPiece = board.DistanceToPieceFrom(taskField);
@@ -51,10 +51,14 @@ namespace Messaging.Requests
             }
             else
             {
-                newPlayerLocation = player.Location;
+                var stepActionAvailability = new StepOnPlayerAvailabilityChain(player.Location, Direction, player.Team, board);
+                if (stepActionAvailability.ActionAvailable())
+                    taskFields.Add((TaskField)board[newLocation]);
+
+                newLocation = player.Location;
             }
 
-            var response = new MoveResponse(PlayerId, newPlayerLocation, taskFields, pieces);
+            var response = new MoveResponse(PlayerId, newLocation, taskFields, pieces);
 
             return response;
         }

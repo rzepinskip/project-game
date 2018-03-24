@@ -11,13 +11,13 @@ namespace GameSimulation
         public void VisualizeBoard(IBoard board)
         {
             var output = new List<ColoredString>(100);
-            for (var i = board.Height - 1; i >= 0; i--)
+            for (var y = board.Height - 1; y >= 0; y--)
             {
-                for (var j = 0; j < board.Width; j++)
+                for (var x = 0; x < board.Width; x++)
                 {
                     var symbol = new ColoredString("");
 
-                    var field = board[new Location(j, i)];
+                    var field = board[new Location(x, y)];
                     if (field.PlayerId != null)
                     {
                         var player = board.Players[field.PlayerId.Value];
