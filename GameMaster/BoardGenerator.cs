@@ -56,6 +56,19 @@ namespace GameMaster
         private void PlaceGoals(List<GoalField> goals)
         {
             foreach (var goal in goals) _board[goal] = goal;
+
+            foreach (var goalField in goals)
+            {
+                switch (goalField.Team)
+                {
+                    case TeamColor.Blue:
+                        _board.UncompletedBlueGoalsLocations.Add(goalField);
+                        break;
+                    case TeamColor.Red:
+                        _board.UncompletedRedGoalsLocations.Add(goalField);
+                        break;
+                }
+            }
         }
 
         private List<PlayerInfo> GeneratePlayers(int teamPlayerCount)

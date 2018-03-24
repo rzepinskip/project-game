@@ -14,7 +14,7 @@ namespace Messaging.Requests
         {
         }
 
-        public override Response Execute(IBoard board)
+        public override Response Execute(IGameMasterBoard board)
         {
             ///TODO: different action on TaskField
             var player = board.Players[PlayerId];
@@ -30,7 +30,10 @@ namespace Messaging.Requests
 
 
             ///TODO: GameMaster counter
-            if (goalField != null) goalField.Type = GoalFieldType.NonGoal;
+            if (goalField != null)
+            {
+                board.MarkGoalAsCompleted(goalField);
+            }
 
             var response = new PlacePieceResponse(PlayerId, playerGoalField as GoalField);
 

@@ -14,7 +14,7 @@ namespace Messaging.Requests
         {
         }
 
-        public override Response Execute(IBoard board)
+        public override Response Execute(IGameMasterBoard board)
         {
             var response = new PickUpPieceResponse(PlayerId);
 

@@ -52,41 +52,6 @@ namespace GameMaster
             return new PieceGenerator(board, GameConfiguration.GameDefinition.ShamProbability);
         }
 
-        public bool IsGameFinished()
-        {
-            var blueRemainingGoalsCount = 0;
-            var redRemainingGoalsCount = 0;
-
-            foreach (var field in Board)
-                if (field is GoalField goalField)
-                    if (goalField.Type == GoalFieldType.Goal)
-                        if (goalField.Team == TeamColor.Red)
-                            redRemainingGoalsCount++;
-                        else
-                            blueRemainingGoalsCount++;
-            return blueRemainingGoalsCount == 0 || redRemainingGoalsCount == 0;
-        }
-
-        public TeamColor CheckWinner()
-        {
-            var blueRemainingGoalsCount = 0;
-            var redRemainingGoalsCount = 0;
-
-            foreach (var field in Board)
-                if (field is GoalField goalField)
-                    if (goalField.Type == GoalFieldType.Goal)
-                        if (goalField.Team == TeamColor.Red)
-                            redRemainingGoalsCount++;
-                        else
-                            blueRemainingGoalsCount++;
-
-            if (blueRemainingGoalsCount == 0)
-                return TeamColor.Blue;
-            if (redRemainingGoalsCount == 0)
-                return TeamColor.Red;
-            throw new InvalidOperationException();
-        }
-
         private async void HandleMessagesFromPlayer(int playerId)
         {
             var requestQueue = RequestsQueues[playerId];
@@ -106,9 +71,9 @@ namespace GameMaster
                 {
                     response = request.Execute(Board);
 
-                    if (IsGameFinished())
+                    if (Board.IsGameFinished())
                     {
-                        GameFinished(this, new GameFinishedEventArgs(CheckWinner()));
+                        GameFinished(this, new GameFinishedEventArgs(Board.CheckWinner()));
                         response.IsGameFinished = true;
                     }
                 }

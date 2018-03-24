@@ -16,7 +16,7 @@ namespace Messaging.Requests
         {
         }
 
-        public override Response Execute(IBoard board)
+        public override Response Execute(IGameMasterBoard board)
         {
             var player = board.Players[PlayerId];
             var taskFields = new List<TaskField>();
