@@ -63,7 +63,7 @@ namespace Common.BoardObjects
             return nl;
         }
 
-        public Direction GetLocationTo(Location location)
+        public Direction GetDirectionFrom(Location location)
         {
             var dx = X - location.X;
             var dy = Y - location.Y;
@@ -99,6 +99,25 @@ namespace Common.BoardObjects
         public static bool operator !=(Location location1, Location location2)
         {
             return !(location1 == location2);
+        }
+
+        public Direction DirectionToTask(TeamColor team)
+        {
+            return team == TeamColor.Red
+                ? Direction.Down
+                : Direction.Up;
+        }
+
+        public Direction DirectionToGoal(TeamColor team)
+        {
+            return team == TeamColor.Red
+                ? Direction.Up
+                : Direction.Down;
+        }
+
+        public override string ToString()
+        {
+            return "(" + X + ", " + Y + ")";
         }
     }
 }
