@@ -73,7 +73,7 @@ namespace Messaging.Tests
             pickUpResponse.Update(_board);
 
             //Assert
-            Assert.Equal(_pieceId, piece.PlayerId);
+            Assert.Equal(_pieceId, piece.Id);
             Assert.Equal(piece, _board.Players[_playerId].Piece);
         }
 
@@ -98,10 +98,11 @@ namespace Messaging.Tests
         public void CorrectRightMoveResponse()
         {
             //Arrange
+            var oldPlayerLocation = _board.Players[_playerId].Location;
             var newLocation = new Location(2, 2);
             var taskFields = new List<TaskField>
             {
-                new TaskField(new Location(1,2))
+                new TaskField(new Location(2,2))
             };
 
             var moveResponse = new MoveResponse(_playerId, newLocation, taskFields, null);
@@ -110,10 +111,8 @@ namespace Messaging.Tests
             moveResponse.Update(_board);
 
             //Assert
-            var playerLocation = _board.Players[_playerId].Location;
-
-            Assert.Null(_board[playerLocation].PlayerId);
-            Assert.Equal(_playerId, _board[playerLocation].PlayerId);
+            Assert.Null(_board[oldPlayerLocation].PlayerId);
+            Assert.Equal(_playerId, _board[newLocation].PlayerId);
             Assert.Equal(moveResponse.NewPlayerLocation, _board.Players[_playerId].Location);
         }
 
