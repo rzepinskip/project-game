@@ -1,5 +1,6 @@
 ﻿using System.Xml.Serialization;
 using Common;
+using Common.ActionAvailability.AvailabilityChain;
 using Common.Interfaces;
 using Messaging.ActionHelpers;
 using Messaging.Responses;
@@ -15,13 +16,19 @@ namespace Messaging.Requests
 
         public override Response Execute(IGameMasterBoard board)
         {
+            var response = new TestPieceResponse(PlayerId, null);
+
             var player = board.Players[PlayerId];
             var playerPiece = player.Piece;
 
-            if (playerPiece.Type == PieceType.Sham)
-                player.Piece = null;
+            var actionAvailibility = new TestAvailabilityChain(PlayerId, board.Players);
+            if (actionAvailibility.ActionAvailable())
+            {
+                if (playerPiece.Type == PieceType.Sham)
+                    player.Piece = null;
 
-            var response = new TestPieceResponse(PlayerId, playerPiece);
+                response = new TestPieceResponse(PlayerId, playerPiece);
+            }
 
             return response;
         }

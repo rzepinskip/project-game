@@ -1,5 +1,6 @@
 ﻿using System.Xml.Serialization;
 using Common;
+using Common.ActionAvailability.AvailabilityChain;
 using Common.BoardObjects;
 using Common.Interfaces;
 using Messaging.ActionHelpers;
@@ -16,26 +17,30 @@ namespace Messaging.Requests
 
         public override Response Execute(IGameMasterBoard board)
         {
+            var response = new PlacePieceResponse(PlayerId);
             ///TODO: different action on TaskField
             var player = board.Players[PlayerId];
             var piece = player.Piece;
 
-            player.Piece = null;
+            var actionAvailibility = new PlaceAvailabilityChain(player.Location, board, PlayerId);
+            if (actionAvailibility.ActionAvailable())
+            {
+                player.Piece = null;
+                if (piece.Type == PieceType.Sham)
+                    return new PlacePieceResponse(PlayerId);
 
-            if (piece.Type == PieceType.Sham)
-                return new PlacePieceResponse(PlayerId);
-
-            var playerGoalField = board[player.Location];
-            var goalField = playerGoalField as GoalField;
+                var playerGoalField = board[player.Location];
+                var goalField = playerGoalField as GoalField;
 
 
-            ///TODO: GameMaster counter
+                ///TODO: GameMaster counter
             if (goalField != null)
             {
                 board.MarkGoalAsCompleted(goalField);
             }
 
-            var response = new PlacePieceResponse(PlayerId, playerGoalField as GoalField);
+                response = new PlacePieceResponse(PlayerId, playerGoalField as GoalField);
+            }
 
             return response;
         }

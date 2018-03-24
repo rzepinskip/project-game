@@ -7,24 +7,21 @@ namespace Common.ActionAvailability.AvailabilityChain
 {
     public class PickUpAvailabilityChain
     {
-        private readonly IBoard board;
-        private readonly Location location;
-        private readonly string playerGuid;
-        private readonly Dictionary<string, int> playerGuidToPiece;
+        private readonly IBoard _board;
+        private readonly Location _location;
+        private readonly int _playerId;
 
-        public PickUpAvailabilityChain(Location location, IBoard board, string playerGuid,
-            Dictionary<string, int> playerGuidToPiece)
+        public PickUpAvailabilityChain(Location location, IBoard board, int playerId)
         {
-            this.location = location;
-            this.board = board;
-            this.playerGuid = playerGuid;
-            this.playerGuidToPiece = playerGuidToPiece;
+            _location = location;
+            _board = board;
+            _playerId = playerId;
         }
 
         public bool ActionAvailable()
         {
-            var builder = new AvailabilityChainBuilder(new IsPieceInCurrentLocationLink(location, board))
-                .AddNextLink(new HasPlayerEmptySlotForPieceLink(playerGuid, playerGuidToPiece));
+            var builder = new AvailabilityChainBuilder(new IsPieceInCurrentLocationLink(_location, _board))
+                .AddNextLink(new HasPlayerEmptySlotForPieceLink(_playerId, _board.Players));
             return builder.Build().ValidateLink();
         }
     }

@@ -5,18 +5,18 @@ namespace Common.ActionAvailability.AvailabilityLink
 {
     internal class HasPlayerEmptySlotForPieceLink : AvailabilityLinkBase
     {
-        private readonly string playerGuid;
-        private readonly Dictionary<string, int> playerGuidToPieceId;
+        private readonly int _playerId;
+        private readonly Dictionary<int, PlayerInfo> _players;
 
-        public HasPlayerEmptySlotForPieceLink(string playerGuid, Dictionary<string, int> playerGuidToPieceId)
+        public HasPlayerEmptySlotForPieceLink(int playerId, Dictionary<int, PlayerInfo> players)
         {
-            this.playerGuid = playerGuid;
-            this.playerGuidToPieceId = playerGuidToPieceId;
+            _playerId = playerId;
+            _players = players;
         }
 
         protected override bool Validate()
         {
-            return new PieceRelatedAvailability().HasPlayerEmptySlotForPiece(playerGuid, playerGuidToPieceId);
+            return new PieceRelatedAvailability().HasPlayerEmptySlotForPiece(_playerId, _players);
         }
     }
 }

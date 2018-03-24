@@ -9,16 +9,14 @@ namespace Common.ActionAvailability.Helpers
         public bool IsPieceInCurrentLocation(Location l, IBoard board)
         {
             var PieceId = board.GetPieceIdAt(l);
-            var result = true;
-            if (PieceId == null)
-                result = false;
-            return result;
+            return PieceId != null;
         }
 
-        public bool HasPlayerEmptySlotForPiece(string playerGuid, Dictionary<string, int> playerGuidToPiece)
+        public bool HasPlayerEmptySlotForPiece(int playerId, Dictionary<int, PlayerInfo> players)
         {
             var result = true;
-            if (playerGuidToPiece.TryGetValue(playerGuid, out var pieceId))
+            var playerInfo = players[playerId];
+            if (playerInfo?.Piece != null)
                 result = false;
             return result;
         }

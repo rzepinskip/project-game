@@ -25,13 +25,14 @@ namespace Messaging.Responses
             board[currentLocation].PlayerId = null;
 
             playerInfo.Location = NewPlayerLocation;
-            board[NewPlayerLocation].PlayerId = PlayerId;
 
             foreach (var taskField in TaskFields)
                 board[taskField] = taskField;
 
             foreach (var piece in Pieces)
                 board.Pieces[piece.Id] = piece;
+
+            board[NewPlayerLocation].PlayerId = PlayerId;
         }
     }
 }

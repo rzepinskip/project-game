@@ -21,18 +21,16 @@ namespace Common.Tests.ActionAvailability
             goalAreaLocation = new Location(1, 1);
 
             board.PlacePieceInTaskArea(1, locationSuccess);
-
-            playerGuidToPieceId = new Dictionary<string, int>();
-            playerGuidToPieceId.Add(playerGuidFailPickUp, pieceId);
+            board.Players.Add(playerIdFail, new PlayerInfo(TeamColor.Blue, PlayerType.Member, locationFail, new Piece(0, PieceType.Normal)));
+            board.Players.Add(playerIdSuccess, new PlayerInfo(TeamColor.Blue, PlayerType.Member, locationSuccess));
         }
 
         private readonly int boardWidth = 5;
         private readonly int goalAreaSize = 2;
         private readonly int taskAreaSize = 4;
         private readonly int pieceId = 1;
-        private readonly string playerGuidSuccessPickUp = "c094cab7-da7b-457f-89e5-a5c51756035f";
-        private readonly string playerGuidFailPickUp = "c094cab7-da7b-457f-89e5-a5c51756035d";
-        private readonly Dictionary<string, int> playerGuidToPieceId;
+        private readonly int playerIdSuccess = 1;
+        private readonly int playerIdFail = 0;
         private readonly Location locationFail;
         private readonly Location locationSuccess;
         private readonly Location goalAreaLocation;
@@ -60,15 +58,14 @@ namespace Common.Tests.ActionAvailability
         public void PickUpWhenPlayerCarringPiece()
         {
             Assert.False(
-                new PieceRelatedAvailability().HasPlayerEmptySlotForPiece(playerGuidFailPickUp, playerGuidToPieceId));
+                new PieceRelatedAvailability().HasPlayerEmptySlotForPiece(playerIdFail, board.Players));
         }
 
         [Fact]
         public void PickUpWhenPlayerNotCarringPiece()
         {
             Assert.True(
-                new PieceRelatedAvailability().HasPlayerEmptySlotForPiece(playerGuidSuccessPickUp,
-                    playerGuidToPieceId));
+                new PieceRelatedAvailability().HasPlayerEmptySlotForPiece(playerIdSuccess, board.Players));
         }
     }
 }

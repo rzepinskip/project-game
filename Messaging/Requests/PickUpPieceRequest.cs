@@ -1,5 +1,6 @@
 ﻿using System.Xml.Serialization;
 using Common;
+using Common.ActionAvailability.AvailabilityChain;
 using Common.BoardObjects;
 using Common.Interfaces;
 using Messaging.ActionHelpers;
@@ -19,21 +20,21 @@ namespace Messaging.Requests
             var response = new PickUpPieceResponse(PlayerId);
 
             var player = board.Players[PlayerId];
-            if (!board.IsLocationInTaskArea(player.Location))
-                return response;
 
-            var playerField = board[player.Location] as TaskField;
+            var actionAvailibility = new PickUpAvailabilityChain(player.Location, board, PlayerId);
 
-            if (!playerField.PieceId.HasValue)
-                return response;
+            if (actionAvailibility.ActionAvailable())
+            {
+                var playerField = board[player.Location] as TaskField;
 
-            var piece = board.Pieces[playerField.PieceId.Value];
-            piece.PlayerId = PlayerId;
+                var piece = board.Pieces[playerField.PieceId.Value];
+                piece.PlayerId = PlayerId;
 
-            player.Piece = piece;
-            playerField.PieceId = null;
+                player.Piece = piece;
+                playerField.PieceId = null;
 
-            response = new PickUpPieceResponse(PlayerId, new Piece(piece.Id, PieceType.Unknown, piece.PlayerId));
+                response = new PickUpPieceResponse(PlayerId, new Piece(piece.Id, PieceType.Unknown, piece.PlayerId));
+            }
 
             return response;
         }
