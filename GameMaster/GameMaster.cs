@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using CsvHelper;
@@ -69,7 +71,8 @@ namespace GameMaster
 
                     if (Board.IsGameFinished())
                     {
-                        GameFinished(this, new GameFinishedEventArgs(Board.CheckWinner()));
+                        Thread thread = new Thread(() => GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner())));
+                        thread.Start();
                         response.IsGameFinished = true;
                     }
                 }
