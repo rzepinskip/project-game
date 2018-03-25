@@ -56,7 +56,8 @@ namespace GameMaster
             while (requestQueue.Count > 0)
             {
                 Request request;
-                while (!requestQueue.TryPeek(out request)) await Task.Delay(10);
+                while (!requestQueue.TryDequeue(out request))
+                    await Task.Delay(10);
 
                 var timeSpan = Convert.ToInt32(request.GetDelay(GameConfiguration.ActionCosts));
                 await Task.Delay(timeSpan);
@@ -75,7 +76,7 @@ namespace GameMaster
 
                 ResponsesQueues[request.PlayerId].Enqueue(response);
 
-                while (!RequestsQueues[request.PlayerId].TryDequeue(out var result)) await Task.Delay(10);
+                //while (!RequestsQueues[request.PlayerId].TryDequeue(out var result)) await Task.Delay(10);
             }
         }
 
