@@ -67,7 +67,7 @@ namespace Player
 
         public void StartListeningToResponses()
         {
-            ResponsesQueue.FirstItemEnqueued += (sender, args) => { Task.Run(() => HandleResponse()); };
+            ResponsesQueue.ItemEnqueued += (sender, args) => { Task.Run(() => HandleResponse()); };
         }
     }
 }
