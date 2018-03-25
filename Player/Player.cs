@@ -5,6 +5,7 @@ using Common.BoardObjects;
 using Messaging.Requests;
 using Messaging.Responses;
 using NLog;
+using Player.Logging;
 using Player.Strategy;
 
 namespace Player
