@@ -48,7 +48,8 @@ namespace GameMaster
         {
             var playerInfo = Board.Players[record.PlayerId];
             var actionLog = new RequestLog(record, playerInfo.Team, playerInfo.Role);
-            _logger.Info("REQUEST: " + actionLog.ToLog());
+            _logger.Info(actionLog.ToLog());
+            //_logger.Info("REQUEST: " + actionLog.ToLog());
         }
 
         public PieceGenerator CreatePieceGenerator(GameMasterBoard board)
@@ -93,7 +94,7 @@ namespace GameMaster
                     }
                 }
 
-                _logger.Info("RESPONSE: " + response.ToLog());
+                //_logger.Info("RESPONSE: " + response.ToLog());
                 ResponsesQueues[request.PlayerId].Enqueue(response);
             }
         }
