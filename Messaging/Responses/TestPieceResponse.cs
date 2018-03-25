@@ -18,6 +18,7 @@ namespace Messaging.Responses
         {
             if (Piece == null)
                 return;
+
             var playerInfo = board.Players[PlayerId];
             playerInfo.Piece = Piece;
             if (Piece.Type == PieceType.Sham)

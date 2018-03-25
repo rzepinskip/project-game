@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using Common;
 using Common.BoardObjects;
+using Messaging.ActionHelpers;
 
 namespace Player.Strategy
 {
-    public class StrategyInfo
+    public class StrategyInfo : ILoggable
     {
         public StrategyInfo(Location fromLocation, BoardBase board, int playerId, TeamColor team,
             List<GoalField> undiscoveredGoalFields = null, Location toLocation = null)
@@ -40,6 +41,11 @@ namespace Player.Strategy
                 "PlayerId: " + PlayerId, "Team: " + Team, "UndiscoveredGoals: " + UndiscoveredGoalFields);
 
             return string.Join('\n', "Strategy Info:", fields);
+        }
+
+        public string ToLog()
+        {
+            return this.ToString();
         }
     }
 }

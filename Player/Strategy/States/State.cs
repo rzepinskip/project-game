@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using Messaging.ActionHelpers;
 using Messaging.Requests;
 using Player.Strategy.Conditions;
 
 namespace Player.Strategy.States
 {
-    public abstract class State
+    public abstract class State : ILoggable
     {
         protected List<Condition> conditions;
 
@@ -37,6 +38,11 @@ namespace Player.Strategy.States
                     return condition.GetNextState(this);
 
             throw new StrategyException("GetNextState error", StrategyInfo);
+        }
+
+        public string ToLog()
+        {
+            return this.GetType().ToString() + StrategyInfo.ToLog();
         }
     }
 }
