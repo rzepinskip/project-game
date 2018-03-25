@@ -47,7 +47,7 @@ namespace Player
             {
                 Task.Delay(10);
             }
-
+            
             response.Update(PlayerBoard);
             //
             //change board state based on response 
