@@ -15,6 +15,8 @@ namespace Messaging.Responses
 
         public override void Update(IBoard board)
         {
+            if (Piece == null)
+                return;
             var playerInfo = board.Players[PlayerId];
 
             playerInfo.Piece = Piece;

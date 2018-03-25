@@ -16,6 +16,8 @@ namespace Messaging.Responses
 
         public override void Update(IBoard board)
         {
+            if (GoalField == null)
+                return;
             var playerInfo = board.Players[PlayerId];
             playerInfo.Piece = null;
             switch (GoalField.Type)

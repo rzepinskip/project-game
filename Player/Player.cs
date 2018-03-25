@@ -47,7 +47,7 @@ namespace Player
             {
                 Task.Delay(10);
             }
-
+            
             response.Update(PlayerBoard);
             //
             //change board state based on response 
@@ -67,7 +67,7 @@ namespace Player
 
         public void StartListeningToResponses()
         {
-            ResponsesQueue.FirstItemEnqueued += (sender, args) => { Task.Run(() => HandleResponse()); };
+            ResponsesQueue.ItemEnqueued += (sender, args) => { Task.Run(() => HandleResponse()); };
         }
     }
 }

@@ -5,27 +5,26 @@ namespace Common
 {
     public class ObservableConcurrentQueue<T> : ConcurrentQueue<T>
     {
-        public event EventHandler<ItemQueuedEventArgs<T>> FirstItemEnqueued;
+        public event EventHandler<ItemEnqueuedEventArgs<T>> ItemEnqueued;
 
         public new void Enqueue(T item)
         {
             base.Enqueue(item);
 
-            if (base.Count == 1)
-                OnFirstItemEnqueued(new ItemQueuedEventArgs<T>(item));
+            OnItemEnqueued(new ItemEnqueuedEventArgs<T>(item));
         }
 
-        private void OnFirstItemEnqueued(ItemQueuedEventArgs<T> item)
+        private void OnItemEnqueued(ItemEnqueuedEventArgs<T> item)
         {
-            FirstItemEnqueued?.Invoke(this, item);
+            ItemEnqueued?.Invoke(this, item);
         }
     }
 
-    public class ItemQueuedEventArgs<T> : EventArgs
+    public class ItemEnqueuedEventArgs<T> : EventArgs
     {
         public T Item { get; private set; }
 
-        public ItemQueuedEventArgs(T item)
+        public ItemEnqueuedEventArgs(T item)
         {
             this.Item = item;
         }

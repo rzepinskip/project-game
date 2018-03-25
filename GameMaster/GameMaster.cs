@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using CsvHelper;
@@ -26,6 +27,9 @@ namespace GameMaster
 
         public Dictionary<int, ObservableConcurrentQueue<Response>> ResponsesQueues { get; set; } =
             new Dictionary<int, ObservableConcurrentQueue<Response>>();
+
+        public Dictionary<int, bool> IsPlayerQueueProcessed { get; set; } = new Dictionary<int, bool>();
+        public Dictionary<int, object> IsPlayerQueueProcessedLock { get; set; } = new Dictionary<int, object>();
 
         public GameConfiguration GameConfiguration { get; }
         private Dictionary<string, int> PlayerGuidToId { get; }
@@ -53,10 +57,22 @@ namespace GameMaster
         private async void HandleMessagesFromPlayer(int playerId)
         {
             var requestQueue = RequestsQueues[playerId];
-            while (requestQueue.Count > 0)
+            while (true)
             {
+                lock (IsPlayerQueueProcessedLock[playerId])
+                {
+                    if (requestQueue.IsEmpty)
+                    {
+                        IsPlayerQueueProcessed[playerId] = false;
+                        break;
+                    }
+
+                    IsPlayerQueueProcessed[playerId] = true;
+                }
+
                 Request request;
-                while (!requestQueue.TryPeek(out request)) await Task.Delay(10);
+                while (!requestQueue.TryDequeue(out request))
+                    await Task.Delay(10);
 
                 var timeSpan = Convert.ToInt32(request.GetDelay(GameConfiguration.ActionCosts));
                 await Task.Delay(timeSpan);
@@ -68,23 +84,28 @@ namespace GameMaster
 
                     if (Board.IsGameFinished())
                     {
-                        GameFinished(this, new GameFinishedEventArgs(Board.CheckWinner()));
+                        new Thread(() => GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner())))
+                            .Start();
                         response.IsGameFinished = true;
                     }
                 }
 
                 ResponsesQueues[request.PlayerId].Enqueue(response);
-
-                while (!RequestsQueues[request.PlayerId].TryDequeue(out var result)) await Task.Delay(10);
             }
         }
 
         public void StartListeningToRequests()
         {
             foreach (var queue in RequestsQueues.Values)
-                queue.FirstItemEnqueued += (sender, args) =>
+                queue.ItemEnqueued += (sender, args) =>
                 {
-                    Task.Run(() => HandleMessagesFromPlayer(args.Item.PlayerId));
+                    var playerId = args.Item.PlayerId;
+
+                    lock (IsPlayerQueueProcessedLock[playerId])
+                    {
+                        if (!IsPlayerQueueProcessed[playerId])
+                            Task.Run(() => HandleMessagesFromPlayer(playerId));
+                    }
                 };
         }
     }

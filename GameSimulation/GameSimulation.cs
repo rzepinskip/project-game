@@ -58,6 +58,8 @@ namespace GameSimulation
 
                 gameMaster.RequestsQueues.Add(player.Id, player.RequestsQueue);
                 gameMaster.ResponsesQueues.Add(player.Id, player.ResponsesQueue);
+                gameMaster.IsPlayerQueueProcessed.Add(player.Id, false);
+                gameMaster.IsPlayerQueueProcessedLock.Add(player.Id, new object());
             }
         }
 

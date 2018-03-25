@@ -31,7 +31,7 @@ namespace GameMaster
 
         public bool IsGameFinished()
         {
-            Debug.WriteLine($"R:{UncompletedRedGoalsLocations.Count} vs B:{UncompletedBlueGoalsLocations.Count}");
+            //Debug.WriteLine($"R:{UncompletedRedGoalsLocations.Count} vs B:{UncompletedBlueGoalsLocations.Count}");
             return UncompletedBlueGoalsLocations.Count == 0 || UncompletedRedGoalsLocations.Count == 0;
         }
 
