@@ -76,7 +76,7 @@ namespace Player
             {
                 var request = GetNextRequestMessage();
                 _logger.Info("REQUEST: " + request.ToLog());
-                RequestsQueue.Enqueue(GetNextRequestMessage());
+                RequestsQueue.Enqueue(request);
             }
             catch(StrategyException s)
             {
