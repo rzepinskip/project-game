@@ -44,6 +44,13 @@ namespace GameMaster
             _logger.Info(record.ToLog());
         }
 
+        public void PutActionLog(Request record)
+        {
+            var playerInfo = Board.Players[record.PlayerId];
+            var actionLog = new RequestLog(record, playerInfo.Team, playerInfo.Role);
+            _logger.Info(actionLog.ToLog());
+        }
+
         public PieceGenerator CreatePieceGenerator(GameMasterBoard board)
         {
             return new PieceGenerator(board, GameConfiguration.GameDefinition.ShamProbability);
@@ -70,7 +77,7 @@ namespace GameMaster
                     await Task.Delay(10);
 
                 var timeSpan = Convert.ToInt32(request.GetDelay(GameConfiguration.ActionCosts));
-                PutLog(request);
+                PutActionLog(request);
                 await Task.Delay(timeSpan);
 
                 Response response;
