@@ -35,5 +35,9 @@ namespace Messaging.Responses
                     break;
             }
         }
+        public override string ToLog()
+        {
+            return string.Join(',', ActionType.Place, base.ToLog());
+        }
     }
 }

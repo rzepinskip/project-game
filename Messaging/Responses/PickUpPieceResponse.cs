@@ -1,4 +1,5 @@
-﻿using Common.BoardObjects;
+﻿using Common;
+using Common.BoardObjects;
 using Common.Interfaces;
 
 namespace Messaging.Responses
@@ -21,6 +22,11 @@ namespace Messaging.Responses
 
             playerInfo.Piece = Piece;
             Piece.PlayerId = PlayerId;
+        }
+
+        public override string ToLog()
+        {
+            return string.Join(',', ActionType.PickUp, base.ToLog());
         }
     }
 }

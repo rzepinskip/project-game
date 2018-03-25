@@ -23,5 +23,10 @@ namespace Messaging.Responses
             if (Piece.Type == PieceType.Sham)
                 playerInfo.Piece = null;
         }
+
+        public override string ToLog()
+        {
+            return string.Join(',', ActionType.Test, base.ToLog());
+        }
     }
 }

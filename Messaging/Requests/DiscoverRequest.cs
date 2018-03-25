@@ -50,9 +50,9 @@ namespace Messaging.Requests
             return actionCosts.DiscoverDelay;
         }
 
-        public override ActionLog ToLog(int playerId, PlayerInfo playerInfo)
+        public override string ToLog()
         {
-            return new ActionLog(playerId, GameId, PlayerGuid, playerInfo, ActionType.Discover);
+            return string.Join(',', ActionType.Discover, base.ToLog());
         }
     }
 }

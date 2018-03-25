@@ -1,8 +1,9 @@
 ﻿using Common.Interfaces;
+using Messaging.ActionHelpers;
 
 namespace Messaging.Responses
 {
-    public abstract class Response
+    public abstract class Response : ILoggable
     {
         public Response(int playerId, bool isGameFinished = false)
         {
@@ -14,5 +15,9 @@ namespace Messaging.Responses
         public bool IsGameFinished { get; set; }
 
         public abstract void Update(IBoard board);
+        public virtual string ToLog()
+        {
+            return string.Join(',', PlayerId, IsGameFinished);
+        }
     }
 }

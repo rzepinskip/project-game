@@ -6,11 +6,18 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="7.0.1" />
+    <PackageReference Include="NLog" Version="4.5.0-rc07" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Messaging\Messaging.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

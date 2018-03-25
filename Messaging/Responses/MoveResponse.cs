@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
 
@@ -33,6 +34,11 @@ namespace Messaging.Responses
                 board.Pieces[piece.Id] = piece;
 
             board[NewPlayerLocation].PlayerId = PlayerId;
+        }
+
+        public override string ToLog()
+        {
+            return string.Join(',', ActionType.Move, base.ToLog());
         }
     }
 }
