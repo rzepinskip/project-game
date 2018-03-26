@@ -25,8 +25,12 @@ namespace Messaging.Requests
 
         public abstract double GetDelay(ActionCosts actionCosts);
 
-        public abstract ActionLog ToLog(int playerId, PlayerInfo playeInfo);
 
         public abstract Response Execute(IGameMasterBoard board);
+
+        public virtual string ToLog()
+        {
+            return string.Join(',', PlayerId, PlayerGuid, GameId);
+        }
     }
 }

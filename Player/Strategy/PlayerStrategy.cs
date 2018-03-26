@@ -11,7 +11,7 @@ namespace Player.Strategy
         private readonly StrategyInfo strategyInfo;
         private readonly List<GoalField> undiscoveredGoalFields = new List<GoalField>();
 
-        private State currentState;
+        public State CurrentState { get; set; }
 
         public PlayerStrategy(PlayerBoard board, TeamColor team, int playerId)
         {
@@ -25,7 +25,7 @@ namespace Player.Strategy
             undiscoveredGoalFields.Shuffle();
 
             strategyInfo = new StrategyInfo(null, board, playerId, team, undiscoveredGoalFields);
-            currentState = new InitState(strategyInfo);
+            CurrentState = new InitState(strategyInfo);
         }
 
 
@@ -33,10 +33,10 @@ namespace Player.Strategy
         {
             strategyInfo.FromLocation = location;
 
-            var nextState = currentState.GetNextState();
-            var gameMessage = currentState.GetNextMessage();
+            var nextState = CurrentState.GetNextState();
+            var gameMessage = CurrentState.GetNextMessage();
 
-            currentState = nextState;
+            CurrentState = nextState;
             return gameMessage;
         }
     }

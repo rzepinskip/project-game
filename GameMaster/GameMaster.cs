@@ -9,11 +9,13 @@ using GameMaster.Configuration;
 using Messaging.ActionHelpers;
 using Messaging.Requests;
 using Messaging.Responses;
+using NLog;
 
 namespace GameMaster
 {
     public class GameMaster
     {
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
         public GameMaster(GameConfiguration gameConfiguration)
         {
             GameConfiguration = gameConfiguration;
@@ -37,16 +39,17 @@ namespace GameMaster
 
         public virtual event EventHandler<GameFinishedEventArgs> GameFinished;
 
-        public void PutLog(string filename, ActionLog log)
+        public void PutLog(ILoggable record)
         {
-            using (var textWriter = new StreamWriter(filename, true))
-            {
-                using (var csvWriter = new CsvWriter(textWriter))
-                {
-                    csvWriter.NextRecord();
-                    csvWriter.WriteRecord(log);
-                }
-            }
+            _logger.Info(record.ToLog());
+        }
+
+        public void PutActionLog(Request record)
+        {
+            var playerInfo = Board.Players[record.PlayerId];
+            var actionLog = new RequestLog(record, playerInfo.Team, playerInfo.Role);
+            _logger.Info(actionLog.ToLog());
+            //_logger.Info("REQUEST: " + actionLog.ToLog());
         }
 
         public PieceGenerator CreatePieceGenerator(GameMasterBoard board)
@@ -75,6 +78,7 @@ namespace GameMaster
                     await Task.Delay(10);
 
                 var timeSpan = Convert.ToInt32(request.GetDelay(GameConfiguration.ActionCosts));
+                PutActionLog(request);
                 await Task.Delay(timeSpan);
 
                 Response response;
@@ -90,6 +94,7 @@ namespace GameMaster
                     }
                 }
 
+                //_logger.Info("RESPONSE: " + response.ToLog());
                 ResponsesQueues[request.PlayerId].Enqueue(response);
             }
         }

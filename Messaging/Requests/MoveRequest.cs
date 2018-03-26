@@ -63,9 +63,9 @@ namespace Messaging.Requests
             return response;
         }
 
-        public override ActionLog ToLog(int playerId, PlayerInfo playerInfo)
+        public override string ToLog()
         {
-            return new ActionLog(playerId, GameId, PlayerGuid, playerInfo, ActionType.Move);
+            return string.Join(',', ActionType.Move, base.ToLog());
         }
 
         public override double GetDelay(ActionCosts actionCosts)

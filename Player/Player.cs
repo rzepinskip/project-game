@@ -4,6 +4,8 @@ using Common;
 using Common.BoardObjects;
 using Messaging.Requests;
 using Messaging.Responses;
+using NLog;
+using Player.Logging;
 using Player.Strategy;
 
 namespace Player
@@ -15,6 +17,7 @@ namespace Player
 
         private string PlayerGuid { get; set; }
         private PlayerBoard PlayerBoard { get; set; }
+        private ILogger _logger;
 
         private List<PlayerBase> Players { get; set; }
 
@@ -24,6 +27,9 @@ namespace Player
         public void InitializePlayer(int id, TeamColor team, PlayerType type, PlayerBoard board,
             Location location)
         {
+            var factory = new LoggerFactory();
+            _logger = factory.GetPlayerLogger(id);
+
             Id = id;
             Team = team;
             Type = type;
@@ -47,8 +53,9 @@ namespace Player
             {
                 Task.Delay(10);
             }
-            
+            //Log received response
             response.Update(PlayerBoard);
+            _logger.Info("RESPONSE: " + response.ToLog());
             //
             //change board state based on response 
             //  - update method in Response Message
@@ -62,7 +69,21 @@ namespace Player
             //    PlayerId = player.Id,
             //    Direction = player.Team == TeamColor.Red ? Direction.Down : Direction.Up,
             //};
-            RequestsQueue.Enqueue(GetNextRequestMessage());
+
+            //log current state
+
+            try
+            {
+                var request = GetNextRequestMessage();
+                _logger.Info("REQUEST: " + request.ToLog());
+                RequestsQueue.Enqueue(request);
+            }
+            catch(StrategyException s)
+            {
+                //log exception
+                _logger.Error("Thrown Exception", s);
+                throw;
+            }
         }
 
         public void StartListeningToResponses()

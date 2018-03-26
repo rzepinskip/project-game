@@ -1,4 +1,4 @@
-﻿using Player.Strategy.Conditions;
+﻿    using Player.Strategy.Conditions;
 
 namespace Player.Strategy.States
 {

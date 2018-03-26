@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
 
@@ -23,6 +24,11 @@ namespace Messaging.Responses
 
             foreach (var piece in Pieces)
                 board.Pieces[piece.Id] = piece;
+        }
+
+        public override string ToLog()
+        {
+            return string.Join(',', ActionType.Discover, base.ToLog());
         }
     }
 }
