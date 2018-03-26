@@ -5,7 +5,7 @@ using Messaging.Requests;
 using Messaging.Responses;
 using Xunit;
 
-namespace Common.Tests.ActionTests
+namespace Messaging.Tests.ActionTests
 {
     public class DiscoverTests : ActionTest
     {

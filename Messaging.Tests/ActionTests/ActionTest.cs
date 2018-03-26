@@ -1,8 +1,9 @@
-﻿using Common.BoardObjects;
+﻿using Common;
+using Common.BoardObjects;
 using Common.Interfaces;
 using Xunit;
 
-namespace Common.Tests.ActionTests
+namespace Messaging.Tests.ActionTests
 {
     public class ActionTest
     {
