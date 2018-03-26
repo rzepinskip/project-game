@@ -1,9 +1,10 @@
-﻿using Common.BoardObjects;
+﻿using Common;
+using Common.BoardObjects;
 using Messaging.Requests;
 using Messaging.Responses;
 using Xunit;
 
-namespace Common.Tests.ActionTests
+namespace Messaging.Tests.ActionTests
 {
     public class MoveTest : ActionTest
     {

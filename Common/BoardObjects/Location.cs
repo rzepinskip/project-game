@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
 namespace Common.BoardObjects
@@ -20,11 +19,9 @@ namespace Common.BoardObjects
             Y = y;
         }
 
-        [XmlAttribute("x")]
-        public int X { get; set; }
+        [XmlAttribute("x")] public int X { get; set; }
 
-        [XmlAttribute("y")]
-        public int Y { get; set; }
+        [XmlAttribute("y")] public int Y { get; set; }
 
         public bool Equals(Location other)
         {

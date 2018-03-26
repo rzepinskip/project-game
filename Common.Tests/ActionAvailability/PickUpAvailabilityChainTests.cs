@@ -22,8 +22,8 @@ namespace Common.Tests.ActionAvailability
             board.PlacePieceInTaskArea(1, locationSuccess);
 
             board.Players.Add(playerIdFail,
-                new PlayerInfo(TeamColor.Blue, PlayerType.Member, locationFail, new Piece(0, PieceType.Normal)));
-            board.Players.Add(playerIdSuccess, new PlayerInfo(TeamColor.Blue, PlayerType.Member, locationSuccess));
+                new PlayerInfo(playerIdFail, TeamColor.Blue, PlayerType.Member, locationFail, new Piece(0, PieceType.Normal)));
+            board.Players.Add(playerIdSuccess, new PlayerInfo(playerIdSuccess, TeamColor.Blue, PlayerType.Member, locationSuccess));
         }
 
         private readonly int boardWidth = 5;

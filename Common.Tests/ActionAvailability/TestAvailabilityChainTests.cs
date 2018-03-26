@@ -20,8 +20,8 @@ namespace Common.Tests.ActionAvailability
             locationSuccess = new Location(1, 3);
 
             _board.Players.Add(playerIdFail,
-                new PlayerInfo(TeamColor.Blue, PlayerType.Member, locationFail, new Piece(0, PieceType.Normal)));
-            _board.Players.Add(playerIdSuccess, new PlayerInfo(TeamColor.Blue, PlayerType.Member, locationSuccess));
+                new PlayerInfo(playerIdFail, TeamColor.Blue, PlayerType.Member, locationFail, new Piece(0, PieceType.Normal)));
+            _board.Players.Add(playerIdSuccess, new PlayerInfo(playerIdSuccess, TeamColor.Blue, PlayerType.Member, locationSuccess));
         }
 
         private readonly int pieceId = 1;

@@ -1,4 +1,4 @@
-﻿namespace Messaging.ActionHelpers
+﻿namespace GameMaster.Delays
 {
     public interface IDelayed
     {

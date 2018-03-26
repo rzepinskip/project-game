@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Common.ActionInfo;
 
-namespace Messaging.ActionHelpers
+namespace GameMaster.Delays
 {
     public class ActionCosts : IEquatable<ActionCosts>
     {
@@ -11,6 +12,36 @@ namespace Messaging.ActionHelpers
         public double PickUpDelay { get; set; }
         public double PlacingDelay { get; set; }
         public double KnowledgeExchangeDelay { get; set; }
+
+        internal double GetDelayFor(ActionInfo actionInfo)
+        {
+            return GetDelayFor((dynamic)actionInfo);
+        }
+
+        private double GetDelayFor(MoveActionInfo actionInfo)
+        {
+            return MoveDelay;
+        }
+
+        private double GetDelayFor(DiscoverActionInfo actionInfo)
+        {
+            return DiscoverDelay;
+        }
+
+        private double GetDelayFor(PickUpActionInfo actionInfo)
+        {
+            return PickUpDelay;
+        }
+
+        private double GetDelayFor(PlaceActionInfo actionInfo)
+        {
+            return PlacingDelay;
+        }
+
+        private double GetDelayFor(TestActionInfo actionInfo)
+        {
+            return TestDelay;
+        }
 
         public bool Equals(ActionCosts other)
         {
