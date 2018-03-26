@@ -1,53 +1,61 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
+using System.Threading.Tasks;
+using Common;
+using Common.BoardObjects;
+using Messaging.Requests;
+using Messaging.Responses;
+using NLog;
+using Player.Logging;
 using Player.Strategy;
-using Shared;
-using Shared.BoardObjects;
-using Shared.GameMessages;
-using Shared.ResponseMessages;
 
 namespace Player
 {
     public class Player : PlayerBase
     {
-        public ObservableQueue<GameMessage> RequestsQueue { get; set; }
-        public ObservableQueue<ResponseMessage> ResponsesQueue { get; set; }
+        public ObservableConcurrentQueue<Request> RequestsQueue { get; set; }
+        public ObservableConcurrentQueue<Response> ResponsesQueue { get; set; }
 
         private string PlayerGuid { get; set; }
-        private Board Board { get; set; }
+        private PlayerBoard PlayerBoard { get; set; }
+        private ILogger _logger;
 
         private List<PlayerBase> Players { get; set; }
 
         //public Location Location { get; set; }
-        private PlayerStrategy PlayerStrategy { get; set; }
+        private IStrategy PlayerStrategy { get; set; }
 
-        public void InitializePlayer(int id, CommonResources.TeamColour team, PlayerType type, Board board,
+        public void InitializePlayer(int id, TeamColor team, PlayerType type, PlayerBoard board,
             Location location)
         {
+            var factory = new LoggerFactory();
+            _logger = factory.GetPlayerLogger(id);
+
             Id = id;
             Team = team;
             Type = type;
-            Board = board;
+            PlayerBoard = board;
             //Location = location;
             PlayerStrategy = new PlayerStrategy(board, Team, Id);
-            Board.Players.Add(id, new PlayerInfo(team, PlayerType.Leader, location));
+            PlayerBoard.Players.Add(id, new PlayerInfo(team, PlayerType.Leader, location));
         }
 
-        public GameMessage GetNextRequestMessage()
+        public Request GetNextRequestMessage()
         {
-            var currentLocation = Board.Players[Id].Location;
+            var currentLocation = PlayerBoard.Players[Id].Location;
             return PlayerStrategy.NextMove(currentLocation);
         }
 
-        public void UpdateBoard(ResponseMessage responseMessage)
+        private void HandleResponse()
         {
-            responseMessage.Update(Board);
-        }
+            Response response;
 
-
-        public void HandleResponse(ResponseMessage response)
-        {
-            UpdateBoard(response);
+            while (!ResponsesQueue.TryDequeue(out response))
+            {
+                Task.Delay(10);
+            }
+            //Log received response
+            response.Update(PlayerBoard);
+            _logger.Info("RESPONSE: " + response.ToLog());
             //
             //change board state based on response 
             //  - update method in Response Message
@@ -59,17 +67,28 @@ namespace Player
             //var message = new Move()
             //{
             //    PlayerId = player.Id,
-            //    Direction = player.Team == CommonResources.TeamColour.Red ? CommonResources.MoveType.Down : CommonResources.MoveType.Up,
+            //    Direction = player.Team == TeamColor.Red ? Direction.Down : Direction.Up,
             //};
-            RequestsQueue.Enqueue(GetNextRequestMessage());
+
+            //log current state
+
+            try
+            {
+                var request = GetNextRequestMessage();
+                _logger.Info("REQUEST: " + request.ToLog());
+                RequestsQueue.Enqueue(request);
+            }
+            catch(StrategyException s)
+            {
+                //log exception
+                _logger.Error("Thrown Exception", s);
+                throw;
+            }
         }
 
         public void StartListeningToResponses()
         {
-            ResponsesQueue.CollectionChanged += (sender, args) =>
-            {
-                new Thread(() => HandleResponse(ResponsesQueue.Dequeue())).Start();
-            };
+            ResponsesQueue.ItemEnqueued += (sender, args) => { Task.Run(() => HandleResponse()); };
         }
     }
 }

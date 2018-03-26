@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
-using CsvHelper;
+using System.Threading.Tasks;
+using Common;
 using GameMaster.Configuration;
-using Shared;
-using Shared.BoardObjects;
-using Shared.GameMessages;
-using Shared.ResponseMessages;
+using Messaging.ActionHelpers;
+using Messaging.Requests;
+using Messaging.Responses;
+using NLog;
 
 namespace GameMaster
 {
     public class GameMaster
     {
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
         public GameMaster(GameConfiguration gameConfiguration)
         {
             GameConfiguration = gameConfiguration;
@@ -21,107 +22,102 @@ namespace GameMaster
             Board = boardGenerator.InitializeBoard(GameConfiguration.GameDefinition);
         }
 
-        public Dictionary<int, ObservableQueue<GameMessage>> RequestsQueues { get; set; } =
-            new Dictionary<int, ObservableQueue<GameMessage>>();
+        public Dictionary<int, ObservableConcurrentQueue<Request>> RequestsQueues { get; set; } =
+            new Dictionary<int, ObservableConcurrentQueue<Request>>();
 
-        public Dictionary<int, ObservableQueue<ResponseMessage>> ResponsesQueues { get; set; } =
-            new Dictionary<int, ObservableQueue<ResponseMessage>>();
+        public Dictionary<int, ObservableConcurrentQueue<Response>> ResponsesQueues { get; set; } =
+            new Dictionary<int, ObservableConcurrentQueue<Response>>();
 
-        public Board Board { get; set; }
+        public Dictionary<int, bool> IsPlayerQueueProcessed { get; set; } = new Dictionary<int, bool>();
+        public Dictionary<int, object> IsPlayerQueueProcessedLock { get; set; } = new Dictionary<int, object>();
+
         public GameConfiguration GameConfiguration { get; }
         private Dictionary<string, int> PlayerGuidToId { get; }
+        public GameMasterBoard Board { get; set; }
 
         public virtual event EventHandler<GameFinishedEventArgs> GameFinished;
 
-        public void PutLog(string filename, ActionLog log)
+        public void PutLog(ILoggable record)
         {
-            using (var textWriter = new StreamWriter(filename, true))
-            {
-                using (var csvWriter = new CsvWriter(textWriter))
-                {
-                    csvWriter.NextRecord();
-                    csvWriter.WriteRecord(log);
-                }
-            }
+            _logger.Info(record.ToLog());
         }
 
-        public PieceGenerator CreatePieceGenerator(Board board)
+        public void PutActionLog(Request record)
+        {
+            var playerInfo = Board.Players[record.PlayerId];
+            var actionLog = new RequestLog(record, playerInfo.Team, playerInfo.Role);
+            _logger.Info(actionLog.ToLog());
+        }
+
+        public PieceGenerator CreatePieceGenerator(GameMasterBoard board)
         {
             return new PieceGenerator(board, GameConfiguration.GameDefinition.ShamProbability);
         }
 
-        public bool IsGameFinished()
-        {
-            var blueRemainingGoalsCount = 0;
-            var redRemainingGoalsCount = 0;
-
-            foreach (var field in Board.Content)
-                if (field is GoalField goalField)
-                    if (goalField.Type == CommonResources.GoalFieldType.Goal)
-                        if (goalField.Team == CommonResources.TeamColour.Red)
-                            redRemainingGoalsCount++;
-                        else
-                            blueRemainingGoalsCount++;
-            return blueRemainingGoalsCount == 0 || redRemainingGoalsCount == 0;
-        }
-
-        public CommonResources.TeamColour CheckWinner()
-        {
-            var blueRemainingGoalsCount = 0;
-            var redRemainingGoalsCount = 0;
-
-            foreach (var field in Board.Content)
-                if (field is GoalField goalField)
-                    if (goalField.Type == CommonResources.GoalFieldType.Goal)
-                        if (goalField.Team == CommonResources.TeamColour.Red)
-                            redRemainingGoalsCount++;
-                        else
-                            blueRemainingGoalsCount++;
-
-            if (blueRemainingGoalsCount == 0)
-                return CommonResources.TeamColour.Blue;
-            if (redRemainingGoalsCount == 0)
-                return CommonResources.TeamColour.Red;
-            throw new InvalidOperationException();
-        }
-
-        public void HandleMessagesFromPlayer(int playerId)
+        private async void HandleMessagesFromPlayer(int playerId)
         {
             var requestQueue = RequestsQueues[playerId];
-            while (requestQueue.Count > 0)
+            while (true)
             {
-                var request = requestQueue.Peek();
-                var delay = Convert.ToInt32(request.GetDelay(GameConfiguration.ActionCosts));
-                Thread.Sleep(delay);
+                lock (IsPlayerQueueProcessedLock[playerId])
+                {
+                    if (requestQueue.IsEmpty)
+                    {
+                        IsPlayerQueueProcessed[playerId] = false;
+                        break;
+                    }
 
-                var requesterInfo = Board.Players[request.PlayerId];
-                var response = request.Execute(Board);
+                    IsPlayerQueueProcessed[playerId] = true;
+                }
+
+                Request request;
+                while (!requestQueue.TryDequeue(out request))
+                    await Task.Delay(10);
+
+                var timeSpan = Convert.ToInt32(request.GetDelay(GameConfiguration.ActionCosts));
+                PutActionLog(request);
+                await Task.Delay(timeSpan);
+
+                Response response;
+                lock (Board.Lock)
+                {
+                    response = request.Execute(Board);
+
+                    if (Board.IsGameFinished())
+                    {
+                        new Thread(() => GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner())))
+                            .Start();
+                        response.IsGameFinished = true;
+                    }
+                }
+                
                 ResponsesQueues[request.PlayerId].Enqueue(response);
-
-                if (IsGameFinished())
-                    GameFinished(this, new GameFinishedEventArgs(CheckWinner()));
-
-                RequestsQueues[request.PlayerId].Dequeue();
             }
         }
 
         public void StartListeningToRequests()
         {
-            foreach (var queue in RequestsQueues)
-                queue.Value.CollectionChanged += (sender, args) =>
+            foreach (var queue in RequestsQueues.Values)
+                queue.ItemEnqueued += (sender, args) =>
                 {
-                    new Thread(() => HandleMessagesFromPlayer(queue.Value.Peek().PlayerId)).Start();
+                    var playerId = args.Item.PlayerId;
+
+                    lock (IsPlayerQueueProcessedLock[playerId])
+                    {
+                        if (!IsPlayerQueueProcessed[playerId])
+                            Task.Run(() => HandleMessagesFromPlayer(playerId));
+                    }
                 };
         }
     }
 
     public class GameFinishedEventArgs : EventArgs
     {
-        public GameFinishedEventArgs(CommonResources.TeamColour winners)
+        public GameFinishedEventArgs(TeamColor winners)
         {
             Winners = winners;
         }
 
-        public CommonResources.TeamColour Winners { get; set; }
+        public TeamColor Winners { get; set; }
     }
 }

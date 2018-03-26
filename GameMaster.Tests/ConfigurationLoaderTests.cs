@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using GameMaster.Configuration;
-using Shared;
-using Shared.BoardObjects;
+using Common;
+using Common.BoardObjects;
+using Messaging.ActionHelpers;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Resources;
 using Xunit;
 
 namespace GameMaster.Tests
@@ -12,7 +14,7 @@ namespace GameMaster.Tests
     {
         public ConfigurationLoaderTests()
         {
-            confTest = new GameConfiguration
+            _confTest = new GameConfiguration
             {
                 KeepAliveInterval = 500,
                 RetryRegisterGameInterval = 60000,
@@ -37,53 +39,52 @@ namespace GameMaster.Tests
                     GameName = "Endgame",
                     Goals = new List<GoalField>
                     {
-                        new GoalField(CommonResources.GoalFieldType.Goal, CommonResources.TeamColour.Red, null,
-                            DateTime.MinValue, 4, 15),
-                        new GoalField(CommonResources.GoalFieldType.Goal, CommonResources.TeamColour.Blue, null,
-                            DateTime.MinValue, 6, 1)
+                        new GoalField(new Location(4,15),TeamColor.Red,GoalFieldType.Goal,null, DateTime.MinValue),
+                        new GoalField(new Location(6,1),TeamColor.Blue, GoalFieldType.Goal,null, DateTime.MinValue )
                     }
                 }
             };
 
             var cl = new ConfigurationLoader();
-            conf = cl.LoadConfigurationFromFile("Resources/ConfigurationLoaderTestsData.xml");
+            _conf = cl.LoadConfigurationFromFile("Resources/ConfigurationLoaderTestsData.xml");
         }
 
-        private readonly GameConfiguration conf;
-        private readonly GameConfiguration confTest;
+        private readonly GameConfiguration _conf;
+        private readonly GameConfiguration _confTest;
 
         [Fact]
         public void BoardWidthLoaded()
         {
-            Assert.Equal(confTest.GameDefinition.BoardWidth, conf.GameDefinition.BoardWidth);
+            Assert.Equal(_confTest.GameDefinition.BoardWidth, _conf.GameDefinition.BoardWidth);
         }
 
         [Fact]
         public void DiscoverDelayLoaded()
         {
-            Assert.Equal(confTest.ActionCosts.DiscoverDelay, conf.ActionCosts.DiscoverDelay);
+            Assert.Equal(_confTest.ActionCosts.DiscoverDelay, _conf.ActionCosts.DiscoverDelay);
         }
 
         [Fact]
         public void GameNameLoaded()
         {
-            Assert.Equal(confTest.GameDefinition.GameName, conf.GameDefinition.GameName);
+            Assert.Equal(_confTest.GameDefinition.GameName, _conf.GameDefinition.GameName);
         }
 
         [Fact]
         public void GoalAreaLengthLoaded()
         {
-            Assert.Equal(confTest.GameDefinition.GoalAreaLength, conf.GameDefinition.GoalAreaLength);
+            Assert.Equal(_confTest.GameDefinition.GoalAreaLength, _conf.GameDefinition.GoalAreaLength);
         }
 
         [Fact]
         public void GoalsLoaded()
         {
-            Assert.True(confTest.GameDefinition.Goals == null && conf.GameDefinition.Goals == null ||
-                        confTest.GameDefinition.Goals != null && conf.GameDefinition.Goals != null);
-            Assert.Equal(confTest.GameDefinition.Goals.Count, conf.GameDefinition.Goals.Count);
+            Assert.True(_confTest.GameDefinition.Goals == null && _conf.GameDefinition.Goals == null ||
+                        _confTest.GameDefinition.Goals != null && _conf.GameDefinition.Goals != null);
+            Assert.Equal(_confTest.GameDefinition.Goals.Count, _conf.GameDefinition.Goals.Count);
 
-            var result = confTest.GameDefinition.Goals.Zip(conf.GameDefinition.Goals, (a, b) => a == b)
+            var qwe = _confTest.GameDefinition.Goals.Zip(_conf.GameDefinition.Goals, (a, b) => a == b).ToList();
+            var result = _confTest.GameDefinition.Goals.Zip(_conf.GameDefinition.Goals, (a, b) => a == b)
                 .Aggregate((a, b) => a && b);
             Assert.True(result);
         }
@@ -91,75 +92,75 @@ namespace GameMaster.Tests
         [Fact]
         public void InitialNumberOfPiecesLoaded()
         {
-            Assert.Equal(confTest.GameDefinition.InitialNumberOfPieces, conf.GameDefinition.InitialNumberOfPieces);
+            Assert.Equal(_confTest.GameDefinition.InitialNumberOfPieces, _conf.GameDefinition.InitialNumberOfPieces);
         }
 
         [Fact]
         public void KeepAliveIntervalLoaded()
         {
-            Assert.Equal(confTest.KeepAliveInterval, conf.KeepAliveInterval);
+            Assert.Equal(_confTest.KeepAliveInterval, _conf.KeepAliveInterval);
         }
 
         [Fact]
         public void KnowledgeExchangeDelayLoaded()
         {
-            Assert.Equal(confTest.ActionCosts.KnowledgeExchangeDelay, conf.ActionCosts.KnowledgeExchangeDelay);
+            Assert.Equal(_confTest.ActionCosts.KnowledgeExchangeDelay, _conf.ActionCosts.KnowledgeExchangeDelay);
         }
 
         [Fact]
         public void MoveDelayLoaded()
         {
-            Assert.Equal(confTest.ActionCosts.MoveDelay, conf.ActionCosts.MoveDelay);
+            Assert.Equal(_confTest.ActionCosts.MoveDelay, _conf.ActionCosts.MoveDelay);
         }
 
         [Fact]
         public void NumberOfPlayersPerTeamLoaded()
         {
-            Assert.Equal(confTest.GameDefinition.NumberOfPlayersPerTeam, conf.GameDefinition.NumberOfPlayersPerTeam);
+            Assert.Equal(_confTest.GameDefinition.NumberOfPlayersPerTeam, _conf.GameDefinition.NumberOfPlayersPerTeam);
         }
 
         [Fact]
         public void PickUpDelayLoaded()
         {
-            Assert.Equal(confTest.ActionCosts.PickUpDelay, conf.ActionCosts.PickUpDelay);
+            Assert.Equal(_confTest.ActionCosts.PickUpDelay, _conf.ActionCosts.PickUpDelay);
         }
 
         [Fact]
         public void PlacingDelayLoaded()
         {
-            Assert.Equal(confTest.ActionCosts.PlacingDelay, conf.ActionCosts.PlacingDelay);
+            Assert.Equal(_confTest.ActionCosts.PlacingDelay, _conf.ActionCosts.PlacingDelay);
         }
 
         [Fact]
         public void PlacingNewPiecesFrequencyLoaded()
         {
-            Assert.Equal(confTest.GameDefinition.PlacingNewPiecesFrequency,
-                conf.GameDefinition.PlacingNewPiecesFrequency);
+            Assert.Equal(_confTest.GameDefinition.PlacingNewPiecesFrequency,
+                _conf.GameDefinition.PlacingNewPiecesFrequency);
         }
 
         [Fact]
         public void RetryRegisterGameIntervalLoaded()
         {
-            Assert.Equal(confTest.RetryRegisterGameInterval, conf.RetryRegisterGameInterval);
+            Assert.Equal(_confTest.RetryRegisterGameInterval, _conf.RetryRegisterGameInterval);
         }
 
         [Fact]
         public void ShamProbabilityLoaded()
         {
-            Assert.Equal(confTest.GameDefinition.ShamProbability, conf.GameDefinition.ShamProbability);
+            Assert.Equal(_confTest.GameDefinition.ShamProbability, _conf.GameDefinition.ShamProbability);
         }
 
         [Fact]
         public void TaskAreaLengthLoaded()
         {
-            Assert.Equal(confTest.GameDefinition.TaskAreaLength, conf.GameDefinition.TaskAreaLength);
+            Assert.Equal(_confTest.GameDefinition.TaskAreaLength, _conf.GameDefinition.TaskAreaLength);
         }
 
 
         [Fact]
         public void TestDelayLoaded()
         {
-            Assert.Equal(confTest.ActionCosts.TestDelay, conf.ActionCosts.TestDelay);
+            Assert.Equal(_confTest.ActionCosts.TestDelay, _conf.ActionCosts.TestDelay);
         }
     }
 }

@@ -7,15 +7,18 @@ image: microsoft/dotnet:sdk
 
 pipelines:
   branches:
-    dev:
+    master,dev:
       - step:
           caches:
             - dotnetcore
-          script: # Modify the commands below to build your repository.
+          script:
             - dotnet restore
-            - dotnet build Shared
-            - dotnet test Shared.Tests
+            - dotnet build Common
+            - dotnet test Common.Tests
             - dotnet build GameMaster
             - dotnet test GameMaster.Tests
+            - dotnet build Messaging
+            - dotnet test Messaging.Tests
             - dotnet build Player
             - dotnet test Player.Tests
+            - dotnet build GameSimulation

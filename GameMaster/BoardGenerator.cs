@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using Common;
+using Common.BoardObjects;
 using GameMaster.Configuration;
-using Shared;
-using Shared.BoardObjects;
 
 namespace GameMaster
 {
     public class BoardGenerator
     {
         private readonly Random _random = new Random();
-        private Board _board;
+        private GameMasterBoard _board;
 
-        public Board InitializeBoard(GameDefinition gameDefinition)
+        public GameMasterBoard InitializeBoard(GameDefinition gameDefinition)
         {
-            _board = new Board(gameDefinition.BoardWidth, gameDefinition.TaskAreaLength, gameDefinition.GoalAreaLength);
+            _board = new GameMasterBoard(gameDefinition.BoardWidth, gameDefinition.TaskAreaLength,
+                gameDefinition.GoalAreaLength);
             PlaceInitialPieces(gameDefinition.InitialNumberOfPieces, gameDefinition.ShamProbability);
 
             PlaceGoals(gameDefinition.Goals);
@@ -24,7 +25,7 @@ namespace GameMaster
             {
                 var player = players[i];
                 _board.Players.Add(i, player);
-                _board.Content[player.Location.X, player.Location.Y].PlayerId = i;
+                _board[player.Location].PlayerId = i;
             }
 
             return _board;
@@ -39,12 +40,12 @@ namespace GameMaster
             for (var i = 0; i < count; i++)
             {
                 var type = _random.NextDouble() <= shamProbability
-                    ? CommonResources.PieceType.Sham
-                    : CommonResources.PieceType.Normal;
+                    ? PieceType.Sham
+                    : PieceType.Normal;
                 var piece = new Piece(i, type);
 
                 var location = locations.Pop();
-                var taskField = _board.Content[location.X, location.Y] as TaskField;
+                var taskField = _board[location] as TaskField;
                 taskField.DistanceToPiece = 0;
                 taskField.PieceId = i;
 
@@ -54,7 +55,20 @@ namespace GameMaster
 
         private void PlaceGoals(List<GoalField> goals)
         {
-            foreach (var goal in goals) _board.Content[goal.X, goal.Y] = goal;
+            foreach (var goal in goals) _board[goal] = goal;
+
+            foreach (var goalField in goals)
+            {
+                switch (goalField.Team)
+                {
+                    case TeamColor.Blue:
+                        _board.UncompletedBlueGoalsLocations.Add(goalField);
+                        break;
+                    case TeamColor.Red:
+                        _board.UncompletedRedGoalsLocations.Add(goalField);
+                        break;
+                }
+            }
         }
 
         private List<PlayerInfo> GeneratePlayers(int teamPlayerCount)
@@ -64,11 +78,11 @@ namespace GameMaster
 
             for (var i = 0; i < playersCount; i++)
             {
-                var team = i % 2 == 0 ? CommonResources.TeamColour.Red : CommonResources.TeamColour.Blue;
-                var role = PlayerBase.PlayerType.Member;
+                var team = i % 2 == 0 ? TeamColor.Red : TeamColor.Blue;
+                var role = PlayerType.Member;
 
                 if (i < 2)
-                    role = PlayerBase.PlayerType.Leader;
+                    role = PlayerType.Leader;
 
                 var player = new PlayerInfo(team, role, null);
                 players.Add(player);
@@ -92,9 +106,9 @@ namespace GameMaster
                 GenerateLocationsOnRectangle(players.Count / 2, blueBottomLeftCorner, blueTopRightCorner);
 
             foreach (var player in players)
-                if (player.Team == CommonResources.TeamColour.Red)
+                if (player.Team == TeamColor.Red)
                     player.Location = redTeamLocations.Pop();
-                else if (player.Team == CommonResources.TeamColour.Blue)
+                else if (player.Team == TeamColor.Blue)
                     player.Location = blueTeamLocations.Pop();
         }
 
@@ -105,7 +119,7 @@ namespace GameMaster
 
             for (var i = 0; i < count; i++)
             {
-                var location = new Location();
+                Location location;
 
                 do
                 {

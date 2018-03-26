@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Common;
+using Common.Interfaces;
 using GameMaster;
 using GameMaster.Configuration;
-using Shared;
-using Shared.BoardObjects;
-using Shared.GameMessages;
-using Shared.ResponseMessages;
+using Messaging;
+using Messaging.Requests;
+using Messaging.Responses;
+using Player;
 
 namespace GameSimulation
 {
@@ -15,7 +17,6 @@ namespace GameSimulation
         private readonly Thread _pieceGeneratorThread;
 
         private readonly int _spawnPieceFrequency;
-        private Random _random = new Random();
 
         public GameSimulation(string configFilePath)
         {
@@ -39,24 +40,26 @@ namespace GameSimulation
         public PieceGenerator PieceGenerator { get; }
 
         public bool GameFinished { get; private set; }
-        public CommonResources.TeamColour Winners { get; private set; }
+        public TeamColor Winners { get; private set; }
 
         private void GameMaster_GameFinished(object sender, GameFinishedEventArgs e)
         {
-            //should wait for all threads end
             Winners = e.Winners;
             GameFinished = true;
+            _pieceGeneratorThread.Join();
         }
 
         private void CreateQueues(GameMaster.GameMaster gameMaster, List<Player.Player> players)
         {
             foreach (var player in players)
             {
-                player.RequestsQueue = new ObservableQueue<GameMessage>();
-                player.ResponsesQueue = new ObservableQueue<ResponseMessage>();
+                player.RequestsQueue = new ObservableConcurrentQueue<Request>();
+                player.ResponsesQueue = new ObservableConcurrentQueue<Response>();
 
                 gameMaster.RequestsQueues.Add(player.Id, player.RequestsQueue);
                 gameMaster.ResponsesQueues.Add(player.Id, player.ResponsesQueue);
+                gameMaster.IsPlayerQueueProcessed.Add(player.Id, false);
+                gameMaster.IsPlayerQueueProcessedLock.Add(player.Id, new object());
             }
         }
 
@@ -74,7 +77,7 @@ namespace GameSimulation
 
             for (var i = 0; i < playersCount; i++)
             {
-                var playerBoard = new Board(gameMaster.Board.Width, gameMaster.Board.TaskAreaSize,
+                var playerBoard = new PlayerBoard(gameMaster.Board.Width, gameMaster.Board.TaskAreaSize,
                     gameMaster.Board.GoalAreaSize);
                 var playerInfo = gameMaster.Board.Players[i];
                 var player = new Player.Player();
