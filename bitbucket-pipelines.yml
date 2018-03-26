@@ -7,11 +7,11 @@ image: microsoft/dotnet:sdk
 
 pipelines:
   branches:
-    dev:
+    master,dev:
       - step:
           caches:
             - dotnetcore
-          script: # Modify the commands below to build your repository.
+          script:
             - dotnet restore
             - dotnet build Common
             - dotnet test Common.Tests
