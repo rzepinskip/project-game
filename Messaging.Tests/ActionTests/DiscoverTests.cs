@@ -7,6 +7,7 @@ using Xunit;
 
 namespace Messaging.Tests.ActionTests
 {
+    /*
     public class DiscoverTests : ActionTest
     {
         private void AssertTaskFields(IEnumerable<TaskField> taskfields)
@@ -134,4 +135,5 @@ namespace Messaging.Tests.ActionTests
             AssertPlayerLocation(new Location(0, 4), 2);
         }
     }
+    */
 }

@@ -8,6 +8,7 @@ using Messaging.Responses;
 
 namespace Messaging.Tests
 {
+    /*
     public class ResponseTests
     {
         private readonly int _playerId = 1;
@@ -131,4 +132,5 @@ namespace Messaging.Tests
             Assert.Equal(piece, testPieceResponse.Piece);
         }
     }
+    */
 }

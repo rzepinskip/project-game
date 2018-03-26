@@ -13,7 +13,7 @@ namespace Player.Strategy
 
         public State CurrentState { get; set; }
 
-        public PlayerStrategy(PlayerBoard board, TeamColor team, int playerId)
+        public PlayerStrategy(PlayerBoard board, TeamColor team, int playerId, string playerGuid)
         {
             var teamCoefficient = team == TeamColor.Blue ? 0 : 1;
             var offset = teamCoefficient * (board.TaskAreaSize + board.GoalAreaSize);

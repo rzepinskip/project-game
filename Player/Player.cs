@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Common;
 using Common.BoardObjects;
+using Common.Interfaces;
 using Messaging.Requests;
 using Messaging.Responses;
 using NLog;
@@ -10,7 +11,7 @@ using Player.Strategy;
 
 namespace Player
 {
-    public class Player : PlayerBase
+    public class Player : PlayerBase, IPlayer
     {
         public ObservableConcurrentQueue<Request> RequestsQueue { get; set; }
         public ObservableConcurrentQueue<Response> ResponsesQueue { get; set; }
@@ -19,12 +20,12 @@ namespace Player
         private PlayerBoard PlayerBoard { get; set; }
         private ILogger _logger;
 
-        private List<PlayerBase> Players { get; set; }
-
-        //public Location Location { get; set; }
         private IStrategy PlayerStrategy { get; set; }
 
-        public void InitializePlayer(int id, TeamColor team, PlayerType type, PlayerBoard board,
+        public IPlayerBoard Board => PlayerBoard;
+ 
+
+        public void InitializePlayer(int id, string guid, TeamColor team, PlayerType role, PlayerBoard board,
             Location location)
         {
             var factory = new LoggerFactory();
@@ -32,14 +33,14 @@ namespace Player
 
             Id = id;
             Team = team;
-            Type = type;
+            Role = role;
+            PlayerGuid = guid;
             PlayerBoard = board;
-            //Location = location;
-            PlayerStrategy = new PlayerStrategy(board, Team, Id);
-            PlayerBoard.Players.Add(id, new PlayerInfo(team, PlayerType.Leader, location));
+            PlayerStrategy = new PlayerStrategy(board, Team, Id, guid);
+            PlayerBoard.Players.Add(id, new PlayerInfo(id, team, role, location));
         }
 
-        public Request GetNextRequestMessage()
+        public IRequest GetNextRequestMessage()
         {
             var currentLocation = PlayerBoard.Players[Id].Location;
             return PlayerStrategy.NextMove(currentLocation);
