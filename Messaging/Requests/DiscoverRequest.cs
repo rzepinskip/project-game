@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 using Common;
-using Common.BoardObjects;
+using Common.ActionInfo;
 using Common.Interfaces;
-using Messaging.ActionHelpers;
-using Messaging.Responses;
 
 namespace Messaging.Requests
 {
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
-    public class DiscoverRequest : Request
+    public class DiscoverRequest : Request, ILoggable
     {
-        public DiscoverRequest(int playerId) : base(playerId)
+        public DiscoverRequest(string playerGuid) : base(playerGuid)
         {
         }
 
-        public override Response Execute(IGameMasterBoard board)
+        /*
+        //TODO: move to GameMaster.ExecuteAction(DiscoverActionInfo dai, bool gameFinished)
+        public override Response Execute(IBoard board)
         {
             var player = board.Players[PlayerId];
             var taskFields = new List<TaskField>();
@@ -27,32 +25,33 @@ namespace Messaging.Requests
                 Math.Min(player.Location.Y + 1, board.Height));
 
             for (var i = downLeftCorner.X; i < Math.Min(upRightCorner.X + 1, board.Width); i++)
-                for (var j = downLeftCorner.Y; j < Math.Min(upRightCorner.Y + 1, board.Height); j++)
-                    if (board[new Location(i, j)] is TaskField taskfield)
-                    {
-                        taskfield.DistanceToPiece = board.DistanceToPieceFrom(taskfield);
-                        taskFields.Add(taskfield);
+            for (var j = downLeftCorner.Y; j < Math.Min(upRightCorner.Y + 1, board.Height); j++)
+                if (board[new Location(i, j)] is TaskField taskfield)
+                {
+                    taskfield.DistanceToPiece = board.DistanceToPieceFrom(taskfield);
+                    taskFields.Add(taskfield);
 
-                        if (taskfield.PieceId.HasValue)
-                        {
-                            var piece = board.Pieces[taskfield.PieceId.Value];
-                            pieces.Add(new Piece(piece.Id, PieceType.Unknown, piece.PlayerId));
-                        }
+                    if (taskfield.PieceId.HasValue)
+                    {
+                        var piece = board.Pieces[taskfield.PieceId.Value];
+                        pieces.Add(new Piece(piece.Id, PieceType.Unknown, piece.PlayerId));
                     }
+                }
 
             var response = new DiscoverResponse(PlayerId, taskFields, pieces);
 
             return response;
         }
-
-        public override double GetDelay(ActionCosts actionCosts)
-        {
-            return actionCosts.DiscoverDelay;
-        }
+        */
 
         public override string ToLog()
         {
             return string.Join(',', ActionType.Discover, base.ToLog());
+        }
+
+        public override ActionInfo GetActionInfo()
+        {
+            return new DiscoverActionInfo(PlayerGuid);
         }
     }
 }

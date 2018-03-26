@@ -1,36 +1,37 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Xml.Serialization;
 using Common;
+using Common.ActionInfo;
 using Common.Interfaces;
-using Messaging.ActionHelpers;
-using Messaging.Responses;
 
 namespace Messaging.Requests
 {
-    [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
-    public abstract class Request : ILoggable, IDelayed
+    public abstract class Request : IRequest, ILoggable
     {
-        // TODO Guid and GameId handling
-        protected Request(int playerId)
+        public Request(string playerGuid)
         {
-            PlayerId = playerId;
+            PlayerGuid = playerGuid;
         }
 
-        [XmlAttribute]
-        public int PlayerId { get; }
+        [XmlAttribute] public int GameId { get; set; }
 
-        public string PlayerGuid { get; }
+        [XmlAttribute] public string PlayerGuid { get; set; }
 
-        [XmlAttribute]
-        public int GameId { get; }
+        public IMessage Process(IGameMaster gameMaster)
+        {
+            var result = gameMaster.EvaluateAction(GetActionInfo());
+            return ResponseWithData.ConvertToData(result.data, result.isGameFinished);
+        }
 
-        public abstract double GetDelay(ActionCosts actionCosts);
+        public void Process(IPlayer player)
+        {
+            throw new InvalidOperationException();
+        }
 
-
-        public abstract Response Execute(IGameMasterBoard board);
-
+        public abstract ActionInfo GetActionInfo();
         public virtual string ToLog()
         {
-            return string.Join(',', PlayerId, PlayerGuid, GameId);
+            return string.Join(',', PlayerGuid, GameId);
         }
     }
 }

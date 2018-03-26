@@ -1,5 +1,6 @@
 ﻿using System;
 using Common;
+using Common.Interfaces;
 using Messaging.Requests;
 
 namespace Messaging.ActionHelpers

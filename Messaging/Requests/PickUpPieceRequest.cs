@@ -1,52 +1,54 @@
 ﻿using System.Xml.Serialization;
 using Common;
-using Common.ActionAvailability.AvailabilityChain;
-using Common.BoardObjects;
+using Common.ActionInfo;
 using Common.Interfaces;
-using Messaging.ActionHelpers;
-using Messaging.Responses;
 
 namespace Messaging.Requests
 {
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
-    public class PickUpPieceRequest : Request
+    public class PickUpPieceRequest : Request, ILoggable
     {
-        public PickUpPieceRequest(int playerId) : base(playerId)
+        public PickUpPieceRequest(string playerGuid) : base(playerGuid)
         {
         }
 
-        public override Response Execute(IGameMasterBoard board)
+
+        /*
+        //TODO: move to GameMaster.ExecuteAction(PickUpPieceActionInfor, ...)
+
+        public override Response Execute(IBoard board)
         {
             var response = new PickUpPieceResponse(PlayerId);
 
             var player = board.Players[PlayerId];
+            if (!board.IsLocationInTaskArea(player.Location))
+                return response;
 
-            var actionAvailibility = new PickUpAvailabilityChain(player.Location, board, PlayerId);
+            var playerField = board[player.Location] as TaskField;
 
-            if (actionAvailibility.ActionAvailable())
-            {
-                var playerField = board[player.Location] as TaskField;
+            if (!playerField.PieceId.HasValue)
+                return response;
 
-                var piece = board.Pieces[playerField.PieceId.Value];
-                piece.PlayerId = PlayerId;
+            var piece = board.Pieces[playerField.PieceId.Value];
+            piece.PlayerId = PlayerId;
 
-                player.Piece = piece;
-                playerField.PieceId = null;
+            player.Piece = piece;
+            playerField.PieceId = null;
 
-                response = new PickUpPieceResponse(PlayerId, new Piece(piece.Id, PieceType.Unknown, piece.PlayerId));
-            }
+            response = new PickUpPieceResponse(PlayerId, new Piece(piece.Id, PieceType.Unknown, piece.PlayerId));
 
             return response;
         }
+        */
 
         public override string ToLog()
         {
             return string.Join(',', ActionType.PickUp, base.ToLog());
         }
 
-        public override double GetDelay(ActionCosts actionCosts)
+        public override ActionInfo GetActionInfo()
         {
-            return actionCosts.PickUpDelay;
+            return new PickUpActionInfo(PlayerGuid);
         }
     }
 }
