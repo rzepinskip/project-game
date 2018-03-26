@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
-using CsvHelper;
 using GameMaster.Configuration;
 using Messaging.ActionHelpers;
 using Messaging.Requests;
@@ -49,7 +47,6 @@ namespace GameMaster
             var playerInfo = Board.Players[record.PlayerId];
             var actionLog = new RequestLog(record, playerInfo.Team, playerInfo.Role);
             _logger.Info(actionLog.ToLog());
-            //_logger.Info("REQUEST: " + actionLog.ToLog());
         }
 
         public PieceGenerator CreatePieceGenerator(GameMasterBoard board)
@@ -93,8 +90,7 @@ namespace GameMaster
                         response.IsGameFinished = true;
                     }
                 }
-
-                //_logger.Info("RESPONSE: " + response.ToLog());
+                
                 ResponsesQueues[request.PlayerId].Enqueue(response);
             }
         }
