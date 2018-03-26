@@ -1,46 +1,41 @@
 ﻿using System.Xml.Serialization;
 using Common;
-using Common.ActionAvailability.AvailabilityChain;
+using Common.ActionInfo;
 using Common.Interfaces;
-using Messaging.ActionHelpers;
-using Messaging.Responses;
 
 namespace Messaging.Requests
 {
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
     public class TestPieceRequest : Request
     {
-        public TestPieceRequest(int playerId) : base(playerId)
+        public TestPieceRequest(string playerGuid) : base(playerGuid)
         {
         }
 
-        public override Response Execute(IGameMasterBoard board)
+        /*
+        TODO: move to GameMaster.ExecuteAction(TestPieceActionInfo ...)
+        public override Response Execute(IBoard board)
         {
-            var response = new TestPieceResponse(PlayerId, null);
-
             var player = board.Players[PlayerId];
             var playerPiece = player.Piece;
 
-            var actionAvailibility = new TestAvailabilityChain(PlayerId, board.Players);
-            if (actionAvailibility.ActionAvailable())
-            {
-                if (playerPiece.Type == PieceType.Sham)
-                    player.Piece = null;
+            if (playerPiece.Type == PieceType.Sham)
+                player.Piece = null;
 
-                response = new TestPieceResponse(PlayerId, playerPiece);
-            }
+            var response = new TestPieceResponse(PlayerId, playerPiece);
 
             return response;
         }
 
+        */
         public override string ToLog()
         {
             return string.Join(',', ActionType.Test, base.ToLog());
         }
 
-        public override double GetDelay(ActionCosts actionCosts)
+        public override ActionInfo GetActionInfo()
         {
-            return actionCosts.TestDelay;
+            return new TestActionInfo(PlayerGuid);
         }
     }
 }
