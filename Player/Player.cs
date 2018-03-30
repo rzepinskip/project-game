@@ -36,7 +36,7 @@ namespace Player
             Role = role;
             PlayerGuid = guid;
             PlayerBoard = board;
-            PlayerStrategy = new PlayerStrategy(board, new PlayerBase(id, team, role), guid);
+            PlayerStrategy = new PlayerStrategy(board, this, guid);
             PlayerBoard.Players.Add(id, new PlayerInfo(id, team, role, location));
         }
 
