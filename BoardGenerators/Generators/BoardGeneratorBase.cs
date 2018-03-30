@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using BoardGenerators.Loaders;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
@@ -10,8 +9,6 @@ namespace BoardGenerators.Generators
     public abstract class BoardGeneratorBase
     {
         protected IBoard Board;
-
-        public abstract IBoard InitializeBoard(GameDefinitionBase gameDefinition);
 
         protected List<Piece> CreatePiecesObjects(List<PieceType> piecesTypes)
         {
