@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using BoardGenerators.Loaders;
 using GameMaster.Delays;
 
 namespace GameMaster.Configuration
 {
     [XmlRoot(ElementName = "GameMasterSettings", Namespace = "https://se2.mini.pw.edu.pl/17-pl-19/17-pl-19/")]
-    public class GameConfiguration : IEquatable<GameConfiguration>
+    public class GameConfiguration : GameConfigurationBase, IEquatable<GameConfiguration>
     {
-        public GameDefinition GameDefinition { get; set; }
+        public new GameDefinition GameDefinition { get; set; }
         public ActionCosts ActionCosts { get; set; }
 
         [XmlAttribute]
