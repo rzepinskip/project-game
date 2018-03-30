@@ -1,6 +1,6 @@
 ﻿namespace Common.Interfaces
 {
-    public interface IRequest : IMessage
+    public interface IRequest : IMessage, ILoggable
     {
         string PlayerGuid { get; set; }
 

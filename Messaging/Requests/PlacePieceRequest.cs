@@ -1,7 +1,6 @@
 ﻿using System.Xml.Serialization;
 using Common;
 using Common.ActionInfo;
-using Common.Interfaces;
 
 namespace Messaging.Requests
 {

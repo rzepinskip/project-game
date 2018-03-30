@@ -1,12 +1,11 @@
 ﻿using System.Xml.Serialization;
 using Common;
 using Common.ActionInfo;
-using Common.Interfaces;
 
 namespace Messaging.Requests
 {
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
-    public class DiscoverRequest : Request, ILoggable
+    public class DiscoverRequest : Request
     {
         public DiscoverRequest(string playerGuid) : base(playerGuid)
         {

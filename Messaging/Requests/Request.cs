@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Xml.Serialization;
-using Common;
 using Common.ActionInfo;
 using Common.Interfaces;
 
 namespace Messaging.Requests
 {
-    public abstract class Request : IRequest, ILoggable
+    public abstract class Request : IRequest
     {
         public Request(string playerGuid)
         {
@@ -29,6 +28,7 @@ namespace Messaging.Requests
         }
 
         public abstract ActionInfo GetActionInfo();
+
         public virtual string ToLog()
         {
             return string.Join(',', PlayerGuid, GameId);
