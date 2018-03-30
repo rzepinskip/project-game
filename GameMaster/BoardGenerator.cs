@@ -21,6 +21,18 @@ namespace GameMaster
             var piecesLocations = GenerateLocationsForPieces(gameDefinition.InitialNumberOfPieces);
             PlacePieces(pieces, piecesLocations);
 
+            foreach (var goal in gameDefinition.Goals)
+            {
+                switch (goal.Team)
+                {
+                    case TeamColor.Blue:
+                        Board.UncompletedBlueGoalsLocations.Add(goal);
+                        break;
+                    case TeamColor.Red:
+                        Board.UncompletedRedGoalsLocations.Add(goal);
+                        break;
+                }
+            }
             PlaceGoals(gameDefinition.Goals);
 
             var players = GeneratePlayers(gameDefinition.NumberOfPlayersPerTeam);
