@@ -1,12 +1,11 @@
 ﻿using System.Xml.Serialization;
 using Common;
 using Common.ActionInfo;
-using Common.Logging;
 
 namespace Messaging.Requests
 {
     [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
-    public class PickUpPieceRequest : Request, ILoggable
+    public class PickUpPieceRequest : Request
     {
         public PickUpPieceRequest(string playerGuid) : base(playerGuid)
         {
