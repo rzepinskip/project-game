@@ -1,21 +1,18 @@
-﻿using System;
-using Common;
+﻿using Common;
 using Common.Interfaces;
-using Messaging.Requests;
 
-namespace Messaging.ActionHelpers
+namespace GameMaster
 {
     public class RequestLog : ILoggable
-
     {
-        public RequestLog(Request message, TeamColor color, PlayerType role)
+        public RequestLog(IRequest message, TeamColor color, PlayerType role)
         {
             Message = message;
             Color = color;
             Role = role;
         }
 
-        public Request Message { get; set; }
+        public IRequest Message { get; set; }
         public TeamColor Color { get; set; }
         public PlayerType Role { get; set; }
         public string ToLog()

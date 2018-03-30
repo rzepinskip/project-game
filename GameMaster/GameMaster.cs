@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Common.ActionInfo;
-using Common.Logging;
+using Common.Interfaces;
 using GameMaster.ActionHandlers;
 using GameMaster.Configuration;
 using NLog;
@@ -27,11 +27,11 @@ namespace GameMaster
             }
         }
 
-        public Dictionary<int, ObservableConcurrentQueue<Request>> RequestsQueues { get; set; } =
-            new Dictionary<int, ObservableConcurrentQueue<Request>>();
+        public Dictionary<int, ObservableConcurrentQueue<IRequest>> RequestsQueues { get; set; } =
+            new Dictionary<int, ObservableConcurrentQueue<IRequest>>();
 
-        public Dictionary<int, ObservableConcurrentQueue<Response>> ResponsesQueues { get; set; } =
-            new Dictionary<int, ObservableConcurrentQueue<Response>>();
+        public Dictionary<int, ObservableConcurrentQueue<IMessage>> ResponsesQueues { get; set; } =
+            new Dictionary<int, ObservableConcurrentQueue<IMessage>>();
 
         public Dictionary<int, bool> IsPlayerQueueProcessed { get; set; } = new Dictionary<int, bool>();
         public Dictionary<int, object> IsPlayerQueueProcessedLock { get; set; } = new Dictionary<int, object>();
@@ -45,7 +45,7 @@ namespace GameMaster
             var playerId = PlayerGuidToId[actionInfo.PlayerGuid];
             var action = new ActionHandlerDispatcher((dynamic)actionInfo, Board, playerId);
             var responseData = action.Execute();
-            var _isGameFinished = IsGameFinished();
+            var _isGameFinished = Board.IsGameFinished();
             return (data: responseData, isGameFinished: _isGameFinished);
         }
 
@@ -56,12 +56,14 @@ namespace GameMaster
             _logger.Info(record.ToLog());
         }
 
-        public void PutActionLog(Request record)
+        public void PutActionLog(IRequest record)
         {
-            var playerInfo = Board.Players[record.PlayerId];
+            var playerId = PlayerGuidToId[record.PlayerGuid];
+            var playerInfo = Board.Players[playerId];
             var actionLog = new RequestLog(record, playerInfo.Team, playerInfo.Role);
             _logger.Info(actionLog.ToLog());
         }
+
 
         public PieceGenerator CreatePieceGenerator(GameMasterBoard board)
         {
@@ -84,28 +86,27 @@ namespace GameMaster
                     IsPlayerQueueProcessed[playerId] = true;
                 }
 
-                Request request;
+                IRequest request;
                 while (!requestQueue.TryDequeue(out request))
                     await Task.Delay(10);
 
-                var timeSpan = Convert.ToInt32(request.GetDelay(GameConfiguration.ActionCosts));
+                var timeSpan = Convert.ToInt32(GameConfiguration.ActionCosts.GetDelayFor(request.GetActionInfo()));
                 PutActionLog(request);
                 await Task.Delay(timeSpan);
 
-                Response response;
+                IMessage response;
                 lock (Board.Lock)
                 {
-                    response = request.Execute(Board);
+                    response = request.Process(this);
 
                     if (Board.IsGameFinished())
                     {
                         new Thread(() => GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner())))
                             .Start();
-                        response.IsGameFinished = true;
                     }
                 }
-                
-                // TODO Event handler
+
+                ResponsesQueues[playerId].Enqueue(response);
             }
         }
 
@@ -114,7 +115,7 @@ namespace GameMaster
             foreach (var queue in RequestsQueues.Values)
                 queue.ItemEnqueued += (sender, args) =>
                 {
-                    var playerId = args.Item.PlayerId;
+                    var playerId = PlayerGuidToId[args.Item.PlayerGuid];
 
                     lock (IsPlayerQueueProcessedLock[playerId])
                     {
