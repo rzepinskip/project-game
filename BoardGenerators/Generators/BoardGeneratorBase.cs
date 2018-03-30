@@ -10,20 +10,7 @@ namespace BoardGenerators.Generators
     {
         protected IBoard Board;
 
-        protected List<Piece> CreatePiecesObjects(List<PieceType> piecesTypes)
-        {
-            var pieces = new List<Piece>(piecesTypes.Count);
-            for (var i = 0; i < piecesTypes.Count; i++)
-            {
-                var piece = new Piece(i, piecesTypes[i]);
-
-                pieces.Add(piece);
-            }
-
-            return pieces;
-        }
-
-        protected void PlacePieces(List<(Piece piece, Location location)> piecesWithLocations)
+        protected void PlacePieces(IEnumerable<(Piece piece, Location location)> piecesWithLocations)
         {
             foreach (var (piece, location) in piecesWithLocations)
             {
@@ -49,7 +36,7 @@ namespace BoardGenerators.Generators
             }
         }
 
-        protected void PlacePlayers(List<(PlayerBase player, Location location)> playersWithLocations)
+        protected void PlacePlayers(IEnumerable<(PlayerBase player, Location location)> playersWithLocations)
         {
             foreach (var (player, location) in playersWithLocations)
             {
