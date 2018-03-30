@@ -1,8 +1,12 @@
-﻿namespace Common
+﻿using System;
+using System.Xml.Serialization;
+
+namespace Common
 {
+    [Serializable]
     public class PlayerBase
     {
-        public PlayerBase()
+        protected PlayerBase()
         {
         }
 
@@ -14,7 +18,7 @@
         }
 
         public int Id { get; set; }
-        public TeamColor Team { get; set; }
+        [XmlAttribute("team")] public TeamColor Team { get; set; }
         public PlayerType Role { get; set; }
     }
 }
