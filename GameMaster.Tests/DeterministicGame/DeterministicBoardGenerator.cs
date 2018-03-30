@@ -1,29 +1,28 @@
-﻿using GameMaster.Tests.BoardConfigurationGenerator;
+﻿using System.Collections.Generic;
+using System.Linq;
+using BoardGenerators.Generators;
+using Common;
+using Common.BoardObjects;
+using GameMaster.Tests.BoardConfigurationGenerator;
 
 namespace GameMaster.Tests.DeterministicGame
 {
-    public class DeterministicBoardGenerator : BoardGenerator
+    public class DeterministicBoardGenerator : BoardGeneratorBase
     {
         public GameMasterBoard InitializeBoard(DeterministicGameDefinition config)
         {
-            //Board = new GameMasterBoard(config.BoardWidth, config.TaskAreaLength,
-            //    config.GoalAreaLength);
+            var board = new GameMasterBoard(config.BoardWidth, config.TaskAreaLength, config.GoalAreaLength);
+            Board = board;
 
-            ////var pieces = GeneratePieces(config.PiecesLocations.Count, 0);
-            ////var piecesLocations = config.PiecesLocations;
-            ////PlacePieces(pieces, piecesLocations);
+            PlaceGoals(config.Goals);
 
-            //PlaceGoals(config.Goals);
+            var piecesWithLocations = config.Pieces.Select((x, i) => (new Piece(i, x.Type), x.Location)).ToList();
+            PlacePieces(piecesWithLocations);
 
-            //var players = GeneratePlayers(config.BluePlayersLocations.Count);
-            //var playersLocations = new Dictionary<TeamColor, List<Location>>
-            //{
-            //    {TeamColor.Blue, config.BluePlayersLocations},
-            //    {TeamColor.Red, config.RedPlayersLocations}
-            //};
-            //PlacePlayers(players, playersLocations);
+            var players = config.Players.Select((x, i) => (new PlayerBase(i, x.Team, x.Role), x.Location)).ToList();
+            PlacePlayers(players);
 
-            return Board;
+            return board;
         }
     }
 }
