@@ -8,15 +8,15 @@ namespace Player.Strategy
 {
     public class StrategyInfo : ILoggable
     {
-        public StrategyInfo(Location fromLocation, BoardBase board, int playerId, string playerGuid,TeamColor team,
+        public StrategyInfo(Location fromLocation, BoardBase board, string playerGuid, PlayerBase player,
             List<GoalField> undiscoveredGoalFields = null, Location toLocation = null)
         {
             FromLocation = fromLocation;
             ToLocation = toLocation;
             Board = board;
-            PlayerId = playerId;
+            PlayerId = player.Id;
             PlayerGuid = playerGuid;
-            Team = team;
+            Team = player.Team;
             UndiscoveredGoalFields = undiscoveredGoalFields;
         }
 

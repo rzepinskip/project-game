@@ -36,7 +36,7 @@ namespace Player
             Role = role;
             PlayerGuid = guid;
             PlayerBoard = board;
-            PlayerStrategy = new PlayerStrategy(board, Team, Id, guid);
+            PlayerStrategy = new PlayerStrategy(board, new PlayerBase(id, team, role), guid);
             PlayerBoard.Players.Add(id, new PlayerInfo(id, team, role, location));
         }
 
@@ -80,7 +80,6 @@ namespace Player
             catch(StrategyException s)
             {
                 //log exception
-                _logger.Error("Thrown Exception", s);
                 throw;
             }
         }
