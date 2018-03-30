@@ -5,6 +5,7 @@ using Xunit;
 
 namespace Messaging.Tests.ActionTests
 {
+    /*
     public class ActionTest
     {
         protected IGameMasterBoard GameMasterBoard;
@@ -83,4 +84,5 @@ namespace Messaging.Tests.ActionTests
             Assert.Equal(pieceId, taskField.PieceId);
         }
     }
+    */
 }

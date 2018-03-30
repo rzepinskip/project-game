@@ -13,9 +13,9 @@ namespace Player.Strategy
 
         public State CurrentState { get; set; }
 
-        public PlayerStrategy(PlayerBoard board, TeamColor team, int playerId)
+        public PlayerStrategy(PlayerBoard board, PlayerBase player, string playerGuid)
         {
-            var teamCoefficient = team == TeamColor.Blue ? 0 : 1;
+            var teamCoefficient = player.Team == TeamColor.Blue ? 0 : 1;
             var offset = teamCoefficient * (board.TaskAreaSize + board.GoalAreaSize);
 
             for (var i = 0; i < board.Width; ++i)
@@ -24,7 +24,7 @@ namespace Player.Strategy
 
             undiscoveredGoalFields.Shuffle();
 
-            strategyInfo = new StrategyInfo(null, board, playerId, team, undiscoveredGoalFields);
+            strategyInfo = new StrategyInfo(null, board, playerGuid, player, undiscoveredGoalFields);
             CurrentState = new InitState(strategyInfo);
         }
 

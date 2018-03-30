@@ -6,6 +6,7 @@ using Xunit;
 
 namespace Messaging.Tests.ActionTests
 {
+    /*
     public class MoveTest : ActionTest
     {
         [Fact]
@@ -70,4 +71,5 @@ namespace Messaging.Tests.ActionTests
             AssertPlayerLocation(new Location(0, 3), PlayerId);
         }
     }
+    */
 }
