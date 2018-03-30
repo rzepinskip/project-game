@@ -22,7 +22,7 @@ namespace Player.Strategy.Conditions
 
         public override Request GetNextMessage(State fromState)
         {
-            return new DiscoverRequest(StrategyInfo.PlayerId);
+            return new DiscoverRequest(StrategyInfo.PlayerGuid);
         }
     }
 }

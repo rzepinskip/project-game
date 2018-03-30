@@ -13,9 +13,9 @@ namespace Player
 {
     public class Player : PlayerBase, IPlayer
     {
-        public ObservableConcurrentQueue<Request> RequestsQueue { get; set; }
-        public ObservableConcurrentQueue<Response> ResponsesQueue { get; set; }
-
+        public ObservableConcurrentQueue<IRequest> RequestsQueue { get; set; }
+        public ObservableConcurrentQueue<IResponse> ResponsesQueue { get; set; }
+        
         private string PlayerGuid { get; set; }
         private PlayerBoard PlayerBoard { get; set; }
         private ILogger _logger;
@@ -48,15 +48,14 @@ namespace Player
 
         private void HandleResponse()
         {
-            Response response;
+            IResponse response;
 
             while (!ResponsesQueue.TryDequeue(out response))
             {
                 Task.Delay(10);
             }
             //Log received response
-            response.Update(PlayerBoard);
-            _logger.Info("RESPONSE: " + response.ToLog());
+            response.Process(this);
             //
             //change board state based on response 
             //  - update method in Response Message
@@ -76,7 +75,6 @@ namespace Player
             try
             {
                 var request = GetNextRequestMessage();
-                _logger.Info("REQUEST: " + request.ToLog());
                 RequestsQueue.Enqueue(request);
             }
             catch(StrategyException s)
