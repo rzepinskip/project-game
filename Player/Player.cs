@@ -14,7 +14,7 @@ namespace Player
     public class Player : PlayerBase, IPlayer
     {
         public ObservableConcurrentQueue<IRequest> RequestsQueue { get; set; }
-        public ObservableConcurrentQueue<IResponse> ResponsesQueue { get; set; }
+        public ObservableConcurrentQueue<IMessage> ResponsesQueue { get; set; }
         
         private string PlayerGuid { get; set; }
         private PlayerBoard PlayerBoard { get; set; }
@@ -48,7 +48,7 @@ namespace Player
 
         private void HandleResponse()
         {
-            IResponse response;
+            IMessage response;
 
             while (!ResponsesQueue.TryDequeue(out response))
             {

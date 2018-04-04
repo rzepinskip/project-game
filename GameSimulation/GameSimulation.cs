@@ -5,9 +5,6 @@ using Common;
 using Common.Interfaces;
 using GameMaster;
 using GameMaster.Configuration;
-using Messaging;
-using Messaging.Requests;
-using Messaging.Responses;
 using Player;
 
 namespace GameSimulation
@@ -53,8 +50,8 @@ namespace GameSimulation
         {
             foreach (var player in players)
             {
-                player.RequestsQueue = new ObservableConcurrentQueue<Request>();
-                player.ResponsesQueue = new ObservableConcurrentQueue<Response>();
+                player.RequestsQueue = new ObservableConcurrentQueue<IRequest>();
+                player.ResponsesQueue = new ObservableConcurrentQueue<IMessage>();
 
                 gameMaster.RequestsQueues.Add(player.Id, player.RequestsQueue);
                 gameMaster.ResponsesQueues.Add(player.Id, player.ResponsesQueue);
@@ -81,7 +78,18 @@ namespace GameSimulation
                     gameMaster.Board.GoalAreaSize);
                 var playerInfo = gameMaster.Board.Players[i];
                 var player = new Player.Player();
-                player.InitializePlayer(i, playerInfo.Team, playerInfo.Role, playerBoard, playerInfo.Location);
+
+                string playerGuid = "";
+                foreach (var guidIdPair in GameMaster.PlayerGuidToId)
+                {
+                    if (guidIdPair.Value == i)
+                    {
+                        playerGuid = guidIdPair.Key;
+                        break;
+                    }
+                }
+
+                player.InitializePlayer(i, playerGuid, playerInfo.Team, playerInfo.Role, playerBoard, playerInfo.Location);
                 players.Add(player);
             }
 

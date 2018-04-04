@@ -30,9 +30,10 @@ namespace GameMaster.ActionHandlers
 
             var playerGoalField = Board[player.Location] as GoalField;
 
-            if (playerGoalField != null) playerGoalField.Type = GoalFieldType.NonGoal;
+            if (playerGoalField != null && playerGoalField.Type == GoalFieldType.Goal)
+                Board.MarkGoalAsCompleted(playerGoalField);
 
-            return DataFieldSet.CreateMoveDataSet(PlayerId, new [] { playerGoalField });
+            return DataFieldSet.CreateMoveDataSet(PlayerId, new[] {playerGoalField});
         }
     }
 }
