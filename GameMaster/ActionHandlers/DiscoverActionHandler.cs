@@ -15,7 +15,7 @@ namespace GameMaster.ActionHandlers
 
         protected override bool Validate()
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public override DataFieldSet Respond()

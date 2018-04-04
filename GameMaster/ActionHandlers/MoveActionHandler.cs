@@ -25,9 +25,9 @@ namespace GameMaster.ActionHandlers
         public override DataFieldSet Respond()
         {
             var player = Board.Players[PlayerId];
-
             var taskFields = new List<TaskField>();
             var pieces = new List<Piece>();
+
             Location newPlayerLocation;
             if (Validate())
             {

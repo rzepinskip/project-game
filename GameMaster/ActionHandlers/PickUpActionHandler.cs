@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Common;
+using Common.ActionAvailability.AvailabilityChain;
 using Common.BoardObjects;
 
 namespace GameMaster.ActionHandlers
@@ -15,19 +16,17 @@ namespace GameMaster.ActionHandlers
 
         protected override bool Validate()
         {
-            throw new NotImplementedException();
+            var playerInfo = Board.Players[PlayerId];
+            return new PickUpAvailabilityChain(playerInfo.Location, Board, PlayerId).ActionAvailable();
         }
 
         public override DataFieldSet Respond()
         {
-            var player = Board.Players[PlayerId];
-            if (!Board.IsLocationInTaskArea(player.Location))
+            if (!Validate())
                 return DataFieldSet.CreateMoveDataSet(PlayerId,  new Piece[0]);
 
+            var player = Board.Players[PlayerId];
             var playerField = Board[player.Location] as TaskField;
-
-            if (!playerField.PieceId.HasValue)
-                return DataFieldSet.CreateMoveDataSet(PlayerId, new Piece[0]);
 
             var piece = Board.Pieces[playerField.PieceId.Value];
             piece.PlayerId = PlayerId;
