@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using BoardGenerators.Loaders;
 using Common;
 using Common.Interfaces;
 using GameMaster;
@@ -17,7 +18,7 @@ namespace GameSimulation
 
         public GameSimulation(string configFilePath)
         {
-            var configLoader = new ConfigurationLoader();
+            var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(configFilePath);
 
             _spawnPieceFrequency = Convert.ToInt32(config.GameDefinition.PlacingNewPiecesFrequency);

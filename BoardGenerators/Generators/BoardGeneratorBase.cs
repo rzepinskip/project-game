@@ -6,11 +6,11 @@ using Common.Interfaces;
 
 namespace BoardGenerators.Generators
 {
-    public abstract class BoardGeneratorBase
+    public abstract class BoardGeneratorBase<TBoard> where TBoard : IBoard
     {
-        protected IBoard Board;
+        protected abstract TBoard Board { get;  set; }
 
-        protected void PlacePieces(IEnumerable<(Piece piece, Location location)> piecesWithLocations)
+        protected virtual void PlacePieces(IEnumerable<(Piece piece, Location location)> piecesWithLocations)
         {
             foreach (var (piece, location) in piecesWithLocations)
             {
@@ -25,7 +25,7 @@ namespace BoardGenerators.Generators
             }
         }
 
-        protected void PlaceGoals(IEnumerable<GoalField> goals)
+        protected virtual void PlaceGoals(IEnumerable<GoalField> goals)
         {
             foreach (var goal in goals)
             {
@@ -36,7 +36,7 @@ namespace BoardGenerators.Generators
             }
         }
 
-        protected void PlacePlayers(IEnumerable<(PlayerBase player, Location location)> playersWithLocations)
+        protected virtual void PlacePlayers(IEnumerable<(PlayerBase player, Location location)> playersWithLocations)
         {
             foreach (var (player, location) in playersWithLocations)
             {

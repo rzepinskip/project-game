@@ -4,14 +4,16 @@ using System.Linq;
 using BoardGenerators.Generators;
 using Common;
 using Common.BoardObjects;
+using Common.Interfaces;
 using GameMaster.Configuration;
 
 namespace GameMaster
 {
-    public class BoardGenerator : BoardGeneratorBase
+    public class GameMasterBoardGenerator : BoardGeneratorBase<GameMasterBoard>
     {
         private readonly Random _random = new Random();
-        protected new GameMasterBoard Board;
+
+        protected override GameMasterBoard Board { get; set; }
 
         public GameMasterBoard InitializeBoard(GameDefinition gameDefinition)
         {
@@ -23,7 +25,21 @@ namespace GameMaster
             var piecesWithLocation = pieces.Zip(piecesLocations, (p, l) => (p, l));
             PlacePieces(piecesWithLocation);
 
-            foreach (var goal in gameDefinition.Goals)
+            PlaceGoals(gameDefinition.Goals);
+
+            var players = GeneratePlayers(gameDefinition.NumberOfPlayersPerTeam);
+            var playersLocations = GenerateLocationsForPlayers(gameDefinition.NumberOfPlayersPerTeam);
+            var playersWithLocation = AssignLocationsToPlayers(players, playersLocations);
+            PlacePlayers(playersWithLocation);
+
+            return Board;
+        }
+
+        protected override void PlaceGoals(IEnumerable<GoalField> goals)
+        {
+            base.PlaceGoals(goals);
+
+            foreach (var goal in goals)
             {
                 switch (goal.Team)
                 {
@@ -35,14 +51,6 @@ namespace GameMaster
                         break;
                 }
             }
-            PlaceGoals(gameDefinition.Goals);
-
-            var players = GeneratePlayers(gameDefinition.NumberOfPlayersPerTeam);
-            var playersLocations = GenerateLocationsForPlayers(gameDefinition.NumberOfPlayersPerTeam);
-            var playersWithLocation = AssignLocationsToPlayers(players, playersLocations);
-            PlacePlayers(playersWithLocation);
-
-            return Board;
         }
 
         private IEnumerable<(PlayerBase player, Location location)> AssignLocationsToPlayers(
@@ -144,5 +152,6 @@ namespace GameMaster
 
             return new List<Location>(randomLocations);
         }
+
     }
 }
