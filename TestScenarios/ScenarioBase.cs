@@ -1,35 +1,40 @@
-﻿using Common.Interfaces;
+﻿using System;
+using BoardGenerators.Loaders;
+using Common.Interfaces;
+using TestScenarios.DeterministicGame;
 
 namespace TestScenarios
 {
     public abstract class ScenarioBase
     {
-        protected ScenarioBase(Game)
+        protected int PlayerId { get; set; } = 0;
+        protected string PlayerGuid { get; set; } = Guid.NewGuid().ToString();
+
+        public string ScenarioFilePath { get; }
+
+        protected ScenarioBase(string scenarioName)
         {
-            InitialPlayerBoard = initialPlayerBoard;
-            InitGameMasterBoard = initGameMasterBoard;
-            InitialRequest = initialRequest;
-            UpdatedGameMasterBoard = updatedGameMasterBoard;
-            Response = response;
-            UpdatedPlayerBoard = updatedPlayerBoard;
+             ScenarioFilePath = scenarioName + ".xml";
         }
 
-        public abstract IPlayerBoard InitialPlayerBoard { get; set; }
-        public abstract IGameMasterBoard InitGameMasterBoard { get; set; }
-        public abstract IRequest InitialRequest { get; set; }
+        public abstract IPlayerBoard InitialPlayerBoard { get; protected set; }
+        public abstract IGameMasterBoard InitGameMasterBoard { get; protected set; }
+        public abstract IRequest InitialRequest { get; protected set; }
 
-        public abstract IGameMasterBoard UpdatedGameMasterBoard { get; set; } // Validate&Response assert
-        public abstract IResponse Response { get; set; } // Response assert, UpdatePlayer input
-        public abstract IPlayerBoard UpdatedPlayerBoard { get; set; } // UpdatePlayer output
+        public abstract IGameMasterBoard UpdatedGameMasterBoard { get; protected set; } // Validate&Response assert
+        public abstract IResponse Response { get; protected set; } // Response assert, UpdatePlayer input
+        public abstract IPlayerBoard UpdatedPlayerBoard { get; protected set; } // UpdatePlayer output
 
-        protected IBoard LoadGameMasterBoard()
+        protected IGameMasterBoard LoadGameMasterBoard()
         {
-
+            var gameDefinition = new XmlLoader<DeterministicGameDefinition>().LoadConfigurationFromFile(ScenarioFilePath);
+            return new DeterministicGameMasterBoardGenerator().InitializeBoard(gameDefinition);
         }
 
-        protected IBoard LoadPlayerBoard()
+        protected IPlayerBoard LoadPlayerBoard()
         {
-
+            var gameDefinition = new XmlLoader<DeterministicGameDefinition>().LoadConfigurationFromFile(ScenarioFilePath);
+            return new DeterministicPlayerBoardGenerator().InitializeBoard(gameDefinition, 0);
         }
     }
 }

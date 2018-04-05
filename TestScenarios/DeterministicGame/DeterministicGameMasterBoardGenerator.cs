@@ -1,18 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using BoardGenerators.Generators;
 using Common;
 using Common.BoardObjects;
-using GameMaster.Tests.BoardConfigurationGenerator;
+using GameMaster;
 
-namespace GameMaster.Tests.DeterministicGame
+namespace TestScenarios.DeterministicGame
 {
-    public class DeterministicBoardGenerator : BoardGeneratorBase
+    public class DeterministicGameMasterBoardGenerator : BoardGeneratorBase<GameMasterBoard>
     {
+        protected override GameMasterBoard Board { get; set; }
+
         public GameMasterBoard InitializeBoard(DeterministicGameDefinition config)
         {
-            var board = new GameMasterBoard(config.BoardWidth, config.TaskAreaLength, config.GoalAreaLength);
-            Board = board;
+            Board = new GameMasterBoard(config.BoardWidth, config.TaskAreaLength, config.GoalAreaLength);
 
             PlaceGoals(config.Goals);
 
@@ -22,7 +22,7 @@ namespace GameMaster.Tests.DeterministicGame
             var players = config.Players.Select((x, i) => (new PlayerBase(i, x.Team, x.Role), x.Location)).ToList();
             PlacePlayers(players);
 
-            return board;
+            return Board;
         }
     }
 }

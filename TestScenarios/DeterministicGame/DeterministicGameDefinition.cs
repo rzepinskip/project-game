@@ -2,7 +2,7 @@
 using System.Xml.Serialization;
 using BoardGenerators.Loaders;
 
-namespace GameMaster.Tests.BoardConfigurationGenerator
+namespace TestScenarios.DeterministicGame
 {
     [XmlRoot(ElementName = "DeterministicGameDefinition", Namespace = "https://se2.mini.pw.edu.pl/17-pl-19/17-pl-19/")]
     public class DeterministicGameDefinition : GameDefinitionBase

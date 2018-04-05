@@ -17,15 +17,8 @@
   <ItemGroup>
     <ProjectReference Include="..\BoardGenerators\BoardGenerators.csproj" />
     <ProjectReference Include="..\GameMaster\GameMaster.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Resources\ConfigurationLoaderTestsData.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-	<None Update="Resources\SimpleBoardConfiguration.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\Player\Player.csproj" />
+    <ProjectReference Include="..\TestScenarios\TestScenarios.csproj" />
   </ItemGroup>
 
 </Project>
