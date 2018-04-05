@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using TestScenarios.MoveScenarios;
+using Xunit;
 
 namespace GameMaster.Tests
 {
@@ -7,7 +8,6 @@ namespace GameMaster.Tests
         [Fact]
         public void MoveToGoalField()
         {
-
         }
 
         [Fact]

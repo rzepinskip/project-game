@@ -1,5 +1,5 @@
 ﻿using BoardGenerators.Loaders;
-using GameMaster.Tests.BoardConfigurationGenerator;
+using TestScenarios.DeterministicGame;
 using Xunit;
 
 namespace GameMaster.Tests
@@ -11,7 +11,7 @@ namespace GameMaster.Tests
         {
             var bcl = new XmlLoader<DeterministicGameDefinition>();
             var bc = bcl.LoadConfigurationFromFile("Resources/SimpleBoardConfiguration.xml");
-            //var board = new DeterministicBoardGenerator().InitializeBoard(bc);
+            //var board = new DeterministicGameMasterBoardGenerator().InitializeBoard(bc);
         }
         [Fact]
         public void TestShamPiece()

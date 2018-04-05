@@ -8,14 +8,14 @@ namespace BoardGenerators.Generators
 {
     public abstract class BoardGeneratorBase<TBoard> where TBoard : IBoard
     {
-        protected abstract TBoard Board { get;  set; }
+        protected abstract TBoard Board { get; set; }
 
         protected virtual void PlacePieces(IEnumerable<(Piece piece, Location location)> piecesWithLocations)
         {
             foreach (var (piece, location) in piecesWithLocations)
             {
                 var taskFieldToFill = Board[location] as TaskField;
-                if(taskFieldToFill == null)
+                if (taskFieldToFill == null)
                     throw new InvalidDataException();
 
                 taskFieldToFill.DistanceToPiece = 0;
@@ -29,7 +29,7 @@ namespace BoardGenerators.Generators
         {
             foreach (var goal in goals)
             {
-                if(!(Board[goal] is GoalField))
+                if (!(Board[goal] is GoalField))
                     throw new InvalidDataException();
 
                 Board[goal] = goal;
