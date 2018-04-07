@@ -4,7 +4,7 @@ using Common.BoardObjects;
 
 namespace Common.Interfaces
 {
-    public interface IBoard : IEnumerable
+    public interface IBoard
     {
         Dictionary<int, PlayerInfo> Players { get; }
         Dictionary<int, Piece> Pieces { get; }

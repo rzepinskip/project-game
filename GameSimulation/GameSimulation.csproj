@@ -11,4 +11,10 @@
     <ProjectReference Include="..\Player\Player.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Resources\ExampleConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
