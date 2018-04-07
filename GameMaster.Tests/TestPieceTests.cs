@@ -4,10 +4,10 @@ using Xunit;
 
 namespace GameMaster.Tests
 {
-    public class TestPieceResponseDataTests
+    public class TestPieceTests
     {
 
-        public TestPieceResponseDataTests()
+        public TestPieceTests()
         {
             var bcl = new XmlLoader<DeterministicGameDefinition>();
             var bc = bcl.LoadConfigurationFromFile("Resources/SimpleBoardConfiguration.xml");

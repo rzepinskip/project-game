@@ -6,20 +6,29 @@ using Xunit;
 
 namespace GameMaster.Tests
 {
-    public class MoveResponseDataTests
+    public class MoveTests
     {
         [Theory]
         [MemberData(nameof(GetData))]
-        public void MoveTestVoid(MoveScenarioBase scenario)
+        public void MoveTestsResponse(MoveScenarioBase scenario)
         {
-            var gameMaster = new GameMaster(scenario.InitGameMasterBoard, scenario.PlayerGuidToId);
+            var gameMaster = new GameMaster(scenario.InitialGameMasterBoard, scenario.PlayerGuidToId);
 
             var response = scenario.InitialRequest.Process(gameMaster);
 
             Assert.Equal(scenario.Response, response);
-            Assert.Equal(scenario.UpdatedGameMasterBoard, gameMaster.Board);
         }
 
+        [Theory]
+        [MemberData(nameof(GetData))]
+        public void MoveTestsBoard(MoveScenarioBase scenario)
+        {
+            var gameMaster = new GameMaster(scenario.InitialGameMasterBoard, scenario.PlayerGuidToId);
+
+            scenario.InitialRequest.Process(gameMaster);
+
+            Assert.Equal(scenario.UpdatedGameMasterBoard, gameMaster.Board);
+        }
 
         public static IEnumerable<object[]> GetData()
         {

@@ -11,7 +11,7 @@ namespace TestScenarios.MoveScenarios
     public sealed class MoveToGoalField : MoveScenarioBase
     {
         public override PlayerBoard InitialPlayerBoard { get; protected set; }
-        public override GameMasterBoard InitGameMasterBoard { get; protected set; }
+        public override GameMasterBoard InitialGameMasterBoard { get; protected set; }
         public override IRequest InitialRequest { get; protected set; }
 
         public override GameMasterBoard UpdatedGameMasterBoard { get; protected set; }
@@ -29,7 +29,7 @@ namespace TestScenarios.MoveScenarios
             InitialPlayerBoard = LoadPlayerBoard();
             UpdatedPlayerBoard = LoadPlayerBoard();
 
-            InitGameMasterBoard = LoadGameMasterBoard();
+            InitialGameMasterBoard = LoadGameMasterBoard();
             UpdatedGameMasterBoard = LoadGameMasterBoard();
 
 

@@ -15,7 +15,7 @@ namespace Player
     {
         public ObservableConcurrentQueue<IRequest> RequestsQueue { get; set; }
         public ObservableConcurrentQueue<IMessage> ResponsesQueue { get; set; }
-        
+
         private string PlayerGuid { get; set; }
         private PlayerBoard PlayerBoard { get; set; }
         private ILogger _logger;
@@ -23,7 +23,7 @@ namespace Player
         private IStrategy PlayerStrategy { get; set; }
 
         public IPlayerBoard Board => PlayerBoard;
- 
+
 
         public void InitializePlayer(int id, string guid, TeamColor team, PlayerType role, PlayerBoard board,
             Location location)
@@ -37,7 +37,7 @@ namespace Player
             PlayerGuid = guid;
             PlayerBoard = board;
             PlayerStrategy = new PlayerStrategy(board, this, guid);
-            PlayerBoard.Players.Add(id, new PlayerInfo(id, team, role, location));
+            PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
         }
 
         public IRequest GetNextRequestMessage()
@@ -77,7 +77,7 @@ namespace Player
                 var request = GetNextRequestMessage();
                 RequestsQueue.Enqueue(request);
             }
-            catch(StrategyException s)
+            catch (StrategyException s)
             {
                 //log exception
                 throw;

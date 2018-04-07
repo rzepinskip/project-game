@@ -2,7 +2,7 @@
 
 namespace GameMaster.Tests
 {
-    public class PickUpPieceResponseDataTests
+    public class PickUpTests
     {
         [Fact]
         public void PickUpPieceOnTaskFieldWithPiece()
