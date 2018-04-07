@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Common.BoardObjects;
+﻿using Common.BoardObjects;
 
 namespace Common.Interfaces
 {
     public interface IBoard
     {
-        Dictionary<int, PlayerInfo> Players { get; }
-        Dictionary<int, Piece> Pieces { get; }
+        SerializableDictionary<int, PlayerInfo> Players { get; }
+        SerializableDictionary<int, Piece> Pieces { get; }
 
         int TaskAreaSize { get; }
         int GoalAreaSize { get; }

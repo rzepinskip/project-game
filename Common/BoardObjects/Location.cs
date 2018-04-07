@@ -7,7 +7,6 @@ using System.Xml.Serialization;
 
 namespace Common.BoardObjects
 {
-    [Serializable]
     [DebuggerDisplay("[X = {X}, Y = {Y}]")]
     public class Location : IXmlSerializable, IEquatable<Location>
     {

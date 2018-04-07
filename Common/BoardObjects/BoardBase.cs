@@ -1,19 +1,23 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using System.Xml.Serialization;
 using Common.Interfaces;
 
 namespace Common.BoardObjects
 {
     public abstract class BoardBase : IBoard
     {
+        protected BoardBase()
+        {
+        }
+
         protected BoardBase(int boardWidth, int taskAreaSize, int goalAreaSize)
         {
             GoalAreaSize = goalAreaSize;
             TaskAreaSize = taskAreaSize;
             Width = boardWidth;
             Content = new Field[boardWidth, Height];
-            Players = new Dictionary<int, PlayerInfo>();
-            Pieces = new Dictionary<int, Piece>();
+            Players = new SerializableDictionary<int, PlayerInfo>();
+            Pieces = new SerializableDictionary<int, Piece>();
 
             for (var i = 0; i < boardWidth; ++i)
             {
@@ -28,7 +32,16 @@ namespace Common.BoardObjects
             }
         }
 
-        protected Field[,] Content { get; }
+        [XmlIgnore] public Field[,] Content { get; private set; }
+
+        [XmlArray("Content")]
+        public Field[] ContentFlattend
+        {
+            get => Flatten(Content);
+            set => Content = Expand(value, Height);
+        }
+
+        public object Lock { get; set; } = new object();
 
         public Field this[Location location]
         {
@@ -41,14 +54,8 @@ namespace Common.BoardObjects
         public int Width { get; }
         public int Height => 2 * GoalAreaSize + TaskAreaSize;
 
-        public Dictionary<int, PlayerInfo> Players { get; }
-        public Dictionary<int, Piece> Pieces { get; }
-        public object Lock { get; set; } = new object();
-
-        public IEnumerator GetEnumerator()
-        {
-            return Content.GetEnumerator();
-        }
+        public SerializableDictionary<int, PlayerInfo> Players { get; set; }
+        public SerializableDictionary<int, Piece> Pieces { get; }
 
         public int? GetPieceIdAt(Location location)
         {
@@ -60,14 +67,13 @@ namespace Common.BoardObjects
             return pieceId;
         }
 
-
         public int DistanceToPieceFrom(Location location)
         {
             var min = int.MaxValue;
             for (var i = 0; i < Width; ++i)
             for (var j = GoalAreaSize; j < TaskAreaSize + GoalAreaSize; ++j)
             {
-                var field = Content[i, j] as TaskField;
+                var field = this[new Location(i, j)] as TaskField;
                 if (field.PieceId != null)
                 {
                     var distance = field.ManhattanDistanceTo(location);
@@ -84,10 +90,35 @@ namespace Common.BoardObjects
 
         public bool IsLocationInTaskArea(Location location)
         {
-            if (location.Y <= TaskAreaSize + GoalAreaSize - 1 && location.Y >= GoalAreaSize)
-                return true;
+            return location.Y <= TaskAreaSize + GoalAreaSize - 1 && location.Y >= GoalAreaSize;
+        }
 
-            return false;
+        public static T[] Flatten<T>(T[,] arr)
+        {
+            var rows0 = arr.GetLength(0);
+            var rows1 = arr.GetLength(1);
+            var arrFlattened = new T[rows0 * rows1];
+            for (var j = 0; j < rows1; j++)
+            for (var i = 0; i < rows0; i++)
+                arrFlattened[i + j * rows0] = arr[i, j];
+
+            return arrFlattened;
+        }
+
+        public static T[,] Expand<T>(T[] arr, int rows0)
+        {
+            var length = arr.GetLength(0);
+            var rows1 = length / rows0;
+            var arrExpanded = new T[rows0, rows1];
+            for (var j = 0; j < rows1; j++)
+            for (var i = 0; i < rows0; i++)
+                arrExpanded[i, j] = arr[i + j * rows0];
+            return arrExpanded;
+        }
+
+        public void Add(object value)
+        {
+            throw new NotSupportedException("Add is not supported.");
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Common.BoardObjects
             PlayerId = playerId;
         }
 
-        public int Id { get; private set; }
+        public int Id { get; set; }
         public PieceType Type { get; set; }
         public int? PlayerId { get; set; }
         public DateTime Timestamp { get; set; }
