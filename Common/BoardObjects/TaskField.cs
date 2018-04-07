@@ -34,7 +34,8 @@ namespace Common.BoardObjects
             base.ReadXml(reader);
 
             DistanceToPiece = int.Parse(reader.GetAttribute("distanceToPiece"));
-            PieceId = int.Parse(reader.GetAttribute("pieceId"));
+            if (int.TryParse(reader.GetAttribute("pieceId"), out int pieceId))
+                PieceId = pieceId;
         }
 
         public override void WriteXml(XmlWriter writer)

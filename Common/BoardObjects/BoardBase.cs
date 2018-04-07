@@ -4,6 +4,7 @@ using Common.Interfaces;
 
 namespace Common.BoardObjects
 {
+
     public abstract class BoardBase : IBoard
     {
         protected BoardBase()
@@ -35,6 +36,8 @@ namespace Common.BoardObjects
         [XmlIgnore] public Field[,] Content { get; private set; }
 
         [XmlArray("Content")]
+        [XmlArrayItem(nameof(GoalField), typeof(GoalField))]
+        [XmlArrayItem(nameof(TaskField), typeof(TaskField))]
         public Field[] ContentFlattend
         {
             get => Flatten(Content);

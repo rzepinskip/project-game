@@ -62,11 +62,11 @@ namespace Common.BoardObjects
         {
             base.ReadXml(reader);
 
-            if (!string.IsNullOrWhiteSpace(reader.GetAttribute("type")))
-                Type = EnumMap.CreateFor<GoalFieldType>()[reader.GetAttribute("type")];
+            if (Enum.TryParse(reader.GetAttribute("type"), out GoalFieldType type))
+                Type = type;
 
-            if (!string.IsNullOrWhiteSpace(reader.GetAttribute("team")))
-                Team = EnumMap.CreateFor<TeamColor>()[reader.GetAttribute("team")];
+            if (Enum.TryParse(reader.GetAttribute("team"), out TeamColor team))
+                Team = team;
         }
 
         public override void WriteXml(XmlWriter writer)
