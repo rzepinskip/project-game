@@ -4,7 +4,7 @@ using Common.Interfaces;
 
 namespace Messaging.Responses
 {
-    public abstract class Response : Message, IResponse, ILoggable
+    public abstract class Response : Message, IResponse, ILoggable, IEquatable<Response>
     {
         protected Response()
         {
@@ -30,6 +30,36 @@ namespace Messaging.Responses
         public override void Process(IPlayer player)
         {
             throw new NotImplementedException();
+        }
+        
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Response);
+        }
+
+        public bool Equals(Response other)
+        {
+            return other != null &&
+                   PlayerId == other.PlayerId &&
+                   IsGameFinished == other.IsGameFinished;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -1020949546;
+            hashCode = hashCode * -1521134295 + PlayerId.GetHashCode();
+            hashCode = hashCode * -1521134295 + IsGameFinished.GetHashCode();
+            return hashCode;
+        }
+
+        public static bool operator ==(Response response1, Response response2)
+        {
+            return EqualityComparer<Response>.Default.Equals(response1, response2);
+        }
+
+        public static bool operator !=(Response response1, Response response2)
+        {
+            return !(response1 == response2);
         }
     }
 }

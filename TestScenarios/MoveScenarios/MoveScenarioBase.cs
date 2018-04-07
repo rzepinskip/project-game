@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using System.IO;
+using Common;
 using Common.Interfaces;
 using Messaging.Requests;
 
@@ -6,10 +7,7 @@ namespace TestScenarios.MoveScenarios
 {
     public abstract class MoveScenarioBase : ScenarioBase
     {
-
-        public override IRequest InitialRequest { get; protected set; }
-
-        protected MoveScenarioBase(string scenarioFilePath) : base(scenarioFilePath)
+        protected MoveScenarioBase(string scenarioName) : base(Path.Combine("MoveScenarios","Resources", scenarioName + ".xml"))
         {
         }
     }

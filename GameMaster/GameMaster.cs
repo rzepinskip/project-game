@@ -27,6 +27,13 @@ namespace GameMaster
             }
         }
 
+        public GameMaster(GameMasterBoard board, Dictionary<string, int> playerGuidToId)
+        {
+            Board = board;
+
+            PlayerGuidToId = playerGuidToId;
+        }
+
         public Dictionary<int, ObservableConcurrentQueue<IRequest>> RequestsQueues { get; set; } =
             new Dictionary<int, ObservableConcurrentQueue<IRequest>>();
 

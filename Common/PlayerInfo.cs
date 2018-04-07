@@ -4,7 +4,7 @@ using Common.BoardObjects;
 
 namespace Common
 {
-    public class PlayerInfo : PlayerBase
+    public class PlayerInfo : PlayerBase, IEquatable<PlayerInfo>
     {
         protected PlayerInfo()
         {
@@ -58,6 +58,38 @@ namespace Common
                 var pieceSerializer = new XmlSerializer(typeof(Piece));
                 pieceSerializer.Serialize(writer, Piece);
             }
+        }
+        
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as PlayerInfo);
+        }
+
+        public bool Equals(PlayerInfo other)
+        {
+            return other != null &&
+                   base.Equals(other) &&
+                   EqualityComparer<Location>.Default.Equals(Location, other.Location) &&
+                   EqualityComparer<Piece>.Default.Equals(Piece, other.Piece);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -14891557;
+            hashCode = hashCode * -1521134295 + base.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<Location>.Default.GetHashCode(Location);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Piece>.Default.GetHashCode(Piece);
+            return hashCode;
+        }
+
+        public static bool operator ==(PlayerInfo info1, PlayerInfo info2)
+        {
+            return EqualityComparer<PlayerInfo>.Default.Equals(info1, info2);
+        }
+
+        public static bool operator !=(PlayerInfo info1, PlayerInfo info2)
+        {
+            return !(info1 == info2);
         }
     }
 }

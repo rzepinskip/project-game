@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using System.Linq;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
 
 namespace GameMaster
 {
-    public class GameMasterBoard : BoardBase, IGameMasterBoard
+    public class GameMasterBoard : BoardBase, IGameMasterBoard, IEquatable<GameMasterBoard>
     {
         protected GameMasterBoard()
         {
@@ -49,6 +50,38 @@ namespace GameMaster
                 return TeamColor.Red;
 
             throw new InvalidOperationException();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as GameMasterBoard);
+        }
+
+        public bool Equals(GameMasterBoard other)
+        {
+            return other != null &&
+                   base.Equals(other) &&
+                   UncompletedBlueGoalsLocations.SequenceEqual(other.UncompletedBlueGoalsLocations) &&
+                   UncompletedRedGoalsLocations.SequenceEqual(other.UncompletedRedGoalsLocations);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -961712695;
+            hashCode = hashCode * -1521134295 + base.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<Location>>.Default.GetHashCode(UncompletedBlueGoalsLocations);
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<Location>>.Default.GetHashCode(UncompletedRedGoalsLocations);
+            return hashCode;
+        }
+
+        public static bool operator ==(GameMasterBoard board1, GameMasterBoard board2)
+        {
+            return EqualityComparer<GameMasterBoard>.Default.Equals(board1, board2);
+        }
+
+        public static bool operator !=(GameMasterBoard board1, GameMasterBoard board2)
+        {
+            return !(board1 == board2);
         }
 
         public override void ReadXml(XmlReader reader)

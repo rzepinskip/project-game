@@ -6,7 +6,7 @@ using Messaging.Responses;
 
 namespace Messaging.Requests
 {
-    public abstract class Request : Message, IRequest
+    public abstract class Request : Message, IRequest, IEquatable<Request>
     {
         protected Request()
         {
@@ -37,6 +37,36 @@ namespace Messaging.Requests
         public virtual string ToLog()
         {
             return string.Join(',', PlayerGuid, GameId);
+        }
+        
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Request);
+        }
+
+        public bool Equals(Request other)
+        {
+            return other != null &&
+                   GameId == other.GameId &&
+                   PlayerGuid == other.PlayerGuid;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -497176057;
+            hashCode = hashCode * -1521134295 + GameId.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(PlayerGuid);
+            return hashCode;
+        }
+
+        public static bool operator ==(Request request1, Request request2)
+        {
+            return EqualityComparer<Request>.Default.Equals(request1, request2);
+        }
+
+        public static bool operator !=(Request request1, Request request2)
+        {
+            return !(request1 == request2);
         }
     }
 }

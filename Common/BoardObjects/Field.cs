@@ -27,8 +27,7 @@ namespace Common.BoardObjects
         {
             return other != null &&
                    base.Equals(other) &&
-                   EqualityComparer<int?>.Default.Equals(PlayerId, other.PlayerId) &&
-                   Timestamp == other.Timestamp;
+                   EqualityComparer<int?>.Default.Equals(PlayerId, other.PlayerId);
         }
 
         public override bool Equals(object obj)
@@ -38,11 +37,7 @@ namespace Common.BoardObjects
 
         public override int GetHashCode()
         {
-            var hashCode = 1655836488;
-            hashCode = hashCode * -1521134295 + base.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<int?>.Default.GetHashCode(PlayerId);
-            hashCode = hashCode * -1521134295 + Timestamp.GetHashCode();
-            return hashCode;
+            return base.GetHashCode();
         }
 
         public static bool operator ==(Field field1, Field field2)

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using BoardGenerators.Generators;
 using Common;
 using Common.BoardObjects;
@@ -23,6 +24,24 @@ namespace TestScenarios.DeterministicGame
             PlacePlayers(players);
 
             return Board;
+        }
+
+        protected override void PlaceGoals(IEnumerable<GoalField> goals)
+        {
+            base.PlaceGoals(goals);
+
+            foreach (var goal in goals)
+            {
+                switch (goal.Team)
+                {
+                    case TeamColor.Blue:
+                        Board.UncompletedBlueGoalsLocations.Add(goal);
+                        break;
+                    case TeamColor.Red:
+                        Board.UncompletedRedGoalsLocations.Add(goal);
+                        break;
+                }
+            }
         }
     }
 }

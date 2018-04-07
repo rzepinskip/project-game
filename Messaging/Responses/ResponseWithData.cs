@@ -9,7 +9,7 @@ using Common.Interfaces;
 namespace Messaging.Responses
 {
     [XmlType(XmlRootName)]
-    public class ResponseWithData : Response
+    public class ResponseWithData : Response, IEquatable<ResponseWithData>
     {
         public const string XmlRootName = "Data";
 
@@ -62,6 +62,44 @@ namespace Messaging.Responses
         {
             return new ResponseWithData(datafieldset.PlayerId, datafieldset.PlayerLocation, datafieldset.TaskFields,
                 datafieldset.GoalFields, datafieldset.Pieces, isGameFinished);
+        }
+        
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as ResponseWithData);
+        }
+
+        public bool Equals(ResponseWithData other)
+        {
+            return other != null &&
+                   base.Equals(other) &&
+                   TaskFields.SequenceEqual(other.TaskFields) &&
+                   GoalFields.SequenceEqual(other.GoalFields) &&
+                   Pieces.SequenceEqual(other.Pieces) &&
+                   EqualityComparer<Location>.Default.Equals(PlayerLocation, other.PlayerLocation) &&
+                   GameFinished == other.GameFinished;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 1775193206;
+            hashCode = hashCode * -1521134295 + base.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<TaskField[]>.Default.GetHashCode(TaskFields);
+            hashCode = hashCode * -1521134295 + EqualityComparer<GoalField[]>.Default.GetHashCode(GoalFields);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Piece[]>.Default.GetHashCode(Pieces);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Location>.Default.GetHashCode(PlayerLocation);
+            hashCode = hashCode * -1521134295 + GameFinished.GetHashCode();
+            return hashCode;
+        }
+
+        public static bool operator ==(ResponseWithData data1, ResponseWithData data2)
+        {
+            return EqualityComparer<ResponseWithData>.Default.Equals(data1, data2);
+        }
+
+        public static bool operator !=(ResponseWithData data1, ResponseWithData data2)
+        {
+            return !(data1 == data2);
         }
     }
 }

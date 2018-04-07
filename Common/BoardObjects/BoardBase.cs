@@ -8,7 +8,7 @@ using Common.Interfaces;
 
 namespace Common.BoardObjects
 {
-    public abstract class BoardBase : IBoard, IXmlSerializable
+    public abstract class BoardBase : IBoard, IXmlSerializable, IEquatable<BoardBase>
     {
         protected BoardBase()
         {
@@ -179,6 +179,60 @@ namespace Common.BoardObjects
             reader.ReadEndElement();
 
             return readElements;
+        }
+        
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as BoardBase);
+        }
+
+        public bool Equals(BoardBase other)
+        {
+            return other != null &&
+                   IsContentEqual(other.Content) &&
+                   TaskAreaSize == other.TaskAreaSize &&
+                   GoalAreaSize == other.GoalAreaSize &&
+                   Width == other.Width &&
+                   Height == other.Height &&
+                   Players.SequenceEqual(other.Players) == true&&
+                   Pieces.SequenceEqual(other.Pieces) == true;
+        }
+
+        private bool IsContentEqual(Field[,] otherContent)
+        {
+            for (int i = 0; i < Content.GetLength(0); i++)
+            {
+                for (int j = 0; j < Content.GetLength(1); j++)
+                {
+                    if (Content[i, j] != otherContent[i, j])
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -190167123;
+            hashCode = hashCode * -1521134295 + EqualityComparer<Field[,]>.Default.GetHashCode(Content);
+            hashCode = hashCode * -1521134295 + TaskAreaSize.GetHashCode();
+            hashCode = hashCode * -1521134295 + GoalAreaSize.GetHashCode();
+            hashCode = hashCode * -1521134295 + Width.GetHashCode();
+            hashCode = hashCode * -1521134295 + Height.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<Dictionary<int, PlayerInfo>>.Default.GetHashCode(Players);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Dictionary<int, Piece>>.Default.GetHashCode(Pieces);
+            return hashCode;
+        }
+
+        public static bool operator ==(BoardBase base1, BoardBase base2)
+        {
+            return EqualityComparer<BoardBase>.Default.Equals(base1, base2);
+        }
+
+        public static bool operator !=(BoardBase base1, BoardBase base2)
+        {
+            return !(base1 == base2);
         }
     }
 }

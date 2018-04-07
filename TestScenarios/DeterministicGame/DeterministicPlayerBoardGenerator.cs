@@ -11,12 +11,12 @@ namespace TestScenarios.DeterministicGame
 
         public PlayerBoard InitializeBoard(DeterministicGameDefinition config, int playerId)
         {
-            var board = new PlayerBoard(config.BoardWidth, config.TaskAreaLength, config.GoalAreaLength);
+            Board = new PlayerBoard(config.BoardWidth, config.TaskAreaLength, config.GoalAreaLength);
 
             var players = config.Players.Where(p => p.Id == playerId).Select((x, i) => (new PlayerBase(i, x.Team, x.Role), x.Location)).ToList();
             PlacePlayers(players);
 
-            return board;
+            return Board;
         }
     }
 }

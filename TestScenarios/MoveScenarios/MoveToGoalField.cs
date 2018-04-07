@@ -1,20 +1,22 @@
 ﻿using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
+using GameMaster;
 using Messaging;
 using Messaging.Requests;
+using Player;
 
 namespace TestScenarios.MoveScenarios
 {
-    public sealed class MoveToGoalField : ScenarioBase
+    public sealed class MoveToGoalField : MoveScenarioBase
     {
-        public override IPlayerBoard InitialPlayerBoard { get; protected set; }
-        public override IGameMasterBoard InitGameMasterBoard { get; protected set; }
+        public override PlayerBoard InitialPlayerBoard { get; protected set; }
+        public override GameMasterBoard InitGameMasterBoard { get; protected set; }
         public override IRequest InitialRequest { get; protected set; }
 
-        public override IGameMasterBoard UpdatedGameMasterBoard { get; protected set; }
+        public override GameMasterBoard UpdatedGameMasterBoard { get; protected set; }
         public override IResponse Response { get; protected set; }
-        public override IPlayerBoard UpdatedPlayerBoard { get; protected set; }
+        public override PlayerBoard UpdatedPlayerBoard { get; protected set; }
 
         public MoveToGoalField() : base(nameof(MoveToGoalField))
         {

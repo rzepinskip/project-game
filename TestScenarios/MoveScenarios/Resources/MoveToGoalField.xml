@@ -9,4 +9,6 @@
   <BoardWidth>3</BoardWidth>
   <TaskAreaLength>3</TaskAreaLength>
   <GoalAreaLength>2</GoalAreaLength>
+  <Goals team="red" x="0" y="6" type="goal" />
+  <Goals team="blue" x="0" y="0" type="goal" />
 </DeterministicGameDefinition>

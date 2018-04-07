@@ -14,7 +14,7 @@ namespace Common.Interfaces
 
         Field this[Location location] { get; set; }
 
-        int? GetPieceIdAt(Location llocation);
+        int? GetPieceIdAt(Location location);
         bool IsLocationInTaskArea(Location location);
         int DistanceToPieceFrom(Location location);
     }

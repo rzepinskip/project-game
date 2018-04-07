@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="MoveScenarios\Resources\MoveScenarioBasicMove.xml">
+    <None Update="MoveScenarios\Resources\MoveToGoalField.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

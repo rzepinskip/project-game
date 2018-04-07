@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 namespace Common.BoardObjects
 {
     [DebuggerDisplay("[Id = {Id}, PlayerId = {PlayerId}]")]
-    public class Piece : IXmlSerializable
+    public class Piece : IXmlSerializable, IEquatable<Piece>
     {
         protected Piece()
         {
@@ -58,6 +58,39 @@ namespace Common.BoardObjects
         public virtual XmlSchema GetSchema()
         {
             return null;
+        }
+        
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Piece);
+        }
+
+        public bool Equals(Piece other)
+        {
+            return other != null &&
+                   Id == other.Id &&
+                   Type == other.Type &&
+                   EqualityComparer<int?>.Default.Equals(PlayerId, other.PlayerId);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -2135171675;
+            hashCode = hashCode * -1521134295 + Id.GetHashCode();
+            hashCode = hashCode * -1521134295 + Type.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<int?>.Default.GetHashCode(PlayerId);
+            hashCode = hashCode * -1521134295 + TimeStamp.GetHashCode();
+            return hashCode;
+        }
+
+        public static bool operator ==(Piece piece1, Piece piece2)
+        {
+            return EqualityComparer<Piece>.Default.Equals(piece1, piece2);
+        }
+
+        public static bool operator !=(Piece piece1, Piece piece2)
+        {
+            return !(piece1 == piece2);
         }
     }
 }
