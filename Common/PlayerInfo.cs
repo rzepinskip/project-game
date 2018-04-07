@@ -4,6 +4,11 @@ namespace Common
 {
     public class PlayerInfo : PlayerBase
     {
+        protected PlayerInfo()
+        {
+
+        }
+
         public PlayerInfo(int playerId, TeamColor team, PlayerType role, Location location,
             Piece piece = null) : base(playerId, team, role)
         {

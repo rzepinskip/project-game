@@ -9,6 +9,11 @@ namespace GameMaster
 {
     public class GameMasterBoard : BoardBase, IGameMasterBoard
     {
+        protected GameMasterBoard()
+        {
+
+        }
+
         public GameMasterBoard(int boardWidth, int taskAreaSize, int goalAreaSize) : base(boardWidth, taskAreaSize, goalAreaSize)
         {
         }
