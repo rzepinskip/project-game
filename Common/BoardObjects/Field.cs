@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml;
 
 namespace Common.BoardObjects
 {
-    [Serializable]
     public abstract class Field : Location, IEquatable<Field>
     {
         protected Field()
@@ -53,6 +53,27 @@ namespace Common.BoardObjects
         public static bool operator !=(Field field1, Field field2)
         {
             return !(field1 == field2);
+        }
+
+        public override void ReadXml(XmlReader reader)
+        {
+            base.ReadXml(reader);
+
+            if (!string.IsNullOrWhiteSpace(reader.GetAttribute("timestamp")))
+                Timestamp = DateTime.Parse(reader.GetAttribute("timestamp"));
+
+            if (!string.IsNullOrWhiteSpace(reader.GetAttribute("playerId")))
+                PlayerId = int.Parse(reader.GetAttribute("playerId"));
+        }
+
+        public override void WriteXml(XmlWriter writer)
+        {
+            base.WriteXml(writer);
+
+            writer.WriteAttributeString("timestamp", Timestamp.ToString());
+
+            if (PlayerId.HasValue)
+                writer.WriteAttributeString("playerId", PlayerId.ToString());
         }
     }
 }

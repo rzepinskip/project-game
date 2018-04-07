@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml.Serialization;
+using System.Xml;
 
 namespace Common.BoardObjects
 {
-    [Serializable]
     public class GoalField : Field, IEquatable<GoalField>
     {
-        private GoalField()
+        protected GoalField()
         {
         }
 
@@ -23,9 +22,9 @@ namespace Common.BoardObjects
             Type = type;
         }
 
-        [XmlAttribute("type")] public GoalFieldType Type { get; set; }
+        public GoalFieldType Type { get; set; }
 
-        [XmlAttribute("team")] public TeamColor Team { get; set; }
+        public TeamColor Team { get; set; }
 
         public bool Equals(GoalField other)
         {
@@ -57,6 +56,25 @@ namespace Common.BoardObjects
         public static bool operator !=(GoalField field1, GoalField field2)
         {
             return !(field1 == field2);
+        }
+
+        public override void ReadXml(XmlReader reader)
+        {
+            base.ReadXml(reader);
+
+            if (!string.IsNullOrWhiteSpace(reader.GetAttribute("type")))
+                Type = EnumMap.CreateFor<GoalFieldType>()[reader.GetAttribute("type")];
+
+            if (!string.IsNullOrWhiteSpace(reader.GetAttribute("team")))
+                Team = EnumMap.CreateFor<TeamColor>()[reader.GetAttribute("team")];
+        }
+
+        public override void WriteXml(XmlWriter writer)
+        {
+            base.WriteXml(writer);
+
+            writer.WriteAttributeString("type", Type.ToString());
+            writer.WriteAttributeString("team", Team.ToString());
         }
     }
 }

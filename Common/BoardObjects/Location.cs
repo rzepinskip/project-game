@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Xml;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 
 namespace Common.BoardObjects
 {
     [Serializable]
     [DebuggerDisplay("[X = {X}, Y = {Y}]")]
-    public class Location : IEquatable<Location>
+    public class Location : IXmlSerializable, IEquatable<Location>
     {
         protected Location()
         {
@@ -19,15 +21,37 @@ namespace Common.BoardObjects
             Y = y;
         }
 
-        [XmlAttribute("x")] public int X { get; set; }
+        public int X { get; set; }
 
-        [XmlAttribute("y")] public int Y { get; set; }
+        public int Y { get; set; }
 
         public bool Equals(Location other)
         {
             return other != null &&
                    X == other.X &&
                    Y == other.Y;
+        }
+
+        public XmlSchema GetSchema()
+        {
+            return null;
+        }
+
+        public virtual void ReadXml(XmlReader reader)
+        {
+            reader.MoveToContent();
+            X = int.Parse(reader.GetAttribute("x"));
+            Y = int.Parse(reader.GetAttribute("y"));
+
+            var isEmptyElement = reader.IsEmptyElement;
+            reader.ReadStartElement();
+            if (!isEmptyElement) reader.ReadEndElement();
+        }
+
+        public virtual void WriteXml(XmlWriter writer)
+        {
+            writer.WriteAttributeString("x", X.ToString());
+            writer.WriteAttributeString("y", Y.ToString());
         }
 
         public override bool Equals(object obj)
