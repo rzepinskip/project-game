@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO.Pipes;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -25,12 +26,19 @@ namespace Common.Communication
         private readonly ManualResetEvent _receiveDone =
             new ManualResetEvent(false);
 
-        public event Action<string> StringMessageReceivedEvent;
+        public event Action<IMessage> MessageReceivedEvent;
+
+        private readonly IMessageConverter _messageConverter;
 
         // The response from the remote device.  
         private string _response = string.Empty;
-
         private Socket _client;
+
+        public AsynchronousClient(IMessageConverter messageConverter)
+        {
+            _messageConverter = messageConverter;
+        }
+
         public void StartClient()
         {
             try
@@ -147,7 +155,7 @@ namespace Common.Communication
                             var message = messages[i];
                             //Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
                             //message.Length, message);
-                            StringMessageReceivedEvent?.Invoke(message);
+                            MessageReceivedEvent?.Invoke(_messageConverter.ConvertStringToMessage(message));
 
                         }
                         state.sb.Clear();
@@ -174,9 +182,9 @@ namespace Common.Communication
 
         
 
-        public void Send(string data)
+        public void Send(IMessage message)
         {
-            var byteData = Encoding.ASCII.GetBytes(data);
+            var byteData = Encoding.ASCII.GetBytes(_messageConverter.ConvertMessageToString(message));
             try
             {
                 _client?.BeginSend(byteData, 0, byteData.Length, 0,
@@ -189,9 +197,9 @@ namespace Common.Communication
 
         }
 
-        public void SetupClient(Action<string> messageHandler)
+        public void SetupClient(Action<IMessage> messageHandler)
         {
-            this.StringMessageReceivedEvent += messageHandler;
+            this.MessageReceivedEvent += messageHandler;
         }
 
         private void SendCallback(IAsyncResult ar)
