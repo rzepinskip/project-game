@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Common;
 using Common.Interfaces;
 
 namespace CommunicationServer
@@ -16,21 +17,32 @@ namespace CommunicationServer
         public StringBuilder sb = new StringBuilder();
         public Socket workSocket;
         public ManualResetEvent messageProcessed = new ManualResetEvent(true);
+        public int socketID;
     }
 
-    public class AsynchronousSocketListener : IServer
+    public class AsynchronousSocketListener : ICommunicationServer
     {
-        public event Action<string> StringMessageReceivedEvent;
+        public event Action<IMessage, int> MessageReceivedEvent;
         public ManualResetEvent allDone = new ManualResetEvent(false);
-       
 
         public Socket GmSocket;
-        public Dictionary<int, Socket> playerToSocket;
-        private int counter = 0;
+        public Dictionary<int, Socket> _agentToSocket;
+        public Dictionary<int, int> _playerIdToGameId;
+        public Dictionary<int, GameInfo> _gameIdToGameInfo;
+
+        private int _counter;
+
+        private readonly IMessageConverter _messageConverter;
+
+        public AsynchronousSocketListener(IMessageConverter messageConverter)
+        {
+            _messageConverter = messageConverter;
+            _counter = 0;
+        }
 
         public void StartListening()
         {
-            playerToSocket = new Dictionary<int, Socket>();
+            _agentToSocket = new Dictionary<int, Socket>();
             var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             var ipAddress = ipHostInfo.AddressList[0];
             var localEndPoint = new IPEndPoint(ipAddress, 11000);
@@ -81,12 +93,9 @@ namespace CommunicationServer
             // Create the state object.  
             var state = new StateObject();
             state.workSocket = handler;
-            if (GmSocket == null)
-                GmSocket = handler;
-            else
-            {
-                playerToSocket.Add(counter++, handler);
-            }
+            state.socketID = _counter;
+
+            _agentToSocket.Add(_counter++, handler);
 
             StartReading(state);
         }
@@ -159,7 +168,7 @@ namespace CommunicationServer
                         var message = messages[i];
                         //Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
                         //    message.Length, message);
-                        StringMessageReceivedEvent?.Invoke(message);
+                        MessageReceivedEvent?.Invoke(_messageConverter.ConvertStringToMessage(message), state.socketID);
 
                     }
                     state.sb.Clear();
@@ -180,14 +189,17 @@ namespace CommunicationServer
             }
         }
 
-        public void Send(string data, Socket sendTo)
+        public void Send(IMessage message, int id)
         {
-            var byteData = Encoding.ASCII.GetBytes(data);
+            var byteData = Encoding.ASCII.GetBytes(_messageConverter.ConvertMessageToString(message));
+            _agentToSocket.TryGetValue(id, out var handler);
             try
             {
+                //find socket in dictionary
+
                 // Begin sending the data to the remote device.  
-                sendTo.BeginSend(byteData, 0, byteData.Length, 0,
-                    SendCallback, sendTo);
+                handler?.BeginSend(byteData, 0, byteData.Length, 0,
+                    SendCallback, handler);
             }
             catch (Exception e)
             {
@@ -195,9 +207,9 @@ namespace CommunicationServer
             }
         }
 
-        public void SetupServer(Action<string> messageHandler)
+        public void SetupServer(Action<IMessage, int> messageHandler)
         {
-            StringMessageReceivedEvent += messageHandler;
+            MessageReceivedEvent += messageHandler;
         }
 
         //public void SendToGM(string data)
@@ -211,7 +223,7 @@ namespace CommunicationServer
 
         //public void SendToPlayer(int playerID, string data)
         //{
-        //    playerToSocket.TryGetValue(playerID, out var handler);
+        //    _agentToSocket.TryGetValue(playerID, out var handler);
         //    // Convert the string data to byte data using ASCII encoding.  
         //    var byteData = Encoding.ASCII.GetBytes(data);
         //    try

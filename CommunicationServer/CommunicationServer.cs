@@ -1,10 +1,7 @@
-﻿using Common.Interfaces;
-
-namespace CommunicationServer
+﻿namespace CommunicationServer
 {
     public class CommunicationServer
     {
-        I
-        IProxy proxy
+     
     }
 }
