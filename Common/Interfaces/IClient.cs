@@ -4,8 +4,8 @@ namespace Common.Interfaces
 {
     public interface IClient
     {
-        void Send(string data);
+        void Send(IMessage message);
 
-        void SetupClient(Action<string> messageHandler);
+        void SetupClient(Action<IMessage> messageHandler);
     }
 }
