@@ -57,13 +57,13 @@ namespace Common.BoardObjects
 
         public override void ReadXml(XmlReader reader)
         {
-            base.ReadXml(reader);
-
             if (!string.IsNullOrWhiteSpace(reader.GetAttribute("timestamp")))
                 Timestamp = DateTime.Parse(reader.GetAttribute("timestamp"));
 
             if (!string.IsNullOrWhiteSpace(reader.GetAttribute("playerId")))
                 PlayerId = int.Parse(reader.GetAttribute("playerId"));
+
+            base.ReadXml(reader);
         }
 
         public override void WriteXml(XmlWriter writer)

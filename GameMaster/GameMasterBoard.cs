@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Xml.Serialization;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
@@ -18,7 +19,9 @@ namespace GameMaster
         {
         }
 
+        [XmlElement(Order = 10)]
         public List<Location> UncompletedBlueGoalsLocations { get; set; } = new List<Location>();
+        [XmlElement(Order = 11)]
         public List<Location> UncompletedRedGoalsLocations { get; set; } = new List<Location>();
 
         public void MarkGoalAsCompleted(GoalField goal)

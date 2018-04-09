@@ -32,7 +32,7 @@ namespace Common.BoardObjects
         {
             reader.MoveToContent();
             Id = int.Parse(reader.GetAttribute("id"));
-            Type = EnumMap.CreateFor<PieceType>()[reader.GetAttribute("type")];
+            Type = reader.GetAttribute("type").GetEnumValueFor<PieceType>();
             Timestamp = DateTime.Parse(reader.GetAttribute("timestamp"));
 
             if (!string.IsNullOrWhiteSpace(reader.GetAttribute("playerId")))
@@ -46,7 +46,7 @@ namespace Common.BoardObjects
         public virtual void WriteXml(XmlWriter writer)
         {
             writer.WriteAttributeString("id", Id.ToString());
-            writer.WriteAttributeString("type", Type.ToString());
+            writer.WriteAttributeString("type", Type.GetXmlAttributeName());
             writer.WriteAttributeString("timestamp", Timestamp.ToString());
 
             if (PlayerId.HasValue)

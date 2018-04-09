@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
 
 namespace Common
 {
-    public class EnumMap
+    public static class StringExtension
     {
-        public static Dictionary<string, T> CreateFor<T>() where T : struct, IConvertible
+        public static T GetEnumValueFor<T>(this string str) where T : struct, IConvertible
         {
             if (!typeof(T).IsEnum)
             {
@@ -26,11 +27,23 @@ namespace Common
                 }
 
                 var xmlEnumValue = enumAttrib.Name;
-                var enumVal = ((FieldInfo) member).GetRawConstantValue();
-                map.Add(xmlEnumValue, (T) enumVal);
+                var enumVal = ((FieldInfo)member).GetRawConstantValue();
+                map.Add(xmlEnumValue, (T)enumVal);
             }
 
-            return map;
+            return map[str];
+        }
+    }
+
+    public static class EnumExtensions
+    {
+        public static string GetXmlAttributeName<T>(this T enumVal)
+        {
+            var type = enumVal.GetType();
+            var info = type.GetField(Enum.GetName(typeof(T), enumVal));
+            var att = (XmlEnumAttribute)info.GetCustomAttributes(typeof(XmlEnumAttribute), false)[0];
+
+            return att.Name;
         }
     }
 

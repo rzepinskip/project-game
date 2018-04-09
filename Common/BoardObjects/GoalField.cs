@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Xml;
 
 namespace Common.BoardObjects
 {
+    [DebuggerDisplay("[X = {X}, Y = {Y}], {Type}, {Team}")]
     public class GoalField : Field, IEquatable<GoalField>
     {
         protected GoalField()
@@ -60,21 +62,18 @@ namespace Common.BoardObjects
 
         public override void ReadXml(XmlReader reader)
         {
+            Type = reader.GetAttribute("type").GetEnumValueFor<GoalFieldType>();
+            Team = reader.GetAttribute("team").GetEnumValueFor<TeamColor>();
+
             base.ReadXml(reader);
-
-            if (Enum.TryParse(reader.GetAttribute("type"), out GoalFieldType type))
-                Type = type;
-
-            if (Enum.TryParse(reader.GetAttribute("team"), out TeamColor team))
-                Team = team;
         }
 
         public override void WriteXml(XmlWriter writer)
         {
             base.WriteXml(writer);
 
-            writer.WriteAttributeString("type", Type.ToString());
-            writer.WriteAttributeString("team", Team.ToString());
+            writer.WriteAttributeString("type", Type.GetXmlAttributeName());
+            writer.WriteAttributeString("team", Team.GetXmlAttributeName());
         }
     }
 }

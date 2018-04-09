@@ -35,7 +35,7 @@ namespace Common.BoardObjects
 
         [XmlIgnore] public Field[,] Content { get; private set; }
 
-        [XmlArray("Content")]
+        [XmlArray("Content", Order = 4)]
         [XmlArrayItem(nameof(GoalField), typeof(GoalField))]
         [XmlArrayItem(nameof(TaskField), typeof(TaskField))]
         public Field[] ContentFlattend
@@ -44,6 +44,7 @@ namespace Common.BoardObjects
             set => Content = Expand(value, Height);
         }
 
+        [XmlIgnore]
         public object Lock { get; set; } = new object();
 
         public Field this[Location location]
@@ -51,13 +52,17 @@ namespace Common.BoardObjects
             get => Content[location.X, location.Y];
             set => Content[location.X, location.Y] = value;
         }
-
-        public int TaskAreaSize { get; }
-        public int GoalAreaSize { get; }
-        public int Width { get; }
+        [XmlElement(Order = 1)]
+        public int TaskAreaSize { get; set; }
+        [XmlElement(Order = 2)]
+        public int GoalAreaSize { get; set; }
+        [XmlElement(Order = 3)]
+        public int Width { get; set; }
         public int Height => 2 * GoalAreaSize + TaskAreaSize;
 
+        [XmlElement(Order = 5)]
         public SerializableDictionary<int, PlayerInfo> Players { get; set; }
+        [XmlElement(Order = 6)]
         public SerializableDictionary<int, Piece> Pieces { get; }
 
         public int? GetPieceIdAt(Location location)
@@ -74,16 +79,16 @@ namespace Common.BoardObjects
         {
             var min = int.MaxValue;
             for (var i = 0; i < Width; ++i)
-            for (var j = GoalAreaSize; j < TaskAreaSize + GoalAreaSize; ++j)
-            {
-                var field = this[new Location(i, j)] as TaskField;
-                if (field.PieceId != null)
+                for (var j = GoalAreaSize; j < TaskAreaSize + GoalAreaSize; ++j)
                 {
-                    var distance = field.ManhattanDistanceTo(location);
-                    if (distance < min)
-                        min = distance;
+                    var field = this[new Location(i, j)] as TaskField;
+                    if (field.PieceId != null)
+                    {
+                        var distance = field.ManhattanDistanceTo(location);
+                        if (distance < min)
+                            min = distance;
+                    }
                 }
-            }
 
             if (min == int.MaxValue)
                 min = -1;
@@ -102,8 +107,8 @@ namespace Common.BoardObjects
             var rows1 = arr.GetLength(1);
             var arrFlattened = new T[rows0 * rows1];
             for (var j = 0; j < rows1; j++)
-            for (var i = 0; i < rows0; i++)
-                arrFlattened[i + j * rows0] = arr[i, j];
+                for (var i = 0; i < rows0; i++)
+                    arrFlattened[i + j * rows0] = arr[i, j];
 
             return arrFlattened;
         }
@@ -114,8 +119,8 @@ namespace Common.BoardObjects
             var rows1 = length / rows0;
             var arrExpanded = new T[rows0, rows1];
             for (var j = 0; j < rows1; j++)
-            for (var i = 0; i < rows0; i++)
-                arrExpanded[i, j] = arr[i + j * rows0];
+                for (var i = 0; i < rows0; i++)
+                    arrExpanded[i, j] = arr[i + j * rows0];
             return arrExpanded;
         }
 
