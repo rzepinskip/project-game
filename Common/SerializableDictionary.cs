@@ -8,6 +8,10 @@ namespace Common
     [XmlRoot("dictionary")]
     public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IXmlSerializable
     {
+        private const string ItemTag = "item";
+        private const string KeyTag = "key";
+        private const string ValueTag = "value";
+
         #region IXmlSerializable Members
         public XmlSchema GetSchema()
         {
@@ -27,12 +31,12 @@ namespace Common
 
             while (reader.NodeType != XmlNodeType.EndElement)
             {
-                reader.ReadStartElement("item");
-                reader.ReadStartElement("key");
+                reader.ReadStartElement(ItemTag);
+                reader.ReadStartElement(KeyTag);
                 var key = (TKey) keySerializer.Deserialize(reader);
                 reader.ReadEndElement();
 
-                reader.ReadStartElement("value");
+                reader.ReadStartElement(ValueTag);
                 var value = (TValue) valueSerializer.Deserialize(reader);
                 reader.ReadEndElement();
 
@@ -51,12 +55,12 @@ namespace Common
 
             foreach (var key in Keys)
             {
-                writer.WriteStartElement("item");
-                writer.WriteStartElement("key");
+                writer.WriteStartElement(ItemTag);
+                writer.WriteStartElement(KeyTag);
                 keySerializer.Serialize(writer, key);
                 writer.WriteEndElement();
 
-                writer.WriteStartElement("value");
+                writer.WriteStartElement(ValueTag);
                 var value = this[key];
                 valueSerializer.Serialize(writer, value);
                 writer.WriteEndElement();
