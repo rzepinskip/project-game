@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Xml;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 using Common.Interfaces;
 
 namespace Common.BoardObjects
 {
-
-    public abstract class BoardBase : IBoard
+    public abstract class BoardBase : IBoard, IXmlSerializable
     {
         protected BoardBase()
         {
@@ -17,8 +20,6 @@ namespace Common.BoardObjects
             TaskAreaSize = taskAreaSize;
             Width = boardWidth;
             Content = new Field[boardWidth, Height];
-            Players = new SerializableDictionary<int, PlayerInfo>();
-            Pieces = new SerializableDictionary<int, Piece>();
 
             for (var i = 0; i < boardWidth; ++i)
             {
@@ -33,37 +34,28 @@ namespace Common.BoardObjects
             }
         }
 
-        [XmlIgnore] public Field[,] Content { get; private set; }
+        protected Field[,] Content { get; set; }
 
-        [XmlArray("Content", Order = 4)]
-        [XmlArrayItem(nameof(GoalField), typeof(GoalField))]
-        [XmlArrayItem(nameof(TaskField), typeof(TaskField))]
-        public Field[] ContentFlattend
-        {
-            get => Flatten(Content);
-            set => Content = Expand(value, Height);
-        }
-
-        [XmlIgnore]
-        public object Lock { get; set; } = new object();
+        public object Lock { get; protected set; } = new object();
 
         public Field this[Location location]
         {
             get => Content[location.X, location.Y];
             set => Content[location.X, location.Y] = value;
         }
-        [XmlElement(Order = 1)]
-        public int TaskAreaSize { get; set; }
-        [XmlElement(Order = 2)]
-        public int GoalAreaSize { get; set; }
-        [XmlElement(Order = 3)]
-        public int Width { get; set; }
+
+        public int TaskAreaSize { get; private set; }
+
+        public int GoalAreaSize { get; private set; }
+
+        public int Width { get; private set; }
+
         public int Height => 2 * GoalAreaSize + TaskAreaSize;
 
-        [XmlElement(Order = 5)]
-        public SerializableDictionary<int, PlayerInfo> Players { get; set; }
-        [XmlElement(Order = 6)]
-        public SerializableDictionary<int, Piece> Pieces { get; }
+        public SerializableDictionary<int, PlayerInfo> Players { get; } =
+            new SerializableDictionary<int, PlayerInfo>();
+
+        public SerializableDictionary<int, Piece> Pieces { get; } = new SerializableDictionary<int, Piece>();
 
         public int? GetPieceIdAt(Location location)
         {
@@ -79,16 +71,16 @@ namespace Common.BoardObjects
         {
             var min = int.MaxValue;
             for (var i = 0; i < Width; ++i)
-                for (var j = GoalAreaSize; j < TaskAreaSize + GoalAreaSize; ++j)
+            for (var j = GoalAreaSize; j < TaskAreaSize + GoalAreaSize; ++j)
+            {
+                var field = this[new Location(i, j)] as TaskField;
+                if (field.PieceId != null)
                 {
-                    var field = this[new Location(i, j)] as TaskField;
-                    if (field.PieceId != null)
-                    {
-                        var distance = field.ManhattanDistanceTo(location);
-                        if (distance < min)
-                            min = distance;
-                    }
+                    var distance = field.ManhattanDistanceTo(location);
+                    if (distance < min)
+                        min = distance;
                 }
+            }
 
             if (min == int.MaxValue)
                 min = -1;
@@ -101,32 +93,92 @@ namespace Common.BoardObjects
             return location.Y <= TaskAreaSize + GoalAreaSize - 1 && location.Y >= GoalAreaSize;
         }
 
-        public static T[] Flatten<T>(T[,] arr)
-        {
-            var rows0 = arr.GetLength(0);
-            var rows1 = arr.GetLength(1);
-            var arrFlattened = new T[rows0 * rows1];
-            for (var j = 0; j < rows1; j++)
-                for (var i = 0; i < rows0; i++)
-                    arrFlattened[i + j * rows0] = arr[i, j];
 
-            return arrFlattened;
+        public XmlSchema GetSchema()
+        {
+            return null;
         }
 
-        public static T[,] Expand<T>(T[] arr, int rows0)
+        public virtual void ReadXml(XmlReader reader)
         {
-            var length = arr.GetLength(0);
-            var rows1 = length / rows0;
-            var arrExpanded = new T[rows0, rows1];
-            for (var j = 0; j < rows1; j++)
-                for (var i = 0; i < rows0; i++)
-                    arrExpanded[i, j] = arr[i + j * rows0];
-            return arrExpanded;
+            reader.MoveToContent();
+
+            TaskAreaSize = int.Parse(reader.GetAttribute("taskAreaSize"));
+            GoalAreaSize = int.Parse(reader.GetAttribute("goalAreaSize"));
+            Width = int.Parse(reader.GetAttribute("width"));
+
+            reader.ReadStartElement();
+
+            ReadCollection(reader, Players, nameof(Players));
+            ReadCollection(reader, Pieces, nameof(Pieces));
+
+            Content = new Field[Width, Height];
+            var types = new[] {typeof(GoalField), typeof(TaskField)};
+            var readElements = ReadCollection<Field>(reader, nameof(Content), types);
+            foreach (var element in readElements) this[element] = element;
+
+            reader.ReadEndElement();
+        }
+
+        public virtual void WriteXml(XmlWriter writer)
+        {
+            writer.WriteAttributeString("taskAreaSize", TaskAreaSize.ToString());
+            writer.WriteAttributeString("goalAreaSize", GoalAreaSize.ToString());
+            writer.WriteAttributeString("width", Width.ToString());
+
+            WriteCollection(writer, Players, nameof(Players));
+            WriteCollection(writer, Pieces, nameof(Pieces));
+
+            writer.WriteStartElement(nameof(Content));
+            foreach (var field in Content)
+            {
+                writer.WriteStartElement(field.GetType().Name);
+                field.WriteXml(writer);
+                writer.WriteEndElement();
+            }
+
+            writer.WriteEndElement();
         }
 
         public void Add(object value)
         {
             throw new NotSupportedException("Add is not supported.");
+        }
+
+        private void ReadCollection<TCollection>(XmlReader reader, TCollection collection, string collectionName)
+            where TCollection : IEnumerable, IXmlSerializable
+        {
+            collection.ReadXml(reader);
+        }
+
+        private void WriteCollection<TCollection>(XmlWriter writer, TCollection collection, string collectionName)
+            where TCollection : IEnumerable, IXmlSerializable
+        {
+            writer.WriteStartElement(collectionName);
+            collection.WriteXml(writer);
+            writer.WriteEndElement();
+        }
+
+        private List<T> ReadCollection<T>(XmlReader reader, string collectionName, IEnumerable<Type> derivedTypes)
+            where T : class
+        {
+            var serializers = new Dictionary<string, XmlSerializer>();
+            foreach (var derivedType in derivedTypes)
+                serializers.Add(derivedType.Name, new XmlSerializer(derivedType));
+
+            reader.ReadStartElement(collectionName);
+
+            var readElements = new List<T>();
+            while (reader.NodeType != XmlNodeType.EndElement)
+            {
+                var element = serializers[reader.LocalName].Deserialize(reader) as T;
+
+                readElements.Add(element);
+            }
+
+            reader.ReadEndElement();
+
+            return readElements;
         }
     }
 }
