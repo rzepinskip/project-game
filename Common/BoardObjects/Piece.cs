@@ -49,7 +49,7 @@ namespace Common.BoardObjects
         {
             writer.WriteAttributeString("id", Id.ToString());
             writer.WriteAttributeString("type", Type.GetXmlAttributeName());
-            writer.WriteAttributeString("timestamp", Timestamp.ToString());
+            writer.WriteAttributeString("timestamp", Timestamp.ToString("s"));
 
             if (PlayerId.HasValue)
                 writer.WriteAttributeString("playerId", PlayerId.ToString());

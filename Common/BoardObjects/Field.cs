@@ -70,7 +70,7 @@ namespace Common.BoardObjects
         {
             base.WriteXml(writer);
 
-            writer.WriteAttributeString("timestamp", Timestamp.ToString());
+            writer.WriteAttributeString("timestamp", Timestamp.ToString("s"));
 
             if (PlayerId.HasValue)
                 writer.WriteAttributeString("playerId", PlayerId.ToString());

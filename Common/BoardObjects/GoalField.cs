@@ -10,6 +10,7 @@ namespace Common.BoardObjects
     {
         protected GoalField()
         {
+            Timestamp = DateTime.Now;
         }
 
         public GoalField(Location location, TeamColor team, GoalFieldType type = GoalFieldType.Unknown,
