@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 namespace Common.BoardObjects
 {
     [DebuggerDisplay("[Id = {Id}, PlayerId = {PlayerId}]")]
-    public class Piece
+    public class Piece : IXmlSerializable
     {
         protected Piece()
         {
@@ -30,7 +33,6 @@ namespace Common.BoardObjects
 
         public virtual void ReadXml(XmlReader reader)
         {
-            reader.MoveToContent();
             Id = int.Parse(reader.GetAttribute("id"));
             Type = reader.GetAttribute("type").GetEnumValueFor<PieceType>();
             Timestamp = DateTime.Parse(reader.GetAttribute("timestamp"));
@@ -51,6 +53,11 @@ namespace Common.BoardObjects
 
             if (PlayerId.HasValue)
                 writer.WriteAttributeString("playerId", PlayerId.ToString());
+        }
+
+        public virtual XmlSchema GetSchema()
+        {
+            return null;
         }
     }
 }
