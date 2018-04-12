@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Common;
 using TestScenarios.MoveScenarios;
+using TestScenarios.MoveScenarios.MoveToGoalField;
 using Xunit;
 
 namespace Player.Tests

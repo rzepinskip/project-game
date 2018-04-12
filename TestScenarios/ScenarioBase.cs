@@ -1,47 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using BoardGenerators.Loaders;
 using Common.Interfaces;
 using GameMaster;
-using Messaging.Requests;
 using Player;
-using TestScenarios.DeterministicGame;
 
 namespace TestScenarios
 {
     public abstract class ScenarioBase
     {
+        private const string GMInitialSufix = "-GM-Initial.xml";
+        private const string GMUpdatedSufix = "-GM-Updated.xml";
+        private const string PlayerInitialSufix = "-Player-Initial.xml";
+        private const string PlayerUpdatedSufix = "-Player-Updated.xml";
+
+        protected ScenarioBase(string scenarioCategory, string scenarioName)
+        {
+            ScenarioFileBase = Path.Combine(scenarioCategory, scenarioName, scenarioName);
+            PlayerGuidToId = new Dictionary<string, int> {{PlayerGuid, PlayerId}};
+
+            LoadBoards();
+        }
+
         public Dictionary<string, int> PlayerGuidToId { get; }
-        public int PlayerId { get; } = 0;
+        public int PlayerId { get; } = 1;
         public string PlayerGuid { get; } = Guid.NewGuid().ToString();
 
-        public string ScenarioFilePath { get; }
+        public string ScenarioFileBase { get; }
 
-        protected ScenarioBase(string scenarioFilePath)
+        public PlayerBoard InitialPlayerBoard { get; protected set; }
+        public GameMasterBoard InitialGameMasterBoard { get; protected set; }
+        public IRequest InitialRequest { get; protected set; }
+
+        public GameMasterBoard UpdatedGameMasterBoard { get; protected set; } // Validate&Response assert
+        public IResponse Response { get; protected set; } // Response assert, UpdatePlayer input
+        public PlayerBoard UpdatedPlayerBoard { get; protected set; } // UpdatePlayer output
+
+        private void LoadBoards()
         {
-            ScenarioFilePath = scenarioFilePath;
-            PlayerGuidToId = new Dictionary<string, int>();
-            PlayerGuidToId.Add(PlayerGuid, PlayerId);
-        }
+            InitialGameMasterBoard =
+                new XmlLoader<GameMasterBoard>().LoadConfigurationFromFile(ScenarioFileBase + GMInitialSufix);
+            UpdatedGameMasterBoard =
+                new XmlLoader<GameMasterBoard>().LoadConfigurationFromFile(ScenarioFileBase + GMUpdatedSufix);
 
-        public abstract PlayerBoard InitialPlayerBoard { get; protected set; }
-        public abstract GameMasterBoard InitialGameMasterBoard { get; protected set; }
-        public abstract IRequest InitialRequest { get; protected set; }
-
-        public abstract GameMasterBoard UpdatedGameMasterBoard { get; protected set; } // Validate&Response assert
-        public abstract IResponse Response { get; protected set; } // Response assert, UpdatePlayer input
-        public abstract PlayerBoard UpdatedPlayerBoard { get; protected set; } // UpdatePlayer output
-
-        protected GameMasterBoard LoadGameMasterBoard()
-        {
-            var gameDefinition = new XmlLoader<DeterministicGameDefinition>().LoadConfigurationFromFile(ScenarioFilePath);
-            return new DeterministicGameMasterBoardGenerator().InitializeBoard(gameDefinition);
-        }
-
-        protected PlayerBoard LoadPlayerBoard()
-        {
-            var gameDefinition = new XmlLoader<DeterministicGameDefinition>().LoadConfigurationFromFile(ScenarioFilePath);
-            return new DeterministicPlayerBoardGenerator().InitializeBoard(gameDefinition, PlayerId);
+            InitialPlayerBoard =
+                new XmlLoader<PlayerBoard>().LoadConfigurationFromFile(ScenarioFileBase + PlayerInitialSufix);
+            UpdatedPlayerBoard =
+                new XmlLoader<PlayerBoard>().LoadConfigurationFromFile(ScenarioFileBase + PlayerUpdatedSufix);
         }
     }
 }

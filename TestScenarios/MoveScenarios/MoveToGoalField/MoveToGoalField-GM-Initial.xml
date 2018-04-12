@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-16"?>
+<GameMasterBoard taskAreaSize="2" goalAreaSize="1" width="2">
+  <Players>
+    <item>
+      <key>
+        <int>0</int>
+      </key>
+      <value>
+        <PlayerInfo id="0" team="red" role="leader">
+          <Location x="1" y="3" />
+        </PlayerInfo>
+      </value>
+    </item>
+    <item>
+      <key>
+        <int>1</int>
+      </key>
+      <value>
+        <PlayerInfo id="1" team="blue" role="leader">
+          <Location x="1" y="0" />
+        </PlayerInfo>
+      </value>
+    </item>
+  </Players>
+  <Pieces>
+    <item>
+      <key>
+        <int>0</int>
+      </key>
+      <value>
+        <Piece id="0" type="normal" timestamp="2018-04-12T15:33:40" />
+      </value>
+    </item>
+  </Pieces>
+  <Content>
+    <GoalField x="0" y="0" timestamp="2018-04-12T15:33:40" type="goal" team="blue" />
+    <TaskField x="0" y="1" timestamp="2018-04-12T15:33:40" distanceToPiece="-1" />
+    <TaskField x="0" y="2" timestamp="2018-04-12T15:33:40" distanceToPiece="0" pieceId="0" />
+    <GoalField x="0" y="3" timestamp="2018-04-12T15:33:40" type="goal" team="red" />
+    <GoalField x="1" y="0" timestamp="2018-04-12T15:33:40" playerId="1" type="non-goal" team="blue" />
+    <TaskField x="1" y="1" timestamp="2018-04-12T15:33:40" distanceToPiece="-1" />
+    <TaskField x="1" y="2" timestamp="2018-04-12T15:33:40" distanceToPiece="-1" />
+    <GoalField x="1" y="3" timestamp="2018-04-12T15:33:40" playerId="0" type="non-goal" team="red" />
+  </Content>
+</GameMasterBoard>

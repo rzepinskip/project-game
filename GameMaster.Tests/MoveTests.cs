@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using Common.Interfaces;
-using GameMaster.Configuration;
 using TestScenarios.MoveScenarios;
+using TestScenarios.MoveScenarios.MoveToGoalField;
 using Xunit;
 
 namespace GameMaster.Tests

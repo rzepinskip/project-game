@@ -13,7 +13,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="MoveScenarios\Resources\MoveToGoalField.xml">
+    <None Update="MoveScenarios\MoveToGoalField\MoveToGoalField-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToGoalField\MoveToGoalField-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToGoalField\MoveToGoalField-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToGoalField\MoveToGoalField-Player-Updated.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
