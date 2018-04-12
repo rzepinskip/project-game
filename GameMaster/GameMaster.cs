@@ -18,7 +18,7 @@ namespace GameMaster
         {
             GameConfiguration = gameConfiguration;
 
-            var boardGenerator = new BoardGenerator();
+            var boardGenerator = new GameMasterBoardGenerator();
             Board = boardGenerator.InitializeBoard(GameConfiguration.GameDefinition);
 
             foreach (var player in Board.Players)

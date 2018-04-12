@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 using Common.BoardObjects;
 
-namespace GameMaster.Configuration
+namespace BoardGenerators.Loaders
 {
-    public class GameDefinitionBase
+    public abstract class GameDefinitionBase
     {
         [XmlElement]
         public List<GoalField> Goals { get; set; }

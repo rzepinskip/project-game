@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml.Serialization;
+using BoardGenerators.Loaders;
 using Common.BoardObjects;
 
 namespace GameMaster.Configuration
 {
     public class GameDefinition : GameDefinitionBase, IEquatable<GameDefinition>
     {
+        private const double Tolerance = 0.01;
 
         public double ShamProbability { get; set; }
 
@@ -28,8 +29,8 @@ namespace GameMaster.Configuration
                     return false;
 
             return other != null &&
-                   ShamProbability == other.ShamProbability &&
-                   PlacingNewPiecesFrequency == other.PlacingNewPiecesFrequency &&
+                   Math.Abs(ShamProbability - other.ShamProbability) < Tolerance &&
+                   Math.Abs(PlacingNewPiecesFrequency - other.PlacingNewPiecesFrequency) < Tolerance &&
                    InitialNumberOfPieces == other.InitialNumberOfPieces &&
                    BoardWidth == other.BoardWidth &&
                    TaskAreaLength == other.TaskAreaLength &&

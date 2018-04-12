@@ -1,11 +1,23 @@
-﻿<BoardConfiguration xmlns="https://se2.mini.pw.edu.pl/17-pl-19/17-pl-19/">
-    <Goals team="red" x="4" y="15" type="goal" />
-    <Goals team="blue" x="6" y="1" type="goal" />
-    <PiecesLocations x="5" y="6"/>
-    <PiecesLocations x="5" y="7"/>
-    <RedPlayersLocations x="1" y="13"/>
-    <BluePlayersLocations x="2" y="2"/>
-    <BoardWidth>10</BoardWidth>
-    <TaskAreaLength>10</TaskAreaLength>
-    <GoalAreaLength>3</GoalAreaLength>
-</BoardConfiguration>
+﻿<DeterministicGameDefinition xmlns="https://se2.mini.pw.edu.pl/17-pl-19/17-pl-19/">
+  <Goals team="red" x="4" y="15" type="goal" />
+  <Goals team="blue" x="6" y="1" type="goal" />
+  <Pieces>
+    <PieceWithLocation type="sham">
+      <Location x="5" y="6" />
+    </PieceWithLocation>
+    <PieceWithLocation>
+      <Location x="5" y="7" />
+    </PieceWithLocation>
+  </Pieces>
+  <Players>
+    <PlayerWithLocation team="red">
+      <Location x="1" y="13"/>
+    </PlayerWithLocation>
+    <PlayerWithLocation team="blue">
+      <Location x="2" y="2"/>
+    </PlayerWithLocation>
+  </Players>
+  <BoardWidth>10</BoardWidth>
+  <TaskAreaLength>10</TaskAreaLength>
+  <GoalAreaLength>3</GoalAreaLength>
+</DeterministicGameDefinition>

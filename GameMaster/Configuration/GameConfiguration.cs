@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using BoardGenerators.Loaders;
 using GameMaster.Delays;
 
 namespace GameMaster.Configuration

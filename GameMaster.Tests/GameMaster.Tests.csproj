@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BoardGenerators\BoardGenerators.csproj" />
     <ProjectReference Include="..\GameMaster\GameMaster.csproj" />
   </ItemGroup>
 
