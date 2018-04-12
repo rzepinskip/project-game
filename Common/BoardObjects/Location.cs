@@ -43,7 +43,7 @@ namespace Common.BoardObjects
             Y = int.Parse(reader.GetAttribute("y"));
 
             var isEmptyElement = reader.IsEmptyElement;
-            reader.ReadStartElement(); 
+            reader.ReadStartElement();
             if (!isEmptyElement) reader.ReadEndElement();
         }
 

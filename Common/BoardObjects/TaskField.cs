@@ -35,7 +35,7 @@ namespace Common.BoardObjects
         {
             DistanceToPiece = int.Parse(reader.GetAttribute("distanceToPiece"));
 
-            if (int.TryParse(reader.GetAttribute("pieceId"), out int pieceId))
+            if (int.TryParse(reader.GetAttribute("pieceId"), out var pieceId))
                 PieceId = pieceId;
 
             base.ReadXml(reader);

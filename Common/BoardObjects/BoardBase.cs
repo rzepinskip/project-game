@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -93,6 +94,18 @@ namespace Common.BoardObjects
             return location.Y <= TaskAreaSize + GoalAreaSize - 1 && location.Y >= GoalAreaSize;
         }
 
+        public bool Equals(BoardBase other)
+        {
+            return other != null &&
+                   IsContentEqual(other.Content) &&
+                   TaskAreaSize == other.TaskAreaSize &&
+                   GoalAreaSize == other.GoalAreaSize &&
+                   Width == other.Width &&
+                   Height == other.Height &&
+                   Players.SequenceEqual(other.Players) &&
+                   Pieces.SequenceEqual(other.Pieces);
+        }
+
 
         public XmlSchema GetSchema()
         {
@@ -180,34 +193,18 @@ namespace Common.BoardObjects
 
             return readElements;
         }
-        
+
         public override bool Equals(object obj)
         {
             return Equals(obj as BoardBase);
         }
 
-        public bool Equals(BoardBase other)
-        {
-            return other != null &&
-                   IsContentEqual(other.Content) &&
-                   TaskAreaSize == other.TaskAreaSize &&
-                   GoalAreaSize == other.GoalAreaSize &&
-                   Width == other.Width &&
-                   Height == other.Height &&
-                   Players.SequenceEqual(other.Players) == true&&
-                   Pieces.SequenceEqual(other.Pieces) == true;
-        }
-
         private bool IsContentEqual(Field[,] otherContent)
         {
-            for (int i = 0; i < Content.GetLength(0); i++)
-            {
-                for (int j = 0; j < Content.GetLength(1); j++)
-                {
-                    if (Content[i, j] != otherContent[i, j])
-                        return false;
-                }
-            }
+            for (var i = 0; i < Content.GetLength(0); i++)
+            for (var j = 0; j < Content.GetLength(1); j++)
+                if (Content[i, j] != otherContent[i, j])
+                    return false;
 
             return true;
         }
@@ -220,7 +217,8 @@ namespace Common.BoardObjects
             hashCode = hashCode * -1521134295 + GoalAreaSize.GetHashCode();
             hashCode = hashCode * -1521134295 + Width.GetHashCode();
             hashCode = hashCode * -1521134295 + Height.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<Dictionary<int, PlayerInfo>>.Default.GetHashCode(Players);
+            hashCode = hashCode * -1521134295 +
+                       EqualityComparer<Dictionary<int, PlayerInfo>>.Default.GetHashCode(Players);
             hashCode = hashCode * -1521134295 + EqualityComparer<Dictionary<int, Piece>>.Default.GetHashCode(Pieces);
             return hashCode;
         }

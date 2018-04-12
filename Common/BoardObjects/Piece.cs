@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -31,6 +31,14 @@ namespace Common.BoardObjects
         public int? PlayerId { get; set; }
         public DateTime Timestamp { get; set; }
 
+        public bool Equals(Piece other)
+        {
+            return other != null &&
+                   Id == other.Id &&
+                   Type == other.Type &&
+                   EqualityComparer<int?>.Default.Equals(PlayerId, other.PlayerId);
+        }
+
         public virtual void ReadXml(XmlReader reader)
         {
             Id = int.Parse(reader.GetAttribute("id"));
@@ -59,18 +67,10 @@ namespace Common.BoardObjects
         {
             return null;
         }
-        
+
         public override bool Equals(object obj)
         {
             return Equals(obj as Piece);
-        }
-
-        public bool Equals(Piece other)
-        {
-            return other != null &&
-                   Id == other.Id &&
-                   Type == other.Type &&
-                   EqualityComparer<int?>.Default.Equals(PlayerId, other.PlayerId);
         }
 
         public override int GetHashCode()
@@ -79,7 +79,7 @@ namespace Common.BoardObjects
             hashCode = hashCode * -1521134295 + Id.GetHashCode();
             hashCode = hashCode * -1521134295 + Type.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<int?>.Default.GetHashCode(PlayerId);
-            hashCode = hashCode * -1521134295 + TimeStamp.GetHashCode();
+            hashCode = hashCode * -1521134295 + Timestamp.GetHashCode();
             return hashCode;
         }
 

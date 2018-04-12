@@ -1,4 +1,6 @@
-﻿using System.Xml;
+﻿using System;
+using System.Collections.Generic;
+using System.Xml;
 using System.Xml.Serialization;
 using Common.BoardObjects;
 
@@ -8,7 +10,6 @@ namespace Common
     {
         protected PlayerInfo()
         {
-
         }
 
         public PlayerInfo(int playerId, TeamColor team, PlayerType role, Location location,
@@ -59,7 +60,7 @@ namespace Common
                 pieceSerializer.Serialize(writer, Piece);
             }
         }
-        
+
         public override bool Equals(object obj)
         {
             return Equals(obj as PlayerInfo);

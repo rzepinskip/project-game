@@ -1,4 +1,6 @@
-﻿using System.Xml;
+﻿using System;
+using System.Collections.Generic;
+using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
@@ -39,7 +41,7 @@ namespace Common
             writer.WriteAttributeString("team", Team.GetXmlAttributeName());
             writer.WriteAttributeString("role", Role.GetXmlAttributeName());
         }
-        
+
         public override bool Equals(object obj)
         {
             return Equals(obj as PlayerBase);
