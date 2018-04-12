@@ -5,16 +5,21 @@ using Common.Interfaces;
 
 namespace Messaging.Requests
 {
+    [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
     public abstract class Request : IRequest
     {
-        public Request(string playerGuid)
+        protected Request()
+        {
+        }
+
+        protected Request(string playerGuid)
         {
             PlayerGuid = playerGuid;
         }
 
-        [XmlAttribute] public int GameId { get; set; }
+        [XmlAttribute("gameId")] public int GameId { get; set; }
 
-        [XmlAttribute] public string PlayerGuid { get; set; }
+        [XmlAttribute("playerGuid")] public string PlayerGuid { get; set; }
 
         public IMessage Process(IGameMaster gameMaster)
         {

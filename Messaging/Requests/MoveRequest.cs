@@ -4,15 +4,20 @@ using Common.ActionInfo;
 
 namespace Messaging.Requests
 {
-    [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
+    [XmlInclude(typeof(MoveRequest))]
+    [XmlRoot(ElementName = "Move", Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
     public class MoveRequest : Request
     {
+        protected MoveRequest()
+        {
+        }
+
         public MoveRequest(string playerGuid, Direction direction) : base(playerGuid)
         {
             Direction = direction;
         }
 
-        [XmlAttribute] public Direction Direction { get; }
+        [XmlAttribute("direction")] public Direction Direction { get; set; }
 
 
         public override string ToLog()
