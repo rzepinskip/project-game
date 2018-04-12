@@ -8,7 +8,6 @@ namespace GameSimulation
         private static void Main(string[] args)
         {
             var simulation = new GameSimulation("Resources/ExampleConfig.xml");
-            var simulation = new GameSimulation("Resources/ExampleSimpleConfig.xml");
             simulation.StartSimulation();
 
             var boardVisualizer = new BoardVisualizer();
