@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Common.Interfaces
 {
@@ -6,5 +7,7 @@ namespace Common.Interfaces
     {
         void Send(IMessage message, int id);
         void SetupServer(Action<IMessage, int> messageHandler);
+        IEnumerable<GameInfo> GetGames();
+        int GetGameId(string gameName);
     }
 }

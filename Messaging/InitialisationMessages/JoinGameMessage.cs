@@ -35,7 +35,7 @@ namespace Messaging.InitialisationMessages
         {
             this.PlayerId = id;
             //find and set gameId 
-            //cs.Send(this, cs.getGameId(GameName));
+            cs.Send(this, cs.GetGameId(GameName));
         }
 
         public string ToLog()

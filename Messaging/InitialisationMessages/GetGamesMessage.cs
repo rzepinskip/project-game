@@ -19,7 +19,7 @@ namespace Messaging.InitialisationMessages
 
         public void Process(ICommunicationServer cs, int id)
         {
-            //cs.Send(new RegisteredGamesMessage(cs.GetGames()), id);
+            cs.Send(new RegisteredGamesMessage(cs.GetGames()), id);
         }
     }
 }

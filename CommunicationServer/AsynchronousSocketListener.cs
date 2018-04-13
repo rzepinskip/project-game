@@ -193,5 +193,15 @@ namespace CommunicationServer
         {
             MessageReceivedEvent += messageHandler;
         }
+
+        public IEnumerable<GameInfo> GetGames()
+        {
+            return this.
+        }
+
+        public int GetGameId(string gameName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
