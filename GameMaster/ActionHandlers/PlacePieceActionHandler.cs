@@ -1,5 +1,6 @@
 ﻿using System;
 using Common;
+using Common.ActionAvailability.AvailabilityChain;
 using Common.BoardObjects;
 
 namespace GameMaster.ActionHandlers
@@ -14,12 +15,15 @@ namespace GameMaster.ActionHandlers
 
         protected override bool Validate()
         {
-            throw new NotImplementedException();
+            var playerInfo = Board.Players[PlayerId];
+            return new PlaceAvailabilityChain(playerInfo.Location, Board, PlayerId).ActionAvailable();
         }
 
         public override DataFieldSet Respond()
         {
             ///TODO: different action on TaskField
+            if (!Validate())
+                return DataFieldSet.CreateMoveDataSet(PlayerId, new GoalField[0]);
             var player = Board.Players[PlayerId];
             var piece = player.Piece;
 
