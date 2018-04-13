@@ -1,9 +1,8 @@
 ﻿using System;
-using Common.Interfaces;
 
-namespace CommunicationServer
+namespace Common.Interfaces
 {
-    interface ICommunicationServer
+    public interface ICommunicationServer
     {
         void Send(IMessage message, int id);
         void SetupServer(Action<IMessage, int> messageHandler);
