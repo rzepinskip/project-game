@@ -13,13 +13,13 @@ namespace Common
         public Proxy(IClient client)
         {
             Client = client;
-            Client.SetupClient(HandleStringMessage);
+            //Client.SetupClient(HandleStringMessage);
         }
 
         public void Send(IMessage message)
         {
             string content = "";// = message.SerializeToString();
-            Client.Send(content);
+            //Client.Send(content);
         }
 
         public void HandleStringMessage(string message)

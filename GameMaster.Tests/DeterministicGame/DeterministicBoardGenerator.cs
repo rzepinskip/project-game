@@ -7,6 +7,7 @@ using GameMaster.Tests.BoardConfigurationGenerator;
 
 namespace GameMaster.Tests.DeterministicGame
 {
+    /*
     public class DeterministicBoardGenerator : BoardGeneratorBase
     {
         public GameMasterBoard InitializeBoard(DeterministicGameDefinition config)
@@ -25,4 +26,5 @@ namespace GameMaster.Tests.DeterministicGame
             return board;
         }
     }
+    */
 }

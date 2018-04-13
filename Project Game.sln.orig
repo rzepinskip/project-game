@@ -1,0 +1,96 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2009
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Player.Tests", "Player.Tests\Player.Tests.csproj", "{8CCF7424-BFBF-4FD2-BB57-D9AFA03336D7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameMaster.Tests", "GameMaster.Tests\GameMaster.Tests.csproj", "{B2A3B305-F130-49EB-AB58-3E7C34F566D8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameMaster", "GameMaster\GameMaster.csproj", "{C2DD43DB-BCD4-4D13-AC21-90907783ACB9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Player", "Player\Player.csproj", "{DF47BC65-E25C-408B-A004-5DE35BEC59AA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameSimulation", "GameSimulation\GameSimulation.csproj", "{BA0395C7-780D-4F16-8919-AB6F064EF795}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{C97DC559-3C3D-4F2F-90BF-FE962C9084B4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Messaging", "Messaging\Messaging.csproj", "{63D4F187-AD3B-4785-A1E8-7A25B6066D2C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Tests", "Common.Tests\Common.Tests.csproj", "{01F849F7-209C-4C96-A218-4A6B7AA9D936}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Messaging.Tests", "Messaging.Tests\Messaging.Tests.csproj", "{6EE0C0FB-8C98-40CB-8613-F37A26D2C62D}"
+EndProject
+<<<<<<< HEAD
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BoardGenerators", "BoardGenerators\BoardGenerators.csproj", "{543ECCEE-4770-418D-B739-407716A3685A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestScenarios", "TestScenarios\TestScenarios.csproj", "{EB9D702A-D4E5-43B1-96B0-7D513DCA5977}"
+=======
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunicationServer", "CommunicationServer\CommunicationServer.csproj", "{A3CD5E52-F275-49EC-B52F-E3EFB699E73E}"
+>>>>>>> 02d105e... Add Communication Server library
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8CCF7424-BFBF-4FD2-BB57-D9AFA03336D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CCF7424-BFBF-4FD2-BB57-D9AFA03336D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CCF7424-BFBF-4FD2-BB57-D9AFA03336D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CCF7424-BFBF-4FD2-BB57-D9AFA03336D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2A3B305-F130-49EB-AB58-3E7C34F566D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2A3B305-F130-49EB-AB58-3E7C34F566D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2A3B305-F130-49EB-AB58-3E7C34F566D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2A3B305-F130-49EB-AB58-3E7C34F566D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2DD43DB-BCD4-4D13-AC21-90907783ACB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2DD43DB-BCD4-4D13-AC21-90907783ACB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2DD43DB-BCD4-4D13-AC21-90907783ACB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2DD43DB-BCD4-4D13-AC21-90907783ACB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF47BC65-E25C-408B-A004-5DE35BEC59AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF47BC65-E25C-408B-A004-5DE35BEC59AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF47BC65-E25C-408B-A004-5DE35BEC59AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF47BC65-E25C-408B-A004-5DE35BEC59AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA0395C7-780D-4F16-8919-AB6F064EF795}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA0395C7-780D-4F16-8919-AB6F064EF795}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA0395C7-780D-4F16-8919-AB6F064EF795}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA0395C7-780D-4F16-8919-AB6F064EF795}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C97DC559-3C3D-4F2F-90BF-FE962C9084B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C97DC559-3C3D-4F2F-90BF-FE962C9084B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C97DC559-3C3D-4F2F-90BF-FE962C9084B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C97DC559-3C3D-4F2F-90BF-FE962C9084B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63D4F187-AD3B-4785-A1E8-7A25B6066D2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63D4F187-AD3B-4785-A1E8-7A25B6066D2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63D4F187-AD3B-4785-A1E8-7A25B6066D2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63D4F187-AD3B-4785-A1E8-7A25B6066D2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01F849F7-209C-4C96-A218-4A6B7AA9D936}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01F849F7-209C-4C96-A218-4A6B7AA9D936}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01F849F7-209C-4C96-A218-4A6B7AA9D936}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01F849F7-209C-4C96-A218-4A6B7AA9D936}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EE0C0FB-8C98-40CB-8613-F37A26D2C62D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EE0C0FB-8C98-40CB-8613-F37A26D2C62D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EE0C0FB-8C98-40CB-8613-F37A26D2C62D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EE0C0FB-8C98-40CB-8613-F37A26D2C62D}.Release|Any CPU.Build.0 = Release|Any CPU
+<<<<<<< HEAD
+		{543ECCEE-4770-418D-B739-407716A3685A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{543ECCEE-4770-418D-B739-407716A3685A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{543ECCEE-4770-418D-B739-407716A3685A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{543ECCEE-4770-418D-B739-407716A3685A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB9D702A-D4E5-43B1-96B0-7D513DCA5977}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB9D702A-D4E5-43B1-96B0-7D513DCA5977}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB9D702A-D4E5-43B1-96B0-7D513DCA5977}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB9D702A-D4E5-43B1-96B0-7D513DCA5977}.Release|Any CPU.Build.0 = Release|Any CPU
+=======
+		{A3CD5E52-F275-49EC-B52F-E3EFB699E73E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3CD5E52-F275-49EC-B52F-E3EFB699E73E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3CD5E52-F275-49EC-B52F-E3EFB699E73E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3CD5E52-F275-49EC-B52F-E3EFB699E73E}.Release|Any CPU.Build.0 = Release|Any CPU
+>>>>>>> 02d105e... Add Communication Server library
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1C3BFD35-EF41-4AD2-9EE7-54AF0110BE49}
+	EndGlobalSection
+EndGlobal

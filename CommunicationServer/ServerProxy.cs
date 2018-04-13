@@ -6,13 +6,13 @@ namespace CommunicationServer
 {
     class ServerProxy : IProxy
     {
-        private IServer Server { get; }
+        private ICommunicationServer Server { get; }
         public event Action<IMessage> MessageReceivedEvent;
 
-        public ServerProxy(IServer server)
+        public ServerProxy(ICommunicationServer server)
         {
             Server = server;
-            Server.SetupServer(MessageHandler);
+            //Server.SetupServer(MessageHandler);
         }
         public void Send(IMessage message)
         {
