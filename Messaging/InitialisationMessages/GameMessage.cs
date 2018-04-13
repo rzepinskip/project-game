@@ -7,8 +7,9 @@ using Common.Interfaces;
 
 namespace Messaging.InitialisationMessages
 {
-    public class GameMessage : IMessage
+    public class GameMessage : IResponse
     {
+        public int PlayerId { get; set; }
         public GameMessage(IEnumerable<PlayerBase> players, Location playerLocation, BoardInfo board)
         {
             this.Players = players;
@@ -29,5 +30,11 @@ namespace Messaging.InitialisationMessages
         {
             throw new NotImplementedException();
         }
+
+        public void Process(ICommunicationServer cs, int id)
+        {
+            cs.Send(this, this.PlayerId);
+        }
+
     }
 }

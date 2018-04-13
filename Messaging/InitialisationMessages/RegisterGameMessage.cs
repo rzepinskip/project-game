@@ -23,5 +23,11 @@ namespace Messaging.InitialisationMessages
         {
             throw new NotImplementedException();
         }
+
+        public void Process(ICommunicationServer cs, int id)
+        {
+            //Create response for GM with registered game info
+            //cs.SendRegisterGameResponse(id, NewGameInfo);
+        }
     }
 }

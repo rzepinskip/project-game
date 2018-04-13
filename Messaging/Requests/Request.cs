@@ -32,6 +32,11 @@ namespace Messaging.Requests
             throw new InvalidOperationException();
         }
 
+        public void Process(ICommunicationServer cs, int id)
+        {
+            cs.Send(this, this.GameId);
+        }
+
         public abstract ActionInfo GetActionInfo();
 
         public virtual string ToLog()

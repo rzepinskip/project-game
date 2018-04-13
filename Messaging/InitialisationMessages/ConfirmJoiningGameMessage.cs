@@ -6,7 +6,7 @@ using Common.Interfaces;
 
 namespace Messaging.InitialisationMessages
 {
-    public class ConfirmJoiningGameMessage : IMessage
+    public class ConfirmJoiningGameMessage : IResponse
     {
         public ConfirmJoiningGameMessage(int gameId, int playerId, string privateGuid, PlayerBase playerDefiniton)
         {
@@ -27,7 +27,12 @@ namespace Messaging.InitialisationMessages
 
         public void Process(IPlayer player)
         {
-            throw new NotImplementedException();
+            //handle join message
+        }
+
+        public void Process(ICommunicationServer cs, int id)
+        {
+            cs.Send(this, this.PlayerId);
         }
     }
 }

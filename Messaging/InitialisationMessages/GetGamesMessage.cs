@@ -16,5 +16,10 @@ namespace Messaging.InitialisationMessages
         {
             throw new NotImplementedException();
         }
+
+        public void Process(ICommunicationServer cs, int id)
+        {
+            //cs.Send(new RegisteredGamesMessage(cs.GetGames()), id);
+        }
     }
 }

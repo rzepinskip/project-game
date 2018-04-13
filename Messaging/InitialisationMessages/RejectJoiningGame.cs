@@ -5,7 +5,7 @@ using Common.Interfaces;
 
 namespace Messaging.InitialisationMessages
 {
-    public class RejectJoiningGame : IMessage
+    public class RejectJoiningGame : IResponse
     {
         public RejectJoiningGame(string gameName, int playerId)
         {
@@ -21,7 +21,12 @@ namespace Messaging.InitialisationMessages
 
         public void Process(IPlayer player)
         {
-            throw new NotImplementedException();
+            //handle reject join
+        }
+
+        public void Process(ICommunicationServer cs, int id)
+        {
+            cs.Send(this, this.PlayerId);
         }
     }
 }

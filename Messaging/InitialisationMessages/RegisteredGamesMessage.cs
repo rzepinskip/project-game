@@ -24,5 +24,10 @@ namespace Messaging.InitialisationMessages
         {
             throw new NotImplementedException();
         }
+
+        public void Process(ICommunicationServer cs, int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
