@@ -9,14 +9,6 @@ using Common.Interfaces;
 
 namespace Common.Communication
 {
-    public class StateObject
-    {
-        public const int BufferSize = 1024;
-        public byte[] buffer = new byte[BufferSize];
-        public StringBuilder sb = new StringBuilder();
-
-        public Socket workSocket;
-    }
 
     public class AsynchronousClient : IClient
     {
@@ -27,11 +19,8 @@ namespace Common.Communication
             new ManualResetEvent(false);
 
         public event Action<IMessage> MessageReceivedEvent;
-
         private readonly IMessageConverter _messageConverter;
 
-        // The response from the remote device.  
-        private string _response = string.Empty;
         private Socket _client;
 
         public AsynchronousClient(IMessageConverter messageConverter)
@@ -47,11 +36,9 @@ namespace Common.Communication
                 var ipAddress = ipHostInfo.AddressList[0];
                 var remoteEP = new IPEndPoint(ipAddress, port);
 
-                _client = new Socket(ipAddress.AddressFamily,
-                    SocketType.Stream, ProtocolType.Tcp);
+                _client = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-                _client.BeginConnect(remoteEP,
-                    ConnectCallback, _client);
+                _client.BeginConnect(remoteEP, ConnectCallback, _client);
                 _connectDone.WaitOne();
             }
             catch (Exception e)
@@ -59,8 +46,9 @@ namespace Common.Communication
                 //Console.WriteLine(e.ToString());
             }
 
-            var thread = new Thread(StartReading);
-            thread.Start();
+            //var thread = new Thread(StartReading);
+            //thread.Start();
+            StartReading();
 
         }
 
@@ -68,14 +56,11 @@ namespace Common.Communication
         {
             try
             {
-                // Retrieve the socket from the state object.  
-                // Complete the connection.  
+
                 _client.EndConnect(ar);
 
-                Console.WriteLine("Socket connected to {0}",
-                    _client.RemoteEndPoint);
+                Console.WriteLine("Socket connected to {0}", _client.RemoteEndPoint);
 
-                // Signal that the connection has been made.  
                 _connectDone.Set();
             }
             catch (Exception e)
@@ -99,34 +84,29 @@ namespace Common.Communication
 
         public void Receive(Socket socket)
         {
-
-            // Create the state object.  
-            var state = new StateObject();
+ 
+            var state = new CommunicationStateObject(socket);
 
             //according to docs beginreceive can throw an exception
             try
             {
-                // Begin receiving the data from the remote device.  
-                _client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                    ReceiveCallback, state);
+                _client.BeginReceive(state.Buffer, 0, CommunicationStateObject.BufferSize, 0, ReceiveCallback, state);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                //Console.WriteLine(e.ToString());
             }
         }
 
         private void ReceiveCallback(IAsyncResult ar)
         {
+            var response = String.Empty;
             try
             {
-                // Retrieve the state object and the client socket   
-                // from the asynchronous state object.  
-                var state = (StateObject)ar.AsyncState;
-                var client = state.workSocket;
+                var state = (CommunicationStateObject)ar.AsyncState;
+                var client = state.WorkSocket;
                 var bytesRead = 0;
 
-                // Read data from the remote device.  
                 try
                 {
                     bytesRead = client.EndReceive(ar);
@@ -140,13 +120,13 @@ namespace Common.Communication
 
                 if (bytesRead > 0)
                 {
-                    // There might be more data, so store the data received so far.  
-                    state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
+                    state.Sb.Append(Encoding.ASCII.GetString(state.Buffer, 0, bytesRead));
 
-                    if (state.sb.Length > 1) _response = state.sb.ToString();
-                    if (_response.IndexOf("<EOF>") > -1)
+                    response = state.Sb.ToString();
+
+                    if (response.IndexOf(CommunicationStateObject.ETBByte) > -1)
                     {
-                        var messages = _response.Split("<EOF>");
+                        var messages = response.Split(CommunicationStateObject.ETBByte);
                         var numberOfMessages = messages.Length;
                         var wholeMessages = String.IsNullOrEmpty(messages[numberOfMessages - 1]);
 
@@ -158,19 +138,17 @@ namespace Common.Communication
                             MessageReceivedEvent?.Invoke(_messageConverter.ConvertStringToMessage(message));
 
                         }
-                        state.sb.Clear();
+                        state.Sb.Clear();
                         if (!wholeMessages)
                         {
-                            state.sb.Append(messages[numberOfMessages - 1]);
+                            state.Sb.Append(messages[numberOfMessages - 1]);
                         }
 
                         _receiveDone.Set();
 
                     } else
                     {
-                        // Get the rest of the data.  
-                        client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                            ReceiveCallback, state);
+                        client.BeginReceive(state.Buffer, 0, CommunicationStateObject.BufferSize, 0, ReceiveCallback, state);
                     }
                 }
             }
@@ -184,22 +162,16 @@ namespace Common.Communication
 
         public void Send(IMessage message)
         {
-            var byteData = Encoding.ASCII.GetBytes(_messageConverter.ConvertMessageToString(message));
+            var byteData = Encoding.ASCII.GetBytes(_messageConverter.ConvertMessageToString(message) +  CommunicationStateObject.ETBByte);
             try
             {
-                _client?.BeginSend(byteData, 0, byteData.Length, 0,
-                    SendCallback, _client);
+                _client?.BeginSend(byteData, 0, byteData.Length, 0, SendCallback, _client);
             }
             catch (Exception e)
             {
                 //Console.WriteLine(e.ToString());
             }
 
-        }
-
-        public void SetupClient(Action<IMessage> messageHandler)
-        {
-            this.MessageReceivedEvent += messageHandler;
         }
 
         private void SendCallback(IAsyncResult ar)
@@ -212,6 +184,11 @@ namespace Common.Communication
             {
                 //Console.WriteLine(e.ToString());
             }
+        }
+
+        public void SetupClient(Action<IMessage> messageHandler)
+        {
+            this.MessageReceivedEvent += messageHandler;
         }
     }
 }
