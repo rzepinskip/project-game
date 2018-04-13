@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Common.GameInfo;
+using Common;
 using Common.Interfaces;
 
 namespace Messaging.InitialisationMessages

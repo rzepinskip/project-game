@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using Common;
-using Common.GameInfo;
 using Common.Interfaces;
 
 namespace Messaging.InitialisationMessages
