@@ -196,12 +196,12 @@ namespace CommunicationServer
 
         public IEnumerable<GameInfo> GetGames()
         {
-            return this.
+            return this._gameIdToGameInfo.Values;
         }
 
         public int GetGameId(string gameName)
         {
-            throw new NotImplementedException();
+            return this._gameIdToGameInfo.FirstOrDefault(x => x.Value.GameName == gameName).Key;
         }
     }
 }
