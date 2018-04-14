@@ -4,7 +4,7 @@ using Common.Interfaces;
 
 namespace Messaging.Responses
 {
-    public abstract class Response : IResponse, ILoggable
+    public abstract class Response : Message, IResponse, ILoggable
     {
         protected Response()
         {
@@ -22,12 +22,12 @@ namespace Messaging.Responses
 
         [XmlAttribute("playerId")] public int PlayerId { get; set; }
 
-        public virtual IMessage Process(IGameMaster gameMaster)
+        public override IMessage Process(IGameMaster gameMaster)
         {
             throw new NotImplementedException();
         }
 
-        public virtual void Process(IPlayer player)
+        public override void Process(IPlayer player)
         {
             throw new NotImplementedException();
         }

@@ -6,7 +6,7 @@ using Messaging.Responses;
 
 namespace Messaging.Requests
 {
-    public abstract class Request : IRequest
+    public abstract class Request : Message, IRequest
     {
         protected Request()
         {
@@ -21,13 +21,13 @@ namespace Messaging.Requests
 
         [XmlAttribute("playerGuid")] public string PlayerGuid { get; set; }
 
-        public IMessage Process(IGameMaster gameMaster)
+        public override IMessage Process(IGameMaster gameMaster)
         {
             var result = gameMaster.EvaluateAction(GetActionInfo());
             return ResponseWithData.ConvertToData(result.data, result.isGameFinished);
         }
 
-        public void Process(IPlayer player)
+        public override void Process(IPlayer player)
         {
             throw new InvalidOperationException();
         }

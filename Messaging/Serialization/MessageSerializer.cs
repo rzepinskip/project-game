@@ -1,5 +1,4 @@
 ﻿using Messaging.Requests;
-using Messaging.Responses;
 
 namespace Messaging.Serialization
 {
@@ -19,24 +18,18 @@ namespace Messaging.Serialization
 
         public static MessageSerializer Instance => _instance ?? (_instance = new MessageSerializer());
 
-        public Request DeserializeRequest(string xml)
+
+        public Message Deserialize<TMessage>(string xml) where TMessage : Message
         {
-            return _requestSerializer.Deserialize(xml);
+            if (typeof(TMessage) == typeof(Request))
+                return _requestSerializer.Deserialize(xml);
+
+            return _xmlSerializer.DeserializeFromXml<TMessage>(xml);
         }
 
-        public Response DeserializeResponse(string xml)
+        public string Serialize(Message message)
         {
-            return _xmlSerializer.DeserializeFromXml<ResponseWithData>(xml);
-        }
-
-        public string Serialize(Request request)
-        {
-            return _xmlSerializer.SerializeToXml(request);
-        }
-
-        public string Serialize(Response response)
-        {
-            return _xmlSerializer.SerializeToXml(response);
+            return _xmlSerializer.SerializeToXml(message);
         }
     }
 }
