@@ -6,39 +6,36 @@ using Messaging.Requests;
 
 namespace Messaging.Serialization
 {
-    public class RequestSerializer
+    public class RequestSerializer : ExtendedXmlSerializer
     {
-        private static RequestSerializer _instance;
-        private static Dictionary<string, XmlSerializer> _serializers;
+        private readonly Dictionary<string, XmlSerializer> _serializers;
 
-        private RequestSerializer()
+        public RequestSerializer(string xmlNamespace) : base(xmlNamespace)
         {
             _serializers = new Dictionary<string, XmlSerializer>
             {
                 {
-                    DiscoverRequest.XmlRootName, 
-                    ExtendedXmlSerializer.GetDefaultXmlSerializer(typeof(DiscoverRequest))
+                    DiscoverRequest.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(DiscoverRequest))
                 },
                 {
-                    MoveRequest.XmlRootName, 
-                    ExtendedXmlSerializer.GetDefaultXmlSerializer(typeof(MoveRequest))
+                    MoveRequest.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(MoveRequest))
                 },
                 {
                     PickUpPieceRequest.XmlRootName,
-                    ExtendedXmlSerializer.GetDefaultXmlSerializer(typeof(PickUpPieceRequest))
+                    GetDefaultXmlSerializer(typeof(PickUpPieceRequest))
                 },
                 {
                     PlacePieceRequest.XmlRootName,
-                    ExtendedXmlSerializer.GetDefaultXmlSerializer(typeof(PlacePieceRequest))
+                    GetDefaultXmlSerializer(typeof(PlacePieceRequest))
                 },
                 {
-                    TestPieceRequest.XmlRootName, 
-                    ExtendedXmlSerializer.GetDefaultXmlSerializer(typeof(TestPieceRequest))
+                    TestPieceRequest.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(TestPieceRequest))
                 }
             };
         }
-
-        public static RequestSerializer Instance => _instance ?? (_instance = new RequestSerializer());
 
         public Request Deserialize(string xml)
         {
@@ -46,14 +43,11 @@ namespace Messaging.Serialization
             var document = XDocument.Load(stream);
 
             var name = ReadRootName(document);
-
             var serializer = _serializers[name];
-
 
             if (document.Root == null) return null;
 
-            var result = serializer.Deserialize(document.Root.CreateReader()) as Request;
-            return result;
+            return serializer.Deserialize(document.Root.CreateReader()) as Request;
         }
 
         private string ReadRootName(XDocument document)

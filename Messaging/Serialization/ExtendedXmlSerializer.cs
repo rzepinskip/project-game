@@ -8,25 +8,30 @@ namespace Messaging.Serialization
 {
     public class ExtendedXmlSerializer
     {
-        private const string DefaultNamespace = "https://se2.mini.pw.edu.pl/17-results/";
+        private readonly string _defaultNamespace;
 
-        public static XmlSerializer GetDefaultXmlSerializer(Type type)
+        public ExtendedXmlSerializer(string xmlNamespace)
         {
-            return GetXmlSerializer(type, DefaultNamespace);
+            _defaultNamespace = xmlNamespace;
         }
 
-        private static XmlSerializer GetXmlSerializer(Type type, string xmlNamespace)
+        private XmlSerializer GetXmlSerializer(Type type, string xmlNamespace)
         {
             return new XmlSerializer(type, new XmlAttributeOverrides(), new Type[] { },
                 new XmlRootAttribute {Namespace = xmlNamespace}, "");
         }
 
-        public static string SerializeToXml<T>(T value)
+        public XmlSerializer GetDefaultXmlSerializer(Type type)
+        {
+            return GetXmlSerializer(type, _defaultNamespace);
+        }
+
+        public string SerializeToXml<T>(T value)
         {
             if (value == null) return string.Empty;
 
             var ns = new XmlSerializerNamespaces();
-            ns.Add("", DefaultNamespace);
+            ns.Add("", _defaultNamespace);
 
             var xmlSerializer = GetDefaultXmlSerializer(value.GetType());
 
@@ -40,7 +45,7 @@ namespace Messaging.Serialization
             }
         }
 
-        public static T DeserializeFromXml<T>(string xml)
+        public T DeserializeFromXml<T>(string xml)
         {
             var serializer = GetDefaultXmlSerializer(typeof(T));
             var reader = new StringReader(xml);
@@ -49,10 +54,10 @@ namespace Messaging.Serialization
 
             return conf;
         }
-    }
 
-    public class Utf8EncodedStringWriter : StringWriter
-    {
-        public override Encoding Encoding => Encoding.UTF8;
+        private class Utf8EncodedStringWriter : StringWriter
+        {
+            public override Encoding Encoding => Encoding.UTF8;
+        }
     }
 }

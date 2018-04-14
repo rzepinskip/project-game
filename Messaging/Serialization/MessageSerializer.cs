@@ -3,26 +3,40 @@ using Messaging.Responses;
 
 namespace Messaging.Serialization
 {
-    public static class MessageSerializer
+    public class MessageSerializer
     {
-        public static Request DeserializeRequest(string xml)
+        private const string DefaultNameSpace = "https://se2.mini.pw.edu.pl/17-results/";
+
+        private static MessageSerializer _instance;
+        private readonly RequestSerializer _requestSerializer;
+        private readonly ExtendedXmlSerializer _xmlSerializer;
+
+        private MessageSerializer()
         {
-            return RequestSerializer.Instance.Deserialize(xml);
+            _xmlSerializer = new ExtendedXmlSerializer(DefaultNameSpace);
+            _requestSerializer = new RequestSerializer(DefaultNameSpace);
         }
 
-        public static Response DeserializeResponse(string xml)
+        public static MessageSerializer Instance => _instance ?? (_instance = new MessageSerializer());
+
+        public Request DeserializeRequest(string xml)
         {
-            return ExtendedXmlSerializer.DeserializeFromXml<ResponseWithData>(xml);
+            return _requestSerializer.Deserialize(xml);
         }
 
-        public static string Serialize(Request request)
+        public Response DeserializeResponse(string xml)
         {
-            return ExtendedXmlSerializer.SerializeToXml(request);
+            return _xmlSerializer.DeserializeFromXml<ResponseWithData>(xml);
         }
 
-        public static string Serialize(Response response)
+        public string Serialize(Request request)
         {
-            return ExtendedXmlSerializer.SerializeToXml(response);
+            return _xmlSerializer.SerializeToXml(request);
+        }
+
+        public string Serialize(Response response)
+        {
+            return _xmlSerializer.SerializeToXml(response);
         }
     }
 }
