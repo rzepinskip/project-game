@@ -17,9 +17,9 @@ namespace CommunicationServer
         public ManualResetEvent readyForAccept = new ManualResetEvent(false);
 
         //public Socket GmSocket;
-        public Dictionary<int, Socket> _agentToSocket;
-        public Dictionary<int, int> _playerIdToGameId;
-        public Dictionary<int, GameInfo> _gameIdToGameInfo;
+        private readonly Dictionary<int, Socket> _agentToSocket;
+        //private Dictionary<int, int> _playerIdToGameId;
+        private readonly Dictionary<int, GameInfo> _gameIdToGameInfo;
 
         private int _counter;
 
@@ -29,12 +29,12 @@ namespace CommunicationServer
         {
             _messageConverter = messageConverter;
             _counter = 0;
+            _gameIdToGameInfo = new Dictionary<int, GameInfo>();
+            _agentToSocket = new Dictionary<int, Socket>();
         }
 
         public void StartListening()
         {
-            _agentToSocket = new Dictionary<int, Socket>();
-
             var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             var ipAddress = ipHostInfo.AddressList[0];
             var localEndPoint = new IPEndPoint(ipAddress, 11000);
@@ -202,6 +202,35 @@ namespace CommunicationServer
         public int GetGameId(string gameName)
         {
             return this._gameIdToGameInfo.FirstOrDefault(x => x.Value.GameName == gameName).Key;
+        }
+
+        public void RegisterNewGame(GameInfo gameInfo, int id)
+        {
+            this._gameIdToGameInfo.Add(id, gameInfo);
+        }
+
+        public void UpdateTeamCount(int gameId, TeamColor team)
+        {
+            this._gameIdToGameInfo.TryGetValue(gameId, out var info);
+            if (info == null)
+                return;
+            switch (team)
+            {
+            case TeamColor.Blue:
+                info.BlueTeamPlayers--;
+                break;
+            case TeamColor.Red:
+                info.RedTeamPlayers--;
+                break;
+            default:
+                throw new Exception("Unexpected team color");
+            }
+            _gameIdToGameInfo[gameId] = info;
+        }
+
+        public void UnregisterGame(int gameId)
+        {
+            this._gameIdToGameInfo.Remove(gameId);
         }
     }
 }

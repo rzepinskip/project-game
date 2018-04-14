@@ -9,5 +9,8 @@ namespace Common.Interfaces
         void SetupServer(Action<IMessage, int> messageHandler);
         IEnumerable<GameInfo> GetGames();
         int GetGameId(string gameName);
+        void RegisterNewGame(GameInfo gameInfo, int id);
+        void UpdateTeamCount(int gameId, TeamColor team);
+        void UnregisterGame(int gameId);
     }
 }
