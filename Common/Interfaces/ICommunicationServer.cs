@@ -12,5 +12,7 @@ namespace Common.Interfaces
         void RegisterNewGame(GameInfo gameInfo, int id);
         void UpdateTeamCount(int gameId, TeamColor team);
         void UnregisterGame(int gameId);
+        void AssignGameIdToPlayerId(int gameId, int playerId);
+        int GetGameIdForPlayer(int playerId);
     }
 }

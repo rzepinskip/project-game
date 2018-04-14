@@ -34,6 +34,7 @@ namespace Messaging.InitialisationMessages
         {
             //update team count
             cs.UpdateTeamCount(id, this.PlayerDefinition.Team);
+            cs.AssignGameIdToPlayerId(id, this.PlayerId);
             cs.Send(this, this.PlayerId);
         }
     }

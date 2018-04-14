@@ -18,7 +18,7 @@ namespace CommunicationServer
 
         //public Socket GmSocket;
         private readonly Dictionary<int, Socket> _agentToSocket;
-        //private Dictionary<int, int> _playerIdToGameId;
+        private readonly Dictionary<int, int> _playerIdToGameId;
         private readonly Dictionary<int, GameInfo> _gameIdToGameInfo;
 
         private int _counter;
@@ -31,6 +31,7 @@ namespace CommunicationServer
             _counter = 0;
             _gameIdToGameInfo = new Dictionary<int, GameInfo>();
             _agentToSocket = new Dictionary<int, Socket>();
+            _playerIdToGameId = new Dictionary<int, int>();
         }
 
         public void StartListening()
@@ -231,6 +232,17 @@ namespace CommunicationServer
         public void UnregisterGame(int gameId)
         {
             this._gameIdToGameInfo.Remove(gameId);
+        }
+
+        public void AssignGameIdToPlayerId(int gameId, int playerId)
+        {
+            this._playerIdToGameId.Add(playerId, gameId);
+        }
+
+        public int GetGameIdForPlayer(int playerId)
+        {
+            this._playerIdToGameId.TryGetValue(playerId, out var gameId);
+            return gameId;
         }
     }
 }
