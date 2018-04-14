@@ -32,6 +32,8 @@ namespace Messaging.InitialisationMessages
 
         public void Process(ICommunicationServer cs, int id)
         {
+            //update team count
+            cs.UpdateTeamCount(id, this.PlayerDefinition.Team);
             cs.Send(this, this.PlayerId);
         }
     }

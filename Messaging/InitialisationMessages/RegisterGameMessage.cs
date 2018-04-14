@@ -26,8 +26,8 @@ namespace Messaging.InitialisationMessages
 
         public void Process(ICommunicationServer cs, int id)
         {
-            //Create response for GM with registered game info
-            //cs.SendRegisterGameResponse(id, NewGameInfo);
+            cs.RegisterNewGame(NewGameInfo, id);
+            cs.Send(new ConfirmGameRegistrationMessage(id), id);
         }
     }
 }

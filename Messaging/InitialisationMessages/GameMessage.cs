@@ -33,6 +33,7 @@ namespace Messaging.InitialisationMessages
 
         public void Process(ICommunicationServer cs, int id)
         {
+            cs.UnregisterGame(id);
             cs.Send(this, this.PlayerId);
         }
 
