@@ -5,7 +5,6 @@ using Common.Interfaces;
 
 namespace Messaging.Requests
 {
-    [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
     public abstract class Request : IRequest
     {
         protected Request()

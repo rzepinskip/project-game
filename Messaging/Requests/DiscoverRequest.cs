@@ -4,9 +4,11 @@ using Common.ActionInfo;
 
 namespace Messaging.Requests
 {
-    [XmlRoot(ElementName = "Discover", Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
+    [XmlType(XmlRootName)]
     public class DiscoverRequest : Request
     {
+        public const string XmlRootName = "Discover";
+
         protected DiscoverRequest()
         {
         }

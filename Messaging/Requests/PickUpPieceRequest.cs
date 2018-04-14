@@ -4,9 +4,15 @@ using Common.ActionInfo;
 
 namespace Messaging.Requests
 {
-    [XmlRoot(ElementName = "PickUpPiece", Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
+    [XmlType(XmlRootName)]
     public class PickUpPieceRequest : Request
     {
+        public const string XmlRootName = "PickUpPiece";
+
+        protected PickUpPieceRequest()
+        {
+        }
+
         public PickUpPieceRequest(string playerGuid) : base(playerGuid)
         {
         }

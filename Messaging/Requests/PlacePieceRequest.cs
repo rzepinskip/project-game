@@ -4,9 +4,15 @@ using Common.ActionInfo;
 
 namespace Messaging.Requests
 {
-    [XmlRoot(ElementName = "PlacePiece", Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
+    [XmlType(XmlRootName)]
     public class PlacePieceRequest : Request
     {
+        public const string XmlRootName = "PlacePiece";
+
+        protected PlacePieceRequest()
+        {
+        }
+
         public PlacePieceRequest(string playerGuid) : base(playerGuid)
         {
         }
