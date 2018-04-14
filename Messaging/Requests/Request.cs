@@ -2,6 +2,7 @@
 using System.Xml.Serialization;
 using Common.ActionInfo;
 using Common.Interfaces;
+using Messaging.Responses;
 
 namespace Messaging.Requests
 {
@@ -36,6 +37,12 @@ namespace Messaging.Requests
         public virtual string ToLog()
         {
             return string.Join(',', PlayerGuid, GameId);
+        }
+
+        public abstract string Serialize();
+        public static Request DeserializeFrom(string xml)
+        {
+            return RequestSerializer.Instance.Deserialize(xml);
         }
     }
 }

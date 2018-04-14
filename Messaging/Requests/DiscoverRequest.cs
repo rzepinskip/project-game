@@ -17,14 +17,19 @@ namespace Messaging.Requests
         {
         }
 
-        public override string ToLog()
-        {
-            return string.Join(',', ActionType.Discover, base.ToLog());
-        }
-
         public override ActionInfo GetActionInfo()
         {
             return new DiscoverActionInfo(PlayerGuid);
+        }
+
+        public override string Serialize()
+        {
+            return XmlExtensions.SerializeToXml(this);
+        }
+
+        public override string ToLog()
+        {
+            return string.Join(',', ActionType.Discover, base.ToLog());
         }
     }
 }

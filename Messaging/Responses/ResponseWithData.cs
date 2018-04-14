@@ -63,5 +63,15 @@ namespace Messaging.Responses
             return new ResponseWithData(datafieldset.PlayerId, datafieldset.PlayerLocation, datafieldset.TaskFields,
                 datafieldset.GoalFields, datafieldset.Pieces, isGameFinished);
         }
+
+        public virtual string Serialize()
+        {
+            return XmlExtensions.SerializeToXml(this);
+        }
+
+        public static ResponseWithData DeserializeFrom(string xml)
+        {
+            return XmlExtensions.DeserializeFromXml<ResponseWithData>(xml);
+        }
     }
 }

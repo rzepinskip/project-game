@@ -20,14 +20,19 @@ namespace Messaging.Requests
 
         [XmlAttribute("direction")] public Direction Direction { get; set; }
 
-        public override string ToLog()
-        {
-            return string.Join(',', ActionType.Move, base.ToLog());
-        }
-
         public override ActionInfo GetActionInfo()
         {
             return new MoveActionInfo(PlayerGuid, Direction);
+        }
+
+        public override string Serialize()
+        {
+            return XmlExtensions.SerializeToXml(this);
+        }
+
+        public override string ToLog()
+        {
+            return string.Join(',', ActionType.Move, base.ToLog());
         }
     }
 }
