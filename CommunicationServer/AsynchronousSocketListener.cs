@@ -20,18 +20,23 @@ namespace CommunicationServer
         private readonly Dictionary<int, Socket> _agentToSocket;
         private readonly Dictionary<int, int> _playerIdToGameId;
         private readonly Dictionary<int, GameInfo> _gameIdToGameInfo;
+        private readonly Dictionary<int, CommunicationStateObject> _agentToCommunicationStateObject;
 
         private int _counter;
-
         private readonly IMessageConverter _messageConverter;
+        private readonly int _keepAliveTimeMiliseconds;
+        private Timer _checkKeepAliveTimer;
 
-        public AsynchronousSocketListener(IMessageConverter messageConverter)
+        public AsynchronousSocketListener(IMessageConverter messageConverter, int keepAliveTimeMiliseconds)
         {
+            _keepAliveTimeMiliseconds = keepAliveTimeMiliseconds;
             _messageConverter = messageConverter;
             _counter = 0;
             _gameIdToGameInfo = new Dictionary<int, GameInfo>();
             _agentToSocket = new Dictionary<int, Socket>();
             _playerIdToGameId = new Dictionary<int, int>();
+            _agentToCommunicationStateObject = new Dictionary<int, CommunicationStateObject>();
+            _checkKeepAliveTimer = new Timer(KeepAliveCallback, _agentToCommunicationStateObject, 0, _keepAliveTimeMiliseconds/2);
         }
 
         public void StartListening()
@@ -76,7 +81,7 @@ namespace CommunicationServer
             var handler = listener.EndAccept(ar);
 
             var state = new CommunicationStateObject(handler, _counter);
-
+            _agentToCommunicationStateObject.Add(_counter, state);
             _agentToSocket.Add(_counter++, handler);
 
             StartReading(state);
@@ -104,7 +109,8 @@ namespace CommunicationServer
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                //After closing socket, BeginReceive will throw SocketException which has to be handled
+                //Console.WriteLine(e.ToString());
             }
         }
 
@@ -139,6 +145,7 @@ namespace CommunicationServer
                         var message = messages[i];
                         //Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
                         //    message.Length, message);
+                        state.LastMessageReceivedTicks = DateTime.Today.Ticks;
                         MessageReceivedEvent?.Invoke(_messageConverter.ConvertStringToMessage(message), state.SocketID);
 
                     }
@@ -243,6 +250,37 @@ namespace CommunicationServer
         {
             this._playerIdToGameId.TryGetValue(playerId, out var gameId);
             return gameId;
+        }
+
+        public void KeepAliveCallback(object state)
+        {
+            var dictionary = (Dictionary<int, CommunicationStateObject>)state;
+            var currentTime = DateTime.Now.Ticks;
+            foreach (var csStateObject in dictionary.Values)
+            {
+                var elapsedTicks = currentTime - csStateObject.LastMessageReceivedTicks;
+                var elapsedSpan = new TimeSpan(elapsedTicks);
+
+                if (elapsedSpan.Milliseconds > _keepAliveTimeMiliseconds)
+                    CloseSocket(csStateObject.SocketID);
+            }
+
+        }
+
+        private void CloseSocket(int socketId)
+        {
+            _agentToSocket.TryGetValue(socketId, out var socketToClose);
+            if (socketToClose == null)
+                return;
+            try
+            {
+                socketToClose.Shutdown(SocketShutdown.Both);
+                socketToClose.Close();
+            }
+            catch (Exception e)
+            {
+                //
+            }
         }
     }
 }
