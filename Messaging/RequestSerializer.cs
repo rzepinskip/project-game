@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -66,7 +67,7 @@ namespace Messaging
             return new XmlSerializer(typeof(T), new XmlAttributeOverrides(), new Type[]{}, new XmlRootAttribute { Namespace = namepsace}, "");
         }
 
-        public static string SerializeToXml<T>(this T value)
+        public static string SerializeToXml<T>(T value)
         {
             if (value == null) return string.Empty;
  
@@ -75,7 +76,7 @@ namespace Messaging
  
             var xmlSerializer = GetDefaultXmlSerializer<T>();
  
-            using (var stringWriter = new StringWriter())
+            using (var stringWriter = new Utf8EncodedStringWriter())
             {
                 using (var xmlWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings { Indent = true }))
                 {
@@ -84,5 +85,20 @@ namespace Messaging
                 }
             }
         }
+
+        public static T DeserializeFromXml<T>(string xml)
+        {
+            var serializer = GetDefaultXmlSerializer<T>();
+            var reader = new StringReader(xml);
+            var conf = (T) serializer.Deserialize(reader);
+            reader.Close();
+
+            return conf;
+        }
+    }
+
+    public class Utf8EncodedStringWriter : StringWriter
+    {
+        public override Encoding Encoding => Encoding.UTF8;
     }
 }
