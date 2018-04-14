@@ -13,6 +13,7 @@ namespace Common.Communication
         public Socket WorkSocket { get; set; }
         public ManualResetEvent MessageProcessed { get; } = new ManualResetEvent(true);
         public int SocketID { get; }
+        public long LastMessageReceivedTicks { get; set; }
 
         public CommunicationStateObject(Socket workSocket, int socketId = 0)
         {
