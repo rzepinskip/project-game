@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Common;
 using Common.Interfaces;
 
@@ -10,7 +8,7 @@ namespace Messaging.InitialisationMessages
     {
         public RegisterGameMessage(GameInfo newGameInfo)
         {
-            this.NewGameInfo = newGameInfo;
+            NewGameInfo = newGameInfo;
         }
 
         public GameInfo NewGameInfo { get; set; }

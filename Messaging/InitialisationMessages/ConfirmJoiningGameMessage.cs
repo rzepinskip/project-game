@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Common;
 using Common.Interfaces;
 
@@ -10,10 +8,10 @@ namespace Messaging.InitialisationMessages
     {
         public ConfirmJoiningGameMessage(int gameId, int playerId, string privateGuid, PlayerBase playerDefiniton)
         {
-            this.GameId = gameId;
-            this.PlayerId = playerId;
-            this.PrivateGuid = privateGuid;
-            this.PlayerDefinition = playerDefiniton;
+            GameId = gameId;
+            PlayerId = playerId;
+            PrivateGuid = privateGuid;
+            PlayerDefinition = playerDefiniton;
         }
 
         public int GameId { get; set; }
@@ -33,9 +31,9 @@ namespace Messaging.InitialisationMessages
         public void Process(ICommunicationServer cs, int id)
         {
             //update team count
-            cs.UpdateTeamCount(id, this.PlayerDefinition.Team);
-            cs.AssignGameIdToPlayerId(id, this.PlayerId);
-            cs.Send(this, this.PlayerId);
+            cs.UpdateTeamCount(id, PlayerDefinition.Team);
+            cs.AssignGameIdToPlayerId(id, PlayerId);
+            cs.Send(this, PlayerId);
         }
     }
 }

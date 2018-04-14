@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
@@ -12,9 +11,9 @@ namespace Messaging.InitialisationMessages
         public int PlayerId { get; set; }
         public GameMessage(IEnumerable<PlayerBase> players, Location playerLocation, BoardInfo board)
         {
-            this.Players = players;
-            this.PlayerLocation = playerLocation;
-            this.Board = board;
+            Players = players;
+            PlayerLocation = playerLocation;
+            Board = board;
         }
 
         public IEnumerable<PlayerBase> Players { get; set; }
@@ -34,7 +33,7 @@ namespace Messaging.InitialisationMessages
         public void Process(ICommunicationServer cs, int id)
         {
             cs.UnregisterGame(id);
-            cs.Send(this, this.PlayerId);
+            cs.Send(this, PlayerId);
         }
 
     }

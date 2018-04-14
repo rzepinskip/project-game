@@ -34,7 +34,7 @@ namespace Messaging.Responses
 
         public void Process(ICommunicationServer cs, int id)
         {
-            cs.Send(this, this.PlayerId);
+            cs.Send(this, PlayerId);
         }
     }
 }

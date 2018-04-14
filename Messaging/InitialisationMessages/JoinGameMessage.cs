@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Common;
 using Common.ActionInfo;
 using Common.Interfaces;
@@ -11,9 +9,9 @@ namespace Messaging.InitialisationMessages
     {
         public JoinGameMessage(string gameName, PlayerType preferedRole, TeamColor preferedTeam)
         {
-            this.GameName = gameName;
-            this.PreferedRole = preferedRole;
-            this.PreferedTeam = preferedTeam;
+            GameName = gameName;
+            PreferedRole = preferedRole;
+            PreferedTeam = preferedTeam;
         }
 
         public int PlayerId;
@@ -33,8 +31,8 @@ namespace Messaging.InitialisationMessages
 
         public void Process(ICommunicationServer cs, int id)
         {
-            this.PlayerId = id;
-            //find and set gameId 
+            PlayerId = id;
+            
             cs.Send(this, cs.GetGameId(GameName));
         }
 

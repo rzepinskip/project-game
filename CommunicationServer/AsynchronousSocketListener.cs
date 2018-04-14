@@ -14,9 +14,8 @@ namespace CommunicationServer
     public class AsynchronousSocketListener : ICommunicationServer
     {
         public event Action<IMessage, int> MessageReceivedEvent;
-        public ManualResetEvent readyForAccept = new ManualResetEvent(false);
+        private readonly ManualResetEvent _readyForAccept = new ManualResetEvent(false);
 
-        //public Socket GmSocket;
         private readonly Dictionary<int, Socket> _agentToSocket;
         private readonly Dictionary<int, int> _playerIdToGameId;
         private readonly Dictionary<int, GameInfo> _gameIdToGameInfo;
@@ -45,8 +44,7 @@ namespace CommunicationServer
             var ipAddress = ipHostInfo.AddressList[0];
             var localEndPoint = new IPEndPoint(ipAddress, 11000);
 
-            var listener = new Socket(ipAddress.AddressFamily,
-                SocketType.Stream, ProtocolType.Tcp);
+            var listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
             try
             {
@@ -55,27 +53,25 @@ namespace CommunicationServer
 
                 while (true)
                 {
-                   
-                    readyForAccept.Reset();
-
-                    Console.WriteLine("Waiting for a connection...");
+                    _readyForAccept.Reset();
+                    //Console.WriteLine("Waiting for a connection...");
                     listener.BeginAccept(AcceptCallback, listener);
 
-                    readyForAccept.WaitOne();
+                    _readyForAccept.WaitOne();
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                //Console.WriteLine(e.ToString());
             }
 
-            Console.WriteLine("\nPress ENTER to continue...");
-            Console.Read();
+            //Console.WriteLine("\nPress ENTER to continue...");
+            //Console.Read();
         }
 
         private void AcceptCallback(IAsyncResult ar)
         {
-            readyForAccept.Set();
+            _readyForAccept.Set();
 
             var listener = (Socket)ar.AsyncState;
             var handler = listener.EndAccept(ar);
@@ -116,7 +112,7 @@ namespace CommunicationServer
 
         private void ReadCallback(IAsyncResult ar)
         {
-            Console.WriteLine("in callback");
+            //Console.WriteLine("in callback");
             var content = string.Empty;
             var state = (CommunicationStateObject)ar.AsyncState;
             var handler = state.WorkSocket;
@@ -127,18 +123,18 @@ namespace CommunicationServer
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                //Console.WriteLine(e.ToString());
             }
 
             if (bytesRead > 0)
             {
                 state.Sb.Append(Encoding.ASCII.GetString(state.Buffer, 0, bytesRead));
                 content = state.Sb.ToString();
-                if (content.IndexOf(CommunicationStateObject.ETBByte) > -1)
+                if (content.IndexOf(CommunicationStateObject.EtbByte) > -1)
                 {
-                    var messages = content.Split(CommunicationStateObject.ETBByte);
+                    var messages = content.Split(CommunicationStateObject.EtbByte);
                     var numberOfMessages = messages.Length;
-                    var wholeMessages = String.IsNullOrEmpty(messages[numberOfMessages - 1]);
+                    var wholeMessages = string.IsNullOrEmpty(messages[numberOfMessages - 1]);
 
                     for (var i = 0; i < numberOfMessages - 1; ++i)
                     {
@@ -146,7 +142,7 @@ namespace CommunicationServer
                         //Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
                         //    message.Length, message);
                         state.LastMessageReceivedTicks = DateTime.Today.Ticks;
-                        MessageReceivedEvent?.Invoke(_messageConverter.ConvertStringToMessage(message), state.SocketID);
+                        MessageReceivedEvent?.Invoke(_messageConverter.ConvertStringToMessage(message), state.SocketId);
 
                     }
                     state.Sb.Clear();
@@ -166,7 +162,7 @@ namespace CommunicationServer
 
         public void Send(IMessage message, int id)
         {
-            var byteData = Encoding.ASCII.GetBytes(_messageConverter.ConvertMessageToString(message) + CommunicationStateObject.ETBByte);
+            var byteData = Encoding.ASCII.GetBytes(_messageConverter.ConvertMessageToString(message) + CommunicationStateObject.EtbByte);
             var findResult = _agentToSocket.TryGetValue(id, out var handler);
             if (!findResult)
             {
@@ -179,7 +175,7 @@ namespace CommunicationServer
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                //Console.WriteLine(e.ToString());
             }
         }
 
@@ -193,7 +189,7 @@ namespace CommunicationServer
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                //Console.WriteLine(e.ToString());
             }
         }
 
@@ -204,22 +200,22 @@ namespace CommunicationServer
 
         public IEnumerable<GameInfo> GetGames()
         {
-            return this._gameIdToGameInfo.Values;
+            return _gameIdToGameInfo.Values;
         }
 
         public int GetGameId(string gameName)
         {
-            return this._gameIdToGameInfo.FirstOrDefault(x => x.Value.GameName == gameName).Key;
+            return _gameIdToGameInfo.FirstOrDefault(x => x.Value.GameName == gameName).Key;
         }
 
         public void RegisterNewGame(GameInfo gameInfo, int id)
         {
-            this._gameIdToGameInfo.Add(id, gameInfo);
+            _gameIdToGameInfo.Add(id, gameInfo);
         }
 
         public void UpdateTeamCount(int gameId, TeamColor team)
         {
-            this._gameIdToGameInfo.TryGetValue(gameId, out var info);
+            _gameIdToGameInfo.TryGetValue(gameId, out var info);
             if (info == null)
                 return;
             switch (team)
@@ -238,17 +234,17 @@ namespace CommunicationServer
 
         public void UnregisterGame(int gameId)
         {
-            this._gameIdToGameInfo.Remove(gameId);
+            _gameIdToGameInfo.Remove(gameId);
         }
 
         public void AssignGameIdToPlayerId(int gameId, int playerId)
         {
-            this._playerIdToGameId.Add(playerId, gameId);
+            _playerIdToGameId.Add(playerId, gameId);
         }
 
         public int GetGameIdForPlayer(int playerId)
         {
-            this._playerIdToGameId.TryGetValue(playerId, out var gameId);
+            _playerIdToGameId.TryGetValue(playerId, out var gameId);
             return gameId;
         }
 
@@ -262,7 +258,7 @@ namespace CommunicationServer
                 var elapsedSpan = new TimeSpan(elapsedTicks);
 
                 if (elapsedSpan.Milliseconds > _keepAliveTimeMiliseconds)
-                    CloseSocket(csStateObject.SocketID);
+                    CloseSocket(csStateObject.SocketId);
             }
 
         }

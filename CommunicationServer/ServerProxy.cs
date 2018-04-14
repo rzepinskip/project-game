@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Sockets;
 using Common.Interfaces;
 
 namespace CommunicationServer

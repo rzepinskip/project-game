@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO.Pipes;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -12,7 +11,7 @@ namespace Common.Communication
 
     public class AsynchronousClient : IClient
     {
-        private const int port = 11000;
+        private const int Port = 11000;
         private readonly ManualResetEvent _connectDone =
             new ManualResetEvent(false);
         private readonly ManualResetEvent _receiveDone =
@@ -34,11 +33,11 @@ namespace Common.Communication
             {
                 var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
                 var ipAddress = ipHostInfo.AddressList[0];
-                var remoteEP = new IPEndPoint(ipAddress, port);
+                var remoteEp = new IPEndPoint(ipAddress, Port);
 
                 _client = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-                _client.BeginConnect(remoteEP, ConnectCallback, _client);
+                _client.BeginConnect(remoteEp, ConnectCallback, _client);
                 _connectDone.WaitOne();
             }
             catch (Exception e)
@@ -59,7 +58,7 @@ namespace Common.Communication
 
                 _client.EndConnect(ar);
 
-                Console.WriteLine("Socket connected to {0}", _client.RemoteEndPoint);
+                //Console.WriteLine("Socket connected to {0}", _client.RemoteEndPoint);
 
                 _connectDone.Set();
             }
@@ -71,7 +70,7 @@ namespace Common.Communication
 
         private void StartReading()
         {
-            Console.WriteLine("Client starts reading");
+            //Console.WriteLine("Client starts reading");
             while (true)
             {
                 _receiveDone.Reset();
@@ -100,7 +99,7 @@ namespace Common.Communication
 
         private void ReceiveCallback(IAsyncResult ar)
         {
-            var response = String.Empty;
+            var response = string.Empty;
             try
             {
                 var state = (CommunicationStateObject)ar.AsyncState;
@@ -112,7 +111,7 @@ namespace Common.Communication
                     bytesRead = client.EndReceive(ar);
                     Debug.WriteLine("received bytes" + bytesRead);
                 }
-                catch (SocketException e)
+                catch (Exception e)
                 {
                     //Console.WriteLine(e.ToString());
                     return;
@@ -124,13 +123,13 @@ namespace Common.Communication
 
                     response = state.Sb.ToString();
 
-                    if (response.IndexOf(CommunicationStateObject.ETBByte) > -1)
+                    if (response.IndexOf(CommunicationStateObject.EtbByte) > -1)
                     {
-                        var messages = response.Split(CommunicationStateObject.ETBByte);
+                        var messages = response.Split(CommunicationStateObject.EtbByte);
                         var numberOfMessages = messages.Length;
-                        var wholeMessages = String.IsNullOrEmpty(messages[numberOfMessages - 1]);
+                        var wholeMessages = string.IsNullOrEmpty(messages[numberOfMessages - 1]);
 
-                        for (int i = 0; i < numberOfMessages - 1; ++i)
+                        for (var i = 0; i < numberOfMessages - 1; ++i)
                         {
                             var message = messages[i];
                             //Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
@@ -162,7 +161,7 @@ namespace Common.Communication
 
         public void Send(IMessage message)
         {
-            var byteData = Encoding.ASCII.GetBytes(_messageConverter.ConvertMessageToString(message) +  CommunicationStateObject.ETBByte);
+            var byteData = Encoding.ASCII.GetBytes(_messageConverter.ConvertMessageToString(message) +  CommunicationStateObject.EtbByte);
             try
             {
                 _client?.BeginSend(byteData, 0, byteData.Length, 0, SendCallback, _client);

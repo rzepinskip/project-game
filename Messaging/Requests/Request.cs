@@ -34,7 +34,7 @@ namespace Messaging.Requests
 
         public void Process(ICommunicationServer cs, int id)
         {
-            cs.Send(this, this.GameId);
+            cs.Send(this, GameId);
         }
 
         public abstract ActionInfo GetActionInfo();

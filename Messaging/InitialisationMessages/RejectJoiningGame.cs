@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Common.Interfaces;
 
 namespace Messaging.InitialisationMessages
@@ -9,8 +7,8 @@ namespace Messaging.InitialisationMessages
     {
         public RejectJoiningGame(string gameName, int playerId)
         {
-            this.GameName = gameName;
-            this.PlayerId = playerId;
+            GameName = gameName;
+            PlayerId = playerId;
         }
         public string GameName { get; set; }
         public int PlayerId { get; set; }
@@ -26,7 +24,7 @@ namespace Messaging.InitialisationMessages
 
         public void Process(ICommunicationServer cs, int id)
         {
-            cs.Send(this, this.PlayerId);
+            cs.Send(this, PlayerId);
         }
     }
 }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Common.Interfaces;
 
 namespace Messaging.InitialisationMessages
@@ -9,7 +7,7 @@ namespace Messaging.InitialisationMessages
     {
         public ConfirmGameRegistrationMessage(int gameId)
         {
-            this.GameId = gameId;
+            GameId = gameId;
         }
 
         public int GameId { get; set; }
