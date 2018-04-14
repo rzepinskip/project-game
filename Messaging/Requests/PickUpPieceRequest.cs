@@ -22,11 +22,6 @@ namespace Messaging.Requests
             return new PickUpActionInfo(PlayerGuid);
         }
 
-        public override string Serialize()
-        {
-            return XmlExtensions.SerializeToXml(this);
-        }
-
         public override string ToLog()
         {
             return string.Join(',', ActionType.PickUp, base.ToLog());

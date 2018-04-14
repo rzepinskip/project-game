@@ -38,11 +38,5 @@ namespace Messaging.Requests
         {
             return string.Join(',', PlayerGuid, GameId);
         }
-
-        public abstract string Serialize();
-        public static Request DeserializeFrom(string xml)
-        {
-            return RequestSerializer.Instance.Deserialize(xml);
-        }
     }
 }

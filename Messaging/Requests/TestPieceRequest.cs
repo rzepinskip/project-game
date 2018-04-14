@@ -22,11 +22,6 @@ namespace Messaging.Requests
             return new TestActionInfo(PlayerGuid);
         }
 
-        public override string Serialize()
-        {
-            return XmlExtensions.SerializeToXml(this);
-        }
-
         public override string ToLog()
         {
             return string.Join(',', ActionType.Test, base.ToLog());
