@@ -1,7 +1,7 @@
 ﻿using Common;
 using Common.BoardObjects;
-using Messaging;
 using Messaging.Requests;
+using Messaging.Responses;
 
 namespace TestScenarios.MoveScenarios.MoveToGoalField
 {

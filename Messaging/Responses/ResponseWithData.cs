@@ -48,11 +48,17 @@ namespace Messaging.Responses
 
         public override void Process(IPlayer player)
         {
-            foreach (var taskField in TaskFields) player.Board.HandleTaskField(PlayerId, taskField);
+            if (TaskFields != null)
+                foreach (var taskField in TaskFields)
+                    player.Board.HandleTaskField(PlayerId, taskField);
 
-            foreach (var goalField in GoalFields) player.Board.HandleGoalField(PlayerId, goalField);
+            if (GoalFields != null)
+                foreach (var goalField in GoalFields)
+                    player.Board.HandleGoalField(PlayerId, goalField);
 
-            foreach (var piece in Pieces) player.Board.HandlePiece(PlayerId, piece);
+            if (Pieces != null)
+                foreach (var piece in Pieces)
+                    player.Board.HandlePiece(PlayerId, piece);
 
             if (PlayerLocation != null)
                 player.Board.HandlePlayerLocation(PlayerId, PlayerLocation);
@@ -63,7 +69,7 @@ namespace Messaging.Responses
             return new ResponseWithData(datafieldset.PlayerId, datafieldset.PlayerLocation, datafieldset.TaskFields,
                 datafieldset.GoalFields, datafieldset.Pieces, isGameFinished);
         }
-        
+
         public override bool Equals(object obj)
         {
             return Equals(obj as ResponseWithData);

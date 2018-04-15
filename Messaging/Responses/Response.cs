@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using Common.Interfaces;
 
@@ -40,15 +41,13 @@ namespace Messaging.Responses
         public bool Equals(Response other)
         {
             return other != null &&
-                   PlayerId == other.PlayerId &&
-                   IsGameFinished == other.IsGameFinished;
+                   PlayerId == other.PlayerId;
         }
 
         public override int GetHashCode()
         {
             var hashCode = -1020949546;
             hashCode = hashCode * -1521134295 + PlayerId.GetHashCode();
-            hashCode = hashCode * -1521134295 + IsGameFinished.GetHashCode();
             return hashCode;
         }
 

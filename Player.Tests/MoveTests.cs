@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Common;
 using TestScenarios.MoveScenarios;
 using TestScenarios.MoveScenarios.MoveToGoalField;
 using Xunit;
@@ -14,7 +13,8 @@ namespace Player.Tests
         {
             var player = new Player();
             var playerInfo = scenario.InitialPlayerBoard.Players[scenario.PlayerId];
-            player.InitializePlayer(scenario.PlayerId,scenario.PlayerGuid, playerInfo.Team, playerInfo.Role, scenario.InitialPlayerBoard, playerInfo.Location);
+            player.InitializePlayer(scenario.PlayerId, scenario.PlayerGuid, playerInfo.Team, playerInfo.Role,
+                scenario.InitialPlayerBoard, playerInfo.Location);
 
             scenario.Response.Process(player);
 
@@ -33,6 +33,5 @@ namespace Player.Tests
             //yield return new object[] { new MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece()};
             //yield return new object[] { new MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece()};
         }
-
     }
 }
