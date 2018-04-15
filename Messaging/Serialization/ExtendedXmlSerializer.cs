@@ -15,7 +15,7 @@ namespace Messaging.Serialization
             _defaultNamespace = xmlNamespace;
         }
 
-        private XmlSerializer GetXmlSerializer(Type type, string xmlNamespace)
+        private static XmlSerializer GetXmlSerializer(Type type, string xmlNamespace)
         {
             return new XmlSerializer(type, new XmlAttributeOverrides(), new Type[] { },
                 new XmlRootAttribute {Namespace = xmlNamespace}, "");
