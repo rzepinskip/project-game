@@ -1,19 +1,25 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 using Common.Interfaces;
 
 namespace Common.BoardObjects
 {
-    public abstract class BoardBase : IBoard
+    public abstract class BoardBase : IBoard, IXmlSerializable
     {
+        protected BoardBase()
+        {
+        }
+
         protected BoardBase(int boardWidth, int taskAreaSize, int goalAreaSize)
         {
             GoalAreaSize = goalAreaSize;
             TaskAreaSize = taskAreaSize;
             Width = boardWidth;
             Content = new Field[boardWidth, Height];
-            Players = new Dictionary<int, PlayerInfo>();
-            Pieces = new Dictionary<int, Piece>();
 
             for (var i = 0; i < boardWidth; ++i)
             {
@@ -28,7 +34,9 @@ namespace Common.BoardObjects
             }
         }
 
-        protected Field[,] Content { get; }
+        protected Field[,] Content { get; set; }
+
+        public object Lock { get; protected set; } = new object();
 
         public Field this[Location location]
         {
@@ -36,19 +44,18 @@ namespace Common.BoardObjects
             set => Content[location.X, location.Y] = value;
         }
 
-        public int TaskAreaSize { get; }
-        public int GoalAreaSize { get; }
-        public int Width { get; }
+        public int TaskAreaSize { get; private set; }
+
+        public int GoalAreaSize { get; private set; }
+
+        public int Width { get; private set; }
+
         public int Height => 2 * GoalAreaSize + TaskAreaSize;
 
-        public Dictionary<int, PlayerInfo> Players { get; }
-        public Dictionary<int, Piece> Pieces { get; }
-        public object Lock { get; set; } = new object();
+        public SerializableDictionary<int, PlayerInfo> Players { get; } =
+            new SerializableDictionary<int, PlayerInfo>();
 
-        public IEnumerator GetEnumerator()
-        {
-            return Content.GetEnumerator();
-        }
+        public SerializableDictionary<int, Piece> Pieces { get; } = new SerializableDictionary<int, Piece>();
 
         public int? GetPieceIdAt(Location location)
         {
@@ -60,14 +67,13 @@ namespace Common.BoardObjects
             return pieceId;
         }
 
-
         public int DistanceToPieceFrom(Location location)
         {
             var min = int.MaxValue;
             for (var i = 0; i < Width; ++i)
             for (var j = GoalAreaSize; j < TaskAreaSize + GoalAreaSize; ++j)
             {
-                var field = Content[i, j] as TaskField;
+                var field = this[new Location(i, j)] as TaskField;
                 if (field.PieceId != null)
                 {
                     var distance = field.ManhattanDistanceTo(location);
@@ -84,10 +90,95 @@ namespace Common.BoardObjects
 
         public bool IsLocationInTaskArea(Location location)
         {
-            if (location.Y <= TaskAreaSize + GoalAreaSize - 1 && location.Y >= GoalAreaSize)
-                return true;
+            return location.Y <= TaskAreaSize + GoalAreaSize - 1 && location.Y >= GoalAreaSize;
+        }
 
-            return false;
+
+        public XmlSchema GetSchema()
+        {
+            return null;
+        }
+
+        public virtual void ReadXml(XmlReader reader)
+        {
+            reader.MoveToContent();
+
+            TaskAreaSize = int.Parse(reader.GetAttribute("taskAreaSize"));
+            GoalAreaSize = int.Parse(reader.GetAttribute("goalAreaSize"));
+            Width = int.Parse(reader.GetAttribute("width"));
+
+            reader.ReadStartElement();
+
+            ReadCollection(reader, Players, nameof(Players));
+            ReadCollection(reader, Pieces, nameof(Pieces));
+
+            Content = new Field[Width, Height];
+            var types = new[] {typeof(GoalField), typeof(TaskField)};
+            var readElements = ReadCollection<Field>(reader, nameof(Content), types);
+            foreach (var element in readElements) this[element] = element;
+
+            reader.ReadEndElement();
+        }
+
+        public virtual void WriteXml(XmlWriter writer)
+        {
+            writer.WriteAttributeString("taskAreaSize", TaskAreaSize.ToString());
+            writer.WriteAttributeString("goalAreaSize", GoalAreaSize.ToString());
+            writer.WriteAttributeString("width", Width.ToString());
+
+            WriteCollection(writer, Players, nameof(Players));
+            WriteCollection(writer, Pieces, nameof(Pieces));
+
+            writer.WriteStartElement(nameof(Content));
+            foreach (var field in Content)
+            {
+                writer.WriteStartElement(field.GetType().Name);
+                field.WriteXml(writer);
+                writer.WriteEndElement();
+            }
+
+            writer.WriteEndElement();
+        }
+
+        public void Add(object value)
+        {
+            throw new NotSupportedException("Add is not supported.");
+        }
+
+        private void ReadCollection<TCollection>(XmlReader reader, TCollection collection, string collectionName)
+            where TCollection : IEnumerable, IXmlSerializable
+        {
+            collection.ReadXml(reader);
+        }
+
+        private void WriteCollection<TCollection>(XmlWriter writer, TCollection collection, string collectionName)
+            where TCollection : IEnumerable, IXmlSerializable
+        {
+            writer.WriteStartElement(collectionName);
+            collection.WriteXml(writer);
+            writer.WriteEndElement();
+        }
+
+        private List<T> ReadCollection<T>(XmlReader reader, string collectionName, IEnumerable<Type> derivedTypes)
+            where T : class
+        {
+            var serializers = new Dictionary<string, XmlSerializer>();
+            foreach (var derivedType in derivedTypes)
+                serializers.Add(derivedType.Name, new XmlSerializer(derivedType));
+
+            reader.ReadStartElement(collectionName);
+
+            var readElements = new List<T>();
+            while (reader.NodeType != XmlNodeType.EndElement)
+            {
+                var element = serializers[reader.LocalName].Deserialize(reader) as T;
+
+                readElements.Add(element);
+            }
+
+            reader.ReadEndElement();
+
+            return readElements;
         }
     }
 }

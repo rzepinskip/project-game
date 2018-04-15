@@ -1,31 +1,63 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
+using System.Xml;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 
 namespace Common.BoardObjects
 {
     [DebuggerDisplay("[Id = {Id}, PlayerId = {PlayerId}]")]
-    [Serializable]
-    public class Piece
+    public class Piece : IXmlSerializable
     {
         protected Piece()
-        { }
+        {
+        }
 
         public Piece(int id, PieceType type, int? playerId = null) : this(id, type, playerId, DateTime.Now)
         {
         }
 
-        public Piece(int id, PieceType type, int? playerId, DateTime timeStamp)
+        public Piece(int id, PieceType type, int? playerId, DateTime timestamp)
         {
             Id = id;
             Type = type;
-            TimeStamp = timeStamp;
+            Timestamp = timestamp;
             PlayerId = playerId;
         }
 
-        public int Id { get; }
-        [XmlAttribute("type")] public PieceType Type { get; set; }
+        public int Id { get; set; }
+        public PieceType Type { get; set; }
         public int? PlayerId { get; set; }
-        public DateTime TimeStamp { get; set; }
+        public DateTime Timestamp { get; set; }
+
+        public virtual void ReadXml(XmlReader reader)
+        {
+            Id = int.Parse(reader.GetAttribute("id"));
+            Type = reader.GetAttribute("type").GetEnumValueFor<PieceType>();
+            Timestamp = DateTime.Parse(reader.GetAttribute("timestamp"));
+
+            if (!string.IsNullOrWhiteSpace(reader.GetAttribute("playerId")))
+                PlayerId = int.Parse(reader.GetAttribute("playerId"));
+
+            var isEmptyElement = reader.IsEmptyElement;
+            reader.ReadStartElement();
+            if (!isEmptyElement) reader.ReadEndElement();
+        }
+
+        public virtual void WriteXml(XmlWriter writer)
+        {
+            writer.WriteAttributeString("id", Id.ToString());
+            writer.WriteAttributeString("type", Type.GetXmlAttributeName());
+            writer.WriteAttributeString("timestamp", Timestamp.ToString("s"));
+
+            if (PlayerId.HasValue)
+                writer.WriteAttributeString("playerId", PlayerId.ToString());
+        }
+
+        public virtual XmlSchema GetSchema()
+        {
+            return null;
+        }
     }
 }

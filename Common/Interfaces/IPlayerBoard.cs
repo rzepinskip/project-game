@@ -2,7 +2,7 @@
 
 namespace Common.Interfaces
 {
-    public interface IPlayerBoard
+    public interface IPlayerBoard : IBoard
     {
         void HandlePlayerLocation(int playerId, Location playerLocation);
         void HandlePiece(int playerId, Piece piece);

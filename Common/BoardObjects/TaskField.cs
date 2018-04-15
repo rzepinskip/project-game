@@ -1,9 +1,16 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Xml;
 
 namespace Common.BoardObjects
 {
+    [DebuggerDisplay("[X = {X}, Y = {Y}], {PieceId}, {DistanceToPiece}")]
     public class TaskField : Field
     {
+        protected TaskField()
+        {
+        }
+
         public TaskField(Location location, int distanceToPiece = -1, int? pieceId = null, int? playerId = null) : this(
             location, distanceToPiece, pieceId, playerId, DateTime.Now)
         {
@@ -22,6 +29,26 @@ namespace Common.BoardObjects
         public int ManhattanDistanceTo(Location location)
         {
             return Math.Abs(X - location.X) + Math.Abs(Y - location.Y);
+        }
+
+        public override void ReadXml(XmlReader reader)
+        {
+            DistanceToPiece = int.Parse(reader.GetAttribute("distanceToPiece"));
+
+            if (int.TryParse(reader.GetAttribute("pieceId"), out int pieceId))
+                PieceId = pieceId;
+
+            base.ReadXml(reader);
+        }
+
+        public override void WriteXml(XmlWriter writer)
+        {
+            base.WriteXml(writer);
+
+            writer.WriteAttributeString("distanceToPiece", DistanceToPiece.ToString());
+
+            if (PieceId.HasValue)
+                writer.WriteAttributeString("pieceId", PieceId.ToString());
         }
     }
 }
