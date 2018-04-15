@@ -7,5 +7,6 @@ namespace Messaging
         public abstract IMessage Process(IGameMaster gameMaster);
 
         public abstract void Process(IPlayer player);
+        public abstract void Process(ICommunicationServer cs, int id);
     }
 }
