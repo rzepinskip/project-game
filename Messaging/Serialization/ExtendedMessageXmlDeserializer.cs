@@ -42,12 +42,6 @@ namespace Messaging.Serialization
             };
         }
 
-        private KeyValuePair<string,XmlSerializer> GetDeserializerForType<TMessage>() where TMessage : Message
-        {
-            var serializer = GetDefaultXmlSerializer(typeof(TMessage));
-            return new KeyValuePair<string,XmlSerializer>("", serializer);
-        }
-
         public Message Deserialize(string xml)
         {
             var stream = new StringReader(xml);
