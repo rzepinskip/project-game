@@ -56,7 +56,7 @@ namespace Player.Strategy.Conditions
 
             direction = Randomize4WayDirection(StrategyInfo, onlyTaskArea);
             StrategyInfo.ToLocation = StrategyInfo.FromLocation.GetNewLocation(direction);
-            return new MoveRequest(StrategyInfo.PlayerGuid, direction);
+            return new MoveRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId, direction);
         }
 
         private Direction Randomize4WayDirection(StrategyInfo strategyInfo, bool onlyTaskArea)

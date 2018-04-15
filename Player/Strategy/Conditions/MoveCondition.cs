@@ -49,7 +49,7 @@ namespace Player.Strategy.Conditions
                     Direction.Up, ref directionToNearest);
 
             StrategyInfo.ToLocation = StrategyInfo.FromLocation.GetNewLocation(directionToNearest);
-            return new MoveRequest(StrategyInfo.PlayerGuid, directionToNearest);
+            return new MoveRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId, directionToNearest);
         }
 
         private void CheckIfCloser(BoardBase board, Location newLocation, ref int distanceToNearest,

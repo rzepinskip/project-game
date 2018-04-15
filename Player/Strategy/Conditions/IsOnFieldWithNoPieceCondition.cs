@@ -32,7 +32,7 @@ namespace Player.Strategy.Conditions
 
         public override Request GetNextMessage(State fromState)
         {
-            return new DiscoverRequest(StrategyInfo.PlayerGuid);
+            return new DiscoverRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId);
         }
     }
 }

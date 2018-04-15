@@ -24,7 +24,7 @@ namespace Player.Strategy.Conditions
         public override Request GetNextMessage(State fromState)
         {
             StrategyInfo.UndiscoveredGoalFields.RemoveAt(0);
-            return new PlacePieceRequest(StrategyInfo.PlayerGuid);
+            return new PlacePieceRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId);
         }
     }
 }

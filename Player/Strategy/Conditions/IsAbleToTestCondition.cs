@@ -21,7 +21,7 @@ namespace Player.Strategy.Conditions
 
         public override Request GetNextMessage(State fromState)
         {
-            return new TestPieceRequest(StrategyInfo.PlayerGuid);
+            return new TestPieceRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId);
         }
     }
 }

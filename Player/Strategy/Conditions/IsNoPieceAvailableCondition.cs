@@ -41,7 +41,7 @@ namespace Player.Strategy.Conditions
                 ? Direction.Left
                 : Direction.Right;
             StrategyInfo.ToLocation = StrategyInfo.FromLocation.GetNewLocation(direction);
-            return new MoveRequest(StrategyInfo.PlayerGuid, direction);
+            return new MoveRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId, direction);
         }
     }
 }
