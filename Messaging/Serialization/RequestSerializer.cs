@@ -42,7 +42,7 @@ namespace Messaging.Serialization
             };
         }
 
-        public Request Deserialize(string xml)
+        public Message Deserialize(string xml)
         {
             var stream = new StringReader(xml);
             var document = XDocument.Load(stream);
@@ -52,7 +52,7 @@ namespace Messaging.Serialization
 
             if (document.Root == null) return null;
 
-            return serializer.Deserialize(document.Root.CreateReader()) as Request;
+            return serializer.Deserialize(document.Root.CreateReader()) as Message;
         }
 
         private string ReadRootName(XDocument document)
