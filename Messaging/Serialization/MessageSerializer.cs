@@ -1,30 +1,25 @@
-﻿using Messaging.Requests;
-
-namespace Messaging.Serialization
+﻿namespace Messaging.Serialization
 {
     public class MessageSerializer
     {
-        private const string DefaultNameSpace = "https://se2.mini.pw.edu.pl/17-results/";
+        private const string DefaultNamespace = "https://se2.mini.pw.edu.pl/17-results/";
 
         private static MessageSerializer _instance;
-        private readonly RequestSerializer _requestSerializer;
+        private readonly ExtendedMessageXmlDeserializer _messageDeserializer;
         private readonly ExtendedXmlSerializer _xmlSerializer;
 
         private MessageSerializer()
         {
-            _xmlSerializer = new ExtendedXmlSerializer(DefaultNameSpace);
-            _requestSerializer = new RequestSerializer(DefaultNameSpace);
+            _xmlSerializer = new ExtendedXmlSerializer(DefaultNamespace);
+            _messageDeserializer = new ExtendedMessageXmlDeserializer(DefaultNamespace);
         }
 
         public static MessageSerializer Instance => _instance ?? (_instance = new MessageSerializer());
 
 
-        public Message Deserialize<TMessage>(string xml) where TMessage : Message
+        public Message Deserialize(string xml)
         {
-            if (typeof(TMessage) == typeof(Request))
-                return _requestSerializer.Deserialize(xml);
-
-            return _xmlSerializer.DeserializeFromXml<TMessage>(xml);
+            return _messageDeserializer.Deserialize(xml);
         }
 
         public string Serialize(Message message)
