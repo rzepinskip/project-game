@@ -30,7 +30,8 @@ namespace CommunicationServer
         {
             _keepAliveTimeMiliseconds = keepAliveTimeMiliseconds;
             _messageConverter = messageConverter;
-            _counter = 0;
+            //Only for gameSimulation, the GM must have ID = -1 to get request queues working properly
+            _counter = -1;
             _gameIdToGameInfo = new Dictionary<int, GameInfo>();
             _agentToSocket = new Dictionary<int, Socket>();
             _playerIdToGameId = new Dictionary<int, int>();
