@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Common.BoardObjects;
+using Common.Communication;
 using Common.Interfaces;
 using Messaging.Requests;
 using Messaging.Responses;
@@ -23,9 +25,12 @@ namespace Player
         private IStrategy PlayerStrategy { get; set; }
 
         public IPlayerBoard Board => PlayerBoard;
- 
 
-        public void InitializePlayer(int id, string guid, TeamColor team, PlayerType role, PlayerBoard board,
+        public IClient CommunicationClient;
+
+        private int GameId { get; set; }
+
+        public async Task InitializePlayer(int id, string guid, int gameId, TeamColor team, PlayerType role, PlayerBoard board,
             Location location)
         {
             var factory = new LoggerFactory();
@@ -35,9 +40,15 @@ namespace Player
             Team = team;
             Role = role;
             PlayerGuid = guid;
+            GameId = gameId;
             PlayerBoard = board;
-            PlayerStrategy = new PlayerStrategy(board, this, guid);
+            PlayerStrategy = new PlayerStrategy(board, this, guid, GameId);
             PlayerBoard.Players.Add(id, new PlayerInfo(id, team, role, location));
+
+            await Task.Delay(500 * (id+1));
+            CommunicationClient = new AsynchronousClient(new PlayerConverter());
+            CommunicationClient.SetupClient(HandleResponse);
+            new Thread(() => CommunicationClient.StartClient()).Start();
         }
 
         public IRequest GetNextRequestMessage()
@@ -46,14 +57,14 @@ namespace Player
             return PlayerStrategy.NextMove(currentLocation);
         }
 
-        private void HandleResponse()
+        private void HandleResponse(IMessage response)
         {
-            IMessage response;
+            //IMessage response;
 
-            while (!ResponsesQueue.TryDequeue(out response))
-            {
-                Task.Delay(10);
-            }
+            //while (!ResponsesQueue.TryDequeue(out response))
+            //{
+                //Task.Delay(10);
+            //}
             //Log received response
             response.Process(this);
             //
@@ -75,7 +86,8 @@ namespace Player
             try
             {
                 var request = GetNextRequestMessage();
-                RequestsQueue.Enqueue(request);
+                //RequestsQueue.Enqueue(request);
+                CommunicationClient.Send(request);
             }
             catch(StrategyException s)
             {
@@ -84,9 +96,9 @@ namespace Player
             }
         }
 
-        public void StartListeningToResponses()
-        {
-            ResponsesQueue.ItemEnqueued += (sender, args) => { Task.Run(() => HandleResponse()); };
-        }
+        //public void StartListeningToResponses()
+        //{
+        //    ResponsesQueue.ItemEnqueued += (sender, args) => { Task.Run(() => HandleResponse()); };
+        //}
     }
 }

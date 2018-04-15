@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using BoardGenerators.Loaders;
 using Common;
 using Common.Interfaces;
+using CommunicationServer;
 using GameMaster;
 using GameMaster.Configuration;
 using Player;
@@ -23,9 +25,11 @@ namespace GameSimulation
 
             _spawnPieceFrequency = Convert.ToInt32(config.GameDefinition.PlacingNewPiecesFrequency);
 
+            _communicationServer = new GameCommunicationServer();
+            
             GameMaster = GenerateGameMaster(config);
             PieceGenerator = GameMaster.CreatePieceGenerator(GameMaster.Board);
-            Players = GeneratePlayers(GameMaster);
+            Players = GeneratePlayers(GameMaster).Result;
 
             GameMaster.GameFinished += GameMaster_GameFinished;
 
@@ -39,6 +43,8 @@ namespace GameSimulation
 
         public bool GameFinished { get; private set; }
         public TeamColor Winners { get; private set; }
+
+        public GameCommunicationServer _communicationServer;
 
         private void GameMaster_GameFinished(object sender, GameFinishedEventArgs e)
         {
@@ -68,7 +74,7 @@ namespace GameSimulation
             return gameMaster;
         }
 
-        private List<Player.Player> GeneratePlayers(GameMaster.GameMaster gameMaster)
+        private async Task<List<Player.Player>> GeneratePlayers(GameMaster.GameMaster gameMaster)
         {
             var playersCount = gameMaster.Board.Players.Count;
             var players = new List<Player.Player>(playersCount);
@@ -90,7 +96,7 @@ namespace GameSimulation
                     }
                 }
 
-                player.InitializePlayer(i, playerGuid, playerInfo.Team, playerInfo.Role, playerBoard, playerInfo.Location);
+                await player.InitializePlayer(i, playerGuid, -1, playerInfo.Team, playerInfo.Role, playerBoard, playerInfo.Location);
                 players.Add(player);
             }
 
@@ -105,8 +111,9 @@ namespace GameSimulation
 
             foreach (var player in Players)
             {
-                player.StartListeningToResponses();
-                player.RequestsQueue.Enqueue(player.GetNextRequestMessage());
+                //player.StartListeningToResponses();
+                //player.RequestsQueue.Enqueue(player.GetNextRequestMessage());
+                player.CommunicationClient.Send(player.GetNextRequestMessage());
             }
         }
 
