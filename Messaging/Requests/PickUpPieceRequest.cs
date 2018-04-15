@@ -13,7 +13,7 @@ namespace Messaging.Requests
         {
         }
 
-        public PickUpPieceRequest(string playerGuid) : base(playerGuid)
+        public PickUpPieceRequest(string playerGuid, int gameId) : base(playerGuid, gameId)
         {
         }
 
