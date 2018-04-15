@@ -70,22 +70,21 @@ namespace Common.Communication
 
         private void StartReading()
         {
+            var state = new CommunicationStateObject(_client);
             //Console.WriteLine("Client starts reading");
             while (true)
             {
                 _receiveDone.Reset();
 
-                Receive(_client);
+                Receive(_client, state);
 
                 _receiveDone.WaitOne();
             }
         }
 
-        public void Receive(Socket socket)
+        public void Receive(Socket socket, CommunicationStateObject state)
         {
  
-            var state = new CommunicationStateObject(socket);
-
             //according to docs beginreceive can throw an exception
             try
             {
@@ -109,18 +108,17 @@ namespace Common.Communication
                 try
                 {
                     bytesRead = client.EndReceive(ar);
-                    Debug.WriteLine("received bytes" + bytesRead);
+                    //Debug.WriteLine("received bytes" + bytesRead);
                 }
                 catch (Exception e)
                 {
                     //Console.WriteLine(e.ToString());
                     return;
                 }
-
+                
                 if (bytesRead > 0)
                 {
                     state.Sb.Append(Encoding.ASCII.GetString(state.Buffer, 0, bytesRead));
-
                     response = state.Sb.ToString();
 
                     if (response.IndexOf(CommunicationStateObject.EtbByte) > -1)
@@ -132,8 +130,7 @@ namespace Common.Communication
                         for (var i = 0; i < numberOfMessages - 1; ++i)
                         {
                             var message = messages[i];
-                            //Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
-                            //message.Length, message);
+                            
                             MessageReceivedEvent?.Invoke(_messageConverter.ConvertStringToMessage(message));
 
                         }

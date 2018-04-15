@@ -140,7 +140,6 @@ namespace GameMaster
                 return;
 
             PlayerGuidToId.TryGetValue(request.PlayerGuid, out var playerId);
-            Debug.WriteLine("Message received from: " + playerId);
             var requestQueue = RequestsQueues[playerId];
             lock (IsPlayerQueueProcessedLock[playerId])
             {

@@ -57,7 +57,7 @@ namespace CommunicationServer
                 while (true)
                 {
                     _readyForAccept.Reset();
-                    Debug.WriteLine("Waiting for a connection...");
+                    //Debug.WriteLine("Waiting for a connection...");
                     listener.BeginAccept(AcceptCallback, listener);
 
                     _readyForAccept.WaitOne();
@@ -78,7 +78,7 @@ namespace CommunicationServer
 
             var listener = (Socket)ar.AsyncState;
             var handler = listener.EndAccept(ar);
-            Debug.WriteLine("Accepted for " + _counter);
+            //Debug.WriteLine("Accepted for " + _counter);
             var state = new CommunicationStateObject(handler, _counter);
             _agentToCommunicationStateObject.Add(_counter, state);
             _agentToSocket.Add(_counter++, handler);
@@ -115,7 +115,6 @@ namespace CommunicationServer
 
         private void ReadCallback(IAsyncResult ar)
         {
-            //Console.WriteLine("in callback");
             var content = string.Empty;
             var state = (CommunicationStateObject)ar.AsyncState;
             var handler = state.WorkSocket;
@@ -145,7 +144,6 @@ namespace CommunicationServer
                         //Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
                         //    message.Length, message);
                         state.LastMessageReceivedTicks = DateTime.Today.Ticks;
-                        Debug.WriteLine("CS Message received from: " + state.SocketId);
                         MessageReceivedEvent?.Invoke(_messageConverter.ConvertStringToMessage(message), state.SocketId);
 
                     }
@@ -164,7 +162,7 @@ namespace CommunicationServer
             }
         }
 
-        public async Task Send(IMessage message, int id)
+        public void Send(IMessage message, int id)
         {
             var byteData = Encoding.ASCII.GetBytes(_messageConverter.ConvertMessageToString(message) + CommunicationStateObject.EtbByte);
             var findResult = _agentToSocket.TryGetValue(id, out var handler);
@@ -182,7 +180,6 @@ namespace CommunicationServer
                 //Console.WriteLine(e.ToString());
             }
 
-            return new Task<void>();
         }
 
         private void SendCallback(IAsyncResult ar)

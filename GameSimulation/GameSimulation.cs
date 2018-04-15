@@ -101,8 +101,6 @@ namespace GameSimulation
                 players.Add(player);
             }
 
-            Debug.WriteLine("finished player intialization");
-            //Thread.Sleep(10000);
             return players;
         }
 

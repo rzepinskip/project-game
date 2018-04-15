@@ -18,7 +18,7 @@ namespace CommunicationServer
 
         public void HandleMessage(IMessage message, int i)
         {
-            Debug.WriteLine("CS Message received from: " + i);
+            //Debug.WriteLine("CS Message received from: " + i);
             message.Process(_listener, i);
         }
 
