@@ -9,8 +9,8 @@ namespace TestScenarios.MoveScenarios.MoveToGoalField
     {
         public MoveToGoalField() : base(nameof(MoveToGoalField))
         {
-            InitialRequest = new MoveRequest(PlayerGuid, Direction.Up);
             Response = new ResponseWithData(PlayerId, new Location(0, 0));
+            InitialRequest = new MoveRequest(PlayerGuid, Direction.Left);
         }
     }
 }

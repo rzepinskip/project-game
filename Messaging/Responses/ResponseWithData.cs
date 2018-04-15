@@ -31,7 +31,8 @@ namespace Messaging.Responses
             GameFinished = gameFinished;
         }
 
-        public TaskField[] TaskFields { get; set; }
+
+    public TaskField[] TaskFields { get; set; }
 
         public GoalField[] GoalFields { get; set; }
 
@@ -79,11 +80,22 @@ namespace Messaging.Responses
         {
             return other != null &&
                    base.Equals(other) &&
-                   TaskFields.SequenceEqual(other.TaskFields) &&
-                   GoalFields.SequenceEqual(other.GoalFields) &&
-                   Pieces.SequenceEqual(other.Pieces) &&
+                   IsCollectionsEqual(TaskFields, other.TaskFields) &&
+                   IsCollectionsEqual(GoalFields, other.GoalFields) &&
+                   IsCollectionsEqual(Pieces, other.Pieces) &&
                    EqualityComparer<Location>.Default.Equals(PlayerLocation, other.PlayerLocation) &&
                    GameFinished == other.GameFinished;
+        }
+
+        private bool IsCollectionsEqual<T>(IEnumerable<T> l1, IEnumerable<T> l2)
+        {
+            if (l1 == null && l2 == null)
+                return true;
+
+            if (l1 == null || l2 == null)
+                return false;
+
+            return l1.SequenceEqual(l2);
         }
 
         public override int GetHashCode()
