@@ -19,10 +19,19 @@
     <None Update="MoveScenarios\MoveToGoalField\MoveToGoalField-GM-Updated.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="MoveScenarios\MoveToGoalField\MoveToGoalField-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="MoveScenarios\MoveToGoalField\MoveToGoalField-Player-Initial.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="MoveScenarios\MoveToGoalField\MoveToGoalField-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToGoalField\MoveToGoalField-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToGoalField\MoveToGoalField-Response.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

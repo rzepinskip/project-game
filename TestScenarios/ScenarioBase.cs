@@ -1,53 +1,80 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using BoardGenerators.Loaders;
-using Common.Interfaces;
+using Common;
 using GameMaster;
+using Messaging;
+using Messaging.Serialization;
 using Player;
 
 namespace TestScenarios
 {
     public abstract class ScenarioBase
     {
-        private const string GMInitialSufix = "-GM-Initial.xml";
-        private const string GMUpdatedSufix = "-GM-Updated.xml";
-        private const string PlayerInitialSufix = "-Player-Initial.xml";
-        private const string PlayerUpdatedSufix = "-Player-Updated.xml";
+        private const string TestFileExtension = ".xml";
+        private const string DefaultNamespace = "https://se2.mini.pw.edu.pl/17-results/";
 
-        protected ScenarioBase(string scenarioCategory, string scenarioName)
+        private const string GMInitialSufix = "-GM-Initial" + TestFileExtension;
+        private const string GMUpdatedSufix = "-GM-Updated" + TestFileExtension;
+        private const string PlayerInitialSufix = "-Player-Initial" + TestFileExtension;
+        private const string PlayerUpdatedSufix = "-Player-Updated" + TestFileExtension;
+        private const string RequestSufix = "-Request" + TestFileExtension;
+        private const string ResponseSufix = "-Response" + TestFileExtension;
+        private const string IdentifiersSufix = "-Identifiers" + TestFileExtension;
+
+
+        protected ScenarioBase(string scenarioCategory, string scenarioName, int playerId, string playerGuid)
         {
             ScenarioFileBase = Path.Combine(scenarioCategory, scenarioName, scenarioName);
-            PlayerGuidToId = new Dictionary<string, int> {{PlayerGuid, PlayerId}};
+            PlayerId = playerId;
+            PlayerGuid = playerGuid;
 
             LoadBoards();
+            LoadMessages();
+            LoadIdentifiers();
         }
 
-        public Dictionary<string, int> PlayerGuidToId { get; }
-        public int PlayerId { get; } = 1;
-        public string PlayerGuid { get; } = Guid.NewGuid().ToString();
+        public Dictionary<string, int> PlayerGuidToId { get; private set; }
+        public int PlayerId { get; }
+        public string PlayerGuid { get; }
 
         public string ScenarioFileBase { get; }
 
-        public PlayerBoard InitialPlayerBoard { get; protected set; }
-        public GameMasterBoard InitialGameMasterBoard { get; protected set; }
-        public IRequest InitialRequest { get; protected set; }
+        public PlayerBoard InitialPlayerBoard { get; private set; }
+        public GameMasterBoard InitialGameMasterBoard { get; private set; }
+        public Message InitialRequest { get; private set; }
 
-        public GameMasterBoard UpdatedGameMasterBoard { get; protected set; } // Validate&Response assert
-        public IResponse Response { get; protected set; } // Response assert, UpdatePlayer input
-        public PlayerBoard UpdatedPlayerBoard { get; protected set; } // UpdatePlayer output
+        public GameMasterBoard UpdatedGameMasterBoard { get; private set; } // Validate&Response assert
+        public Message Response { get; private set; } // Response assert, UpdatePlayer input
+        public PlayerBoard UpdatedPlayerBoard { get; private set; } // UpdatePlayer output
 
         private void LoadBoards()
         {
+            var xmlSerializer = new ExtendedXmlSerializer(string.Empty);
+
             InitialGameMasterBoard =
-                new XmlLoader<GameMasterBoard>().LoadConfigurationFromFile(ScenarioFileBase + GMInitialSufix);
+                xmlSerializer.DeserializeFromXmlFile<GameMasterBoard>(ScenarioFileBase + GMInitialSufix);
             UpdatedGameMasterBoard =
-                new XmlLoader<GameMasterBoard>().LoadConfigurationFromFile(ScenarioFileBase + GMUpdatedSufix);
+                xmlSerializer.DeserializeFromXmlFile<GameMasterBoard>(ScenarioFileBase + GMUpdatedSufix);
 
             InitialPlayerBoard =
-                new XmlLoader<PlayerBoard>().LoadConfigurationFromFile(ScenarioFileBase + PlayerInitialSufix);
+                xmlSerializer.DeserializeFromXmlFile<PlayerBoard>(ScenarioFileBase + PlayerInitialSufix);
             UpdatedPlayerBoard =
-                new XmlLoader<PlayerBoard>().LoadConfigurationFromFile(ScenarioFileBase + PlayerUpdatedSufix);
+                xmlSerializer.DeserializeFromXmlFile<PlayerBoard>(ScenarioFileBase + PlayerUpdatedSufix);
+        }
+
+        private void LoadMessages()
+        {
+            var messageXmlSerializer = new ExtendedMessageXmlDeserializer(DefaultNamespace);
+
+            InitialRequest = messageXmlSerializer.DeserializeFromFile(ScenarioFileBase + RequestSufix);
+            Response = messageXmlSerializer.DeserializeFromFile(ScenarioFileBase + ResponseSufix);
+        }
+
+        private void LoadIdentifiers()
+        {
+            PlayerGuidToId =
+                new ExtendedXmlSerializer(string.Empty).DeserializeFromXmlFile<SerializableDictionary<string, int>>(
+                    ScenarioFileBase + IdentifiersSufix);
         }
     }
 }
