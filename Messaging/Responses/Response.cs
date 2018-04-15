@@ -32,7 +32,7 @@ namespace Messaging.Responses
             throw new NotImplementedException();
         }
 
-        public void Process(ICommunicationServer cs, int id)
+        public override void Process(ICommunicationServer cs, int id)
         {
             cs.Send(this, PlayerId);
         }
