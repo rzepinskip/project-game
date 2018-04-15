@@ -7,5 +7,7 @@ namespace Common.Interfaces
         void Send(IMessage message);
 
         void SetupClient(Action<IMessage> messageHandler);
+
+        void StartClient();
     }
 }

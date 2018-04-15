@@ -14,5 +14,6 @@ namespace Common.Interfaces
         void UnregisterGame(int gameId);
         void AssignGameIdToPlayerId(int gameId, int playerId);
         int GetGameIdForPlayer(int playerId);
+        void StartListening();
     }
 }
