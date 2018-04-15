@@ -1,6 +1,4 @@
-﻿using Messaging.Requests;
-
-namespace Messaging.Serialization
+﻿namespace Messaging.Serialization
 {
     public class MessageSerializer
     {
@@ -21,10 +19,7 @@ namespace Messaging.Serialization
 
         public Message Deserialize<TMessage>(string xml) where TMessage : Message
         {
-            if (typeof(TMessage) == typeof(Request))
-                return _requestSerializer.Deserialize(xml);
-
-            return _xmlSerializer.DeserializeFromXml<TMessage>(xml);
+            return _requestSerializer.Deserialize(xml);
         }
 
         public string Serialize(Message message)

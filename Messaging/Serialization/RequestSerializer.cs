@@ -3,6 +3,7 @@ using System.IO;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Messaging.Requests;
+using Messaging.Responses;
 
 namespace Messaging.Serialization
 {
@@ -33,7 +34,11 @@ namespace Messaging.Serialization
                 {
                     TestPieceRequest.XmlRootName,
                     GetDefaultXmlSerializer(typeof(TestPieceRequest))
-                }
+                },
+                {
+                    ResponseWithData.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(ResponseWithData))
+                },
             };
         }
 
