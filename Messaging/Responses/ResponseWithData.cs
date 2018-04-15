@@ -5,20 +5,29 @@ using System.Xml.Serialization;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
-using Messaging.Responses;
 
-namespace Messaging
+namespace Messaging.Responses
 {
+    [XmlType(XmlRootName)]
     public class ResponseWithData : Response
     {
+        public const string XmlRootName = "Data";
+
+        protected ResponseWithData()
+        {
+            TaskFields = new TaskField[0];
+            GoalFields = new GoalField[0];
+            Pieces = new Piece[0];
+        }
+
         public ResponseWithData(int playerId, Location location, IEnumerable<TaskField> taskFields = null,
             IEnumerable<GoalField> goalFields = null, IEnumerable<Piece> pieces = null,
             bool gameFinished = false) : base(playerId)
         {
             PlayerLocation = location;
-            TaskFields = taskFields?.ToArray() ?? new TaskField[0];
-            GoalFields = goalFields?.ToArray() ?? new GoalField[0];
-            Pieces = pieces?.ToArray() ?? new Piece[0];
+            TaskFields = taskFields?.ToArray();
+            GoalFields = goalFields?.ToArray();
+            Pieces = pieces?.ToArray();
             GameFinished = gameFinished;
         }
 
@@ -30,7 +39,7 @@ namespace Messaging
 
         public Location PlayerLocation { get; set; }
 
-        [XmlAttribute] public bool GameFinished { get; set; }
+        [XmlAttribute("gameFinished")] public bool GameFinished { get; set; }
 
         public override IMessage Process(IGameMaster gameMaster)
         {

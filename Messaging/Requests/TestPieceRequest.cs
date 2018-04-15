@@ -4,37 +4,27 @@ using Common.ActionInfo;
 
 namespace Messaging.Requests
 {
-    [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
+    [XmlType(XmlRootName)]
     public class TestPieceRequest : Request
     {
+        public const string XmlRootName = "TestPiece";
+
+        protected TestPieceRequest()
+        {
+        }
+
         public TestPieceRequest(string playerGuid) : base(playerGuid)
         {
-        }
-
-        /*
-        TODO: move to GameMaster.ExecuteAction(TestPieceActionInfo ...)
-        public override Response Execute(IBoard board)
-        {
-            var player = board.Players[PlayerId];
-            var playerPiece = player.Piece;
-
-            if (playerPiece.Type == PieceType.Sham)
-                player.Piece = null;
-
-            var response = new TestPieceResponse(PlayerId, playerPiece);
-
-            return response;
-        }
-
-        */
-        public override string ToLog()
-        {
-            return string.Join(',', ActionType.Test, base.ToLog());
         }
 
         public override ActionInfo GetActionInfo()
         {
             return new TestActionInfo(PlayerGuid);
+        }
+
+        public override string ToLog()
+        {
+            return string.Join(',', ActionType.Test, base.ToLog());
         }
     }
 }

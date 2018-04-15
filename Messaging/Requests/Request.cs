@@ -2,27 +2,32 @@
 using System.Xml.Serialization;
 using Common.ActionInfo;
 using Common.Interfaces;
+using Messaging.Responses;
 
 namespace Messaging.Requests
 {
-    public abstract class Request : IRequest
+    public abstract class Request : Message, IRequest
     {
-        public Request(string playerGuid)
+        protected Request()
+        {
+        }
+
+        protected Request(string playerGuid)
         {
             PlayerGuid = playerGuid;
         }
 
-        [XmlAttribute] public int GameId { get; set; }
+        [XmlAttribute("gameId")] public int GameId { get; set; }
 
-        [XmlAttribute] public string PlayerGuid { get; set; }
+        [XmlAttribute("playerGuid")] public string PlayerGuid { get; set; }
 
-        public IMessage Process(IGameMaster gameMaster)
+        public override IMessage Process(IGameMaster gameMaster)
         {
             var result = gameMaster.EvaluateAction(GetActionInfo());
             return ResponseWithData.ConvertToData(result.data, result.isGameFinished);
         }
 
-        public void Process(IPlayer player)
+        public override void Process(IPlayer player)
         {
             throw new InvalidOperationException();
         }
