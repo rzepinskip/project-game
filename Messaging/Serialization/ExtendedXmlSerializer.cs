@@ -48,11 +48,21 @@ namespace Messaging.Serialization
         public T DeserializeFromXml<T>(string xml)
         {
             var serializer = GetDefaultXmlSerializer(typeof(T));
-            var reader = new StringReader(xml);
-            var conf = (T) serializer.Deserialize(reader);
-            reader.Close();
 
-            return conf;
+            using (var reader = new StringReader(xml))
+            {
+                return (T) serializer.Deserialize(reader);
+            }
+        }
+
+        public T DeserializeFromXmlFile<T>(string filePath)
+        {
+            var serializer = GetDefaultXmlSerializer(typeof(T));
+
+            using (var reader = new StreamReader(filePath))
+            {
+                return (T) serializer.Deserialize(reader);
+            }
         }
 
         private class Utf8EncodedStringWriter : StringWriter

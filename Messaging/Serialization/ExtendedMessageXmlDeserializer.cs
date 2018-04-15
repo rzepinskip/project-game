@@ -44,15 +44,33 @@ namespace Messaging.Serialization
 
         public Message Deserialize(string xml)
         {
-            var stream = new StringReader(xml);
+            using (var stream = new StringReader(xml))
+            {
+                return ReadMessage(stream);
+            }
+        }
+
+        public Message DeserializeFromFile(string filePath)
+        {
+            using (var stream = new StreamReader(filePath))
+            {
+                return ReadMessage(stream);
+            }
+        }
+
+        private Message ReadMessage(TextReader stream)
+        {
             var document = XDocument.Load(stream);
 
             var name = ReadRootName(document);
             var serializer = _serializers[name];
 
-            if (document.Root == null) return null;
+            Message message = null;
 
-            return serializer.Deserialize(document.Root.CreateReader()) as Message;
+            if (document.Root != null)
+                message = serializer.Deserialize(document.Root.CreateReader()) as Message;
+
+            return message;
         }
 
         private string ReadRootName(XDocument document)
