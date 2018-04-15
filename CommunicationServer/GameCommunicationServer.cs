@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System;
+using System.Diagnostics;
+using System.Threading;
 using Common.Interfaces;
 
 namespace CommunicationServer
@@ -16,7 +18,13 @@ namespace CommunicationServer
 
         public void HandleMessage(IMessage message, int i)
         {
+            Debug.WriteLine("CS Message received from: " + i);
             message.Process(_listener, i);
+        }
+
+        public void HandleCallback(IAsyncResult ar)
+        {
+
         }
     }
 }

@@ -45,7 +45,7 @@ namespace Player
             PlayerStrategy = new PlayerStrategy(board, this, guid, GameId);
             PlayerBoard.Players.Add(id, new PlayerInfo(id, team, role, location));
 
-            await Task.Delay(500 * (id+1));
+            await Task.Delay(10 * (id+1));
             CommunicationClient = new AsynchronousClient(new PlayerConverter());
             CommunicationClient.SetupClient(HandleResponse);
             new Thread(() => CommunicationClient.StartClient()).Start();
@@ -87,6 +87,7 @@ namespace Player
             {
                 var request = GetNextRequestMessage();
                 //RequestsQueue.Enqueue(request);
+                _logger.Info(request);
                 CommunicationClient.Send(request);
             }
             catch(StrategyException s)

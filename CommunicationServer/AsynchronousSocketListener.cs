@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Common;
 using Common.Communication;
 using Common.Interfaces;
@@ -55,7 +57,7 @@ namespace CommunicationServer
                 while (true)
                 {
                     _readyForAccept.Reset();
-                    //Console.WriteLine("Waiting for a connection...");
+                    Debug.WriteLine("Waiting for a connection...");
                     listener.BeginAccept(AcceptCallback, listener);
 
                     _readyForAccept.WaitOne();
@@ -76,7 +78,7 @@ namespace CommunicationServer
 
             var listener = (Socket)ar.AsyncState;
             var handler = listener.EndAccept(ar);
-
+            Debug.WriteLine("Accepted for " + _counter);
             var state = new CommunicationStateObject(handler, _counter);
             _agentToCommunicationStateObject.Add(_counter, state);
             _agentToSocket.Add(_counter++, handler);
@@ -143,6 +145,7 @@ namespace CommunicationServer
                         //Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
                         //    message.Length, message);
                         state.LastMessageReceivedTicks = DateTime.Today.Ticks;
+                        Debug.WriteLine("CS Message received from: " + state.SocketId);
                         MessageReceivedEvent?.Invoke(_messageConverter.ConvertStringToMessage(message), state.SocketId);
 
                     }
@@ -161,7 +164,7 @@ namespace CommunicationServer
             }
         }
 
-        public void Send(IMessage message, int id)
+        public async Task Send(IMessage message, int id)
         {
             var byteData = Encoding.ASCII.GetBytes(_messageConverter.ConvertMessageToString(message) + CommunicationStateObject.EtbByte);
             var findResult = _agentToSocket.TryGetValue(id, out var handler);
@@ -178,6 +181,8 @@ namespace CommunicationServer
             {
                 //Console.WriteLine(e.ToString());
             }
+
+            return new Task<void>();
         }
 
         private void SendCallback(IAsyncResult ar)
