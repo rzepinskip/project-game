@@ -3,16 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
-
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="4.5.0-rc07" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Messaging\Messaging.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="NLog">
-      <HintPath>..\..\..\..\.nuget\packages\nlog\4.5.0-rc07\lib\netstandard2.0\NLog.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
