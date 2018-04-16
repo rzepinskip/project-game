@@ -1,10 +1,12 @@
-﻿using System.Xml;
+﻿using System;
+using System.Collections.Generic;
+using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
 namespace Common
 {
-    public class PlayerBase : IXmlSerializable
+    public class PlayerBase : IXmlSerializable, IEquatable<PlayerBase>
     {
         protected PlayerBase()
         {
@@ -38,6 +40,38 @@ namespace Common
             writer.WriteAttributeString("id", Id.ToString());
             writer.WriteAttributeString("team", Team.GetXmlAttributeName());
             writer.WriteAttributeString("role", Role.GetXmlAttributeName());
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as PlayerBase);
+        }
+
+        public bool Equals(PlayerBase other)
+        {
+            return other != null &&
+                   Id == other.Id &&
+                   Team == other.Team &&
+                   Role == other.Role;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 525671237;
+            hashCode = hashCode * -1521134295 + Id.GetHashCode();
+            hashCode = hashCode * -1521134295 + Team.GetHashCode();
+            hashCode = hashCode * -1521134295 + Role.GetHashCode();
+            return hashCode;
+        }
+
+        public static bool operator ==(PlayerBase base1, PlayerBase base2)
+        {
+            return EqualityComparer<PlayerBase>.Default.Equals(base1, base2);
+        }
+
+        public static bool operator !=(PlayerBase base1, PlayerBase base2)
+        {
+            return !(base1 == base2);
         }
     }
 }

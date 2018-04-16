@@ -6,6 +6,10 @@ namespace Player
 {
     public class PlayerBoard : BoardBase, IPlayerBoard
     {
+        protected PlayerBoard()
+        {
+        }
+
         public PlayerBoard(int boardWidth, int taskAreaSize, int goalAreaSize) : base(boardWidth, taskAreaSize,
             goalAreaSize)
         {
@@ -30,18 +34,12 @@ namespace Player
             else
                 Pieces.Add(piece.Id, piece);
 
-            if (piece.PlayerId.HasValue)
-            {
-                Players[piece.PlayerId.Value].Piece = piece;
-            }
+            if (piece.PlayerId.HasValue) Players[piece.PlayerId.Value].Piece = piece;
 
             if (piece.Type == PieceType.Sham)
             {
                 Pieces.Remove(piece.Id);
-                if (piece.PlayerId.HasValue)
-                {
-                    Players[piece.PlayerId.Value].Piece = null;
-                }
+                if (piece.PlayerId.HasValue) Players[piece.PlayerId.Value].Piece = null;
             }
         }
 
@@ -61,20 +59,19 @@ namespace Player
             //}
 
             // Insert new data
-            this[taskField] = new TaskField(taskField, taskField.DistanceToPiece, taskField.PieceId, taskField.PlayerId);
+            this[taskField] =
+                new TaskField(taskField, taskField.DistanceToPiece, taskField.PieceId, taskField.PlayerId);
         }
 
         public void HandleGoalField(int playerId, GoalField goalField)
         {
             // Remove old data
             foreach (var piecesValue in Pieces.Values)
-            {
                 if (piecesValue.PlayerId == playerId)
                 {
                     piecesValue.PlayerId = null;
                     break;
                 }
-            }
 
             // Insert new data
             this[goalField] = goalField;

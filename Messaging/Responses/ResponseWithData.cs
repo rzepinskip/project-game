@@ -9,7 +9,7 @@ using Common.Interfaces;
 namespace Messaging.Responses
 {
     [XmlType(XmlRootName)]
-    public class ResponseWithData : Response
+    public class ResponseWithData : Response, IEquatable<ResponseWithData>
     {
         public const string XmlRootName = "Data";
 
@@ -31,7 +31,8 @@ namespace Messaging.Responses
             GameFinished = gameFinished;
         }
 
-        public TaskField[] TaskFields { get; set; }
+
+    public TaskField[] TaskFields { get; set; }
 
         public GoalField[] GoalFields { get; set; }
 
@@ -48,11 +49,17 @@ namespace Messaging.Responses
 
         public override void Process(IPlayer player)
         {
-            foreach (var taskField in TaskFields) player.Board.HandleTaskField(PlayerId, taskField);
+            if (TaskFields != null)
+                foreach (var taskField in TaskFields)
+                    player.Board.HandleTaskField(PlayerId, taskField);
 
-            foreach (var goalField in GoalFields) player.Board.HandleGoalField(PlayerId, goalField);
+            if (GoalFields != null)
+                foreach (var goalField in GoalFields)
+                    player.Board.HandleGoalField(PlayerId, goalField);
 
-            foreach (var piece in Pieces) player.Board.HandlePiece(PlayerId, piece);
+            if (Pieces != null)
+                foreach (var piece in Pieces)
+                    player.Board.HandlePiece(PlayerId, piece);
 
             if (PlayerLocation != null)
                 player.Board.HandlePlayerLocation(PlayerId, PlayerLocation);
@@ -62,6 +69,55 @@ namespace Messaging.Responses
         {
             return new ResponseWithData(datafieldset.PlayerId, datafieldset.PlayerLocation, datafieldset.TaskFields,
                 datafieldset.GoalFields, datafieldset.Pieces, isGameFinished);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as ResponseWithData);
+        }
+
+        public bool Equals(ResponseWithData other)
+        {
+            return other != null &&
+                   base.Equals(other) &&
+                   IsCollectionsEqual(TaskFields, other.TaskFields) &&
+                   IsCollectionsEqual(GoalFields, other.GoalFields) &&
+                   IsCollectionsEqual(Pieces, other.Pieces) &&
+                   EqualityComparer<Location>.Default.Equals(PlayerLocation, other.PlayerLocation) &&
+                   GameFinished == other.GameFinished;
+        }
+
+        private bool IsCollectionsEqual<T>(IEnumerable<T> l1, IEnumerable<T> l2)
+        {
+            if (l1 == null && l2 == null)
+                return true;
+
+            if (l1 == null || l2 == null)
+                return false;
+
+            return l1.SequenceEqual(l2);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 1775193206;
+            hashCode = hashCode * -1521134295 + base.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<TaskField[]>.Default.GetHashCode(TaskFields);
+            hashCode = hashCode * -1521134295 + EqualityComparer<GoalField[]>.Default.GetHashCode(GoalFields);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Piece[]>.Default.GetHashCode(Pieces);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Location>.Default.GetHashCode(PlayerLocation);
+            hashCode = hashCode * -1521134295 + GameFinished.GetHashCode();
+            return hashCode;
+        }
+
+        public static bool operator ==(ResponseWithData data1, ResponseWithData data2)
+        {
+            return EqualityComparer<ResponseWithData>.Default.Equals(data1, data2);
+        }
+
+        public static bool operator !=(ResponseWithData data1, ResponseWithData data2)
+        {
+            return !(data1 == data2);
         }
     }
 }

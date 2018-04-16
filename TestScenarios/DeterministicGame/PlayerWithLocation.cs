@@ -1,7 +1,7 @@
 ﻿using Common;
 using Common.BoardObjects;
 
-namespace GameMaster.Tests.BoardConfigurationGenerator
+namespace TestScenarios.DeterministicGame
 {
     public class PlayerWithLocation : PlayerBase
     {

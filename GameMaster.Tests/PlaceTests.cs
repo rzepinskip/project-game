@@ -2,7 +2,7 @@
 
 namespace GameMaster.Tests
 {
-    public class PlacePieceResponseDataTests
+    public class PlaceTests
     {
         [Fact]
         public void PlaceShamPieceOnGoalFieldWithGoal()

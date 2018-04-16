@@ -17,7 +17,7 @@ namespace Player
     {
         public ObservableConcurrentQueue<IRequest> RequestsQueue { get; set; }
         public ObservableConcurrentQueue<IMessage> ResponsesQueue { get; set; }
-        
+
         private string PlayerGuid { get; set; }
         private PlayerBoard PlayerBoard { get; set; }
         private ILogger _logger;
@@ -43,7 +43,7 @@ namespace Player
             GameId = gameId;
             PlayerBoard = board;
             PlayerStrategy = new PlayerStrategy(board, this, guid, GameId);
-            PlayerBoard.Players.Add(id, new PlayerInfo(id, team, role, location));
+            PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
 
             await Task.Delay(10 * (id+1));
             CommunicationClient = new AsynchronousClient(new PlayerConverter());
@@ -90,7 +90,7 @@ namespace Player
                 _logger.Info(request);
                 CommunicationClient.Send(request);
             }
-            catch(StrategyException s)
+            catch (StrategyException s)
             {
                 //log exception
                 throw;

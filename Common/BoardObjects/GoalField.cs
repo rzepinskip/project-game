@@ -44,11 +44,7 @@ namespace Common.BoardObjects
 
         public override int GetHashCode()
         {
-            var hashCode = -1655874655;
-            hashCode = hashCode * -1521134295 + base.GetHashCode();
-            hashCode = hashCode * -1521134295 + Type.GetHashCode();
-            hashCode = hashCode * -1521134295 + Team.GetHashCode();
-            return hashCode;
+            return base.GetHashCode();
         }
 
         public static bool operator ==(GoalField field1, GoalField field2)

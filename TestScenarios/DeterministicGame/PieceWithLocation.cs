@@ -1,6 +1,6 @@
 ﻿using Common.BoardObjects;
 
-namespace GameMaster.Tests.BoardConfigurationGenerator
+namespace TestScenarios.DeterministicGame
 {
     public class PieceWithLocation : Piece
     {

@@ -33,6 +33,13 @@ namespace GameMaster
             new Thread(() => _communicationClient.StartClient()).Start();
         }
 
+        public GameMaster(GameMasterBoard board, Dictionary<string, int> playerGuidToId)
+        {
+            Board = board;
+
+            PlayerGuidToId = playerGuidToId;
+        }
+
         public Dictionary<int, ObservableConcurrentQueue<IRequest>> RequestsQueues { get; set; } =
             new Dictionary<int, ObservableConcurrentQueue<IRequest>>();
 
