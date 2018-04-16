@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Common.ActionInfo;
+using Common.Communication;
 using Common.Interfaces;
 using GameMaster.ActionHandlers;
 using GameMaster.Configuration;
@@ -25,6 +27,10 @@ namespace GameMaster
             {
                 PlayerGuidToId.Add(Guid.NewGuid().ToString(), player.Key);
             }
+
+            _communicationClient = new AsynchronousClient(new GameMasterConverter());
+            _communicationClient.SetupClient(HandleMessagesFromClient);
+            new Thread(() => _communicationClient.StartClient()).Start();
         }
 
         public Dictionary<int, ObservableConcurrentQueue<IRequest>> RequestsQueues { get; set; } =
@@ -39,6 +45,8 @@ namespace GameMaster
         public GameConfiguration GameConfiguration { get; }
         public Dictionary<string, int> PlayerGuidToId { get; } = new Dictionary<string, int>();
         public GameMasterBoard Board { get; set; }
+
+        private readonly IClient _communicationClient;
 
         public (DataFieldSet data, bool isGameFinished) EvaluateAction(ActionInfo actionInfo)
         {
@@ -105,8 +113,8 @@ namespace GameMaster
                             .Start();
                     }
                 }
-
-                ResponsesQueues[playerId].Enqueue(response);
+                _communicationClient.Send(response);
+                //ResponsesQueues[playerId].Enqueue(response);
             }
         }
 
@@ -123,6 +131,21 @@ namespace GameMaster
                             Task.Run(() => HandleMessagesFromPlayer(playerId));
                     }
                 };
+        }
+
+        private void HandleMessagesFromClient(IMessage obj)
+        {
+            var request = obj as IRequest;
+            if (request == null)
+                return;
+
+            PlayerGuidToId.TryGetValue(request.PlayerGuid, out var playerId);
+            var requestQueue = RequestsQueues[playerId];
+            lock (IsPlayerQueueProcessedLock[playerId])
+            {
+                requestQueue.Enqueue(request);
+            }
+
         }
     }
 

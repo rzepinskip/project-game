@@ -13,7 +13,7 @@ namespace Messaging.Requests
         {
         }
 
-        public DiscoverRequest(string playerGuid) : base(playerGuid)
+        public DiscoverRequest(string playerGuid, int gameId) : base(playerGuid, gameId)
         {
         }
 

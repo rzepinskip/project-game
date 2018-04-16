@@ -23,7 +23,7 @@ namespace Player.Strategy.Conditions
         {
             var direction = StrategyInfo.FromLocation.DirectionToTask(StrategyInfo.Team);
             StrategyInfo.ToLocation = StrategyInfo.FromLocation.GetNewLocation(direction);
-            return new MoveRequest(StrategyInfo.PlayerGuid, direction);
+            return new MoveRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId, direction);
         }
     }
 }

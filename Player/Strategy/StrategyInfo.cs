@@ -7,7 +7,7 @@ namespace Player.Strategy
 {
     public class StrategyInfo : ILoggable
     {
-        public StrategyInfo(Location fromLocation, BoardBase board, string playerGuid, PlayerBase player,
+        public StrategyInfo(Location fromLocation, BoardBase board, string playerGuid, int gameId, PlayerBase player,
             List<GoalField> undiscoveredGoalFields = null, Location toLocation = null)
         {
             FromLocation = fromLocation;
@@ -15,6 +15,7 @@ namespace Player.Strategy
             Board = board;
             PlayerId = player.Id;
             PlayerGuid = playerGuid;
+            GameId = gameId;
             Team = player.Team;
             UndiscoveredGoalFields = undiscoveredGoalFields;
         }
@@ -27,6 +28,7 @@ namespace Player.Strategy
             PlayerId = strategyInfo.PlayerId;
             Team = strategyInfo.Team;
             UndiscoveredGoalFields = strategyInfo.UndiscoveredGoalFields;
+            GameId = strategyInfo.GameId;
         }
 
         public Location FromLocation { get; set; }
@@ -36,6 +38,7 @@ namespace Player.Strategy
         public string PlayerGuid { get; set; }
         public TeamColor Team { get; set; }
         public List<GoalField> UndiscoveredGoalFields { get; set; }
+        public int GameId { get; set; }
 
         public override string ToString()
         {

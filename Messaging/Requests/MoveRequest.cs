@@ -13,7 +13,7 @@ namespace Messaging.Requests
         {
         }
 
-        public MoveRequest(string playerGuid, Direction direction) : base(playerGuid)
+        public MoveRequest(string playerGuid, int gameId, Direction direction) : base(playerGuid, gameId)
         {
             Direction = direction;
         }

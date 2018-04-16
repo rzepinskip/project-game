@@ -33,7 +33,7 @@ namespace Player.Strategy.Conditions
             var undiscoveredGoalLocation = StrategyInfo.UndiscoveredGoalFields[0];
             var direction = undiscoveredGoalLocation.GetDirectionFrom(StrategyInfo.FromLocation);
             StrategyInfo.ToLocation = StrategyInfo.FromLocation.GetNewLocation(direction);
-            return new MoveRequest(StrategyInfo.PlayerGuid, direction);
+            return new MoveRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId, direction);
         }
     }
 }

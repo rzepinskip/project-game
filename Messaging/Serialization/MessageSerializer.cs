@@ -2,24 +2,24 @@
 {
     public class MessageSerializer
     {
-        private const string DefaultNamespace = "https://se2.mini.pw.edu.pl/17-results/";
+        private const string DefaultNameSpace = "https://se2.mini.pw.edu.pl/17-results/";
 
         private static MessageSerializer _instance;
-        private readonly ExtendedMessageXmlDeserializer _messageDeserializer;
+        private readonly ExtendedMessageXmlDeserializer _requestSerializer;
         private readonly ExtendedXmlSerializer _xmlSerializer;
 
         private MessageSerializer()
         {
-            _xmlSerializer = new ExtendedXmlSerializer(DefaultNamespace);
-            _messageDeserializer = new ExtendedMessageXmlDeserializer(DefaultNamespace);
+            _xmlSerializer = new ExtendedXmlSerializer(DefaultNameSpace);
+            _requestSerializer = new ExtendedMessageXmlDeserializer(DefaultNameSpace);
         }
 
         public static MessageSerializer Instance => _instance ?? (_instance = new MessageSerializer());
 
 
-        public Message Deserialize(string xml)
+        public Message Deserialize<TMessage>(string xml) where TMessage : Message
         {
-            return _messageDeserializer.Deserialize(xml);
+            return _requestSerializer.Deserialize(xml);
         }
 
         public string Serialize(Message message)

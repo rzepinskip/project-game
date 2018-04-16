@@ -38,7 +38,7 @@ namespace Messaging.Serialization
                 {
                     ResponseWithData.XmlRootName,
                     GetDefaultXmlSerializer(typeof(ResponseWithData))
-                }
+                },
             };
         }
 

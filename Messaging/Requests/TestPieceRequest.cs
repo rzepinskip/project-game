@@ -13,7 +13,7 @@ namespace Messaging.Requests
         {
         }
 
-        public TestPieceRequest(string playerGuid) : base(playerGuid)
+        public TestPieceRequest(string playerGuid, int gameId) : base(playerGuid, gameId)
         {
         }
 

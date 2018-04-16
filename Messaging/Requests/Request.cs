@@ -12,9 +12,10 @@ namespace Messaging.Requests
         {
         }
 
-        protected Request(string playerGuid)
+        protected Request(string playerGuid, int gameId)
         {
             PlayerGuid = playerGuid;
+            GameId = gameId;
         }
 
         [XmlAttribute("gameId")] public int GameId { get; set; }
@@ -30,6 +31,11 @@ namespace Messaging.Requests
         public override void Process(IPlayer player)
         {
             throw new InvalidOperationException();
+        }
+
+        public override void Process(ICommunicationServer cs, int id)
+        {
+            cs.Send(this, GameId);
         }
 
         public abstract ActionInfo GetActionInfo();
