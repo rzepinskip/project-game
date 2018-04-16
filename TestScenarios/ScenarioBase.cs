@@ -42,9 +42,11 @@ namespace TestScenarios
 
         public PlayerBoard InitialPlayerBoard { get; private set; }
         public GameMasterBoard InitialGameMasterBoard { get; private set; }
+        public string InitialRequestFileContent { get; private set; }
         public Message InitialRequest { get; private set; }
 
         public GameMasterBoard UpdatedGameMasterBoard { get; private set; } // Validate&Response assert
+        public string ResponseFileContent { get; private set; }
         public Message Response { get; private set; } // Response assert, UpdatePlayer input
         public PlayerBoard UpdatedPlayerBoard { get; private set; } // UpdatePlayer output
 
@@ -69,6 +71,15 @@ namespace TestScenarios
 
             InitialRequest = messageXmlSerializer.DeserializeFromFile(ScenarioFileBase + RequestSufix);
             Response = messageXmlSerializer.DeserializeFromFile(ScenarioFileBase + ResponseSufix);
+
+            using (var reader = new StreamReader(ScenarioFileBase + RequestSufix))
+            {
+                InitialRequestFileContent = reader.ReadToEnd();
+            }
+            using (var reader = new StreamReader(ScenarioFileBase + ResponseSufix))
+            {
+                ResponseFileContent = reader.ReadToEnd();
+            }
         }
 
         private void LoadIdentifiers()
