@@ -13,8 +13,8 @@ namespace Player.Tests
         {
             var player = new Player();
             var playerInfo = scenario.InitialPlayerBoard.Players[scenario.PlayerId];
-            player.InitializePlayer(scenario.PlayerId, scenario.PlayerGuid,1, playerInfo.Team, playerInfo.Role,
-                scenario.InitialPlayerBoard, playerInfo.Location).RunSynchronously();
+            player.InitializePlayer(scenario.PlayerId, scenario.PlayerGuid, playerInfo.Team, playerInfo.Role,
+                scenario.InitialPlayerBoard, playerInfo.Location);
 
             scenario.Response.Process(player);
 
