@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Xml.Serialization;
 using Common;
 using Common.ActionInfo;
 
@@ -13,7 +14,7 @@ namespace Messaging.Requests
         {
         }
 
-        public TestPieceRequest(string playerGuid, int gameId) : base(playerGuid, gameId)
+        public TestPieceRequest(Guid playerGuid, int gameId) : base(playerGuid, gameId)
         {
         }
 

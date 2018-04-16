@@ -1,8 +1,10 @@
-﻿namespace Common.ActionInfo
+﻿using System;
+
+namespace Common.ActionInfo
 {
     public class PickUpActionInfo : ActionInfo
     {
-        public PickUpActionInfo(string playerGuid) : base(playerGuid)
+        public PickUpActionInfo(Guid playerGuid) : base(playerGuid)
         {
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Common;
 using GameMaster;
@@ -22,7 +23,7 @@ namespace TestScenarios
         private const string IdentifiersSufix = "-Identifiers" + TestFileExtension;
 
 
-        protected ScenarioBase(string scenarioCategory, string scenarioName, int playerId, string playerGuid)
+        protected ScenarioBase(string scenarioCategory, string scenarioName, int playerId, Guid playerGuid)
         {
             ScenarioFileBase = Path.Combine(scenarioCategory, scenarioName, scenarioName);
             PlayerId = playerId;
@@ -33,9 +34,9 @@ namespace TestScenarios
             LoadIdentifiers();
         }
 
-        public Dictionary<string, int> PlayerGuidToId { get; private set; }
+        public Dictionary<Guid, int> PlayerGuidToId { get; private set; }
         public int PlayerId { get; }
-        public string PlayerGuid { get; }
+        public Guid PlayerGuid { get; }
 
         public string ScenarioFileBase { get; }
 
@@ -73,7 +74,7 @@ namespace TestScenarios
         private void LoadIdentifiers()
         {
             PlayerGuidToId =
-                new ExtendedXmlSerializer(string.Empty).DeserializeFromXmlFile<SerializableDictionary<string, int>>(
+                new ExtendedXmlSerializer(string.Empty).DeserializeFromXmlFile<SerializableDictionary<Guid, int>>(
                     ScenarioFileBase + IdentifiersSufix);
         }
     }

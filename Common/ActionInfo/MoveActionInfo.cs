@@ -1,8 +1,10 @@
-﻿namespace Common.ActionInfo
+﻿using System;
+
+namespace Common.ActionInfo
 {
     public class MoveActionInfo : ActionInfo
     {
-        public MoveActionInfo(string playerGuid, Direction direction) : base(playerGuid)
+        public MoveActionInfo(Guid playerGuid, Direction direction) : base(playerGuid)
         {
             Direction = direction;
         }

@@ -87,7 +87,7 @@ namespace GameSimulation
                 var playerInfo = gameMaster.Board.Players[i];
                 var player = new Player.Player();
 
-                string playerGuid = "";
+                Guid playerGuid;
                 foreach (var guidIdPair in GameMaster.PlayerGuidToId)
                 {
                     if (guidIdPair.Value == i)

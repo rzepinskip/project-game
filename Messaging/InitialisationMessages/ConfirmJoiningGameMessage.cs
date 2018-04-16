@@ -6,7 +6,7 @@ namespace Messaging.InitialisationMessages
 {
     public class ConfirmJoiningGameMessage : IResponse
     {
-        public ConfirmJoiningGameMessage(int gameId, int playerId, string privateGuid, PlayerBase playerDefiniton)
+        public ConfirmJoiningGameMessage(int gameId, int playerId, Guid privateGuid, PlayerBase playerDefiniton)
         {
             GameId = gameId;
             PlayerId = playerId;
@@ -16,7 +16,7 @@ namespace Messaging.InitialisationMessages
 
         public int GameId { get; set; }
         public int PlayerId { get; set; }
-        public string PrivateGuid { get; set; }
+        public Guid PrivateGuid { get; set; }
         public PlayerBase PlayerDefinition { get; set; }
         public IMessage Process(IGameMaster gameMaster)
         {

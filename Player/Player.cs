@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
@@ -18,7 +19,7 @@ namespace Player
         public ObservableConcurrentQueue<IRequest> RequestsQueue { get; set; }
         public ObservableConcurrentQueue<IMessage> ResponsesQueue { get; set; }
 
-        private string PlayerGuid { get; set; }
+        private Guid PlayerGuid { get; set; }
         private PlayerBoard PlayerBoard { get; set; }
         private ILogger _logger;
 
@@ -30,7 +31,7 @@ namespace Player
 
         private int GameId { get; set; }
 
-        public void InitializePlayer(int id, string guid, TeamColor team, PlayerType role, PlayerBoard board,
+        public void InitializePlayer(int id, Guid guid, TeamColor team, PlayerType role, PlayerBoard board,
             Location location)
         {
             var factory = new LoggerFactory();
@@ -50,7 +51,7 @@ namespace Player
             new Thread(() => CommunicationClient.StartClient()).Start();
         }
 
-        public async Task InitializePlayer(int id, string guid, int gameId, TeamColor team, PlayerType role, PlayerBoard board,
+        public async Task InitializePlayer(int id, Guid guid, int gameId, TeamColor team, PlayerType role, PlayerBoard board,
             Location location)
         {
             var factory = new LoggerFactory();

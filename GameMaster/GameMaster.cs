@@ -25,7 +25,7 @@ namespace GameMaster
 
             foreach (var player in Board.Players)
             {
-                PlayerGuidToId.Add(Guid.NewGuid().ToString(), player.Key);
+                PlayerGuidToId.Add(Guid.NewGuid(), player.Key);
             }
 
             _communicationClient = new AsynchronousClient(new GameMasterConverter());
@@ -33,7 +33,7 @@ namespace GameMaster
             new Thread(() => _communicationClient.StartClient()).Start();
         }
 
-        public GameMaster(GameMasterBoard board, Dictionary<string, int> playerGuidToId)
+        public GameMaster(GameMasterBoard board, Dictionary<Guid, int> playerGuidToId)
         {
             Board = board;
 
@@ -50,7 +50,7 @@ namespace GameMaster
         public Dictionary<int, object> IsPlayerQueueProcessedLock { get; set; } = new Dictionary<int, object>();
 
         public GameConfiguration GameConfiguration { get; }
-        public Dictionary<string, int> PlayerGuidToId { get; } = new Dictionary<string, int>();
+        public Dictionary<Guid, int> PlayerGuidToId { get; } = new Dictionary<Guid, int>();
         public GameMasterBoard Board { get; set; }
 
         private readonly IClient _communicationClient;
