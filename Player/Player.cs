@@ -30,6 +30,26 @@ namespace Player
 
         private int GameId { get; set; }
 
+        public void InitializePlayer(int id, string guid, TeamColor team, PlayerType role, PlayerBoard board,
+            Location location)
+        {
+            var factory = new LoggerFactory();
+            _logger = factory.GetPlayerLogger(id);
+
+            Id = id;
+            Team = team;
+            Role = role;
+            PlayerGuid = guid;
+            GameId = 0;
+            PlayerBoard = board;
+            PlayerStrategy = new PlayerStrategy(board, this, guid, GameId);
+            PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
+
+            CommunicationClient = new AsynchronousClient(new PlayerConverter());
+            CommunicationClient.SetupClient(HandleResponse);
+            new Thread(() => CommunicationClient.StartClient()).Start();
+        }
+
         public async Task InitializePlayer(int id, string guid, int gameId, TeamColor team, PlayerType role, PlayerBoard board,
             Location location)
         {
