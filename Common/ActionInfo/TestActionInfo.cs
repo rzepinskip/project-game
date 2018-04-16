@@ -1,8 +1,10 @@
-﻿namespace Common.ActionInfo
+﻿using System;
+
+namespace Common.ActionInfo
 {
     public class TestActionInfo : ActionInfo
     {
-        public TestActionInfo(string playerGuid) : base(playerGuid)
+        public TestActionInfo(Guid playerGuid) : base(playerGuid)
         {
         }
     }

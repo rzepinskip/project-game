@@ -1,8 +1,10 @@
-﻿namespace Common.Interfaces
+﻿using System;
+
+namespace Common.Interfaces
 {
     public interface IRequest : IMessage, ILoggable
     {
-        string PlayerGuid { get; set; }
+        Guid PlayerGuid { get; set; }
 
         ActionInfo.ActionInfo GetActionInfo();
     }

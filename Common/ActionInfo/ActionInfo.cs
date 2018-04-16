@@ -1,12 +1,14 @@
-﻿namespace Common.ActionInfo
+﻿using System;
+
+namespace Common.ActionInfo
 {
     public class ActionInfo
     {
-        public ActionInfo(string playerGuid)
+        public ActionInfo(Guid playerGuid)
         {
             PlayerGuid = playerGuid;
         }
 
-        public string PlayerGuid { get; }
+        public Guid PlayerGuid { get; }
     }
 }

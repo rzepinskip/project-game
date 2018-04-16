@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
@@ -7,7 +8,7 @@ namespace Player.Strategy
 {
     public class StrategyInfo : ILoggable
     {
-        public StrategyInfo(Location fromLocation, BoardBase board, string playerGuid, int gameId, PlayerBase player,
+        public StrategyInfo(Location fromLocation, BoardBase board, Guid playerGuid, int gameId, PlayerBase player,
             List<GoalField> undiscoveredGoalFields = null, Location toLocation = null)
         {
             FromLocation = fromLocation;
@@ -35,7 +36,7 @@ namespace Player.Strategy
         public Location ToLocation { get; set; }
         public BoardBase Board { get; set; }
         public int PlayerId { get; set; }
-        public string PlayerGuid { get; set; }
+        public Guid PlayerGuid { get; set; }
         public TeamColor Team { get; set; }
         public List<GoalField> UndiscoveredGoalFields { get; set; }
         public int GameId { get; set; }

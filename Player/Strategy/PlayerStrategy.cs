@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Common;
 using Common.BoardObjects;
 using Messaging.Requests;
@@ -13,7 +14,7 @@ namespace Player.Strategy
 
         public State CurrentState { get; set; }
 
-        public PlayerStrategy(PlayerBoard board, PlayerBase player, string playerGuid, int gameId)
+        public PlayerStrategy(PlayerBoard board, PlayerBase player, Guid playerGuid, int gameId)
         {
             var teamCoefficient = player.Team == TeamColor.Blue ? 0 : 1;
             var offset = teamCoefficient * (board.TaskAreaSize + board.GoalAreaSize);

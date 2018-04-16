@@ -41,7 +41,7 @@ namespace Messaging.InitialisationMessages
             throw new NotImplementedException();
         }
 
-        public string PlayerGuid { get; set; }
+        public Guid PlayerGuid { get; set; }
         public ActionInfo GetActionInfo()
         {
             //create new ActionInfo for join game message

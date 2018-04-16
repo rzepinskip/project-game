@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Xml.Serialization;
 using Common;
 using Common.ActionInfo;
 
@@ -13,7 +14,7 @@ namespace Messaging.Requests
         {
         }
 
-        public DiscoverRequest(string playerGuid, int gameId) : base(playerGuid, gameId)
+        public DiscoverRequest(Guid playerGuid, int gameId) : base(playerGuid, gameId)
         {
         }
 

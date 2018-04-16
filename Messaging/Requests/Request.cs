@@ -13,7 +13,7 @@ namespace Messaging.Requests
         {
         }
 
-        protected Request(string playerGuid, int gameId)
+        protected Request(Guid playerGuid, int gameId)
         {
             PlayerGuid = playerGuid;
             GameId = gameId;
@@ -21,7 +21,7 @@ namespace Messaging.Requests
 
         [XmlAttribute("gameId")] public int GameId { get; set; }
 
-        [XmlAttribute("playerGuid")] public string PlayerGuid { get; set; }
+        [XmlAttribute("playerGuid")] public Guid PlayerGuid { get; set; }
 
         public override IMessage Process(IGameMaster gameMaster)
         {
@@ -62,7 +62,7 @@ namespace Messaging.Requests
         {
             var hashCode = -497176057;
             hashCode = hashCode * -1521134295 + GameId.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(PlayerGuid);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Guid>.Default.GetHashCode(PlayerGuid);
             return hashCode;
         }
 

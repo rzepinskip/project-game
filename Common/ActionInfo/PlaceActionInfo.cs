@@ -1,8 +1,10 @@
-﻿namespace Common.ActionInfo
+﻿using System;
+
+namespace Common.ActionInfo
 {
     public class PlaceActionInfo : ActionInfo
     {
-        public PlaceActionInfo(string playerGuid) : base(playerGuid)
+        public PlaceActionInfo(Guid playerGuid) : base(playerGuid)
         {
         }
     }
