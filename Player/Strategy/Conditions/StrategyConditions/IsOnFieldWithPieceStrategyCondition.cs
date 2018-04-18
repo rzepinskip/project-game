@@ -1,4 +1,5 @@
 ﻿using Common.BoardObjects;
+using Common.Interfaces;
 using Messaging.Requests;
 using Player.Strategy.StateInfo;
 using Player.Strategy.States;
@@ -27,12 +28,12 @@ namespace Player.Strategy.Conditions.StrategyConditions
             return result;
         }
 
-        public override StrategyState GetNextState(StrategyState fromStrategyState)
+        public override BaseState GetNextState(BaseState fromStrategyState)
         {
             return new PickupPieceStrategyState(StrategyInfo);
         }
 
-        public override Request GetNextMessage(StrategyState fromStrategyState)
+        public override IMessage GetNextMessage(BaseState fromStrategyState)
         {
             return new PickUpPieceRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId);
         }

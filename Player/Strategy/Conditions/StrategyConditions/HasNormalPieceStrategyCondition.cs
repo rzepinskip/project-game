@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Interfaces;
 using Messaging.Requests;
 using Player.Strategy.StateInfo;
 using Player.Strategy.States;
@@ -25,12 +26,12 @@ namespace Player.Strategy.Conditions.StrategyConditions
             return result;
         }
 
-        public override StrategyState GetNextState(StrategyState fromStrategyState)
+        public override BaseState GetNextState(BaseState fromStrategyState)
         {
             return new MoveToUndiscoveredGoalStrategyState(StrategyInfo);
         }
 
-        public override Request GetNextMessage(StrategyState fromStrategyState)
+        public override IMessage GetNextMessage(BaseState fromStrategyState)
         {
             var undiscoveredGoalLocation = StrategyInfo.UndiscoveredGoalFields[0];
             var direction = undiscoveredGoalLocation.GetDirectionFrom(StrategyInfo.FromLocation);

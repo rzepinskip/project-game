@@ -1,6 +1,7 @@
 ﻿using System;
 using Common;
 using Common.ActionAvailability.AvailabilityChain;
+using Common.Interfaces;
 using Messaging.Requests;
 using Player.Strategy.StateInfo;
 using Player.Strategy.States;
@@ -22,7 +23,7 @@ namespace Player.Strategy.Conditions.StrategyConditions
             return !StrategyInfo.FromLocation.Equals(StrategyInfo.ToLocation);
         }
 
-        public override StrategyState GetNextState(StrategyState fromStrategyState)
+        public override BaseState GetNextState(BaseState fromStrategyState)
         {
             switch (fromStrategyState)
             {
@@ -37,7 +38,7 @@ namespace Player.Strategy.Conditions.StrategyConditions
             }
         }
 
-        public override Request GetNextMessage(StrategyState fromStrategyState)
+        public override IMessage GetNextMessage(BaseState fromStrategyState)
         {
             var direction = default(Direction);
             var onlyTaskArea = false;

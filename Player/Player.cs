@@ -72,10 +72,9 @@ namespace Player
             new Thread(() => CommunicationClient.StartClient()).Start();
         }
 
-        public IRequest GetNextRequestMessage()
+        public IMessage GetNextRequestMessage()
         {
-            var currentLocation = PlayerBoard.Players[Id].Location;
-            return PlayerStrategy.NextMove(currentLocation);
+            return PlayerStrategy.NextMove();
         }
 
         private void HandleResponse(IMessage response)

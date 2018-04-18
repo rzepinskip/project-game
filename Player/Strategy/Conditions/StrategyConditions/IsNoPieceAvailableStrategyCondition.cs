@@ -1,6 +1,7 @@
 ﻿using System;
 using Common;
 using Common.BoardObjects;
+using Common.Interfaces;
 using Messaging.Requests;
 using Player.Strategy.StateInfo;
 using Player.Strategy.States;
@@ -32,12 +33,12 @@ namespace Player.Strategy.Conditions.StrategyConditions
             return result;
         }
 
-        public override StrategyState GetNextState(StrategyState fromStrategyState)
+        public override BaseState GetNextState(BaseState fromStrategyState)
         {
             return new MoveToPieceStrategyState(StrategyInfo);
         }
 
-        public override Request GetNextMessage(StrategyState fromStrategyState)
+        public override IMessage GetNextMessage(BaseState fromStrategyState)
         {
             var direction = _directionGenerator.Next() % 2 == 0
                 ? Direction.Left

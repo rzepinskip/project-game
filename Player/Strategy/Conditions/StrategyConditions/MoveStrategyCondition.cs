@@ -1,6 +1,7 @@
 ﻿using Common;
 using Common.ActionAvailability.Helpers;
 using Common.BoardObjects;
+using Common.Interfaces;
 using Messaging.Requests;
 using Player.Strategy.StateInfo;
 using Player.Strategy.States;
@@ -19,12 +20,12 @@ namespace Player.Strategy.Conditions.StrategyConditions
             return true;
         }
 
-        public override StrategyState GetNextState(StrategyState fromStrategyState)
+        public override BaseState GetNextState(BaseState fromStrategyState)
         {
             return new MoveToPieceStrategyState(StrategyInfo);
         }
 
-        public override Request GetNextMessage(StrategyState fromStrategyState)
+        public override IMessage GetNextMessage(BaseState fromStrategyState)
         {
             var directionToNearest = Direction.Left;
             var distanceToNearest = int.MaxValue;
