@@ -2,22 +2,24 @@
 using Common.Interfaces;
 using Messaging.Requests;
 using Player.Strategy.Conditions;
+using Player.Strategy.Conditions.StrategyConditions;
+using Player.Strategy.StateInfo;
 
 namespace Player.Strategy.States
 {
     public abstract class State : ILoggable
     {
-        protected List<Condition> conditions;
+        protected List<StrategyCondition> conditions;
 
         protected State(StrategyInfo strategyInfo)
         {
             StrategyInfo = strategyInfo;
-            conditions = new List<Condition>();
+            conditions = new List<StrategyCondition>();
         }
 
         protected State()
         {
-            conditions = new List<Condition>();
+            conditions = new List<StrategyCondition>();
         }
 
         protected StrategyInfo StrategyInfo { get; }

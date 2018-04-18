@@ -2,11 +2,13 @@
 using Common;
 using Common.ActionAvailability.AvailabilityChain;
 using Messaging.Requests;
+using Player.Strategy.StateInfo;
 using Player.Strategy.States;
+using Player.Strategy.States.StrategyStates;
 
-namespace Player.Strategy.Conditions
+namespace Player.Strategy.Conditions.StrategyConditions
 {
-    internal class IsPlayerBlocked : Condition
+    internal class IsPlayerBlocked : StrategyCondition
     {
         private readonly Random _directionGenerator;
 
@@ -20,38 +22,38 @@ namespace Player.Strategy.Conditions
             return !StrategyInfo.FromLocation.Equals(StrategyInfo.ToLocation);
         }
 
-        public override State GetNextState(State fromState)
+        public override StrategyState GetNextState(StrategyState fromStrategyState)
         {
-            switch (fromState)
+            switch (fromStrategyState)
             {
-                case InGoalAreaMovingToTaskState inGoalAreaMovingToTaskState:
-                    return new InGoalAreaMovingToTaskState(StrategyInfo);
-                case MoveToPieceState moveToPieceState:
-                    return new MoveToPieceState(StrategyInfo);
-                case MoveToUndiscoveredGoalState moveToUndiscoveredGoalState:
-                    return new MoveToUndiscoveredGoalState(StrategyInfo);
+                case InGoalAreaMovingToTaskStrategyState inGoalAreaMovingToTaskState:
+                    return new InGoalAreaMovingToTaskStrategyState(StrategyInfo);
+                case MoveToPieceStrategyState moveToPieceState:
+                    return new MoveToPieceStrategyState(StrategyInfo);
+                case MoveToUndiscoveredGoalStrategyState moveToUndiscoveredGoalState:
+                    return new MoveToUndiscoveredGoalStrategyState(StrategyInfo);
                 default:
-                    throw new StrategyException("Unknown state", fromState, StrategyInfo);
+                    throw new StrategyException("Unknown state", fromStrategyState, StrategyInfo);
             }
         }
 
-        public override Request GetNextMessage(State fromState)
+        public override Request GetNextMessage(StrategyState fromStrategyState)
         {
             var direction = default(Direction);
             var onlyTaskArea = false;
-            switch (fromState)
+            switch (fromStrategyState)
             {
-                case MoveToPieceState moveToPieceState:
+                case MoveToPieceStrategyState moveToPieceState:
                 {
                     onlyTaskArea = true;
                     break;
                 }
-                case InGoalAreaMovingToTaskState inGoalAreaMovingToTaskState:
-                case MoveToUndiscoveredGoalState moveToUndiscoveredGoalState:
+                case InGoalAreaMovingToTaskStrategyState inGoalAreaMovingToTaskState:
+                case MoveToUndiscoveredGoalStrategyState moveToUndiscoveredGoalState:
                     break;
 
                 default:
-                    throw new StrategyException("Unknown state", fromState, StrategyInfo);
+                    throw new StrategyException("Unknown state", fromStrategyState, StrategyInfo);
             }
 
             direction = Randomize4WayDirection(StrategyInfo, onlyTaskArea);

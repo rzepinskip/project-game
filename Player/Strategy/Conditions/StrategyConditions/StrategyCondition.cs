@@ -3,11 +3,11 @@ using Player.Strategy.StateInfo;
 using Player.Strategy.States;
 using Player.Strategy.States.StrategyStates;
 
-namespace Player.Strategy.Conditions
+namespace Player.Strategy.Conditions.StrategyConditions
 {
-    public abstract class Condition : ICondition
+    public abstract class StrategyCondition : ICondition
     {
-        protected Condition(StrategyInfo strategyInfo)
+        protected StrategyCondition(StrategyInfo strategyInfo)
         {
             StrategyInfo = strategyInfo;
         }

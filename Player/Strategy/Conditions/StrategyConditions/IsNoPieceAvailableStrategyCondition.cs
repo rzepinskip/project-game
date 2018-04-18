@@ -2,15 +2,17 @@
 using Common;
 using Common.BoardObjects;
 using Messaging.Requests;
+using Player.Strategy.StateInfo;
 using Player.Strategy.States;
+using Player.Strategy.States.StrategyStates;
 
-namespace Player.Strategy.Conditions
+namespace Player.Strategy.Conditions.StrategyConditions
 {
-    public class IsNoPieceAvailableCondition : Condition
+    public class IsNoPieceAvailableStrategyCondition : StrategyCondition
     {
         private readonly Random _directionGenerator;
 
-        public IsNoPieceAvailableCondition(StrategyInfo strategyInfo) : base(strategyInfo)
+        public IsNoPieceAvailableStrategyCondition(StrategyInfo strategyInfo) : base(strategyInfo)
         {
             _directionGenerator = new Random();
         }
@@ -30,12 +32,12 @@ namespace Player.Strategy.Conditions
             return result;
         }
 
-        public override State GetNextState(State fromState)
+        public override StrategyState GetNextState(StrategyState fromStrategyState)
         {
-            return new MoveToPieceState(StrategyInfo);
+            return new MoveToPieceStrategyState(StrategyInfo);
         }
 
-        public override Request GetNextMessage(State fromState)
+        public override Request GetNextMessage(StrategyState fromStrategyState)
         {
             var direction = _directionGenerator.Next() % 2 == 0
                 ? Direction.Left

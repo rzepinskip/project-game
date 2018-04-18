@@ -2,13 +2,15 @@
 using Common.ActionAvailability.Helpers;
 using Common.BoardObjects;
 using Messaging.Requests;
+using Player.Strategy.StateInfo;
 using Player.Strategy.States;
+using Player.Strategy.States.StrategyStates;
 
-namespace Player.Strategy.Conditions
+namespace Player.Strategy.Conditions.StrategyConditions
 {
-    public class MoveCondition : Condition
+    public class MoveStrategyCondition : StrategyCondition
     {
-        public MoveCondition(StrategyInfo strategyInfo) : base(strategyInfo)
+        public MoveStrategyCondition(StrategyInfo strategyInfo) : base(strategyInfo)
         {
         }
 
@@ -17,12 +19,12 @@ namespace Player.Strategy.Conditions
             return true;
         }
 
-        public override State GetNextState(State fromState)
+        public override StrategyState GetNextState(StrategyState fromStrategyState)
         {
-            return new MoveToPieceState(StrategyInfo);
+            return new MoveToPieceStrategyState(StrategyInfo);
         }
 
-        public override Request GetNextMessage(State fromState)
+        public override Request GetNextMessage(StrategyState fromStrategyState)
         {
             var directionToNearest = Direction.Left;
             var distanceToNearest = int.MaxValue;

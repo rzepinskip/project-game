@@ -1,12 +1,14 @@
 ﻿using Common.BoardObjects;
 using Messaging.Requests;
+using Player.Strategy.StateInfo;
 using Player.Strategy.States;
+using Player.Strategy.States.StrategyStates;
 
-namespace Player.Strategy.Conditions
+namespace Player.Strategy.Conditions.StrategyConditions
 {
-    public class IsOnFieldWithNoPieceCondition : Condition
+    public class IsOnFieldWithNoPieceStrategyCondition : StrategyCondition
     {
-        public IsOnFieldWithNoPieceCondition(StrategyInfo strategyInfo) : base(strategyInfo)
+        public IsOnFieldWithNoPieceStrategyCondition(StrategyInfo strategyInfo) : base(strategyInfo)
         {
         }
 
@@ -25,12 +27,12 @@ namespace Player.Strategy.Conditions
             return result;
         }
 
-        public override State GetNextState(State fromState)
+        public override StrategyState GetNextState(StrategyState fromStrategyState)
         {
-            return new DiscoverState(StrategyInfo);
+            return new DiscoverStrategyState(StrategyInfo);
         }
 
-        public override Request GetNextMessage(State fromState)
+        public override Request GetNextMessage(StrategyState fromStrategyState)
         {
             return new DiscoverRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId);
         }

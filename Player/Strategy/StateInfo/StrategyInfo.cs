@@ -4,9 +4,9 @@ using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
 
-namespace Player.Strategy
+namespace Player.Strategy.StateInfo
 {
-    public class StrategyInfo : ILoggable
+    public class StrategyInfo : BaseInfo, ILoggable
     {
         public StrategyInfo(Location fromLocation, BoardBase board, Guid playerGuid, int gameId, PlayerBase player,
             List<GoalField> undiscoveredGoalFields = null, Location toLocation = null)
@@ -49,9 +49,5 @@ namespace Player.Strategy
             return string.Join('\n', "Strategy Info:", fields);
         }
 
-        public string ToLog()
-        {
-            return this.ToString();
-        }
     }
 }

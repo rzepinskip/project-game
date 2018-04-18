@@ -1,12 +1,14 @@
 ﻿using Common;
 using Messaging.Requests;
+using Player.Strategy.StateInfo;
 using Player.Strategy.States;
+using Player.Strategy.States.StrategyStates;
 
-namespace Player.Strategy.Conditions
+namespace Player.Strategy.Conditions.StrategyConditions
 {
-    public class HasNormalPieceCondition : Condition
+    public class HasNormalPieceStrategyCondition : StrategyCondition
     {
-        public HasNormalPieceCondition(StrategyInfo strategyInfo) : base(strategyInfo)
+        public HasNormalPieceStrategyCondition(StrategyInfo strategyInfo) : base(strategyInfo)
         {
         }
 
@@ -23,12 +25,12 @@ namespace Player.Strategy.Conditions
             return result;
         }
 
-        public override State GetNextState(State fromState)
+        public override StrategyState GetNextState(StrategyState fromStrategyState)
         {
-            return new MoveToUndiscoveredGoalState(StrategyInfo);
+            return new MoveToUndiscoveredGoalStrategyState(StrategyInfo);
         }
 
-        public override Request GetNextMessage(State fromState)
+        public override Request GetNextMessage(StrategyState fromStrategyState)
         {
             var undiscoveredGoalLocation = StrategyInfo.UndiscoveredGoalFields[0];
             var direction = undiscoveredGoalLocation.GetDirectionFrom(StrategyInfo.FromLocation);

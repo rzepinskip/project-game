@@ -1,12 +1,14 @@
 ﻿using Common.BoardObjects;
 using Messaging.Requests;
+using Player.Strategy.StateInfo;
 using Player.Strategy.States;
+using Player.Strategy.States.StrategyStates;
 
-namespace Player.Strategy.Conditions
+namespace Player.Strategy.Conditions.StrategyConditions
 {
-    public class IsOnFieldWithPieceCondition : Condition
+    public class IsOnFieldWithPieceStrategyCondition : StrategyCondition
     {
-        public IsOnFieldWithPieceCondition(StrategyInfo strategyInfo) : base(strategyInfo)
+        public IsOnFieldWithPieceStrategyCondition(StrategyInfo strategyInfo) : base(strategyInfo)
         {
         }
 
@@ -25,12 +27,12 @@ namespace Player.Strategy.Conditions
             return result;
         }
 
-        public override State GetNextState(State fromState)
+        public override StrategyState GetNextState(StrategyState fromStrategyState)
         {
-            return new PickupPieceState(StrategyInfo);
+            return new PickupPieceStrategyState(StrategyInfo);
         }
 
-        public override Request GetNextMessage(State fromState)
+        public override Request GetNextMessage(StrategyState fromStrategyState)
         {
             return new PickUpPieceRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId);
         }

@@ -1,11 +1,13 @@
 ﻿using Messaging.Requests;
+using Player.Strategy.StateInfo;
 using Player.Strategy.States;
+using Player.Strategy.States.StrategyStates;
 
-namespace Player.Strategy.Conditions
+namespace Player.Strategy.Conditions.StrategyConditions
 {
-    public class IsInGoalWithoutPieceCondition : Condition
+    public class IsInGoalWithoutPieceStrategyCondition : StrategyCondition
     {
-        public IsInGoalWithoutPieceCondition(StrategyInfo strategyInfo) : base(strategyInfo)
+        public IsInGoalWithoutPieceStrategyCondition(StrategyInfo strategyInfo) : base(strategyInfo)
         {
         }
 
@@ -14,12 +16,12 @@ namespace Player.Strategy.Conditions
             return !StrategyInfo.Board.IsLocationInTaskArea(StrategyInfo.FromLocation);
         }
 
-        public override State GetNextState(State fromState)
+        public override StrategyState GetNextState(StrategyState fromStrategyState)
         {
-            return new InGoalAreaMovingToTaskState(StrategyInfo);
+            return new InGoalAreaMovingToTaskStrategyState(StrategyInfo);
         }
 
-        public override Request GetNextMessage(State fromState)
+        public override Request GetNextMessage(StrategyState fromStrategyState)
         {
             var direction = StrategyInfo.FromLocation.DirectionToTask(StrategyInfo.Team);
             StrategyInfo.ToLocation = StrategyInfo.FromLocation.GetNewLocation(direction);
