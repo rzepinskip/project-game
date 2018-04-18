@@ -7,7 +7,7 @@ namespace Player.Strategy.States.StrategyStates
     {
         public DiscoverStrategyState(StrategyInfo strategyInfo) : base(strategyInfo)
         {
-            conditions.Add(new MoveStrategyCondition(strategyInfo));
+            transitionConditions.Add(new MoveStrategyCondition(strategyInfo));
         }
     }
 }

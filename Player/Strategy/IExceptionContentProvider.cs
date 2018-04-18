@@ -2,6 +2,6 @@
 {
     public interface IExceptionContentProvider
     {
-        string getExceptionInfo();
+        string GetExceptionInfo();
     }
 }

@@ -7,8 +7,8 @@ namespace Player.Strategy.States.StrategyStates
     {
         public TestPieceStrategyState(StrategyInfo strategyInfo) : base(strategyInfo)
         {
-            conditions.Add(new HasNoPieceStrategyCondition(strategyInfo));
-            conditions.Add(new HasNormalPieceStrategyCondition(strategyInfo));
+            transitionConditions.Add(new HasNoPieceStrategyCondition(strategyInfo));
+            transitionConditions.Add(new HasNormalPieceStrategyCondition(strategyInfo));
         }
     }
 }

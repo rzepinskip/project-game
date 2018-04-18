@@ -7,9 +7,9 @@ namespace Player.Strategy.States.StrategyStates
     {
         public MoveToUndiscoveredGoalStrategyState(StrategyInfo strategyInfo) : base(strategyInfo)
         {
-            conditions.Add(new IsPlayerBlocked(strategyInfo));
-            conditions.Add(new IsOnUndiscoveredGoalFieldStrategyCondition(strategyInfo));
-            conditions.Add(new HasNormalPieceStrategyCondition(strategyInfo));
+            transitionConditions.Add(new IsPlayerBlocked(strategyInfo));
+            transitionConditions.Add(new IsOnUndiscoveredGoalFieldStrategyCondition(strategyInfo));
+            transitionConditions.Add(new HasNormalPieceStrategyCondition(strategyInfo));
         }
     }
 }

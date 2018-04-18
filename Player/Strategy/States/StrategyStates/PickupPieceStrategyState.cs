@@ -7,7 +7,7 @@ namespace Player.Strategy.States.StrategyStates
     {
         public PickupPieceStrategyState(StrategyInfo strategyInfo) : base(strategyInfo)
         {
-            conditions.Add(new IsAbleToTestStrategyCondition(strategyInfo));
+            transitionConditions.Add(new IsAbleToTestStrategyCondition(strategyInfo));
         }
     }
 }

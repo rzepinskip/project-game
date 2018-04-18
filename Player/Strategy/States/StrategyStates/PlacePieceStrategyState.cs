@@ -7,7 +7,7 @@ namespace Player.Strategy.States.StrategyStates
     {
         protected PlacePieceStrategyState(StrategyInfo strategyInfo) : base(strategyInfo)
         {
-            conditions.Add(new IsInGoalWithoutPieceStrategyCondition(strategyInfo));
+            transitionConditions.Add(new IsInGoalWithoutPieceStrategyCondition(strategyInfo));
         }
     }
 }

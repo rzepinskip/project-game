@@ -7,9 +7,9 @@ namespace Player.Strategy.States.StrategyStates
     {
         public InGoalAreaMovingToTaskStrategyState(StrategyInfo strategyInfo) : base(strategyInfo)
         {
-            conditions.Add(new IsPlayerBlocked(strategyInfo));
-            conditions.Add(new IsInGoalWithoutPieceStrategyCondition(strategyInfo));
-            conditions.Add(new IsInTaskAreaStrategyCondition(strategyInfo));
+            transitionConditions.Add(new IsPlayerBlocked(strategyInfo));
+            transitionConditions.Add(new IsInGoalWithoutPieceStrategyCondition(strategyInfo));
+            transitionConditions.Add(new IsInTaskAreaStrategyCondition(strategyInfo));
         }
     }
 }

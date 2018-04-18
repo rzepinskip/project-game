@@ -1,4 +1,5 @@
-﻿using Messaging.Requests;
+﻿using Common.Interfaces;
+using Messaging.Requests;
 using Player.Strategy.StateInfo;
 using Player.Strategy.States;
 using Player.Strategy.States.StrategyStates;
@@ -17,12 +18,12 @@ namespace Player.Strategy.Conditions.StrategyConditions
             return playerInfo.Piece == null;
         }
 
-        public override StrategyState GetNextState(StrategyState fromStrategyState)
+        public override BaseState GetNextState(BaseState fromStrategyState)
         {
             return new DiscoverStrategyState(StrategyInfo);
         }
 
-        public override Request GetNextMessage(StrategyState fromStrategyState)
+        public override IMessage GetNextMessage(BaseState fromStrategyState)
         {
             return new DiscoverRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId);
         }

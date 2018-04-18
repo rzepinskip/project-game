@@ -1,4 +1,5 @@
-﻿using Messaging.Requests;
+﻿using Common.Interfaces;
+using Messaging.Requests;
 using Player.Strategy.States;
 using Player.Strategy.States.StrategyStates;
 
@@ -11,12 +12,12 @@ namespace Player.Strategy.Conditions.GameConditions
             throw new System.NotImplementedException();
         }
 
-        public StrategyState GetNextState(StrategyState fromStrategyState)
+        public BaseState GetNextState(BaseState fromStrategyState)
         {
             throw new System.NotImplementedException();
         }
 
-        public Request GetNextMessage(StrategyState fromStrategyState)
+        public IMessage GetNextMessage(BaseState fromStrategyState)
         {
             throw new System.NotImplementedException();
         }

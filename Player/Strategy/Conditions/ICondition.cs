@@ -1,4 +1,5 @@
-﻿using Messaging.Requests;
+﻿using Common.Interfaces;
+using Messaging.Requests;
 using Player.Strategy.States;
 using Player.Strategy.States.StrategyStates;
 
@@ -7,7 +8,7 @@ namespace Player.Strategy.Conditions
     public interface ICondition
     {
         bool CheckCondition();
-        StrategyState GetNextState(StrategyState fromStrategyState);
-        Request GetNextMessage(StrategyState fromStrategyState);
+        BaseState GetNextState(BaseState fromStrategyState);
+        IMessage GetNextMessage(BaseState fromStrategyState);
     }
 }

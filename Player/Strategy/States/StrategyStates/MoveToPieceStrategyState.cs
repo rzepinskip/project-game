@@ -7,10 +7,10 @@ namespace Player.Strategy.States.StrategyStates
     {
         public MoveToPieceStrategyState(StrategyInfo strategyInfo) : base(strategyInfo)
         {
-            conditions.Add(new IsPlayerBlocked(strategyInfo));
-            conditions.Add(new IsOnFieldWithNoPieceStrategyCondition(strategyInfo));
-            conditions.Add(new IsNoPieceAvailableStrategyCondition(strategyInfo));
-            conditions.Add(new IsOnFieldWithPieceStrategyCondition(strategyInfo));
+            transitionConditions.Add(new IsPlayerBlocked(strategyInfo));
+            transitionConditions.Add(new IsOnFieldWithNoPieceStrategyCondition(strategyInfo));
+            transitionConditions.Add(new IsNoPieceAvailableStrategyCondition(strategyInfo));
+            transitionConditions.Add(new IsOnFieldWithPieceStrategyCondition(strategyInfo));
         }
     }
 }

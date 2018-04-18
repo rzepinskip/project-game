@@ -2,7 +2,7 @@
 {
     public abstract class BaseInfo: IExceptionContentProvider 
     {
-        public string getExceptionInfo()
+        public string GetExceptionInfo()
         {
             return ToString();
         }
