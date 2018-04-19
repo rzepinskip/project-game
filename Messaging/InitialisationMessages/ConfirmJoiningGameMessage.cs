@@ -23,9 +23,11 @@ namespace Messaging.InitialisationMessages
             throw new NotImplementedException();
         }
 
-        public void Process(IPlayer player)
+        public bool Process(IPlayer player)
         {
             //handle join message
+
+            return false;
         }
 
         public void Process(ICommunicationServer cs, int id)

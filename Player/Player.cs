@@ -19,17 +19,32 @@ namespace Player
         public ObservableConcurrentQueue<IRequest> RequestsQueue { get; set; }
         public ObservableConcurrentQueue<IMessage> ResponsesQueue { get; set; }
 
-        private Guid PlayerGuid { get; set; }
-        private PlayerBoard PlayerBoard { get; set; }
+        public Guid PlayerGuid { get; set; }
+        public PlayerBoard PlayerBoard { get; set; }
         private ILogger _logger;
 
-        private IStrategy PlayerStrategy { get; set; }
+
+        private PlayerCoordinator PlayerCoordinator { get; set; }
 
         public IPlayerBoard Board => PlayerBoard;
+        public void UpdateGameState(IEnumerable<GameInfo> gameInfo)
+        {
+            PlayerCoordinator.UpdateGameStateInfo(gameInfo);
+        }
+
+        public void ChangePlayerCoordinatorState()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateJoiningInfo(bool info)
+        {
+            PlayerCoordinator.UpdateJoinInfo(info);
+        }
 
         public IClient CommunicationClient;
 
-        private int GameId { get; set; }
+        public int GameId { get; set; }
 
         public void InitializePlayer(int id, Guid guid, TeamColor team, PlayerType role, PlayerBoard board,
             Location location)
@@ -43,7 +58,6 @@ namespace Player
             PlayerGuid = guid;
             GameId = 0;
             PlayerBoard = board;
-            PlayerStrategy = new PlayerStrategy(board, this, guid, GameId);
             PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
 
             CommunicationClient = new AsynchronousClient(new PlayerConverter());
@@ -63,7 +77,6 @@ namespace Player
             PlayerGuid = guid;
             GameId = gameId;
             PlayerBoard = board;
-            PlayerStrategy = new PlayerStrategy(board, this, guid, GameId);
             PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
 
             await Task.Delay(10 * (id+1));
@@ -74,34 +87,13 @@ namespace Player
 
         public IMessage GetNextRequestMessage()
         {
-            return PlayerStrategy.NextMove();
+            return PlayerCoordinator.NextMove();
         }
 
         private void HandleResponse(IMessage response)
         {
-            //IMessage response;
-
-            //while (!ResponsesQueue.TryDequeue(out response))
-            //{
-                //Task.Delay(10);
-            //}
-            //Log received response
-            response.Process(this);
-            //
-            //change board state based on response 
-            //  - update method in Response Message
-            //based on board state change strategy state
-            //  - implement strategy
-            //  - hold current state
-            //  - implement state changing action (stateless in next iteration) which return new message
-            //
-            //var message = new Move()
-            //{
-            //    PlayerId = player.Id,
-            //    Direction = player.Team == TeamColor.Red ? Direction.Down : Direction.Up,
-            //};
-
-            //log current state
+            if (!response.Process(this))
+                return;
 
             try
             {

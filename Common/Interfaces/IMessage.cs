@@ -3,7 +3,7 @@
     public interface IMessage
     {
         IMessage Process(IGameMaster gameMaster);
-        void Process(IPlayer player);
+        bool Process(IPlayer player);
         void Process(ICommunicationServer cs, int id);
     }
 }

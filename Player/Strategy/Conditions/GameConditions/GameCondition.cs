@@ -1,5 +1,6 @@
 ﻿using Common.Interfaces;
 using Messaging.Requests;
+using Player.Strategy.StateInfo;
 using Player.Strategy.States;
 using Player.Strategy.States.StrategyStates;
 
@@ -7,19 +8,16 @@ namespace Player.Strategy.Conditions.GameConditions
 {
     public abstract class GameCondition : ICondition
     {
-        public bool CheckCondition()
+        public GameStateInfo GameStateInfo { get; set; }
+
+        public GameCondition(GameStateInfo gameStateInfo)
         {
-            throw new System.NotImplementedException();
+            GameStateInfo = gameStateInfo;
         }
 
-        public BaseState GetNextState(BaseState fromStrategyState)
-        {
-            throw new System.NotImplementedException();
-        }
+        public abstract bool CheckCondition();
 
-        public IMessage GetNextMessage(BaseState fromStrategyState)
-        {
-            throw new System.NotImplementedException();
-        }
+        public abstract BaseState GetNextState(BaseState fromStrategyState);
+        public abstract IMessage GetNextMessage(BaseState fromStrategyState);
     }
 }

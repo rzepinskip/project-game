@@ -25,7 +25,7 @@ namespace Messaging.InitialisationMessages
             throw new NotImplementedException();
         }
 
-        public void Process(IPlayer player)
+        public bool Process(IPlayer player)
         {
             throw new NotImplementedException();
         }

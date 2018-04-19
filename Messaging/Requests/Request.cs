@@ -29,7 +29,7 @@ namespace Messaging.Requests
             return ResponseWithData.ConvertToData(result.data, result.isGameFinished);
         }
 
-        public override void Process(IPlayer player)
+        public override bool Process(IPlayer player)
         {
             throw new InvalidOperationException();
         }
