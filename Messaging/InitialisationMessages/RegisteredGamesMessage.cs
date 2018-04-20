@@ -8,7 +8,7 @@ using Common.Interfaces;
 namespace Messaging.InitialisationMessages
 {
     [XmlType(XmlRootName)]
-    public class RegisteredGamesMessage : IMessage
+    public class RegisteredGamesMessage : Message
     {
         public const string XmlRootName = "RegisteredGames";
 
@@ -20,17 +20,17 @@ namespace Messaging.InitialisationMessages
 
         public GameInfo[] Games { get; set; }
 
-        public IMessage Process(IGameMaster gameMaster)
+        public override IMessage Process(IGameMaster gameMaster)
         {
             throw new NotImplementedException();
         }
 
-        public bool Process(IPlayer player)
+        public override bool Process(IPlayer player)
         {
             throw new NotImplementedException();
         }
 
-        public void Process(ICommunicationServer cs, int id)
+        public override void Process(ICommunicationServer cs, int id)
         {
             throw new NotImplementedException();
         }
