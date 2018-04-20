@@ -1,4 +1,4 @@
-﻿namespace TestScenarios.MoveScenarios.MoveToGoalField
+﻿namespace TestScenarios.MoveScenarios.MoveToTaskFieldWithPiece
 {
     public sealed class MoveToTaskFieldWithPiece : MoveScenarioBase
     {
