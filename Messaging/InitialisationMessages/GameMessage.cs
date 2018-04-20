@@ -13,7 +13,6 @@ namespace Messaging.InitialisationMessages
     public class GameMessage : Response
     {
         public const string XmlRootName = "Game";
-        public int PlayerId { get; set; }
 
         public GameMessage() { }
         public GameMessage(IEnumerable<PlayerBase> players, Location playerLocation, BoardInfo board)

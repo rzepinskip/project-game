@@ -2,6 +2,7 @@
 using System.Xml.Serialization;
 using Common;
 using Common.Interfaces;
+using Messaging.Responses;
 
 namespace Messaging.InitialisationMessages
 {
@@ -20,7 +21,6 @@ namespace Messaging.InitialisationMessages
         }
 
         public int GameId { get; set; }
-        public int PlayerId { get; set; }
         public Guid PrivateGuid { get; set; }
         public PlayerBase PlayerDefinition { get; set; }
         public override IMessage Process(IGameMaster gameMaster)

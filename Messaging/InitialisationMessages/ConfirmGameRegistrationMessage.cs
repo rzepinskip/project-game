@@ -5,7 +5,7 @@ using Common.Interfaces;
 namespace Messaging.InitialisationMessages
 {
     [XmlType(XmlRootName)]
-    public class ConfirmGameRegistrationMessage : IMessage
+    public class ConfirmGameRegistrationMessage : Message
     {
         public const string XmlRootName = "ConfirmGameRegistration";
 
@@ -17,18 +17,18 @@ namespace Messaging.InitialisationMessages
         }
 
         public int GameId { get; set; }
-        public IMessage Process(IGameMaster gameMaster)
+        public override IMessage Process(IGameMaster gameMaster)
         {
             //add new handler for confirm game registration
             throw new NotImplementedException();
         }
 
-        public bool Process(IPlayer player)
+        public override bool Process(IPlayer player)
         {
             return false;
         }
 
-        public void Process(ICommunicationServer cs, int id)
+        public override void Process(ICommunicationServer cs, int id)
         {
             throw new NotImplementedException();
         }

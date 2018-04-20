@@ -17,7 +17,6 @@ namespace Messaging.InitialisationMessages
             PlayerId = playerId;
         }
         public string GameName { get; set; }
-        public int PlayerId { get; set; }
         public override IMessage Process(IGameMaster gameMaster)
         {
             throw new NotImplementedException();
