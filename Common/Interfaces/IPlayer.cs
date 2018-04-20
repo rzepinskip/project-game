@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Common.BoardObjects;
 
 namespace Common.Interfaces
 {
@@ -9,5 +11,7 @@ namespace Common.Interfaces
         void ChangePlayerCoordinatorState();
         void UpdateJoiningInfo(bool info);
         void NotifyAboutGameEnd();
+        void UpdatePlayer(int playerid, Guid playerGuid, PlayerBase playerBase, int gameId);
+        void UpdatePlayerGame(PlayerBase[] players, Location playerLocation, BoardInfo board);
     }
 }

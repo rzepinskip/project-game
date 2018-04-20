@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
@@ -47,6 +48,23 @@ namespace Player
             PlayerCoordinator.NotifyAboutGameEnd();
         }
 
+        public void UpdatePlayer(int playerId, Guid playerGuid, PlayerBase playerBase, int gameId)
+        {
+            Id = playerId;
+            PlayerGuid = playerGuid;
+            Team = playerBase.Team;
+            Role = playerBase.Role;
+            GameId = gameId;
+        }
+
+        public void UpdatePlayerGame(PlayerBase[] players, Location playerLocation, BoardInfo board)
+        {
+            PlayerBoard = new PlayerBoard(board.Width, board.TasksHeight, board.GoalsHeight);
+            PlayerBoard.Players[Id] = new PlayerInfo(Id, Team, Role, playerLocation);
+
+            PlayerCoordinator.CreatePlayerStrategyFactory(new PlayerStrategyFactory(this));
+        }
+
         public IClient CommunicationClient;
 
         public int GameId { get; set; }
@@ -65,7 +83,7 @@ namespace Player
             PlayerBoard = board;
             PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
 
-            PlayerCoordinator = new PlayerCoordinator("game", new PlayerStrategyFactory(this));
+            PlayerCoordinator = new PlayerCoordinator("game");
 
             CommunicationClient = new AsynchronousClient(new PlayerConverter());
             CommunicationClient.SetupClient(HandleResponse);
@@ -86,7 +104,7 @@ namespace Player
             PlayerBoard = board;
             PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
 
-            PlayerCoordinator = new PlayerCoordinator("game", new PlayerStrategyFactory(this));
+            PlayerCoordinator = new PlayerCoordinator("game");
 
             await Task.Delay(10 * (id+1));
             CommunicationClient = new AsynchronousClient(new PlayerConverter());

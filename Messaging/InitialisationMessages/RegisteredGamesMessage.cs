@@ -27,7 +27,8 @@ namespace Messaging.InitialisationMessages
 
         public override bool Process(IPlayer player)
         {
-            throw new NotImplementedException();
+            player.UpdateGameState(Games);
+            return true;
         }
 
         public override void Process(ICommunicationServer cs, int id)

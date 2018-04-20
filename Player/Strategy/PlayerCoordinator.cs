@@ -20,10 +20,10 @@ namespace Player.Strategy
         /// 
         /// </summary>
 
-        private readonly GameStateInfo _gameStateInfo;
-        public PlayerCoordinator(string gameName, IPlayerStrategyFactory playerStrategyFactory)
+        public readonly GameStateInfo _gameStateInfo;
+        public PlayerCoordinator(string gameName)
         {
-            this._gameStateInfo = new GameStateInfo(gameName, playerStrategyFactory);
+            _gameStateInfo = new GameStateInfo(gameName);
             CurrentStrategyState = new GetGamesState(_gameStateInfo);
         }
 
@@ -53,6 +53,16 @@ namespace Player.Strategy
         public void NotifyAboutGameEnd()
         {
             _gameStateInfo.IsRunning = false;
+        }
+
+        public void CreatePlayerStrategy()
+        {
+            _gameStateInfo.CreatePlayerStrategy();
+        }
+
+        public void CreatePlayerStrategyFactory(IPlayerStrategyFactory playerStrategyFactory)
+        {
+            _gameStateInfo.PlayerStrategyFactory = playerStrategyFactory;
         }
 
         public BaseState CurrentStrategyState { get; set; }

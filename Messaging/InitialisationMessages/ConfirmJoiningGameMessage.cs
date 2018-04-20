@@ -30,8 +30,9 @@ namespace Messaging.InitialisationMessages
 
         public override bool Process(IPlayer player)
         {
-            //handle join message
-
+            player.UpdateJoiningInfo(true);
+            player.ChangePlayerCoordinatorState();
+            player.UpdatePlayer(PlayerId, PrivateGuid, PlayerDefinition, GameId);
             return false;
         }
 

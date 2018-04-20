@@ -14,17 +14,16 @@ namespace Player.Strategy.StateInfo
         public bool JoiningSuccessful { get; set; }
         public bool IsRunning { get; set; }
         public IStrategy PlayerStrategy { get; set; }
-        private IPlayerStrategyFactory _playerStrategyFactory;
+        public  IPlayerStrategyFactory PlayerStrategyFactory { get; set; }
 
-        public GameStateInfo(string gameName, IPlayerStrategyFactory playerStrategyFactory)
+        public GameStateInfo(string gameName)
         {
             GameName = gameName;
-            _playerStrategyFactory = playerStrategyFactory;
         }
 
         public void CreatePlayerStrategy()
         {
-            PlayerStrategy = _playerStrategyFactory.CreatePlayerStrategy();
+            PlayerStrategy = PlayerStrategyFactory.CreatePlayerStrategy();
         }
     }
 }

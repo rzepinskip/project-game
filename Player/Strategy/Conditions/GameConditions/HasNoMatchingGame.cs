@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Common;
 using Common.Interfaces;
 using Messaging.InitialisationMessages;
@@ -31,6 +32,7 @@ namespace Player.Strategy.Conditions.GameConditions
         public override IMessage GetNextMessage(BaseState fromStrategyState)
         {
             //Thread Sleep to avoid CS spamming
+            Thread.Sleep(1000);
             return new GetGamesMessage();
         }
     }
