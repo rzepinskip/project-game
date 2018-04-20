@@ -3,6 +3,8 @@ using TestScenarios.MoveScenarios;
 using TestScenarios.MoveScenarios.MoveToGoalField;
 using TestScenarios.MoveScenarios.MoveToTasFieldWithoutPiece;
 using TestScenarios.MoveScenarios.MoveToTaskFieldWithPiece;
+using TestScenarios.MoveScenarios.MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece;
+using TestScenarios.MoveScenarios.MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece;
 using Xunit;
 
 namespace GameMaster.Tests
@@ -39,7 +41,7 @@ namespace GameMaster.Tests
             //yield return new object[] { new MoveToTaskFieldOccupiedByPlayerWhoCarryPiece()};
             yield return new object[] { new MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece() };
             //yield return new object[] { new MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece()};
-            //yield return new object[] { new MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece()};
+            yield return new object[] { new MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece() };
         }
 
     }

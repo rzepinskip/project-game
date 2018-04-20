@@ -34,6 +34,27 @@
     <None Update="MoveScenarios\MoveToGoalField\MoveToGoalField-Response.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="MoveScenarios\MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece\MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece\MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece\MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece\MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece\MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece\MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece\MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="MoveScenarios\MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece\MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece-GM-Initial.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
