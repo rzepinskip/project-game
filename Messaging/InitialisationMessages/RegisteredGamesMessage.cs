@@ -1,18 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Serialization;
 using Common;
 using Common.Interfaces;
 
 namespace Messaging.InitialisationMessages
 {
+    [XmlType(XmlRootName)]
     public class RegisteredGamesMessage : IMessage
     {
+        public const string XmlRootName = "RegisteredGames";
+
+        public RegisteredGamesMessage() { }
         public RegisteredGamesMessage(IEnumerable<GameInfo> games)
         {
-            Games = games;
+            Games = games.ToArray();
         }
 
-        public IEnumerable<GameInfo> Games { get; set; }
+        public GameInfo[] Games { get; set; }
 
         public IMessage Process(IGameMaster gameMaster)
         {

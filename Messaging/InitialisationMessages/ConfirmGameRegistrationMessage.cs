@@ -4,8 +4,12 @@ using Common.Interfaces;
 
 namespace Messaging.InitialisationMessages
 {
+    [XmlType(XmlRootName)]
     public class ConfirmGameRegistrationMessage : IMessage
     {
+        public const string XmlRootName = "ConfirmGameRegistration";
+
+        public ConfirmGameRegistrationMessage() { }
 
         public ConfirmGameRegistrationMessage(int gameId)
         {

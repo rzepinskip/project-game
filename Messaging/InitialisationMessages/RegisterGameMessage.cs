@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Xml.Serialization;
 using Common;
 using Common.Interfaces;
 
 namespace Messaging.InitialisationMessages
 {
+    [XmlType(XmlRootName)]
     public class RegisterGameMessage : IMessage
     {
+        public const string XmlRootName = "RegisterGame";
+
+        public RegisterGameMessage() { }
         public RegisterGameMessage(GameInfo newGameInfo)
         {
             NewGameInfo = newGameInfo;

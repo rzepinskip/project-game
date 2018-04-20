@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Xml.Serialization;
 using Common;
 using Common.Interfaces;
 
 namespace Messaging.InitialisationMessages
 {
+    [XmlType(XmlRootName)]
     public class ConfirmJoiningGameMessage : IResponse
     {
+        public const string XmlRootName = "ConfirmJoiningGame";
+        
+        public ConfirmJoiningGameMessage() { }
         public ConfirmJoiningGameMessage(int gameId, int playerId, Guid privateGuid, PlayerBase playerDefiniton)
         {
             GameId = gameId;

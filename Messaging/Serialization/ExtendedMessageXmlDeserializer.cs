@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using Messaging.InitialisationMessages;
 using Messaging.Requests;
 using Messaging.Responses;
 
@@ -38,6 +39,38 @@ namespace Messaging.Serialization
                 {
                     ResponseWithData.XmlRootName,
                     GetDefaultXmlSerializer(typeof(ResponseWithData))
+                },
+                {
+                    ConfirmGameRegistrationMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(ConfirmGameRegistrationMessage))
+                },
+                {
+                    GameMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(GameMessage))
+                },
+                {
+                    GetGamesMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(GetGamesMessage))
+                },
+                {
+                    JoinGameMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(JoinGameMessage))
+                },
+                {
+                    RegisteredGamesMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(RegisteredGamesMessage))
+                },
+                {
+                    RegisterGameMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(RegisterGameMessage))
+                },
+                {
+                    RejectJoiningGame.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(RejectJoiningGame))
+                },
+                {
+                    ConfirmJoiningGameMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(ConfirmJoiningGameMessage))
                 },
             };
         }

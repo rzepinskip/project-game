@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Xml.Serialization;
 using Common;
 using Common.ActionInfo;
 using Common.Interfaces;
 
 namespace Messaging.InitialisationMessages
 {
+    [XmlType(XmlRootName)]
     public class JoinGameMessage : IRequest
     {
+        public const string XmlRootName = "JoinGame";
+
+        public JoinGameMessage() { }
         public JoinGameMessage(string gameName, PlayerType preferedRole, TeamColor preferedTeam)
         {
             GameName = gameName;
