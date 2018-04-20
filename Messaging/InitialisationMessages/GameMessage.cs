@@ -5,11 +5,12 @@ using System.Xml.Serialization;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
+using Messaging.Responses;
 
 namespace Messaging.InitialisationMessages
 {
     [XmlType(XmlRootName)]
-    public class GameMessage : IResponse
+    public class GameMessage : Response
     {
         public const string XmlRootName = "Game";
         public int PlayerId { get; set; }
@@ -26,17 +27,17 @@ namespace Messaging.InitialisationMessages
         public Location PlayerLocation { get; set; }
         public BoardInfo Board { get; set; }
 
-        public IMessage Process(IGameMaster gameMaster)
+        public override IMessage Process(IGameMaster gameMaster)
         {
             throw new NotImplementedException();
         }
 
-        public bool Process(IPlayer player)
+        public override bool Process(IPlayer player)
         {
             throw new NotImplementedException();
         }
 
-        public void Process(ICommunicationServer cs, int id)
+        public override void Process(ICommunicationServer cs, int id)
         {
             cs.UnregisterGame(id);
             cs.Send(this, PlayerId);

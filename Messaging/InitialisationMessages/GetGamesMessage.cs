@@ -5,23 +5,23 @@ using Common.Interfaces;
 namespace Messaging.InitialisationMessages
 {
     [XmlType(XmlRootName)]
-    public class GetGamesMessage : IMessage
+    public class GetGamesMessage : Message
     {
         public const string XmlRootName = "GetGames";
 
         public GetGamesMessage() { }
 
-        public IMessage Process(IGameMaster gameMaster)
+        public override IMessage Process(IGameMaster gameMaster)
         {
             throw new NotImplementedException();
         }
 
-        public bool Process(IPlayer player)
+        public override bool Process(IPlayer player)
         {
             throw new NotImplementedException();
         }
 
-        public void Process(ICommunicationServer cs, int id)
+        public override void Process(ICommunicationServer cs, int id)
         {
             cs.Send(new RegisteredGamesMessage(cs.GetGames()), id);
         }

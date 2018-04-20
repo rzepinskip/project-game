@@ -6,7 +6,7 @@ using Common.Interfaces;
 namespace Messaging.InitialisationMessages
 {
     [XmlType(XmlRootName)]
-    public class ConfirmJoiningGameMessage : IResponse
+    public class ConfirmJoiningGameMessage : Response
     {
         public const string XmlRootName = "ConfirmJoiningGame";
         
@@ -23,19 +23,19 @@ namespace Messaging.InitialisationMessages
         public int PlayerId { get; set; }
         public Guid PrivateGuid { get; set; }
         public PlayerBase PlayerDefinition { get; set; }
-        public IMessage Process(IGameMaster gameMaster)
+        public override IMessage Process(IGameMaster gameMaster)
         {
             throw new NotImplementedException();
         }
 
-        public bool Process(IPlayer player)
+        public override bool Process(IPlayer player)
         {
             //handle join message
 
             return false;
         }
 
-        public void Process(ICommunicationServer cs, int id)
+        public override void Process(ICommunicationServer cs, int id)
         {
             //update team count
             cs.UpdateTeamCount(id, PlayerDefinition.Team);
