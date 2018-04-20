@@ -3,6 +3,7 @@ using Common.Interfaces;
 using Messaging.InitialisationMessages;
 using Player.Strategy.StateInfo;
 using Player.Strategy.States;
+using Player.Strategy.States.GameStates;
 
 namespace Player.Strategy.Conditions.GameConditions
 {

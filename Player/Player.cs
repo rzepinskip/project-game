@@ -22,11 +22,10 @@ namespace Player
         public Guid PlayerGuid { get; set; }
         public PlayerBoard PlayerBoard { get; set; }
         private ILogger _logger;
-
-
         private PlayerCoordinator PlayerCoordinator { get; set; }
-
         public IPlayerBoard Board => PlayerBoard;
+
+        private bool _hasGameEnded;
         public void UpdateGameState(IEnumerable<GameInfo> gameInfo)
         {
             PlayerCoordinator.UpdateGameStateInfo(gameInfo);
@@ -34,12 +33,18 @@ namespace Player
 
         public void ChangePlayerCoordinatorState()
         {
-            throw new NotImplementedException();
+            PlayerCoordinator.NextState();
         }
 
         public void UpdateJoiningInfo(bool info)
         {
             PlayerCoordinator.UpdateJoinInfo(info);
+        }
+
+        public void NotifyAboutGameEnd()
+        {
+            _hasGameEnded = true;
+            PlayerCoordinator.NotifyAboutGameEnd();
         }
 
         public IClient CommunicationClient;
@@ -60,6 +65,8 @@ namespace Player
             PlayerBoard = board;
             PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
 
+            PlayerCoordinator = new PlayerCoordinator("game", new PlayerStrategyFactory(this));
+
             CommunicationClient = new AsynchronousClient(new PlayerConverter());
             CommunicationClient.SetupClient(HandleResponse);
             new Thread(() => CommunicationClient.StartClient()).Start();
@@ -79,6 +86,8 @@ namespace Player
             PlayerBoard = board;
             PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
 
+            PlayerCoordinator = new PlayerCoordinator("game", new PlayerStrategyFactory(this));
+
             await Task.Delay(10 * (id+1));
             CommunicationClient = new AsynchronousClient(new PlayerConverter());
             CommunicationClient.SetupClient(HandleResponse);
@@ -92,6 +101,12 @@ namespace Player
 
         private void HandleResponse(IMessage response)
         {
+            if (_hasGameEnded)
+            {
+                _hasGameEnded = true;
+                return;
+            }
+
             if (!response.Process(this))
                 return;
 

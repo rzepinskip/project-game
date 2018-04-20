@@ -8,5 +8,6 @@ namespace Common.Interfaces
         void UpdateGameState(IEnumerable<GameInfo> gameInfo);
         void ChangePlayerCoordinatorState();
         void UpdateJoiningInfo(bool info);
+        void NotifyAboutGameEnd();
     }
 }

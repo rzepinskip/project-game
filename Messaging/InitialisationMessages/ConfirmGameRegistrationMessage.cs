@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Xml.Serialization;
 using Common.Interfaces;
 
 namespace Messaging.InitialisationMessages
 {
     public class ConfirmGameRegistrationMessage : IMessage
     {
+
         public ConfirmGameRegistrationMessage(int gameId)
         {
             GameId = gameId;

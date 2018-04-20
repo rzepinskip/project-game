@@ -1,30 +1,31 @@
 ﻿using Common.Interfaces;
+using Player.Strategy.Conditions;
 using Player.Strategy.StateInfo;
 using Player.Strategy.States;
-using Player.Strategy.States.GameStates;
 
 namespace Player.Strategy.Conditions.GameConditions
 {
-    public class IsJoinSuccessfulCondition : GameCondition
+    internal class HasGameStartedCondition : GameCondition
     {
-        public IsJoinSuccessfulCondition(GameStateInfo gameStateInfo) : base(gameStateInfo)
+
+        public HasGameStartedCondition(GameStateInfo gameStateInfo)
+            : base(gameStateInfo)
         {
         }
 
         public override bool CheckCondition()
         {
-            return GameStateInfo.JoiningSuccessful;
+            return GameStateInfo.IsRunning;
         }
 
         public override BaseState GetNextState(BaseState fromStrategyState)
         {
-            return new GameStartedState(GameStateInfo);
+            return fromStrategyState;
         }
 
         public override IMessage GetNextMessage(BaseState fromStrategyState)
         {
-            //Wainting for another response, not sending message
-            throw new System.NotImplementedException();
+            return GameStateInfo.PlayerStrategy.NextMove();
         }
     }
 }

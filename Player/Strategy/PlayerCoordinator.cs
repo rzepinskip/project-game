@@ -5,6 +5,7 @@ using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
 using Messaging.Requests;
+using Player.Interfaces;
 using Player.Strategy.StateInfo;
 using Player.Strategy.States;
 using Player.Strategy.States.GameStates;
@@ -20,9 +21,10 @@ namespace Player.Strategy
         /// </summary>
 
         private readonly GameStateInfo _gameStateInfo;
-        public PlayerCoordinator()
+        public PlayerCoordinator(string gameName, IPlayerStrategyFactory playerStrategyFactory)
         {
-            this._gameStateInfo = new GameStateInfo();
+            this._gameStateInfo = new GameStateInfo(gameName, playerStrategyFactory);
+            CurrentStrategyState = new GetGamesState(_gameStateInfo);
         }
 
         public void UpdateJoinInfo(bool info)
@@ -38,9 +40,19 @@ namespace Player.Strategy
             return message;
         }
 
+        public void NextState()
+        {
+            CurrentStrategyState = CurrentStrategyState.GetNextState();
+        }
+
         public void UpdateGameStateInfo(IEnumerable<GameInfo> gameInfo)
         {
             _gameStateInfo.GameInfo = gameInfo;
+        }
+
+        public void NotifyAboutGameEnd()
+        {
+            _gameStateInfo.IsRunning = false;
         }
 
         public BaseState CurrentStrategyState { get; set; }
