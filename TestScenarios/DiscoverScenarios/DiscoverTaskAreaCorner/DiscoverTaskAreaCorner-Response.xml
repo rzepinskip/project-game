@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Data playerId="1" gameFinished="false" xmlns="https://se2.mini.pw.edu.pl/17-results/">
+  <TaskFields>
+    <TaskField x="0" y="2" timestamp="2018-04-12T15:33:40" playerId="1" distanceToPiece="-1" />
+    <TaskField x="0" y="3" timestamp="2018-04-12T15:33:40" distanceToPiece="-1" />
+    <TaskField x="1" y="2" timestamp="2018-04-12T15:33:40" distanceToPiece="-1" />
+    <TaskField x="1" y="3" timestamp="2018-04-12T15:33:40" distanceToPiece="-1" />
+  </TaskFields>
+  <GoalFields />
+  <Pieces />
+</Data>

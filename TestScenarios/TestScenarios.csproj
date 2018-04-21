@@ -34,6 +34,27 @@
     <None Update="DiscoverScenarios\DiscoverTaskAreaBoardEdge\DiscoverTaskAreaBoardEdge-Response.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="DiscoverScenarios\DiscoverTaskAreaCorner\DiscoverTaskAreaCorner-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverTaskAreaCorner\DiscoverTaskAreaCorner-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverTaskAreaCorner\DiscoverTaskAreaCorner-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverTaskAreaCorner\DiscoverTaskAreaCorner-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverTaskAreaCorner\DiscoverTaskAreaCorner-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverTaskAreaCorner\DiscoverTaskAreaCorner-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverTaskAreaCorner\DiscoverTaskAreaCorner-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="DiscoverScenarios\DiscoverTaskAreaEdge\DiscoverTaskAreaEdge-GM-Initial.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
