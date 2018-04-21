@@ -7,12 +7,12 @@ namespace GameSimulation
     {
         private static void Main(string[] args)
         {
-            var simulation = new GameSimulation("Resources/ExampleAdvancedConfig.xml");
+            var simulation = new GameSimulation("Resources/ExampleConfig.xml");
             simulation.StartSimulation();
             while (true)
             {
                 var boardVisualizer = new BoardVisualizer();
-                for (var i = 0;; i++)
+                for (var i = 0; ; i++)
                 {
                     if (simulation.GameFinished)
                         break;
@@ -22,7 +22,9 @@ namespace GameSimulation
                     Console.WriteLine(i);
                 }
 
-                Console.WriteLine($"Game finished - team {simulation.Winners} won!");
+                if (simulation.GameFinished)
+                    Console.WriteLine($"Game finished - team {simulation.Winners} won!");
+
                 Thread.Sleep(1000);
             }
         }
