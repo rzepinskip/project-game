@@ -76,6 +76,27 @@
     <None Update="DiscoverScenarios\DiscoverTaskAreaEdge\DiscoverTaskAreaEdge-Response.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="DiscoverScenarios\DiscoverGoalAreaEdge\DiscoverGoalAreaEdge-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverGoalAreaEdge\DiscoverGoalAreaEdge-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverGoalAreaEdge\DiscoverGoalAreaEdge-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverGoalAreaEdge\DiscoverGoalAreaEdge-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverGoalAreaEdge\DiscoverGoalAreaEdge-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverGoalAreaEdge\DiscoverGoalAreaEdge-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverGoalAreaEdge\DiscoverGoalAreaEdge-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="DiscoverScenarios\DiscoverRegular\DiscoverRegular-Player-Updated.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using TestScenarios.DiscoverScenarios;
+using TestScenarios.DiscoverScenarios.DiscoverGoalAreaEdge;
 using TestScenarios.DiscoverScenarios.DiscoverRegular;
 using TestScenarios.DiscoverScenarios.DiscoverTaskAreaBoardEdge;
 using TestScenarios.DiscoverScenarios.DiscoverTaskAreaCorner;
@@ -36,9 +37,9 @@ namespace Player.Tests
             //yield return new object[] { new DiscoverRegular() };
             //yield return new object[] { new DiscoverTaskAreaEdge() };
             //yield return new object[] { new DiscoverTaskAreaBoardEdge() };
-            yield return new object[] { new DiscoverTaskAreaCorner() };
+            //yield return new object[] { new DiscoverTaskAreaCorner() };
             //yield return new object[] { new DiscoverGoalAreaCorner() };
-            //yield return new object[] { new DiscoverGoalAreaEdge() };
+            yield return new object[] { new DiscoverGoalAreaEdge() };
             //yield return new object[] { new DiscoverBoardCorner() };
             //yield return new object[] { new DiscoverPiece() };
             //yield return new object[] { new DiscoverPlayer() };
