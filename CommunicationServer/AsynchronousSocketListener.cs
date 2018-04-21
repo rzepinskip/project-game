@@ -149,7 +149,7 @@ namespace CommunicationServer
                     for (var i = 0; i < numberOfMessages - 1; ++i)
                     {
                         var message = messages[i];
-                        Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
+                        Debug.WriteLine("Read {0} bytes from socket. \n Data : {1}",
                             message.Length, message);
                         state.LastMessageReceivedTicks = DateTime.Today.Ticks;
                         MessageReceivedEvent?.Invoke(_messageConverter.ConvertStringToMessage(message), state.SocketId);
@@ -196,7 +196,7 @@ namespace CommunicationServer
             {
                 var handler = (Socket)ar.AsyncState;
                 var bytesSent = handler.EndSend(ar);
-                Console.WriteLine("Sent {0} bytes to client.", bytesSent);
+                Debug.WriteLine("Sent {0} bytes to client.", bytesSent);
             }
             catch (Exception e)
             {

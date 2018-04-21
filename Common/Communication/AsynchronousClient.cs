@@ -60,7 +60,7 @@ namespace Common.Communication
 
                 _client.EndConnect(ar);
 
-                Console.WriteLine("Socket connected to {0}", _client.RemoteEndPoint);
+                Debug.WriteLine("Socket connected to {0}", _client.RemoteEndPoint);
 
                 _connectDone.Set();
                 _connectDoneForSend.Set();
@@ -74,7 +74,7 @@ namespace Common.Communication
         private void StartReading()
         {
             var state = new CommunicationStateObject(_client);
-            Console.WriteLine("Client starts reading");
+            Debug.WriteLine("Client starts reading");
             while (true)
             {
                 _receiveDone.Reset();
