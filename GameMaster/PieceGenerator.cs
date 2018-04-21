@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Common;
 using Common.BoardObjects;
-using Common.Interfaces;
 
 namespace GameMaster
 {
@@ -23,12 +23,16 @@ namespace GameMaster
             lock (_board.Lock)
             {
                 var location = GetLocationWithoutPiece();
-            var taskField = _board[location] as TaskField;
+
+                if (location == null)
+                    return;
+
+                var taskField = _board[location] as TaskField;
 
                 var pieceId = _board.Pieces.Count > 0 ? _board.Pieces.Keys.ToList().Max() + 1 : 0;
                 var type = _random.NextDouble() <= _shamProbability
-                ? PieceType.Sham
-                : PieceType.Normal;
+                    ? PieceType.Sham
+                    : PieceType.Normal;
 
                 var piece = new Piece(pieceId, type);
                 _board.Pieces.Add(pieceId, piece);
@@ -38,20 +42,25 @@ namespace GameMaster
 
         private Location GetLocationWithoutPiece()
         {
-            Location location;
-
             var taskAreaBottomLeftCorner = new Location(0, _board.GoalAreaSize);
             var taskAreaTopRightCorner = new Location(_board.Width - 1, _board.Height - (_board.GoalAreaSize + 1));
-            var counter = 0;
-            do
-            {
-                var randomX = _random.Next(taskAreaBottomLeftCorner.X, taskAreaTopRightCorner.X + 1);
-                var randomY = _random.Next(taskAreaBottomLeftCorner.Y, taskAreaTopRightCorner.Y + 1);
-                location = new Location(randomX, randomY);
-                counter++;
-            } while (_board.GetPieceIdAt(location) != null && counter < 100);
 
-            return location;
+            var locations = new List<Location>();
+            for (var x = taskAreaBottomLeftCorner.X; x < taskAreaTopRightCorner.X + 1; x++)
+            for (var y = taskAreaBottomLeftCorner.Y; y < taskAreaTopRightCorner.Y + 1; y++)
+            {
+                var location = new Location(x, y);
+
+                if ((_board[location] as TaskField).PieceId == null)
+                    locations.Add(location);
+            }
+
+            if (locations.Count == 0)
+                return null;
+
+            var randomIndex = _random.Next(0, locations.Count);
+
+            return locations[randomIndex];
         }
     }
 }
