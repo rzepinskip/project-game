@@ -120,7 +120,7 @@ namespace Common.Communication
                 {
                     state.Sb.Append(Encoding.ASCII.GetString(state.Buffer, 0, bytesRead));
                     response = state.Sb.ToString();
-
+                    Debug.WriteLine(response);
                     if (response.IndexOf(CommunicationStateObject.EtbByte) > -1)
                     {
                         var messages = response.Split(CommunicationStateObject.EtbByte);
@@ -150,7 +150,7 @@ namespace Common.Communication
             }
             catch (Exception e)
             {
-                //Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
         }
 

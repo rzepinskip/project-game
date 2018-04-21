@@ -15,6 +15,13 @@ namespace GameMaster
 
         protected override GameMasterBoard Board { get; set; }
 
+        private IEnumerable<PlayerBase> _players;
+
+        public void InitializePlayersOnBoard(GameDefinition gameDefinition)
+        {
+            _players = GeneratePlayers(gameDefinition.NumberOfPlayersPerTeam);
+        }
+
         public GameMasterBoard InitializeBoard(GameDefinition gameDefinition)
         {
             Board = new GameMasterBoard(gameDefinition.BoardWidth, gameDefinition.TaskAreaLength,
@@ -27,9 +34,8 @@ namespace GameMaster
 
             PlaceGoals(gameDefinition.Goals);
 
-            var players = GeneratePlayers(gameDefinition.NumberOfPlayersPerTeam);
             var playersLocations = GenerateLocationsForPlayers(gameDefinition.NumberOfPlayersPerTeam);
-            var playersWithLocation = AssignLocationsToPlayers(players, playersLocations);
+            var playersWithLocation = AssignLocationsToPlayers(_players, playersLocations);
             PlacePlayers(playersWithLocation);
 
             return Board;
@@ -123,10 +129,10 @@ namespace GameMaster
                 var team = i % 2 == 0 ? TeamColor.Red : TeamColor.Blue;
                 var role = PlayerType.Member;
 
-                if (i < 2)
-                    role = PlayerType.Leader;
+                //if (i < 2)
+                //    role = PlayerType.Leader;
 
-                var player = new PlayerBase(i, team, role);
+                var player = new PlayerBase(-(i+1), team, role);
                 players.Add(player);
             }
 

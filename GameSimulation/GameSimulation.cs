@@ -15,7 +15,7 @@ namespace GameSimulation
 {
     internal class GameSimulation
     {
-        private readonly Thread _pieceGeneratorThread;
+        private  Thread _pieceGeneratorThread;
 
         private readonly int _spawnPieceFrequency;
 
@@ -34,8 +34,9 @@ namespace GameSimulation
 
             GameMaster.GameFinished += GameMaster_GameFinished;
 
-            CreateQueues(GameMaster, Players);
-            _pieceGeneratorThread = new Thread(() => PieceGeneratorGameplay(PieceGenerator));
+            CreateQueues(GameMaster);
+            
+            
         }
 
         public GameMaster.GameMaster GameMaster { get; }
@@ -51,20 +52,21 @@ namespace GameSimulation
         {
             Winners = e.Winners;
             GameFinished = true;
-            _pieceGeneratorThread.Join();
+            //_pieceGeneratorThread.Join();
         }
 
-        private void CreateQueues(GameMaster.GameMaster gameMaster, List<Player.Player> players)
+        private void CreateQueues(GameMaster.GameMaster gameMaster)
         {
-            foreach (var player in players)
+            //foreach (var player in players)
+            for(int i = 0; i < gameMaster.Board.Players.Count; ++i)
             {
-                player.RequestsQueue = new ObservableConcurrentQueue<IRequest>();
-                player.ResponsesQueue = new ObservableConcurrentQueue<IMessage>();
+                var RequestsQueue = new ObservableConcurrentQueue<IRequest>();
+                var ResponsesQueue = new ObservableConcurrentQueue<IMessage>();
 
-                gameMaster.RequestsQueues.Add(player.Id, player.RequestsQueue);
-                gameMaster.ResponsesQueues.Add(player.Id, player.ResponsesQueue);
-                gameMaster.IsPlayerQueueProcessed.Add(player.Id, false);
-                gameMaster.IsPlayerQueueProcessedLock.Add(player.Id, new object());
+                gameMaster.RequestsQueues.Add(i, RequestsQueue);
+                gameMaster.ResponsesQueues.Add(i, ResponsesQueue);
+                gameMaster.IsPlayerQueueProcessed.Add(i, false);
+                gameMaster.IsPlayerQueueProcessedLock.Add(i, new object());
             }
         }
 
@@ -82,22 +84,22 @@ namespace GameSimulation
 
             for (var i = 0; i < playersCount; i++)
             {
-                var playerBoard = new PlayerBoard(gameMaster.Board.Width, gameMaster.Board.TaskAreaSize,
-                    gameMaster.Board.GoalAreaSize);
-                var playerInfo = gameMaster.Board.Players[i];
+                //var playerBoard = new PlayerBoard(gameMaster.Board.Width, gameMaster.Board.TaskAreaSize,
+                    //gameMaster.Board.GoalAreaSize);
+                //var playerInfo = gameMaster.Board.Players[i];
                 var player = new Player.Player();
 
-                Guid playerGuid;
-                foreach (var guidIdPair in GameMaster.PlayerGuidToId)
-                {
-                    if (guidIdPair.Value == i)
-                    {
-                        playerGuid = guidIdPair.Key;
-                        break;
-                    }
-                }
+                //Guid playerGuid;
+                //foreach (var guidIdPair in GameMaster.PlayerGuidToId)
+                //{
+                //    if (guidIdPair.Value == i)
+                //    {
+                //        playerGuid = guidIdPair.Key;
+                //        break;
+                //    }
+                //}
 
-                await player.InitializePlayer(i, playerGuid, -1, playerInfo.Team, playerInfo.Role, playerBoard, playerInfo.Location);
+                player.InitializePlayer();
                 players.Add(player);
             }
 
@@ -106,6 +108,7 @@ namespace GameSimulation
 
         public void StartSimulation()
         {
+            _pieceGeneratorThread = new Thread(() => PieceGeneratorGameplay(PieceGenerator));
             _pieceGeneratorThread.Start();
 
             GameMaster.StartListeningToRequests();

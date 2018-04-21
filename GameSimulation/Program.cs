@@ -9,19 +9,22 @@ namespace GameSimulation
         {
             var simulation = new GameSimulation("Resources/ExampleAdvancedConfig.xml");
             simulation.StartSimulation();
-
-            var boardVisualizer = new BoardVisualizer();
-            for (var i = 0;; i++)
+            while (true)
             {
-                if (simulation.GameFinished)
-                    break;
+                var boardVisualizer = new BoardVisualizer();
+                for (var i = 0;; i++)
+                {
+                    if (simulation.GameFinished)
+                        break;
 
-                Thread.Sleep(200);
-                boardVisualizer.VisualizeBoard(simulation.GameMaster.Board);
-                Console.WriteLine(i);
+                    Thread.Sleep(200);
+                    boardVisualizer.VisualizeBoard(simulation.GameMaster.Board);
+                    Console.WriteLine(i);
+                }
+
+                Console.WriteLine($"Game finished - team {simulation.Winners} won!");
+                Thread.Sleep(1000);
             }
-
-            Console.WriteLine($"Game finished - team {simulation.Winners} won!");
         }
     }
 }

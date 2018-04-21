@@ -90,23 +90,22 @@ namespace Player
             new Thread(() => CommunicationClient.StartClient()).Start();
         }
 
-        public async Task InitializePlayer(int id, Guid guid, int gameId, TeamColor team, PlayerType role, PlayerBoard board,
-            Location location)
+        public void InitializePlayer()
         {
             var factory = new LoggerFactory();
-            _logger = factory.GetPlayerLogger(id);
+            _logger = factory.GetPlayerLogger(0);
 
-            Id = id;
-            Team = team;
-            Role = role;
-            PlayerGuid = guid;
-            GameId = gameId;
-            PlayerBoard = board;
-            PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
+            //Id = id;
+            //Team = team;
+            //Role = role;
+            //PlayerGuid = guid;
+            //GameId = gameId;
+            //PlayerBoard = board;
+            //PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
 
             PlayerCoordinator = new PlayerCoordinator("game");
 
-            await Task.Delay(10 * (id+1));
+            //await Task.Delay(10 * (id+1));
             CommunicationClient = new AsynchronousClient(new PlayerConverter());
             CommunicationClient.SetupClient(HandleResponse);
             new Thread(() => CommunicationClient.StartClient()).Start();
