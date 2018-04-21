@@ -15,7 +15,7 @@ namespace Messaging.InitialisationMessages
         public const string XmlRootName = "Game";
 
         public GameMessage() { }
-        public GameMessage(IEnumerable<PlayerBase> players, Location playerLocation, BoardInfo board)
+        public GameMessage(int playerId, IEnumerable<PlayerBase> players, Location playerLocation, BoardInfo board) : base(playerId)
         {
             Players = players.ToArray();
             PlayerLocation = playerLocation;

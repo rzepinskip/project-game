@@ -22,10 +22,16 @@ namespace Messaging.InitialisationMessages
             throw new NotImplementedException();
         }
 
+        public override void Process(IGameMaster gameMaster, int i)
+        {
+            throw new NotImplementedException();
+        }
+
         public override bool Process(IPlayer player)
         {
-            //handle reject join
-            throw new Exception();
+            player.UpdateJoiningInfo(false);
+            player.ChangePlayerCoordinatorState();
+            return false;
         }
 
         public override void Process(ICommunicationServer cs, int id)

@@ -22,6 +22,11 @@ namespace Messaging.InitialisationMessages
             throw new NotImplementedException();
         }
 
+        public override void Process(IGameMaster gameMaster, int i)
+        {
+            throw new NotImplementedException();
+        }
+
         public override bool Process(IPlayer player)
         {
             throw new NotImplementedException();

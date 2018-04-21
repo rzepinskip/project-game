@@ -29,6 +29,11 @@ namespace Messaging.Requests
             return ResponseWithData.ConvertToData(result.data, result.isGameFinished);
         }
 
+        public override void Process(IGameMaster gameMaster, int i)
+        {
+            throw new NotImplementedException();
+        }
+
         public override bool Process(IPlayer player)
         {
             throw new InvalidOperationException();

@@ -16,11 +16,17 @@ namespace Messaging.InitialisationMessages
             GameId = gameId;
         }
 
+        
+
         public int GameId { get; set; }
         public override IMessage Process(IGameMaster gameMaster)
         {
-            //add new handler for confirm game registration
             throw new NotImplementedException();
+        }
+
+        public override void Process(IGameMaster gameMaster, int i)
+        {
+            gameMaster.SetGameId(GameId);
         }
 
         public override bool Process(IPlayer player)
