@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using FluentAssertions;
 using TestScenarios.MoveScenarios;
 using TestScenarios.MoveScenarios.MoveToGoalField;
 using TestScenarios.MoveScenarios.MoveToTasFieldWithoutPiece;
@@ -22,7 +23,7 @@ namespace Player.Tests
 
             scenario.Response.Process(player);
 
-            Assert.Equal(scenario.UpdatedPlayerBoard, player.Board);
+            player.Board.Should().BeEquivalentTo(scenario.UpdatedPlayerBoard);
         }
 
 

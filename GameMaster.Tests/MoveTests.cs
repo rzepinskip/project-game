@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using Common;
+using Common.BoardObjects;
+using FluentAssertions;
 using TestScenarios.MoveScenarios;
 using TestScenarios.MoveScenarios.MoveToGoalField;
 using TestScenarios.MoveScenarios.MoveToTasFieldWithoutPiece;
@@ -19,7 +22,7 @@ namespace GameMaster.Tests
 
             var response = scenario.InitialRequest.Process(gameMaster);
 
-            Assert.Equal(scenario.Response, response);
+            response.Should().Be(scenario.Response);
         }
 
         [Theory]
@@ -30,7 +33,7 @@ namespace GameMaster.Tests
 
             scenario.InitialRequest.Process(gameMaster);
 
-            Assert.Equal(scenario.UpdatedGameMasterBoard, gameMaster.Board);
+            gameMaster.Board.Should().BeEquivalentTo(scenario.UpdatedGameMasterBoard, options => options.Excluding(o => o.Lock));
         }
 
         public static IEnumerable<object[]> GetData()
