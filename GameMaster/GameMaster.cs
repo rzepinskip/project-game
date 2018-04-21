@@ -32,6 +32,7 @@ namespace GameMaster
                 PlayerGuidToId.Add(Guid.NewGuid(), player.Key);
             }
 
+            CreateQueues();
             _spawnPieceFrequency = Convert.ToInt32(gameConfiguration.GameDefinition.PlacingNewPiecesFrequency);
             PieceGenerator = CreatePieceGenerator(Board);
             PlayerGuidToQueueId = new Dictionary<Guid, int>();
@@ -49,6 +50,20 @@ namespace GameMaster
             Board = board;
 
             PlayerGuidToId = playerGuidToId;
+        }
+
+        private void CreateQueues()
+        {
+            for(int i = 0; i < Board.Players.Count; ++i)
+            {
+                var RequestsQueue = new ObservableConcurrentQueue<IRequest>();
+                var ResponsesQueue = new ObservableConcurrentQueue<IMessage>();
+
+                RequestsQueues.Add(i, RequestsQueue);
+                ResponsesQueues.Add(i, ResponsesQueue);
+                IsPlayerQueueProcessed.Add(i, false);
+                IsPlayerQueueProcessedLock.Add(i, new object());
+            }
         }
 
         public Dictionary<int, ObservableConcurrentQueue<IRequest>> RequestsQueues { get; set; } =

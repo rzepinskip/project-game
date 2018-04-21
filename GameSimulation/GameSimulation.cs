@@ -26,15 +26,15 @@ namespace GameSimulation
 
             //_spawnPieceFrequency = Convert.ToInt32(config.GameDefinition.PlacingNewPiecesFrequency);
 
-            _communicationServer = new GameCommunicationServer();
+            //_communicationServer = new GameCommunicationServer();
             
             GameMaster = GenerateGameMaster(config);
             //PieceGenerator = GameMaster.CreatePieceGenerator(GameMaster.Board);
-            Players = GeneratePlayers(GameMaster).Result;
+            //Players = GeneratePlayers(GameMaster).Result;
 
             GameMaster.GameFinished += GameMaster_GameFinished;
 
-            CreateQueues(GameMaster);
+            //CreateQueues(GameMaster);
             
             
         }
@@ -112,12 +112,12 @@ namespace GameSimulation
 
             //GameMaster.StartListeningToRequests();
 
-            foreach (var player in Players)
-            {
-                //player.StartListeningToResponses();
-                //player.RequestsQueue.Enqueue(player.GetNextRequestMessage());
-                player.CommunicationClient.Send(player.GetNextRequestMessage());
-            }
+            //foreach (var player in Players)
+            //{
+            //    //player.StartListeningToResponses();
+            //    //player.RequestsQueue.Enqueue(player.GetNextRequestMessage());
+            //    player.CommunicationClient.Send(player.GetNextRequestMessage());
+            //}
         }
 
         
