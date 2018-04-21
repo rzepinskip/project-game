@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Messaging.Serialization;
-using Org.XmlUnit.Builder;
-using Org.XmlUnit.Diff;
+﻿using System.Collections.Generic;
 using TestScenarios.MoveScenarios;
 using TestScenarios.MoveScenarios.MoveToGoalField;
 using TestScenarios.MoveScenarios.MoveToTasFieldWithoutPiece;
@@ -14,22 +9,13 @@ using Xunit;
 
 namespace Messaging.Tests
 {
-    public class MoveTests
+    public class MoveTests : MessagingTestsBase
     {
-        private const string DefaultNamespace = "https://se2.mini.pw.edu.pl/17-results/";
-        private ExtendedMessageXmlDeserializer _messageXmlSerializer = new ExtendedMessageXmlDeserializer(DefaultNamespace);
-
-        private bool XmlsHasDiffrences(string expected, string actual)
-        {
-            var d = DiffBuilder.Compare(Input.FromString(expected)).WithTest(actual).Build();
-            return d.HasDifferences();
-        }
-
         [Theory]
         [MemberData(nameof(GetData))]
         public void MoveTestsRequest(MoveScenarioBase scenario)
         {
-            var xml = _messageXmlSerializer.SerializeToXml(scenario.InitialRequest);
+            var xml = MessageXmlSerializer.SerializeToXml(scenario.InitialRequest);
 
             Assert.False(XmlsHasDiffrences(scenario.InitialRequestFileContent, xml));
         }
@@ -38,7 +24,7 @@ namespace Messaging.Tests
         [MemberData(nameof(GetData))]
         public void MoveTestsResponse(MoveScenarioBase scenario)
         {
-            var xml = _messageXmlSerializer.SerializeToXml(scenario.Response);
+            var xml = MessageXmlSerializer.SerializeToXml(scenario.Response);
 
             Assert.False(XmlsHasDiffrences(scenario.ResponseFileContent, xml));
         }

@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using Common;
-using Common.BoardObjects;
 using FluentAssertions;
 using TestScenarios.MoveScenarios;
 using TestScenarios.MoveScenarios.MoveToGoalField;

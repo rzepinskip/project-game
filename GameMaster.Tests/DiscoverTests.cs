@@ -1,18 +1,7 @@
 ﻿using System.Collections.Generic;
+using FluentAssertions;
 using TestScenarios.DiscoverScenarios;
 using TestScenarios.DiscoverScenarios.DiscoverBoardCorner;
-using TestScenarios.DiscoverScenarios.DiscoverGoalAreaCorner;
-using TestScenarios.DiscoverScenarios.DiscoverGoalAreaEdge;
-using TestScenarios.DiscoverScenarios.DiscoverRegular;
-using TestScenarios.DiscoverScenarios.DiscoverTaskAreaBoardEdge;
-using TestScenarios.DiscoverScenarios.DiscoverTaskAreaCorner;
-using TestScenarios.DiscoverScenarios.DiscoverTaskAreaEdge;
-using TestScenarios.MoveScenarios;
-using TestScenarios.MoveScenarios.MoveToGoalField;
-using TestScenarios.MoveScenarios.MoveToTasFieldWithoutPiece;
-using TestScenarios.MoveScenarios.MoveToTaskFieldWithPiece;
-using TestScenarios.MoveScenarios.MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece;
-using TestScenarios.MoveScenarios.MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece;
 using Xunit;
 
 namespace GameMaster.Tests
@@ -27,7 +16,7 @@ namespace GameMaster.Tests
 
             var response = scenario.InitialRequest.Process(gameMaster);
 
-            Assert.Equal(scenario.Response, response);
+            response.Should().Be(scenario.Response);
         }
 
         [Theory]
@@ -38,7 +27,7 @@ namespace GameMaster.Tests
 
             scenario.InitialRequest.Process(gameMaster);
 
-            Assert.Equal(scenario.UpdatedGameMasterBoard, gameMaster.Board);
+            gameMaster.Board.Should().BeEquivalentTo(scenario.UpdatedGameMasterBoard, options => options.Excluding(o => o.Lock));
         }
         public static IEnumerable<object[]> GetData()
         {
