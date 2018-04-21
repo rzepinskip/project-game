@@ -32,6 +32,8 @@ namespace GameMaster
                 PlayerGuidToId.Add(Guid.NewGuid(), player.Key);
             }
 
+            _spawnPieceFrequency = Convert.ToInt32(gameConfiguration.GameDefinition.PlacingNewPiecesFrequency);
+            PieceGenerator = CreatePieceGenerator(Board);
             PlayerGuidToQueueId = new Dictionary<Guid, int>();
             checkIfFullTeamTimer = new Timer(CheckIfGameFullCallback, null, 0, 1000);
             _connectedPlayers = 0;
@@ -61,7 +63,7 @@ namespace GameMaster
         public GameConfiguration GameConfiguration { get; }
         public Dictionary<Guid, int> PlayerGuidToId { get; } = new Dictionary<Guid, int>();
         public GameMasterBoard Board { get; set; }
-
+        
         private readonly IClient _communicationClient;
 
         /////
@@ -72,7 +74,9 @@ namespace GameMaster
         private string _name = "game";
         private Timer checkIfFullTeamTimer;
         private GameMasterBoardGenerator _gameMasterBoardGenerator;
-
+        private Thread _pieceGeneratorThread;
+        private int _spawnPieceFrequency;
+        public PieceGenerator PieceGenerator { get; }
         public bool IsLeaderInTeam(TeamColor team)
         {
             return Board.Players.Values.Any(x => x.Role == PlayerType.Leader && x.Team == team);
@@ -80,19 +84,24 @@ namespace GameMaster
 
         public bool IsPlaceOnTeam(TeamColor team)
         {
-            return Board.Players.Values.Any(x => x.Id == -1 && x.Team == team);
+            return Board.Players.Values.Any(x => x.Id < 0 && x.Team == team);
         }
 
-        public IMessage AssignPlayerToTeam(int playerId, TeamColor team, PlayerType playerType)
+        public void AssignPlayerToTeam(int playerId, TeamColor team, PlayerType playerType)
         {
             var firstEmptyGuid = PlayerGuidToId.First(x => x.Value < 0);
-            var playerInfo = Board.Players.Values.First(x => x.Id < 0 && x.Team == team);
-            playerInfo.Id = playerId;
-            playerInfo.Role = playerType;
+            var playerInfoKey = Board.Players.First(x => x.Value.Id < 0 && x.Value.Team == team).Key;
+            var oldPlayerInfo = Board.Players[playerInfoKey];
+            Board.Players.Remove(playerInfoKey);
+            var playerInfo = new PlayerInfo(playerId, team, playerType, oldPlayerInfo.Location);
+            Board.Players.Add(playerId, playerInfo);
+            //oldPlayerInfo.Id = playerId;
+            //oldPlayerInfo.Role = playerType;
+            //Board.Players[playerInfoKey] = oldPlayerInfo;
             PlayerGuidToId[firstEmptyGuid.Key] = playerId;
             PlayerGuidToQueueId.Add(firstEmptyGuid.Key, PlayerGuidToQueueId.Count);
             _connectedPlayers++;
-            return new ConfirmJoiningGameMessage(_gameId, playerId, firstEmptyGuid.Key, playerInfo);
+            _communicationClient.Send(new ConfirmJoiningGameMessage(_gameId, playerId, firstEmptyGuid.Key, playerInfo));
         }
 
         public void SetGameId(int gameId)
@@ -103,7 +112,7 @@ namespace GameMaster
 
         public void CheckIfGameFullCallback(object obj)
         {
-            if (_connectedPlayers == Board.Players.Count)
+            if (_connectedPlayers == Board.Players.Count && !_gameStarted)
             {
                 _gameStarted = true;
                 var players = new List<PlayerBase>();
@@ -122,18 +131,32 @@ namespace GameMaster
                     var gameStartMessage = new GameMessage(i.Value, players, playerLocation ,boardInfo);
                     _communicationClient.Send(gameStartMessage);
                 }
+
+                _pieceGeneratorThread = new Thread(() => PieceGeneratorGameplay(PieceGenerator));
+                _pieceGeneratorThread.Start();
+                StartListeningToRequests();
             }
         }
 
         private void GenerateNewBoard()
         {
-            Board = _gameMasterBoardGenerator.InitializeBoard(GameConfiguration.GameDefinition);
+            _gameMasterBoardGenerator.InitializeGameObjects(GameConfiguration.GameDefinition);
         }
 
         private void FinishGame()
         {
             GenerateNewBoard();
             _gameStarted = false;
+        }
+
+        private void PieceGeneratorGameplay(PieceGenerator pieceGenerator)
+        {
+            while (_gameStarted)
+            {
+
+                Thread.Sleep(_spawnPieceFrequency);
+                pieceGenerator.SpawnPiece();
+            }
         }
         /////
 
@@ -216,7 +239,7 @@ namespace GameMaster
             foreach (var queue in RequestsQueues.Values)
                 queue.ItemEnqueued += (sender, args) =>
                 {
-                    var playerId = PlayerGuidToId[args.Item.PlayerGuid];
+                    var playerId = PlayerGuidToQueueId[args.Item.PlayerGuid];
 
                     lock (IsPlayerQueueProcessedLock[playerId])
                     {
@@ -241,7 +264,7 @@ namespace GameMaster
                     requestQueue.Enqueue(request);
                 }
             }
-            else if (!_gameRegistered)
+            else if (!_gameStarted)
             {
                 obj.Process(this, 0);
             }

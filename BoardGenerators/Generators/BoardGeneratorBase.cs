@@ -12,6 +12,7 @@ namespace BoardGenerators.Generators
 
         protected virtual void PlacePieces(IEnumerable<(Piece piece, Location location)> piecesWithLocations)
         {
+            //Board.Pieces.Clear();
             foreach (var (piece, location) in piecesWithLocations)
             {
                 var taskFieldToFill = Board[location] as TaskField;
@@ -38,6 +39,7 @@ namespace BoardGenerators.Generators
 
         protected virtual void PlacePlayers(IEnumerable<(PlayerBase player, Location location)> playersWithLocations)
         {
+            Board.Players.Clear();
             foreach (var (player, location) in playersWithLocations)
             {
                 var playerInfo = new PlayerInfo(player, location);

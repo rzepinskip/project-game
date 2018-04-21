@@ -26,27 +26,31 @@ namespace Messaging.InitialisationMessages
         public TeamColor PreferedTeam { get; set; }
         public override IMessage Process(IGameMaster gameMaster)
         {
+            throw new NotImplementedException();
+        }
+
+        public override void Process(IGameMaster gameMaster, int i)
+        {
             var playerTeam = PreferedTeam;
             var playerType = PreferedRole;
 
             if (!gameMaster.IsPlaceOnTeam(PreferedTeam))
             {
                 playerTeam = PreferedTeam == TeamColor.Blue ? TeamColor.Red : TeamColor.Blue;
-            } 
-            else
+            } else
             {
-                return new RejectJoiningGame(GameName, PlayerId);
+                //return new RejectJoiningGame(GameName, PlayerId);
             }
 
             if (PreferedRole == PlayerType.Leader)
             {
-                if (!gameMaster.IsLeaderInTeam(PreferedTeam))
+                if (gameMaster.IsLeaderInTeam(PreferedTeam))
                     playerType = PlayerType.Member;
             }
 
-            
 
-            return gameMaster.AssignPlayerToTeam(PlayerId, playerTeam, playerType);
+
+            gameMaster.AssignPlayerToTeam(PlayerId, playerTeam, playerType);
         }
 
         public override bool Process(IPlayer player)

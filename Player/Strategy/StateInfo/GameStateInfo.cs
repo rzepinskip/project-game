@@ -16,9 +16,10 @@ namespace Player.Strategy.StateInfo
         public IStrategy PlayerStrategy { get; set; }
         public  IPlayerStrategyFactory PlayerStrategyFactory { get; set; }
 
-        public GameStateInfo(string gameName)
+        public GameStateInfo(string gameName, TeamColor color)
         {
             GameName = gameName;
+            Color = color;
         }
 
         public void CreatePlayerStrategy()

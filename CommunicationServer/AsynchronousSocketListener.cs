@@ -65,7 +65,7 @@ namespace CommunicationServer
             }
             catch (Exception e)
             {
-                //Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
 
             //Console.WriteLine("\nPress ENTER to continue...");
@@ -75,9 +75,17 @@ namespace CommunicationServer
         private void AcceptCallback(IAsyncResult ar)
         {
             _readyForAccept.Set();
-
+            var handler = default(Socket);
             var listener = (Socket)ar.AsyncState;
-            var handler = listener.EndAccept(ar);
+            try
+            {
+                handler = listener.EndAccept(ar);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
             //Debug.WriteLine("Accepted for " + _counter);
             var state = new CommunicationStateObject(handler, _counter);
             _agentToCommunicationStateObject.Add(_counter, state);

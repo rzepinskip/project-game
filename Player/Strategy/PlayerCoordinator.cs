@@ -21,9 +21,9 @@ namespace Player.Strategy
         /// </summary>
 
         public readonly GameStateInfo _gameStateInfo;
-        public PlayerCoordinator(string gameName)
+        public PlayerCoordinator(string gameName, TeamColor color)
         {
-            _gameStateInfo = new GameStateInfo(gameName);
+            _gameStateInfo = new GameStateInfo(gameName, color);
             CurrentStrategyState = new GetGamesState(_gameStateInfo);
         }
 
@@ -63,6 +63,7 @@ namespace Player.Strategy
         public void CreatePlayerStrategyFactory(IPlayerStrategyFactory playerStrategyFactory)
         {
             _gameStateInfo.PlayerStrategyFactory = playerStrategyFactory;
+            _gameStateInfo.CreatePlayerStrategy();
         }
 
         public BaseState CurrentStrategyState { get; set; }

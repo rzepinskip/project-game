@@ -17,12 +17,12 @@ namespace Messaging.InitialisationMessages
         public GameMessage() { }
         public GameMessage(int playerId, IEnumerable<PlayerBase> players, Location playerLocation, BoardInfo board) : base(playerId)
         {
-            Players = players.ToArray();
+            //Players = players.ToArray();
             PlayerLocation = playerLocation;
             Board = board;
         }
 
-        public PlayerBase[] Players { get; set; }
+        //public PlayerBase[] Players { get; set; }
         public Location PlayerLocation { get; set; }
         public BoardInfo Board { get; set; }
 
@@ -33,7 +33,7 @@ namespace Messaging.InitialisationMessages
 
         public override bool Process(IPlayer player)
         {
-            player.UpdatePlayerGame(Players, PlayerLocation, Board);
+            player.UpdatePlayerGame(PlayerLocation, Board);
             return true;
         }
 

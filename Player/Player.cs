@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -57,11 +58,11 @@ namespace Player
             GameId = gameId;
         }
 
-        public void UpdatePlayerGame(PlayerBase[] players, Location playerLocation, BoardInfo board)
+        public void UpdatePlayerGame(Location playerLocation, BoardInfo board)
         {
             PlayerBoard = new PlayerBoard(board.Width, board.TasksHeight, board.GoalsHeight);
             PlayerBoard.Players[Id] = new PlayerInfo(Id, Team, Role, playerLocation);
-
+            Debug.WriteLine("Player is updating game");
             PlayerCoordinator.CreatePlayerStrategyFactory(new PlayerStrategyFactory(this));
         }
 
@@ -83,14 +84,14 @@ namespace Player
             PlayerBoard = board;
             PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
 
-            PlayerCoordinator = new PlayerCoordinator("game");
+            PlayerCoordinator = new PlayerCoordinator("game", team);
 
             CommunicationClient = new AsynchronousClient(new PlayerConverter());
             CommunicationClient.SetupClient(HandleResponse);
             new Thread(() => CommunicationClient.StartClient()).Start();
         }
 
-        public void InitializePlayer()
+        public void InitializePlayer(TeamColor color)
         {
             var factory = new LoggerFactory();
             _logger = factory.GetPlayerLogger(0);
@@ -103,7 +104,7 @@ namespace Player
             //PlayerBoard = board;
             //PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
 
-            PlayerCoordinator = new PlayerCoordinator("game");
+            PlayerCoordinator = new PlayerCoordinator("game", color);
 
             //await Task.Delay(10 * (id+1));
             CommunicationClient = new AsynchronousClient(new PlayerConverter());
@@ -126,6 +127,8 @@ namespace Player
 
             if (!response.Process(this))
                 return;
+
+           
 
             try
             {

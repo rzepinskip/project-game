@@ -24,12 +24,12 @@ namespace GameSimulation
             var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(configFilePath);
 
-            _spawnPieceFrequency = Convert.ToInt32(config.GameDefinition.PlacingNewPiecesFrequency);
+            //_spawnPieceFrequency = Convert.ToInt32(config.GameDefinition.PlacingNewPiecesFrequency);
 
             _communicationServer = new GameCommunicationServer();
             
             GameMaster = GenerateGameMaster(config);
-            PieceGenerator = GameMaster.CreatePieceGenerator(GameMaster.Board);
+            //PieceGenerator = GameMaster.CreatePieceGenerator(GameMaster.Board);
             Players = GeneratePlayers(GameMaster).Result;
 
             GameMaster.GameFinished += GameMaster_GameFinished;
@@ -99,7 +99,7 @@ namespace GameSimulation
                 //    }
                 //}
 
-                player.InitializePlayer();
+                player.InitializePlayer(i%2==0 ? TeamColor.Blue:TeamColor.Red);
                 players.Add(player);
             }
 
@@ -108,10 +108,9 @@ namespace GameSimulation
 
         public void StartSimulation()
         {
-            _pieceGeneratorThread = new Thread(() => PieceGeneratorGameplay(PieceGenerator));
-            _pieceGeneratorThread.Start();
+            
 
-            GameMaster.StartListeningToRequests();
+            //GameMaster.StartListeningToRequests();
 
             foreach (var player in Players)
             {
@@ -121,13 +120,6 @@ namespace GameSimulation
             }
         }
 
-        private void PieceGeneratorGameplay(PieceGenerator pieceGenerator)
-        {
-            while (!GameFinished)
-            {
-                Thread.Sleep(_spawnPieceFrequency);
-                pieceGenerator.SpawnPiece();
-            }
-        }
+        
     }
 }

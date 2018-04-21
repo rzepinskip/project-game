@@ -8,7 +8,8 @@ namespace Player.Strategy.States.GameStates
     {
         public GameStartedState(GameStateInfo gameStateInfo) : base(gameStateInfo)
         {
-            gameStateInfo.CreatePlayerStrategy();
+            if(gameStateInfo.PlayerStrategyFactory != null)
+                gameStateInfo.CreatePlayerStrategy();
             gameStateInfo.IsRunning = true;
             transitionConditions.Add(new HasGameStartedCondition(gameStateInfo));
             transitionConditions.Add(new HasGameEndedCondition(gameStateInfo));

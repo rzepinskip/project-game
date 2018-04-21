@@ -26,7 +26,15 @@ namespace GameMaster
         {
             Board = new GameMasterBoard(gameDefinition.BoardWidth, gameDefinition.TaskAreaLength,
                 gameDefinition.GoalAreaLength);
+            foreach (var playerBase in _players)
+            {
+                Board.Players.Add(playerBase.Id, new PlayerInfo(playerBase.Id, playerBase.Team, playerBase.Role, new Location(0,0)));
+            }
+            return Board;
+        }
 
+        public void InitializeGameObjects(GameDefinition gameDefinition)
+        {
             var pieces = GeneratePieces(gameDefinition.InitialNumberOfPieces, gameDefinition.ShamProbability);
             var piecesLocations = GenerateLocationsForPieces(gameDefinition.InitialNumberOfPieces);
             var piecesWithLocation = pieces.Zip(piecesLocations, (p, l) => (p, l));
@@ -35,10 +43,9 @@ namespace GameMaster
             PlaceGoals(gameDefinition.Goals);
 
             var playersLocations = GenerateLocationsForPlayers(gameDefinition.NumberOfPlayersPerTeam);
-            var playersWithLocation = AssignLocationsToPlayers(_players, playersLocations);
+            var playersWithLocation = AssignLocationsToPlayers(Board.Players.Values, playersLocations);
             PlacePlayers(playersWithLocation);
 
-            return Board;
         }
 
         protected override void PlaceGoals(IEnumerable<GoalField> goals)
