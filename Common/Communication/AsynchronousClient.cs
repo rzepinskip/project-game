@@ -14,6 +14,8 @@ namespace Common.Communication
         private const int Port = 11000;
         private readonly ManualResetEvent _connectDone =
             new ManualResetEvent(false);
+        private readonly ManualResetEvent _connectDoneForSend =
+            new ManualResetEvent(false);
         private readonly ManualResetEvent _receiveDone =
             new ManualResetEvent(false);
 
@@ -61,6 +63,7 @@ namespace Common.Communication
                 //Console.WriteLine("Socket connected to {0}", _client.RemoteEndPoint);
 
                 _connectDone.Set();
+                _connectDoneForSend.Set();
             }
             catch (Exception e)
             {
@@ -158,6 +161,7 @@ namespace Common.Communication
 
         public void Send(IMessage message)
         {
+            _connectDoneForSend.WaitOne();
             var byteData = Encoding.ASCII.GetBytes(_messageConverter.ConvertMessageToString(message) +  CommunicationStateObject.EtbByte);
             try
             {
