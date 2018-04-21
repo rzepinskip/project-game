@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using TestScenarios.DiscoverScenarios;
+using TestScenarios.DiscoverScenarios.DiscoverRegular;
 using TestScenarios.MoveScenarios;
 using TestScenarios.MoveScenarios.MoveToGoalField;
 using TestScenarios.MoveScenarios.MoveToTasFieldWithoutPiece;
@@ -14,7 +15,7 @@ namespace Player.Tests
     {
         [Theory]
         [MemberData(nameof(GetData))]
-        public void MoveTestsBoard(DiscoverScenarioBase scenario)
+        public void DiscoverTestsBoard(DiscoverScenarioBase scenario)
         {
             var player = new Player();
             var playerInfo = scenario.InitialPlayerBoard.Players[scenario.PlayerId];
@@ -29,7 +30,7 @@ namespace Player.Tests
 
         public static IEnumerable<object[]> GetData()
         {
-            //yield return new object[] { new DiscoverRegular() };
+            yield return new object[] { new DiscoverRegular() };
             //yield return new object[] { new DiscoverTaskAreaEdge() };
             //yield return new object[] { new DiscoverTaskAreaBoardEdge() };
             //yield return new object[] { new DiscoverTaskAreaCorner() };

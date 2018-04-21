@@ -28,12 +28,12 @@ namespace Player.Tests
 
         public static IEnumerable<object[]> GetData()
         {
-            //    yield return new object[] { new MoveToGoalField() };
-            //    yield return new object[] { new MoveToTaskFieldWithoutPiece() };
-            //    yield return new object[] { new MoveToTaskFieldWithPiece() };
-            //    yield return new object[] { new MoveToTaskFieldOccupiedByPlayerWhoCarryPiece() };
-            //yield return new object[] { new MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece() };
-            //    //yield return new object[] { new MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece()};
+            yield return new object[] { new MoveToGoalField() };
+            yield return new object[] { new MoveToTaskFieldWithoutPiece() };
+            yield return new object[] { new MoveToTaskFieldWithPiece() };
+            //yield return new object[] { new MoveToTaskFieldOccupiedByPlayerWhoCarryPiece() };
+            yield return new object[] { new MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece() };
+            //yield return new object[] { new MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece()};
             yield return new object[] { new MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece() };
         }
     }

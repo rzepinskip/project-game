@@ -13,6 +13,27 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="DiscoverScenarios\DiscoverRegular\DiscoverRegular-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverRegular\DiscoverRegular-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverRegular\DiscoverRegular-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverRegular\DiscoverRegular-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverRegular\DiscoverRegular-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverRegular\DiscoverRegular-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverRegular\DiscoverRegular-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="MoveScenarios\MoveToGoalField\MoveToGoalField-GM-Initial.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

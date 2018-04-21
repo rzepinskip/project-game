@@ -1,52 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Messaging.Serialization;
-using Org.XmlUnit.Builder;
-using Org.XmlUnit.Diff;
+﻿using System.Collections.Generic;
 using TestScenarios.DiscoverScenarios;
 using TestScenarios.DiscoverScenarios.DiscoverRegular;
 using TestScenarios.MoveScenarios;
 using TestScenarios.MoveScenarios.MoveToGoalField;
 using TestScenarios.MoveScenarios.MoveToTasFieldWithoutPiece;
-using TestScenarios.MoveScenarios.MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece;
 using TestScenarios.MoveScenarios.MoveToTaskFieldWithPiece;
+using TestScenarios.MoveScenarios.MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece;
 using TestScenarios.MoveScenarios.MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece;
 using Xunit;
 
-namespace Messaging.Tests
+namespace GameMaster.Tests
 {
     public class DiscoverTests
     {
-        private const string DefaultNamespace = "https://se2.mini.pw.edu.pl/17-results/";
-
-        private ExtendedMessageXmlDeserializer _messageXmlSerializer =
-            new ExtendedMessageXmlDeserializer(DefaultNamespace);
-
-        private bool XmlsHasDiffrences(string expected, string actual)
-        {
-            var d = DiffBuilder.Compare(Input.FromString(expected)).WithTest(actual).Build();
-            return d.HasDifferences();
-        }
-
-        [Theory]
-        [MemberData(nameof(GetData))]
-        public void DiscoverTestsRequest(DiscoverScenarioBase scenario)
-        {
-            var xml = _messageXmlSerializer.SerializeToXml(scenario.InitialRequest);
-
-            Assert.False(XmlsHasDiffrences(scenario.InitialRequestFileContent, xml));
-        }
-
         [Theory]
         [MemberData(nameof(GetData))]
         public void DiscoverTestsResponse(DiscoverScenarioBase scenario)
         {
-            var xml = _messageXmlSerializer.SerializeToXml(scenario.Response);
+            var gameMaster = new GameMaster(scenario.InitialGameMasterBoard, scenario.PlayerGuidToId);
 
-            Assert.False(XmlsHasDiffrences(scenario.ResponseFileContent, xml));
+            var response = scenario.InitialRequest.Process(gameMaster);
+
+            Assert.Equal(scenario.Response, response);
         }
 
+        [Theory]
+        [MemberData(nameof(GetData))]
+        public void DiscoverTestsBoard(DiscoverScenarioBase scenario)
+        {
+            var gameMaster = new GameMaster(scenario.InitialGameMasterBoard, scenario.PlayerGuidToId);
+
+            scenario.InitialRequest.Process(gameMaster);
+
+            Assert.Equal(scenario.UpdatedGameMasterBoard, gameMaster.Board);
+        }
         public static IEnumerable<object[]> GetData()
         {
             yield return new object[] { new DiscoverRegular() };
@@ -60,5 +47,6 @@ namespace Messaging.Tests
             //yield return new object[] { new DiscoverPlayer() };
             //yield return new object[] { new DiscoverUpdate() };  }
         }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Xml.Serialization;
 using Common;
 using Common.BoardObjects;
@@ -95,7 +96,17 @@ namespace Messaging.Responses
             if (l1 == null || l2 == null)
                 return false;
 
-            return l1.SequenceEqual(l2);
+            if (l1.Any(item => !l2.Contains(item)))
+            {
+                return false;
+            }
+
+            if (l2.Any(item => !l1.Contains(item)))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public override int GetHashCode()
