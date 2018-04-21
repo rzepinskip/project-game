@@ -16,9 +16,6 @@ namespace Messaging.Responses
 
         protected ResponseWithData()
         {
-            TaskFields = new TaskField[0];
-            GoalFields = new GoalField[0];
-            Pieces = new Piece[0];
         }
 
         public ResponseWithData(int playerId, Location location, IEnumerable<TaskField> taskFields = null,

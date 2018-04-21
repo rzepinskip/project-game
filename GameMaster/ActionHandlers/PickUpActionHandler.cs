@@ -23,7 +23,7 @@ namespace GameMaster.ActionHandlers
         public override DataFieldSet Respond()
         {
             if (!Validate())
-                return DataFieldSet.CreateMoveDataSet(PlayerId,  new Piece[0]);
+                return DataFieldSet.Create(PlayerId,  new Piece[0]);
 
             var player = Board.Players[PlayerId];
             var playerField = Board[player.Location] as TaskField;
@@ -34,7 +34,7 @@ namespace GameMaster.ActionHandlers
             player.Piece = piece;
             playerField.PieceId = null;
 
-            return DataFieldSet.CreateMoveDataSet(PlayerId, new[] { new Piece(piece.Id, PieceType.Unknown, piece.PlayerId) });
+            return DataFieldSet.Create(PlayerId, new[] { new Piece(piece.Id, PieceType.Unknown, piece.PlayerId) });
         }
     }
 }
