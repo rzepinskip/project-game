@@ -44,7 +44,7 @@ namespace Common.Communication
             }
             catch (Exception e)
             {
-                //Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
 
             //var thread = new Thread(StartReading);
@@ -60,21 +60,21 @@ namespace Common.Communication
 
                 _client.EndConnect(ar);
 
-                //Console.WriteLine("Socket connected to {0}", _client.RemoteEndPoint);
+                Console.WriteLine("Socket connected to {0}", _client.RemoteEndPoint);
 
                 _connectDone.Set();
                 _connectDoneForSend.Set();
             }
             catch (Exception e)
             {
-                //Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
         }
 
         private void StartReading()
         {
             var state = new CommunicationStateObject(_client);
-            //Console.WriteLine("Client starts reading");
+            Console.WriteLine("Client starts reading");
             while (true)
             {
                 _receiveDone.Reset();
@@ -95,7 +95,7 @@ namespace Common.Communication
             }
             catch (Exception e)
             {
-                //Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
         }
 
@@ -111,11 +111,11 @@ namespace Common.Communication
                 try
                 {
                     bytesRead = client.EndReceive(ar);
-                    //Debug.WriteLine("received bytes" + bytesRead);
+                    Debug.WriteLine("received bytes" + bytesRead);
                 }
                 catch (Exception e)
                 {
-                    //Console.WriteLine(e.ToString());
+                    Console.WriteLine(e.ToString());
                     return;
                 }
                 
@@ -169,7 +169,7 @@ namespace Common.Communication
             }
             catch (Exception e)
             {
-                //Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
 
         }
@@ -182,7 +182,7 @@ namespace Common.Communication
             }
             catch (Exception e)
             {
-                //Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
         }
 

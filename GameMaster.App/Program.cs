@@ -20,7 +20,7 @@ namespace GameMaster.App
             while (true)
             {
                 var boardVisualizer = new BoardVisualizer();
-                for (var i = 0;; i++)
+                for (var i = 0; ; i++)
                 {
                     Thread.Sleep(200);
                     boardVisualizer.VisualizeBoard(gm.Board);

@@ -41,7 +41,7 @@ namespace GameMaster
             _communicationClient = new AsynchronousClient(new GameMasterConverter());
             _communicationClient.SetupClient(HandleMessagesFromClient);
             new Thread(() => _communicationClient.StartClient()).Start();
-
+            Thread.Sleep(500);
             _communicationClient.Send(new RegisterGameMessage(new GameInfo(_name, GameConfiguration.GameDefinition.NumberOfPlayersPerTeam, GameConfiguration.GameDefinition.NumberOfPlayersPerTeam)));
         }
 
