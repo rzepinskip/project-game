@@ -3,16 +3,23 @@ using System.Xml.Serialization;
 using Common;
 using Common.ActionInfo;
 using Common.Interfaces;
-using Messaging.Requests;
 
 namespace Messaging.InitialisationMessages
 {
+    /// <summary>
+    /// Player's request to GM to join game
+    /// </summary>
     [XmlType(XmlRootName)]
-    public class JoinGameMessage : Request
+    public class JoinGameMessage : Message
     {
         public const string XmlRootName = "JoinGame";
 
-        public JoinGameMessage() { }
+        public int PlayerId;
+
+        public JoinGameMessage()
+        {
+        }
+
         public JoinGameMessage(string gameName, PlayerType preferedRole, TeamColor preferedTeam)
         {
             GameName = gameName;
@@ -20,37 +27,38 @@ namespace Messaging.InitialisationMessages
             PreferedTeam = preferedTeam;
         }
 
-        public int PlayerId;
         public string GameName { get; set; }
         public PlayerType PreferedRole { get; set; }
         public TeamColor PreferedTeam { get; set; }
+
         public override IMessage Process(IGameMaster gameMaster)
         {
-            throw new NotImplementedException();
-        }
+            if(!gameMaster.IsSlotAvailable())
+                return new RejectJoiningGame();
 
-        public override void Process(IGameMaster gameMaster, int i)
-        {
+            gameMaster.AssignPlayerToAvailableSlotWithPrefered(PreferedTeam, PreferedRole);
+
             var playerTeam = PreferedTeam;
             var playerType = PreferedRole;
 
-            if (!gameMaster.IsPlaceOnTeam(PreferedTeam))
+            if (!gameMaster.IsSlotAvailableIn(PreferedTeam))
             {
                 playerTeam = PreferedTeam == TeamColor.Blue ? TeamColor.Red : TeamColor.Blue;
-            } else
+            }
+            else
             {
                 //return new RejectJoiningGame(GameName, PlayerId);
             }
 
             if (PreferedRole == PlayerType.Leader)
-            {
-                if (gameMaster.IsLeaderInTeam(PreferedTeam))
+                if (gameMaster.DoesTeamHasAlreadyLeader(PreferedTeam))
                     playerType = PlayerType.Member;
-            }
-
 
 
             gameMaster.AssignPlayerToTeam(PlayerId, playerTeam, playerType);
+
+            //return new ConfirmJoiningGameMessage();
+            return null;
         }
 
         public override bool Process(IPlayer player)
@@ -61,20 +69,8 @@ namespace Messaging.InitialisationMessages
         public override void Process(ICommunicationServer cs, int id)
         {
             PlayerId = id;
-            
+
             cs.Send(this, cs.GetGameId(GameName));
-        }
-
-        public override string ToLog()
-        {
-            throw new NotImplementedException();
-        }
-
-        //public Guid PlayerGuid { get; set; }
-        public override ActionInfo GetActionInfo()
-        {
-            //create new ActionInfo for join game message
-            throw new NotImplementedException();
         }
     }
 }

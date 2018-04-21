@@ -6,12 +6,18 @@ using Messaging.Responses;
 
 namespace Messaging.InitialisationMessages
 {
+    /// <summary>
+    /// GM sends confirmation to player about his registration
+    /// </summary>
     [XmlType(XmlRootName)]
     public class ConfirmJoiningGameMessage : Response
     {
         public const string XmlRootName = "ConfirmJoiningGame";
-        
-        public ConfirmJoiningGameMessage() { }
+
+        public ConfirmJoiningGameMessage()
+        {
+        }
+
         public ConfirmJoiningGameMessage(int gameId, int playerId, Guid privateGuid, PlayerBase playerDefiniton)
         {
             GameId = gameId;
@@ -23,6 +29,7 @@ namespace Messaging.InitialisationMessages
         public int GameId { get; set; }
         public Guid PrivateGuid { get; set; }
         public PlayerBase PlayerDefinition { get; set; }
+
         public override IMessage Process(IGameMaster gameMaster)
         {
             throw new NotImplementedException();

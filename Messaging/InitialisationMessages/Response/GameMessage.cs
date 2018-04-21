@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Xml.Serialization;
 using Common;
 using Common.BoardObjects;
@@ -9,13 +8,20 @@ using Messaging.Responses;
 
 namespace Messaging.InitialisationMessages
 {
+    /// <summary>
+    /// Game start messages sent to every player 
+    /// </summary>
     [XmlType(XmlRootName)]
     public class GameMessage : Response
     {
         public const string XmlRootName = "Game";
 
-        public GameMessage() { }
-        public GameMessage(int playerId, IEnumerable<PlayerBase> players, Location playerLocation, BoardInfo board) : base(playerId)
+        public GameMessage()
+        {
+        }
+
+        public GameMessage(int playerId, IEnumerable<PlayerBase> players, Location playerLocation, BoardInfo board) :
+            base(playerId)
         {
             //Players = players.ToArray();
             PlayerLocation = playerLocation;
@@ -42,6 +48,5 @@ namespace Messaging.InitialisationMessages
             cs.UnregisterGame(id);
             cs.Send(this, PlayerId);
         }
-
     }
 }

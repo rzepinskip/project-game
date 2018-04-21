@@ -1,32 +1,33 @@
 ﻿using System;
 using System.Xml.Serialization;
 using Common.Interfaces;
+using Messaging.Responses;
 
 namespace Messaging.InitialisationMessages
 {
+    /// <summary>
+    /// CS response to GM registration
+    /// </summary>
     [XmlType(XmlRootName)]
-    public class ConfirmGameRegistrationMessage : Message
+    public class ConfirmGameRegistrationMessage : Response
     {
         public const string XmlRootName = "ConfirmGameRegistration";
 
-        public ConfirmGameRegistrationMessage() { }
+        public ConfirmGameRegistrationMessage()
+        {
+        }
 
         public ConfirmGameRegistrationMessage(int gameId)
         {
             GameId = gameId;
         }
 
-        
-
         public int GameId { get; set; }
+
         public override IMessage Process(IGameMaster gameMaster)
         {
-            throw new NotImplementedException();
-        }
-
-        public override void Process(IGameMaster gameMaster, int i)
-        {
             gameMaster.SetGameId(GameId);
+            return null;
         }
 
         public override bool Process(IPlayer player)

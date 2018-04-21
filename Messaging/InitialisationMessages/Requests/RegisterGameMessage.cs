@@ -5,24 +5,26 @@ using Common.Interfaces;
 
 namespace Messaging.InitialisationMessages
 {
+    /// <summary>
+    /// GM's request to register game
+    /// </summary>
     [XmlType(XmlRootName)]
     public class RegisterGameMessage : Message
     {
         public const string XmlRootName = "RegisterGame";
 
-        public RegisterGameMessage() { }
+        public RegisterGameMessage()
+        {
+        }
+
         public RegisterGameMessage(GameInfo newGameInfo)
         {
             NewGameInfo = newGameInfo;
         }
 
         public GameInfo NewGameInfo { get; set; }
-        public override IMessage Process(IGameMaster gameMaster)
-        {
-            throw new NotImplementedException();
-        }
 
-        public override void Process(IGameMaster gameMaster, int i)
+        public override IMessage Process(IGameMaster gameMaster)
         {
             throw new NotImplementedException();
         }
