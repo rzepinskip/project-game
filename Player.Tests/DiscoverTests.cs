@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using TestScenarios.DiscoverScenarios;
 using TestScenarios.DiscoverScenarios.DiscoverRegular;
+using TestScenarios.DiscoverScenarios.DiscoverTaskAreaBoardEdge;
 using TestScenarios.DiscoverScenarios.DiscoverTaskAreaEdge;
 using TestScenarios.MoveScenarios;
 using TestScenarios.MoveScenarios.MoveToGoalField;
@@ -32,8 +33,8 @@ namespace Player.Tests
         public static IEnumerable<object[]> GetData()
         {
             //yield return new object[] { new DiscoverRegular() };
-            yield return new object[] { new DiscoverTaskAreaEdge() };
-            //yield return new object[] { new DiscoverTaskAreaBoardEdge() };
+            //yield return new object[] { new DiscoverTaskAreaEdge() };
+            yield return new object[] { new DiscoverTaskAreaBoardEdge() };
             //yield return new object[] { new DiscoverTaskAreaCorner() };
             //yield return new object[] { new DiscoverGoalAreaCorner() };
             //yield return new object[] { new DiscoverGoalAreaEdge() };
