@@ -13,6 +13,27 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="DiscoverScenarios\DiscoverTaskAreaEdge\DiscoverTaskAreaEdge-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverTaskAreaEdge\DiscoverTaskAreaEdge-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverTaskAreaEdge\DiscoverTaskAreaEdge-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverTaskAreaEdge\DiscoverTaskAreaEdge-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverTaskAreaEdge\DiscoverTaskAreaEdge-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverTaskAreaEdge\DiscoverTaskAreaEdge-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverTaskAreaEdge\DiscoverTaskAreaEdge-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="DiscoverScenarios\DiscoverRegular\DiscoverRegular-Player-Updated.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
