@@ -13,6 +13,27 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="DiscoverScenarios\DiscoverGoalAreaCorner\DiscoverGoalAreaCorner-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverGoalAreaCorner\DiscoverGoalAreaCorner-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverGoalAreaCorner\DiscoverGoalAreaCorner-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverGoalAreaCorner\DiscoverGoalAreaCorner-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverGoalAreaCorner\DiscoverGoalAreaCorner-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverGoalAreaCorner\DiscoverGoalAreaCorner-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverGoalAreaCorner\DiscoverGoalAreaCorner-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="DiscoverScenarios\DiscoverTaskAreaBoardEdge\DiscoverTaskAreaBoardEdge-GM-Initial.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
