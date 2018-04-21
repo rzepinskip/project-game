@@ -8,6 +8,7 @@ namespace Player.Strategy.States.GameStates
         public AwaitingJoinResponseState(GameStateInfo gameStateInfo)
         {
             transitionConditions.Add(new IsJoinSuccessfulCondition(gameStateInfo));
+            transitionConditions.Add(new IsJoinUnsuccessfulCondition(gameStateInfo));
         }
     }
 }
