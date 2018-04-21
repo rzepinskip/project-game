@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Common;
-using Common.BoardObjects;
 using Common.Interfaces;
-using Messaging.Requests;
 using Player.Interfaces;
 using Player.Strategy.StateInfo;
 using Player.Strategy.States;
 using Player.Strategy.States.GameStates;
-using Player.Strategy.States.StrategyStates;
 
 namespace Player.Strategy
 {
@@ -21,9 +16,9 @@ namespace Player.Strategy
         /// </summary>
 
         public readonly GameStateInfo _gameStateInfo;
-        public PlayerCoordinator(string gameName, TeamColor color)
+        public PlayerCoordinator(string gameName, TeamColor color, PlayerType role)
         {
-            _gameStateInfo = new GameStateInfo(gameName, color);
+            _gameStateInfo = new GameStateInfo(gameName, color, role);
             CurrentStrategyState = new GetGamesState(_gameStateInfo);
         }
 

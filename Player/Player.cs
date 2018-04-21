@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Common;
 using Common.BoardObjects;
 using Common.Communication;
 using Common.Interfaces;
-using Messaging.Requests;
-using Messaging.Responses;
 using NLog;
 using Player.Logging;
 using Player.Strategy;
@@ -18,16 +14,20 @@ namespace Player
 {
     public class Player : PlayerBase, IPlayer
     {
+        private bool _hasGameEnded;
+        private ILogger _logger;
+
+        public IClient CommunicationClient;
         public ObservableConcurrentQueue<IRequest> RequestsQueue { get; set; }
         public ObservableConcurrentQueue<IMessage> ResponsesQueue { get; set; }
 
         public Guid PlayerGuid { get; set; }
         public PlayerBoard PlayerBoard { get; set; }
-        private ILogger _logger;
         private PlayerCoordinator PlayerCoordinator { get; set; }
+
+        public int GameId { get; set; }
         public IPlayerBoard Board => PlayerBoard;
 
-        private bool _hasGameEnded;
         public void UpdateGameState(IEnumerable<GameInfo> gameInfo)
         {
             PlayerCoordinator.UpdateGameStateInfo(gameInfo);
@@ -66,10 +66,6 @@ namespace Player
             PlayerCoordinator.CreatePlayerStrategyFactory(new PlayerStrategyFactory(this));
         }
 
-        public IClient CommunicationClient;
-
-        public int GameId { get; set; }
-
         public void InitializePlayer(int id, Guid guid, TeamColor team, PlayerType role, PlayerBoard board,
             Location location)
         {
@@ -84,29 +80,20 @@ namespace Player
             PlayerBoard = board;
             PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
 
-            PlayerCoordinator = new PlayerCoordinator("game", team);
+            PlayerCoordinator = new PlayerCoordinator("", team, role);
 
             CommunicationClient = new AsynchronousClient(new PlayerConverter());
             CommunicationClient.SetupClient(HandleResponse);
             new Thread(() => CommunicationClient.StartClient()).Start();
         }
 
-        public void InitializePlayer(TeamColor color)
+        public void InitializePlayer(string gameName, TeamColor color, PlayerType role)
         {
             var factory = new LoggerFactory();
             _logger = factory.GetPlayerLogger(0);
 
-            //Id = id;
-            //Team = team;
-            //Role = role;
-            //PlayerGuid = guid;
-            //GameId = gameId;
-            //PlayerBoard = board;
-            //PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
+            PlayerCoordinator = new PlayerCoordinator(gameName, color, role);
 
-            PlayerCoordinator = new PlayerCoordinator("game", color);
-
-            //await Task.Delay(10 * (id+1));
             CommunicationClient = new AsynchronousClient(new PlayerConverter());
             CommunicationClient.SetupClient(HandleResponse);
             new Thread(() => CommunicationClient.StartClient()).Start();
@@ -128,25 +115,9 @@ namespace Player
             if (!response.Process(this))
                 return;
 
-           
-
-            try
-            {
-                var request = GetNextRequestMessage();
-                //RequestsQueue.Enqueue(request);
-                _logger.Info(request);
-                CommunicationClient.Send(request);
-            }
-            catch (StrategyException s)
-            {
-                //log exception
-                throw;
-            }
+            var request = GetNextRequestMessage();
+            _logger.Info(request);
+            CommunicationClient.Send(request);
         }
-
-        //public void StartListeningToResponses()
-        //{
-        //    ResponsesQueue.ItemEnqueued += (sender, args) => { Task.Run(() => HandleResponse()); };
-        //}
     }
 }

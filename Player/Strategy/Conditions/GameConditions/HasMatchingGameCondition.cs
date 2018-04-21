@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Common;
 using Common.Interfaces;
 using Messaging.InitialisationMessages;
 using Player.Strategy.StateInfo;
@@ -27,7 +26,7 @@ namespace Player.Strategy.Conditions.GameConditions
 
         public override IMessage GetNextMessage(BaseState fromStrategyState)
         {
-            return new JoinGameMessage(GameStateInfo.GameName, PlayerType.Leader, GameStateInfo.Color);
+            return new JoinGameMessage(GameStateInfo.GameName, GameStateInfo.Role, GameStateInfo.Color);
         }
     }
 }

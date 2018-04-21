@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Common;
+﻿using Common;
 
 namespace Player.App
 {
@@ -8,8 +7,7 @@ namespace Player.App
         static void Main(string[] args)
         {
             var player = new Player();
-            player.InitializePlayer(TeamColor.Blue);
-            Thread.Sleep(500);
+            player.InitializePlayer("game", TeamColor.Blue, PlayerType.Leader);
             player.CommunicationClient.Send(player.GetNextRequestMessage());
         }
     }
