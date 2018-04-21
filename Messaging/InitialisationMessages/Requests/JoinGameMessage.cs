@@ -16,7 +16,7 @@ namespace Messaging.InitialisationMessages
 
         public int PlayerId;
 
-        public JoinGameMessage()
+        protected JoinGameMessage()
         {
         }
 

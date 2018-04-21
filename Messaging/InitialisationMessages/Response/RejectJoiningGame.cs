@@ -13,7 +13,7 @@ namespace Messaging.InitialisationMessages
     {
         public const string XmlRootName = "RejectJoiningGame";
 
-        public RejectJoiningGame()
+        protected RejectJoiningGame()
         {
         }
 
@@ -26,11 +26,6 @@ namespace Messaging.InitialisationMessages
         public string GameName { get; set; }
 
         public override IMessage Process(IGameMaster gameMaster)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Process(IGameMaster gameMaster, int i)
         {
             throw new NotImplementedException();
         }

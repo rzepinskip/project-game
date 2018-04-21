@@ -14,7 +14,7 @@ namespace Messaging.InitialisationMessages
     {
         public const string XmlRootName = "ConfirmJoiningGame";
 
-        public ConfirmJoiningGameMessage()
+        protected ConfirmJoiningGameMessage()
         {
         }
 
