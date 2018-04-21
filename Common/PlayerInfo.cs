@@ -92,5 +92,10 @@ namespace Common
         {
             return !(info1 == info2);
         }
+
+        public override string ToString()
+        {
+            return $"Id:{Id}, {Team}, {Role}, {Location}, Piece:{{{Piece}}}]";
+        }
     }
 }

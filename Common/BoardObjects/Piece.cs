@@ -92,5 +92,10 @@ namespace Common.BoardObjects
         {
             return !(piece1 == piece2);
         }
+
+        public override string ToString()
+        {
+            return $"Id:{Id}, {Type}, PlayerId:{PlayerId}";
+        }
     }
 }
