@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Xml.Serialization;
 using Common;
-using Common.ActionInfo;
 using Common.Interfaces;
 
 namespace Messaging.InitialisationMessages
@@ -34,31 +33,11 @@ namespace Messaging.InitialisationMessages
         public override IMessage Process(IGameMaster gameMaster)
         {
             if(!gameMaster.IsSlotAvailable())
-                return new RejectJoiningGame();
+                return new RejectJoiningGame(GameName, PlayerId);
 
-            gameMaster.AssignPlayerToAvailableSlotWithPrefered(PreferedTeam, PreferedRole);
+            var (gameId, guid, playerInfo) = gameMaster.AssignPlayerToAvailableSlotWithPrefered(PlayerId, PreferedTeam, PreferedRole);
 
-            var playerTeam = PreferedTeam;
-            var playerType = PreferedRole;
-
-            if (!gameMaster.IsSlotAvailableIn(PreferedTeam))
-            {
-                playerTeam = PreferedTeam == TeamColor.Blue ? TeamColor.Red : TeamColor.Blue;
-            }
-            else
-            {
-                //return new RejectJoiningGame(GameName, PlayerId);
-            }
-
-            if (PreferedRole == PlayerType.Leader)
-                if (gameMaster.DoesTeamHasAlreadyLeader(PreferedTeam))
-                    playerType = PlayerType.Member;
-
-
-            gameMaster.AssignPlayerToTeam(PlayerId, playerTeam, playerType);
-
-            //return new ConfirmJoiningGameMessage();
-            return null;
+            return new ConfirmJoiningGameMessage(gameId, PlayerId, guid, playerInfo);
         }
 
         public override bool Process(IPlayer player)

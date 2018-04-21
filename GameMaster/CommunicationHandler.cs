@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
@@ -15,9 +16,10 @@ namespace GameMaster
         private readonly ActionCosts _actionCosts;
         public readonly IClient Client;
 
+        private Dictionary<Guid, PlayerHandle> _playerHandles;
+
         public CommunicationHandler(GameConfiguration gameConfiguration)
         {
-            CreateQueues(2 * gameConfiguration.GameDefinition.NumberOfPlayersPerTeam);
             _actionCosts = gameConfiguration.ActionCosts;
 
             Client = new AsynchronousClient(new GameMasterConverter());
@@ -25,31 +27,24 @@ namespace GameMaster
             new Thread(() => Client.StartClient()).Start();
         }
 
-        public Dictionary<int, ObservableConcurrentQueue<IRequest>> RequestsQueues { get; private set; }
-        public Dictionary<int, ObservableConcurrentQueue<IMessage>> ResponsesQueues { get; private set; }
-        public Dictionary<int, bool> IsPlayerQueueProcessed { get; set; }
-        public Dictionary<int, object> IsPlayerQueueProcessedLocks { get; set; }
-
-        public Dictionary<Guid, int> PlayerGuidToQueueId { get; private set; }
-
-        private async void HandleMessagesFromPlayer(int playerId)
+        private async void HandleMessagesFromPlayer(Guid playerGuid)
         {
-            var requestQueue = RequestsQueues[playerId];
+            var playerHandle = _playerHandles[playerGuid];
             while (true)
             {
-                lock (IsPlayerQueueProcessedLocks[playerId])
+                lock (playerHandle.Lock)
                 {
-                    if (requestQueue.IsEmpty)
+                    if (playerHandle.Queue.IsEmpty)
                     {
-                        IsPlayerQueueProcessed[playerId] = false;
+                        playerHandle.IsProcessed = false;
                         break;
                     }
 
-                    IsPlayerQueueProcessed[playerId] = true;
+                    playerHandle.IsProcessed = true;
                 }
 
                 IRequest request;
-                while (!requestQueue.TryDequeue(out request))
+                while (!playerHandle.Queue.TryDequeue(out request))
                     await Task.Delay(10);
 
                 var timeSpan = Convert.ToInt32(_actionCosts.GetDelayFor(request.GetActionInfo()));
@@ -61,17 +56,21 @@ namespace GameMaster
 
         public virtual event EventHandler<IMessage> MessageReceived;
 
-        public void StartListeningToRequests()
+        public void StartListeningToRequests(IEnumerable<Guid> playersGuids)
         {
-            foreach (var queue in RequestsQueues.Values)
+            CreateQueues(playersGuids);
+
+            var queues = _playerHandles.Values.Select(h => h.Queue);
+
+            foreach (var queue in queues)
                 queue.ItemEnqueued += (sender, args) =>
                 {
-                    var playerId = PlayerGuidToQueueId[args.Item.PlayerGuid];
+                    var playerHandle = _playerHandles[args.Item.PlayerGuid];
 
-                    lock (IsPlayerQueueProcessedLocks[playerId])
+                    lock (playerHandle.Lock)
                     {
-                        if (!IsPlayerQueueProcessed[playerId])
-                            Task.Run(() => HandleMessagesFromPlayer(playerId));
+                        if (!playerHandle.IsProcessed)
+                            Task.Run(() => HandleMessagesFromPlayer(args.Item.PlayerGuid));
                     }
                 };
         }
@@ -80,11 +79,10 @@ namespace GameMaster
         {
             if (message is IRequest request)
             {
-                PlayerGuidToQueueId.TryGetValue(request.PlayerGuid, out var playerId);
-                var requestQueue = RequestsQueues[playerId];
-                lock (IsPlayerQueueProcessedLocks[playerId])
+                var playerHandle = _playerHandles[request.PlayerGuid];
+                lock (playerHandle.Lock)
                 {
-                    requestQueue.Enqueue(request);
+                    playerHandle.Queue.Enqueue(request);
                 }
             }
             else
@@ -94,25 +92,25 @@ namespace GameMaster
         }
 
 
-        private void CreateQueues(int playersCount)
+        public void CreateQueues(IEnumerable<Guid> guids)
         {
-            RequestsQueues = new Dictionary<int, ObservableConcurrentQueue<IRequest>>();
-            ResponsesQueues = new Dictionary<int, ObservableConcurrentQueue<IMessage>>();
+            _playerHandles = new Dictionary<Guid, PlayerHandle>();
 
-            IsPlayerQueueProcessed = new Dictionary<int, bool>();
-            IsPlayerQueueProcessedLocks = new Dictionary<int, object>();
-            PlayerGuidToQueueId = new Dictionary<Guid, int>();
+            foreach (var guid in guids) _playerHandles.Add(guid, new PlayerHandle());
+        }
 
-            for (var i = 0; i < playersCount; ++i)
+        private class PlayerHandle
+        {
+            public PlayerHandle()
             {
-                var requestsQueue = new ObservableConcurrentQueue<IRequest>();
-                var responsesQueue = new ObservableConcurrentQueue<IMessage>();
-
-                RequestsQueues.Add(i, requestsQueue);
-                ResponsesQueues.Add(i, responsesQueue);
-                IsPlayerQueueProcessed.Add(i, false);
-                IsPlayerQueueProcessedLocks.Add(i, new object());
+                Queue = new ObservableConcurrentQueue<IRequest>();
+                IsProcessed = false;
+                Lock = new object();
             }
+
+            public ObservableConcurrentQueue<IRequest> Queue { get; }
+            public bool IsProcessed { get; set; }
+            public object Lock { get; }
         }
     }
 }

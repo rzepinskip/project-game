@@ -4,7 +4,6 @@ using System.Linq;
 using BoardGenerators.Generators;
 using Common;
 using Common.BoardObjects;
-using Common.Interfaces;
 using GameMaster.Configuration;
 
 namespace GameMaster
@@ -15,25 +14,35 @@ namespace GameMaster
 
         protected override GameMasterBoard Board { get; set; }
 
-        private IEnumerable<PlayerBase> _players;
-
-        public void InitializePlayersOnBoard(GameDefinition gameDefinition)
+        public List<(TeamColor, PlayerType)> GeneratePlayerSlots(int teamPlayerCount)
         {
-            _players = GeneratePlayers(gameDefinition.NumberOfPlayersPerTeam);
+            var playersCount = 2 * teamPlayerCount;
+            var playersSlots = new List<(TeamColor, PlayerType)>(playersCount);
+
+            for (var i = 0; i < playersCount; i++)
+            {
+                var team = i % 2 == 0 ? TeamColor.Red : TeamColor.Blue;
+                var role = PlayerType.Member;
+
+                if (i < 2)
+                    role = PlayerType.Leader;
+
+                var player = (team, role);
+                playersSlots.Add(player);
+            }
+
+            return playersSlots;
         }
 
         public GameMasterBoard InitializeBoard(GameDefinition gameDefinition)
         {
             Board = new GameMasterBoard(gameDefinition.BoardWidth, gameDefinition.TaskAreaLength,
                 gameDefinition.GoalAreaLength);
-            foreach (var playerBase in _players)
-            {
-                Board.Players.Add(playerBase.Id, new PlayerInfo(playerBase.Id, playerBase.Team, playerBase.Role, new Location(0,0)));
-            }
+
             return Board;
         }
 
-        public void InitializeGameObjects(GameDefinition gameDefinition)
+        public void SpawnGameObjects(GameDefinition gameDefinition)
         {
             var pieces = GeneratePieces(gameDefinition.InitialNumberOfPieces, gameDefinition.ShamProbability);
             var piecesLocations = GenerateLocationsForPieces(gameDefinition.InitialNumberOfPieces);
@@ -45,14 +54,15 @@ namespace GameMaster
             var playersLocations = GenerateLocationsForPlayers(gameDefinition.NumberOfPlayersPerTeam);
             var playersWithLocation = AssignLocationsToPlayers(Board.Players.Values, playersLocations);
             PlacePlayers(playersWithLocation);
-
         }
 
         protected override void PlaceGoals(IEnumerable<GoalField> goals)
         {
-            base.PlaceGoals(goals);
+            var goalFields = goals.ToList();
 
-            foreach (var goal in goals)
+            base.PlaceGoals(goalFields);
+
+            foreach (var goal in goalFields)
             {
                 switch (goal.Team)
                 {
@@ -124,26 +134,6 @@ namespace GameMaster
             };
 
             return playersLocations;
-        }
-
-        private IEnumerable<PlayerBase> GeneratePlayers(int teamPlayerCount)
-        {
-            var playersCount = 2 * teamPlayerCount;
-            var players = new List<PlayerBase>(playersCount);
-
-            for (var i = 0; i < playersCount; i++)
-            {
-                var team = i % 2 == 0 ? TeamColor.Red : TeamColor.Blue;
-                var role = PlayerType.Member;
-
-                //if (i < 2)
-                //    role = PlayerType.Leader;
-
-                var player = new PlayerBase(-(i+1), team, role);
-                players.Add(player);
-            }
-
-            return players;
         }
 
         private List<Location> GenerateLocationsOnRectangle(int count, Location bottomLeftCorner,
