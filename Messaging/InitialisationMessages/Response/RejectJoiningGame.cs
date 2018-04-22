@@ -30,11 +30,9 @@ namespace Messaging.InitialisationMessages
             throw new NotImplementedException();
         }
 
-        public override bool Process(IPlayer player)
+        public override void Process(IPlayer player)
         {
             player.UpdateJoiningInfo(false);
-            player.ChangePlayerCoordinatorState();
-            return false;
         }
 
         public override void Process(ICommunicationServer cs, int id)

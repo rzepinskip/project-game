@@ -40,7 +40,7 @@ namespace Messaging.InitialisationMessages
             return new ConfirmJoiningGameMessage(gameId, PlayerId, guid, playerInfo);
         }
 
-        public override bool Process(IPlayer player)
+        public override void Process(IPlayer player)
         {
             throw new NotImplementedException();
         }

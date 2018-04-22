@@ -47,7 +47,7 @@ namespace Messaging.Responses
             throw new InvalidOperationException();
         }
 
-        public override bool Process(IPlayer player)
+        public override void Process(IPlayer player)
         {
             if (TaskFields != null)
                 foreach (var taskField in TaskFields)
@@ -64,7 +64,8 @@ namespace Messaging.Responses
             if (PlayerLocation != null)
                 player.Board.HandlePlayerLocation(PlayerId, PlayerLocation);
 
-            return true;
+            if(GameFinished)
+                player.NotifyAboutGameEnd();
         }
 
         public static IMessage ConvertToData(DataFieldSet datafieldset, bool isGameFinished)

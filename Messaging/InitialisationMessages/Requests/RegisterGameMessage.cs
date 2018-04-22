@@ -29,7 +29,7 @@ namespace Messaging.InitialisationMessages
             throw new NotImplementedException();
         }
 
-        public override bool Process(IPlayer player)
+        public override void Process(IPlayer player)
         {
             throw new NotImplementedException();
         }
