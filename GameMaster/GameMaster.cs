@@ -136,7 +136,7 @@ namespace GameMaster
 
             StartNewGame();
 
-            var boardInfo = new BoardInfo(Board.Width, Board.GoalAreaSize, Board.TaskAreaSize);
+            var boardInfo = new BoardInfo(Board.Width, Board.TaskAreaSize, Board.GoalAreaSize);
             foreach (var i in PlayerGuidToId)
             {
                 var playerLocation = Board.Players.Values.Single(x => x.Id == i.Value).Location;
