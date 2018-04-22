@@ -33,11 +33,6 @@ namespace Player
             PlayerCoordinator.UpdateGameStateInfo(gameInfo);
         }
 
-        public void ChangePlayerCoordinatorState()
-        {
-            PlayerCoordinator.NextState();
-        }
-
         public void UpdateJoiningInfo(bool info)
         {
             PlayerCoordinator.UpdateJoinInfo(info);
@@ -106,18 +101,22 @@ namespace Player
 
         private void HandleResponse(IMessage response)
         {
-            if (_hasGameEnded)
+            //if (_hasGameEnded)
+            //{
+            //    _hasGameEnded = true;
+            //    return;
+            //}
+
+            response.Process(this);
+
+            if (PlayerCoordinator.StrategyReturnsMessage())
             {
-                _hasGameEnded = true;
-                return;
+                var request = GetNextRequestMessage();
+                _logger.Info(request);
+                CommunicationClient.Send(request);
             }
 
-            if (!response.Process(this))
-                return;
-
-            var request = GetNextRequestMessage();
-            _logger.Info(request);
-            CommunicationClient.Send(request);
+            PlayerCoordinator.NextState();
         }
     }
 }
