@@ -5,6 +5,4 @@
     <TaskField x="1" y="2" timestamp="2018-04-12T15:33:40" distanceToPiece="-1" />
     <TaskField x="2" y="2" timestamp="2018-04-12T15:33:40" distanceToPiece="-1" />
   </TaskFields>
-  <GoalFields />
-  <Pieces />
 </Data>

@@ -93,14 +93,10 @@ namespace Messaging.Responses
                 return false;
 
             if (l1.Any(item => !l2.Contains(item)))
-            {
                 return false;
-            }
 
             if (l2.Any(item => !l1.Contains(item)))
-            {
                 return false;
-            }
 
             return true;
         }
