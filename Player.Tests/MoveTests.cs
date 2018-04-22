@@ -22,7 +22,7 @@ namespace Player.Tests
                 scenario.InitialPlayerBoard, playerInfo.Location);
 
             scenario.Response.Process(player);
-
+            
             player.Board.Should().BeEquivalentTo(scenario.UpdatedPlayerBoard);
         }
 

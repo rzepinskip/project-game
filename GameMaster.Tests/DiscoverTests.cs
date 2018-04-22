@@ -10,6 +10,7 @@ using TestScenarios.DiscoverScenarios.DiscoverRegular;
 using TestScenarios.DiscoverScenarios.DiscoverTaskAreaBoardEdge;
 using TestScenarios.DiscoverScenarios.DiscoverTaskAreaCorner;
 using TestScenarios.DiscoverScenarios.DiscoverTaskAreaEdge;
+using TestScenarios.DiscoverScenarios.DiscoverUpdate;
 using Xunit;
 
 namespace GameMaster.Tests
@@ -39,17 +40,16 @@ namespace GameMaster.Tests
         }
         public static IEnumerable<object[]> GetData()
         {
-            //yield return new object[] { new DiscoverRegular() };
-            //yield return new object[] { new DiscoverTaskAreaEdge() };
-            //yield return new object[] { new DiscoverTaskAreaBoardEdge() };
-            //yield return new object[] { new DiscoverTaskAreaCorner() };
-            //yield return new object[] { new DiscoverGoalAreaCorner() };
-            //yield return new object[] { new DiscoverGoalAreaEdge() };
-            //yield return new object[] { new DiscoverBoardCorner() };
-            //yield return new object[] { new DiscoverPiece() };
+            yield return new object[] { new DiscoverRegular() };
+            yield return new object[] { new DiscoverTaskAreaEdge() };
+            yield return new object[] { new DiscoverTaskAreaBoardEdge() };
+            yield return new object[] { new DiscoverTaskAreaCorner() };
+            yield return new object[] { new DiscoverGoalAreaCorner() };
+            yield return new object[] { new DiscoverGoalAreaEdge() };
+            yield return new object[] { new DiscoverBoardCorner() };
+            yield return new object[] { new DiscoverPiece() };
             yield return new object[] { new DiscoverPlayer() };
-            //yield return new object[] { new DiscoverUpdate() };  }
+            yield return new object[] { new DiscoverUpdate() };
         }
-
     }
 }

@@ -76,6 +76,27 @@
     <None Update="DiscoverScenarios\DiscoverPiece\DiscoverPiece-Response.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="DiscoverScenarios\DiscoverUpdate\DiscoverUpdate-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverUpdate\DiscoverUpdate-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverUpdate\DiscoverUpdate-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverUpdate\DiscoverUpdate-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverUpdate\DiscoverUpdate-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverUpdate\DiscoverUpdate-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverUpdate\DiscoverUpdate-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="DiscoverScenarios\DiscoverPlayer\DiscoverPlayer-GM-Initial.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
