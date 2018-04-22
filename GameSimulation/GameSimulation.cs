@@ -33,7 +33,7 @@ namespace GameSimulation
         public GameMaster.GameMaster GameMaster { get; }
         public List<Player.Player> Players { get; }
 
-        public bool GameFinished { get; private set; }
+        public bool GameFinished { get; set; }
         public TeamColor Winners { get; private set; }
 
         private void GameMaster_GameFinished(object sender, GameFinishedEventArgs e)

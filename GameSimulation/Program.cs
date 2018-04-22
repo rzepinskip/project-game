@@ -23,7 +23,10 @@ namespace GameSimulation
                 }
 
                 if (simulation.GameFinished)
+                {
                     Console.WriteLine($"Game finished - team {simulation.Winners} won!");
+                    simulation.GameFinished = false;
+                }
 
                 Thread.Sleep(1000);
             }
