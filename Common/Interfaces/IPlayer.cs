@@ -8,7 +8,6 @@ namespace Common.Interfaces
     {
         IPlayerBoard Board { get; }
         void UpdateGameState(IEnumerable<GameInfo> gameInfo);
-        void ChangePlayerCoordinatorState();
         void UpdateJoiningInfo(bool info);
         void NotifyAboutGameEnd();
         void UpdatePlayer(int playerid, Guid playerGuid, PlayerBase playerBase, int gameId);
