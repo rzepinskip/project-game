@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Common;
@@ -21,7 +22,7 @@ namespace GameMaster
         private readonly CommunicationHandler _communicationHandler;
         private readonly List<(TeamColor team, PlayerType role)> _playersSlots;
         private int _gameId;
-
+        private int _playersFinished;
         private bool _gameRegistered;
         private bool _gameStarted;
         private Thread _pieceGeneratorThread;
@@ -40,7 +41,7 @@ namespace GameMaster
 
 
             _spawnPieceFrequency = Convert.ToInt32(gameConfiguration.GameDefinition.PlacingNewPiecesFrequency);
-            PieceGenerator = CreatePieceGenerator(Board);
+            
             checkIfFullTeamTimer = new Timer(CheckIfGameFullCallback, null, 5000, 1000);
 
             _communicationHandler = new CommunicationHandler(gameConfiguration);
@@ -61,7 +62,7 @@ namespace GameMaster
         public GameConfiguration GameConfiguration { get; }
         public Dictionary<Guid, int> PlayerGuidToId { get; } = new Dictionary<Guid, int>();
         public GameMasterBoard Board { get; set; }
-        public PieceGenerator PieceGenerator { get; }
+        public PieceGenerator PieceGenerator { get; set; }
 
         public bool IsSlotAvailable()
         {
@@ -118,10 +119,15 @@ namespace GameMaster
 
                 if (_gameStarted && Board.IsGameFinished())
                 {
-                    new Thread(() => GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner())))
-                        .Start();
-                    FinishGame();
+                    _playersFinished++;
                 }
+            }
+
+            if (_gameStarted && _playersFinished == Board.Players.Count)
+            {
+                new Thread(() => GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner())))
+                    .Start();
+                FinishGame();
             }
 
             if (response != null)
@@ -133,7 +139,6 @@ namespace GameMaster
             if (_playersSlots.Count > 0 || _gameStarted) return;
 
             _gameStarted = true;
-
             StartNewGame();
 
             var boardInfo = new BoardInfo(Board.Width, Board.TaskAreaSize, Board.GoalAreaSize);
@@ -144,20 +149,31 @@ namespace GameMaster
                 _communicationHandler.Client.Send(gameStartMessage);
             }
 
-            _pieceGeneratorThread = new Thread(() => PieceGeneratorGameplay(PieceGenerator));
-            _pieceGeneratorThread.Start();
             _communicationHandler.StartListeningToRequests(PlayerGuidToId.Keys);
         }
 
         private void StartNewGame()
         {
-            _gameMasterBoardGenerator.SpawnGameObjects(GameConfiguration.GameDefinition);
+            var oldBoard = Board;
+            var newGmBoardGenerator = new GameMasterBoardGenerator();
+            Board = newGmBoardGenerator.InitializeBoard(GameConfiguration.GameDefinition);
+            foreach (var boardPlayer in oldBoard.Players)
+            {
+                var oldPlayerInfo = boardPlayer.Value;
+                var playerInfo = new PlayerInfo(oldPlayerInfo.Id, oldPlayerInfo.Team, oldPlayerInfo.Role);
+                Board.Players.Add(boardPlayer.Key, playerInfo);
+            }
+            newGmBoardGenerator.SpawnGameObjects(GameConfiguration.GameDefinition);
+            PieceGenerator = CreatePieceGenerator(Board);
+            _pieceGeneratorThread = new Thread(() => PieceGeneratorGameplay(PieceGenerator));
+            _pieceGeneratorThread.Start();
+            _playersFinished = 0;
         }
 
         private void FinishGame()
         {
-            StartNewGame();
             _gameStarted = false;
+            _pieceGeneratorThread.Join();
         }
 
         private void PieceGeneratorGameplay(PieceGenerator pieceGenerator)
