@@ -41,7 +41,7 @@ namespace GameMaster
 
             _spawnPieceFrequency = Convert.ToInt32(gameConfiguration.GameDefinition.PlacingNewPiecesFrequency);
             PieceGenerator = CreatePieceGenerator(Board);
-            checkIfFullTeamTimer = new Timer(CheckIfGameFullCallback, null, 0, 3000);
+            checkIfFullTeamTimer = new Timer(CheckIfGameFullCallback, null, 5000, 1000);
 
             _communicationHandler = new CommunicationHandler(gameConfiguration);
             _communicationHandler.MessageReceived += (sender, args) => MessageHandler(args);
