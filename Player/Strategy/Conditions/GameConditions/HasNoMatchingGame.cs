@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading;
-using Common;
 using Common.Interfaces;
 using Messaging.InitialisationMessages;
 using Player.Strategy.StateInfo;
@@ -21,6 +17,8 @@ namespace Player.Strategy.Conditions.GameConditions
 
         public override bool CheckCondition()
         {
+            if (GameStateInfo.GameInfo == null)
+                return true;
             return GameStateInfo.GameInfo.All(x => x.GameName != GameStateInfo.GameName);
         }
 
@@ -34,6 +32,11 @@ namespace Player.Strategy.Conditions.GameConditions
             //Thread Sleep to avoid CS spamming
             Thread.Sleep(1000);
             return new GetGamesMessage();
+        }
+
+        public override bool ReturnsMessage(BaseState fromStrategyState)
+        {
+            return true;
         }
     }
 }

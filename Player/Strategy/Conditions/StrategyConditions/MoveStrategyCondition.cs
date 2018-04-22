@@ -55,6 +55,11 @@ namespace Player.Strategy.Conditions.StrategyConditions
             return new MoveRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId, directionToNearest);
         }
 
+        public override bool ReturnsMessage(BaseState fromStrategyState)
+        {
+            return true;
+        }
+
         private void CheckIfCloser(BoardBase board, Location newLocation, ref int distanceToNearest,
             Direction direction, ref Direction directionToNearest)
         {

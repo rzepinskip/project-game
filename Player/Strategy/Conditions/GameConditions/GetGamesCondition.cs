@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Common.Interfaces;
+﻿using Common.Interfaces;
 using Messaging.InitialisationMessages;
 using Player.Strategy.StateInfo;
 using Player.Strategy.States;
@@ -26,6 +25,11 @@ namespace Player.Strategy.Conditions.GameConditions
         public override BaseState GetNextState(BaseState fromStrategyState)
         {
             return new MatchingGameState(GameStateInfo);
+        }
+
+        public override bool ReturnsMessage(BaseState fromStrategyState)
+        {
+            return true;
         }
     }
 }

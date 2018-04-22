@@ -18,5 +18,6 @@ namespace Player.Strategy.Conditions.StrategyConditions
         public abstract bool CheckCondition();
         public abstract BaseState GetNextState(BaseState fromStrategyState);
         public abstract IMessage GetNextMessage(BaseState fromStrategyState);
+        public abstract bool ReturnsMessage(BaseState fromStrategyState);
     }
 }

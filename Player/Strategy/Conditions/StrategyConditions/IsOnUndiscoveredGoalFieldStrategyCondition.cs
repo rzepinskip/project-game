@@ -29,5 +29,10 @@ namespace Player.Strategy.Conditions.StrategyConditions
             StrategyInfo.UndiscoveredGoalFields.RemoveAt(0);
             return new PlacePieceRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId);
         }
+
+        public override bool ReturnsMessage(BaseState fromStrategyState)
+        {
+            return true;
+        }
     }
 }

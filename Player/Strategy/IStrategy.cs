@@ -1,8 +1,5 @@
-﻿using Common.BoardObjects;
-using Common.Interfaces;
-using Messaging.Requests;
+﻿using Common.Interfaces;
 using Player.Strategy.States;
-using Player.Strategy.States.StrategyStates;
 
 namespace Player.Strategy
 {
@@ -10,5 +7,6 @@ namespace Player.Strategy
     {
         IMessage NextMove();
         BaseState CurrentStrategyState { get; set; }
+        bool StrategyReturnsMessage();
     }
 }

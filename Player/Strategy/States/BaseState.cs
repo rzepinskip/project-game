@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Common.Interfaces;
 using Player.Strategy.Conditions;
 using Player.Strategy.StateInfo;
-using Player.Strategy;
 
 namespace Player.Strategy.States
 {
@@ -29,6 +26,16 @@ namespace Player.Strategy.States
 
             throw new StrategyException("GetNextState error", stateInfo);
         }
+
+        public bool StateReturnsMessage()
+        {
+            foreach (var condition in transitionConditions)
+                if (condition.CheckCondition())
+                    return condition.ReturnsMessage(this);
+
+            throw new StrategyException("StateReturnsMessage error", stateInfo);
+        }
+
 
         public string GetExceptionInfo()
         {

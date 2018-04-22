@@ -16,6 +16,8 @@ namespace Player.Strategy.Conditions.GameConditions
 
         public override bool CheckCondition()
         {
+            if (GameStateInfo.GameInfo == null)
+                return false;
             return GameStateInfo.GameInfo.Any(x => x.GameName == GameStateInfo.GameName);
         }
 
@@ -27,6 +29,11 @@ namespace Player.Strategy.Conditions.GameConditions
         public override IMessage GetNextMessage(BaseState fromStrategyState)
         {
             return new JoinGameMessage(GameStateInfo.GameName, GameStateInfo.Role, GameStateInfo.Color);
+        }
+
+        public override bool ReturnsMessage(BaseState fromStrategyState)
+        {
+            return true;
         }
     }
 }

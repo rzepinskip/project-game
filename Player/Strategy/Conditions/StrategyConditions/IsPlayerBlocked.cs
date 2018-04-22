@@ -62,6 +62,11 @@ namespace Player.Strategy.Conditions.StrategyConditions
             return new MoveRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId, direction);
         }
 
+        public override bool ReturnsMessage(BaseState fromStrategyState)
+        {
+            return true;
+        }
+
         private Direction Randomize4WayDirection(StrategyInfo strategyInfo, bool onlyTaskArea)
         {
             var currentLocation = strategyInfo.FromLocation;

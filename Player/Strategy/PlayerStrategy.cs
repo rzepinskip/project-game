@@ -16,6 +16,7 @@ namespace Player.Strategy
         private readonly List<GoalField> undiscoveredGoalFields = new List<GoalField>();
 
         public BaseState CurrentStrategyState { get; set; }
+        
 
         public PlayerStrategy(PlayerBoard board, PlayerBase player, Guid playerGuid, int gameId)
         {
@@ -35,13 +36,19 @@ namespace Player.Strategy
 
         public IMessage NextMove()
         {
-            strategyInfo.FromLocation = strategyInfo.Board.Players[strategyInfo.PlayerId].Location;
+            
 
             var nextState = CurrentStrategyState.GetNextState();
             var gameMessage = CurrentStrategyState.GetNextMessage();
 
             CurrentStrategyState = nextState;
             return gameMessage;
+        }
+
+        public bool StrategyReturnsMessage()
+        {
+            strategyInfo.FromLocation = strategyInfo.Board.Players[strategyInfo.PlayerId].Location;
+            return CurrentStrategyState.StateReturnsMessage();
         }
     }
 }

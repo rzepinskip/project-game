@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Threading;
 using Common.Interfaces;
+using Messaging.InitialisationMessages;
 using Player.Strategy.StateInfo;
 using Player.Strategy.States;
 using Player.Strategy.States.GameStates;
@@ -21,13 +20,18 @@ namespace Player.Strategy.Conditions.GameConditions
 
         public override BaseState GetNextState(BaseState fromStrategyState)
         {
-            return new GetGamesState(GameStateInfo);
+            return new MatchingGameState(GameStateInfo);
         }
 
         public override IMessage GetNextMessage(BaseState fromStrategyState)
         {
-            
-            throw new System.NotImplementedException();
+            Thread.Sleep(1000);
+            return new GetGamesMessage();
+        }
+
+        public override bool ReturnsMessage(BaseState fromStrategyState)
+        {
+            return true;
         }
     }
 }

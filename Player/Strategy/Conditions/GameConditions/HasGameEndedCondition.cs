@@ -1,7 +1,5 @@
 ﻿using System;
 using Common.Interfaces;
-using Player.Strategy.Conditions;
-using Player.Strategy.Conditions.GameConditions;
 using Player.Strategy.StateInfo;
 using Player.Strategy.States;
 using Player.Strategy.States.GameStates;
@@ -26,6 +24,11 @@ namespace Player.Strategy.Conditions.GameConditions
         public override IMessage GetNextMessage(BaseState fromStrategyStates)
         {
             throw new NotImplementedException();
+        }
+
+        public override bool ReturnsMessage(BaseState fromStrategyState)
+        {
+            return false;
         }
     }
 }

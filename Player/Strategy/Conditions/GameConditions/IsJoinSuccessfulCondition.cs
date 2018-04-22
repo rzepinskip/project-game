@@ -26,5 +26,10 @@ namespace Player.Strategy.Conditions.GameConditions
             //Wainting for another response, not sending message
             throw new System.NotImplementedException();
         }
+
+        public override bool ReturnsMessage(BaseState fromStrategyState)
+        {
+            return false;
+        }
     }
 }

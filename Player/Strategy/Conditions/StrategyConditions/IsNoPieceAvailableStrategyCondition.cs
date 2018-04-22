@@ -46,5 +46,10 @@ namespace Player.Strategy.Conditions.StrategyConditions
             StrategyInfo.ToLocation = StrategyInfo.FromLocation.GetNewLocation(direction);
             return new MoveRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId, direction);
         }
+
+        public override bool ReturnsMessage(BaseState fromStrategyState)
+        {
+            return true;
+        }
     }
 }

@@ -26,5 +26,10 @@ namespace Player.Strategy.Conditions.StrategyConditions
         {
             return new DiscoverRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId);
         }
+
+        public override bool ReturnsMessage(BaseState fromStrategyState)
+        {
+            return true;
+        }
     }
 }

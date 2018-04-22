@@ -37,5 +37,10 @@ namespace Player.Strategy.Conditions.StrategyConditions
         {
             return new PickUpPieceRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId);
         }
+
+        public override bool ReturnsMessage(BaseState fromStrategyState)
+        {
+            return true;
+        }
     }
 }

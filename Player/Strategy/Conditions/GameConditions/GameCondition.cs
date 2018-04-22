@@ -1,8 +1,6 @@
 ﻿using Common.Interfaces;
-using Messaging.Requests;
 using Player.Strategy.StateInfo;
 using Player.Strategy.States;
-using Player.Strategy.States.StrategyStates;
 
 namespace Player.Strategy.Conditions.GameConditions
 {
@@ -19,5 +17,6 @@ namespace Player.Strategy.Conditions.GameConditions
 
         public abstract BaseState GetNextState(BaseState fromStrategyState);
         public abstract IMessage GetNextMessage(BaseState fromStrategyState);
+        public abstract bool ReturnsMessage(BaseState fromStrategyState);
     }
 }

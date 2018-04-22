@@ -30,7 +30,7 @@ namespace Player.Strategy
         public IMessage NextMove()
         {
             var message = this.CurrentStrategyState.GetNextMessage();
-            this.CurrentStrategyState = this.CurrentStrategyState.GetNextState();
+            //CurrentStrategyState = CurrentStrategyState.GetNextState();
 
             return message;
         }
@@ -38,6 +38,11 @@ namespace Player.Strategy
         public void NextState()
         {
             CurrentStrategyState = CurrentStrategyState.GetNextState();
+        }
+
+        public bool StrategyReturnsMessage()
+        {
+            return CurrentStrategyState.StateReturnsMessage();
         }
 
         public void UpdateGameStateInfo(IEnumerable<GameInfo> gameInfo)
@@ -62,5 +67,6 @@ namespace Player.Strategy
         }
 
         public BaseState CurrentStrategyState { get; set; }
+        
     }
 }
