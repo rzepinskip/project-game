@@ -12,7 +12,7 @@ namespace BoardGenerators.Generators
 
         protected virtual void PlacePieces(IEnumerable<(Piece piece, Location location)> piecesWithLocations)
         {
-            //Board.Pieces.Clear();
+            Board.Pieces.Clear();
             foreach (var (piece, location) in piecesWithLocations)
             {
                 var taskFieldToFill = Board[location] as TaskField;
@@ -32,7 +32,7 @@ namespace BoardGenerators.Generators
             {
                 if (!(Board[goal] is GoalField))
                     throw new InvalidDataException();
-
+                goal.PlayerId = null;
                 Board[goal] = goal;
             }
         }
