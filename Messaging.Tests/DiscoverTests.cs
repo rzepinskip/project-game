@@ -6,6 +6,7 @@ using TestScenarios.DiscoverScenarios.DiscoverBoardCorner;
 using TestScenarios.DiscoverScenarios.DiscoverGoalAreaCorner;
 using TestScenarios.DiscoverScenarios.DiscoverGoalAreaEdge;
 using TestScenarios.DiscoverScenarios.DiscoverPiece;
+using TestScenarios.DiscoverScenarios.DiscoverPlayer;
 using TestScenarios.DiscoverScenarios.DiscoverRegular;
 using TestScenarios.DiscoverScenarios.DiscoverTaskAreaBoardEdge;
 using TestScenarios.DiscoverScenarios.DiscoverTaskAreaCorner;
@@ -43,8 +44,8 @@ namespace Messaging.Tests
             //yield return new object[] { new DiscoverGoalAreaCorner() };
             //yield return new object[] { new DiscoverGoalAreaEdge() };
             //yield return new object[] { new DiscoverBoardCorner() };
-            yield return new object[] { new DiscoverPiece() };
-            //yield return new object[] { new DiscoverPlayer() };
+            //yield return new object[] { new DiscoverPiece() };
+            yield return new object[] { new DiscoverPlayer() };
             //yield return new object[] { new DiscoverUpdate() };  }
         }
     }
