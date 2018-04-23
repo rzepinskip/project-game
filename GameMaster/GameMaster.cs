@@ -18,14 +18,11 @@ namespace GameMaster
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly GameMasterBoardGenerator _gameMasterBoardGenerator;
         private readonly string _name = "game";
-        private readonly int _spawnPieceFrequency;
+
         private readonly CommunicationHandler _communicationHandler;
         private readonly List<(TeamColor team, PlayerType role)> _playersSlots;
         private int _gameId;
-        private int _playersFinished;
-        private bool _gameRegistered;
-        private bool _gameStarted;
-        private Thread _pieceGeneratorThread;
+        private bool _gameInProgress;
         private Timer checkIfFullTeamTimer;
 
         public GameMaster(GameConfiguration gameConfiguration)
@@ -37,10 +34,8 @@ namespace GameMaster
             _playersSlots =
                 _gameMasterBoardGenerator.GeneratePlayerSlots(GameConfiguration.GameDefinition.NumberOfPlayersPerTeam);
 
+            PlayerGuidToId = new Dictionary<Guid, int>();
             foreach (var player in Board.Players) PlayerGuidToId.Add(Guid.NewGuid(), player.Key);
-
-
-            _spawnPieceFrequency = Convert.ToInt32(gameConfiguration.GameDefinition.PlacingNewPiecesFrequency);
             
             checkIfFullTeamTimer = new Timer(CheckIfGameFullCallback, null, 5000, 1000);
 
@@ -60,7 +55,7 @@ namespace GameMaster
         }
 
         public GameConfiguration GameConfiguration { get; }
-        public Dictionary<Guid, int> PlayerGuidToId { get; } = new Dictionary<Guid, int>();
+        public Dictionary<Guid, int> PlayerGuidToId { get; }
         public GameMasterBoard Board { get; set; }
         public PieceGenerator PieceGenerator { get; set; }
 
@@ -94,7 +89,6 @@ namespace GameMaster
         public void SetGameId(int gameId)
         {
             _gameId = gameId;
-            _gameRegistered = true;
         }
 
         public (DataFieldSet data, bool isGameFinished) EvaluateAction(ActionInfo actionInfo)
@@ -116,17 +110,11 @@ namespace GameMaster
             lock (Board.Lock)
             {
                 response = message.Process(this);
-
-                if (_gameStarted && Board.IsGameFinished())
-                {
-                    _playersFinished++;
-                }
             }
 
-            if (_gameStarted && _playersFinished == Board.Players.Count)
+            if (_gameInProgress && Board.IsGameFinished())
             {
-                new Thread(() => GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner())))
-                    .Start();
+                GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner()));
                 FinishGame();
             }
 
@@ -136,9 +124,9 @@ namespace GameMaster
 
         private void CheckIfGameFullCallback(object obj)
         {
-            if (_playersSlots.Count > 0 || _gameStarted) return;
+            if (_playersSlots.Count > 0 || _gameInProgress) return;
 
-            _gameStarted = true;
+            _gameInProgress = true;
             StartNewGame();
 
             var boardInfo = new BoardInfo(Board.Width, Board.TaskAreaSize, Board.GoalAreaSize);
@@ -164,34 +152,17 @@ namespace GameMaster
                 Board.Players.Add(boardPlayer.Key, playerInfo);
             }
             newGmBoardGenerator.SpawnGameObjects(GameConfiguration.GameDefinition);
-            PieceGenerator = CreatePieceGenerator(Board);
-            _pieceGeneratorThread = new Thread(() => PieceGeneratorGameplay(PieceGenerator));
-            _pieceGeneratorThread.Start();
-            _playersFinished = 0;
+
+            PieceGenerator = new PieceGenerator(Board, GameConfiguration.GameDefinition.ShamProbability, GameConfiguration.GameDefinition.PlacingNewPiecesFrequency);
         }
 
         private void FinishGame()
         {
-            _gameStarted = false;
-            _pieceGeneratorThread.Join();
-        }
-
-        private void PieceGeneratorGameplay(PieceGenerator pieceGenerator)
-        {
-            while (_gameStarted)
-            {
-                Thread.Sleep(_spawnPieceFrequency);
-                pieceGenerator.SpawnPiece();
-            }
+            _gameInProgress = false;
+            PieceGenerator.SpawnTimer.Dispose();
         }
 
         public virtual event EventHandler<GameFinishedEventArgs> GameFinished;
-
-
-        public PieceGenerator CreatePieceGenerator(GameMasterBoard board)
-        {
-            return new PieceGenerator(board, GameConfiguration.GameDefinition.ShamProbability);
-        }
 
         public void PutLog(ILoggable record)
         {
