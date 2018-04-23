@@ -14,7 +14,7 @@ namespace Common.BoardObjects
         {
         }
 
-        public Field(Location location, int? playerId, DateTime timestamp) : base(location.X, location.Y)
+        protected Field(Location location, int? playerId, DateTime timestamp) : base(location.X, location.Y)
         {
             PlayerId = playerId;
             Timestamp = timestamp;
