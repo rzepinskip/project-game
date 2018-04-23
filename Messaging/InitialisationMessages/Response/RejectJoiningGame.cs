@@ -23,7 +23,7 @@ namespace Messaging.InitialisationMessages
             PlayerId = playerId;
         }
 
-        public string GameName { get; set; }
+        [XmlAttribute("gameName")] public string GameName { get; set; }
 
         public override IMessage Process(IGameMaster gameMaster)
         {
