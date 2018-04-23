@@ -3,6 +3,7 @@
   <TaskFields>
     <TaskField x="1" y="2" timestamp="2017-02-23T17:20:11" playerId="0" distanceToPiece="0" />
   </TaskFields>
+  <GoalFields/>
   <Pieces>
     <Piece id="0" type="unknown" timestamp="2017-02-23T17:20:11" />
   </Pieces>

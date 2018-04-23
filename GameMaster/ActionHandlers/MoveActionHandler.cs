@@ -55,7 +55,7 @@ namespace GameMaster.ActionHandlers
                 newPlayerLocation = player.Location;
             }
 
-            return DataFieldSet.Create(PlayerId, taskFields.ToArray(), pieces.ToArray(), newPlayerLocation);
+            return DataFieldSet.Create(PlayerId, newPlayerLocation, taskFields.ToArray(), pieces.ToArray());
         }
     }
 }
