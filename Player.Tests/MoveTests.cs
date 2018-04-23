@@ -1,6 +1,11 @@
 ﻿using System.Collections.Generic;
+using FluentAssertions;
 using TestScenarios.MoveScenarios;
 using TestScenarios.MoveScenarios.MoveToGoalField;
+using TestScenarios.MoveScenarios.MoveToTasFieldWithoutPiece;
+using TestScenarios.MoveScenarios.MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece;
+using TestScenarios.MoveScenarios.MoveToTaskFieldWithPiece;
+using TestScenarios.MoveScenarios.MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece;
 using Xunit;
 
 namespace Player.Tests
@@ -17,21 +22,20 @@ namespace Player.Tests
                 scenario.InitialPlayerBoard, playerInfo.Location);
 
             scenario.Response.Process(player);
-
-            Assert.Equal(scenario.UpdatedPlayerBoard, player.Board);
+            
+            player.Board.Should().BeEquivalentTo(scenario.UpdatedPlayerBoard);
         }
 
 
         public static IEnumerable<object[]> GetData()
         {
-            yield return new object[] {new MoveToGoalField()};
-            //yield return new object[] { new MoveToTaskField()};
-            //yield return new object[] { new MoveToTaskFieldWithPiece()};
-            //yield return new object[] { new MoveToTaskFieldWithoutPiece()};
-            //yield return new object[] { new MoveToTaskFieldOccupiedByPlayerWhoCarryPiece()};
-            //yield return new object[] { new MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece()};
+            yield return new object[] { new MoveToGoalField() };
+            yield return new object[] { new MoveToTaskFieldWithoutPiece() };
+            yield return new object[] { new MoveToTaskFieldWithPiece() };
+            //yield return new object[] { new MoveToTaskFieldOccupiedByPlayerWhoCarryPiece() };
+            yield return new object[] { new MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece() };
             //yield return new object[] { new MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece()};
-            //yield return new object[] { new MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece()};
+            yield return new object[] { new MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece() };
         }
     }
 }

@@ -15,9 +15,6 @@ namespace Messaging.Responses
 
         protected ResponseWithData()
         {
-            TaskFields = new TaskField[0];
-            GoalFields = new GoalField[0];
-            Pieces = new Piece[0];
         }
 
         public ResponseWithData(int playerId, Location location, IEnumerable<TaskField> taskFields = null,
@@ -98,7 +95,13 @@ namespace Messaging.Responses
             if (l1 == null || l2 == null)
                 return false;
 
-            return l1.SequenceEqual(l2);
+            if (l1.Any(item => !l2.Contains(item)))
+                return false;
+
+            if (l2.Any(item => !l1.Contains(item)))
+                return false;
+
+            return true;
         }
 
         public override int GetHashCode()

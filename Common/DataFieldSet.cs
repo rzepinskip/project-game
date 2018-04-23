@@ -23,20 +23,26 @@ namespace Common
 
         public Location PlayerLocation { get; }
 
-        public static DataFieldSet CreateMoveDataSet(int playerId, TaskField[] taskFields, Piece[] pieces,
+        public static DataFieldSet Create(int playerId, TaskField[] taskFields, Piece[] pieces,
             Location playerLocation)
         {
-            return new DataFieldSet(playerId, taskFields, new GoalField[0], pieces, playerLocation);
+            if (taskFields.Length == 0)
+                taskFields = null;
+
+            if (pieces.Length == 0)
+                pieces = null;
+
+            return new DataFieldSet(playerId, taskFields, null, pieces, playerLocation);
         }
 
-        public static DataFieldSet CreateMoveDataSet(int playerId, Piece[] pieces)
+        public static DataFieldSet Create(int playerId, Piece[] pieces)
         {
-            return new DataFieldSet(playerId, new TaskField[0], new GoalField[0], pieces, null);
+            return new DataFieldSet(playerId, null, null, pieces, null);
         }
 
-        public static DataFieldSet CreateMoveDataSet(int playerId, GoalField[] goalFields)
+        public static DataFieldSet Create(int playerId, GoalField[] goalFields)
         {
-            return new DataFieldSet(playerId, new TaskField[0], goalFields, new Piece[0], null);
+            return new DataFieldSet(playerId,null, goalFields, null, null);
         }
     }
 }

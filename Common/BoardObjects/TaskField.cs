@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml;
 
 namespace Common.BoardObjects
 {
     [DebuggerDisplay("[X = {X}, Y = {Y}], {PieceId}, {DistanceToPiece}")]
-    public class TaskField : Field
+    public class TaskField : Field, IEquatable<TaskField>
     {
         protected TaskField()
         {
@@ -49,6 +50,34 @@ namespace Common.BoardObjects
 
             if (PieceId.HasValue)
                 writer.WriteAttributeString("pieceId", PieceId.ToString());
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as TaskField);
+        }
+
+        public bool Equals(TaskField other)
+        {
+            return other != null &&
+                   base.Equals(other) &&
+                   DistanceToPiece == other.DistanceToPiece &&
+                   EqualityComparer<int?>.Default.Equals(PieceId, other.PieceId);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        public static bool operator ==(TaskField field1, TaskField field2)
+        {
+            return EqualityComparer<TaskField>.Default.Equals(field1, field2);
+        }
+
+        public static bool operator !=(TaskField field1, TaskField field2)
+        {
+            return !(field1 == field2);
         }
     }
 }
