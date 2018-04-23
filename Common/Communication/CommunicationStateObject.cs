@@ -13,12 +13,10 @@ namespace Common.Communication
         public StringBuilder Sb { get; } = new StringBuilder();
         public Socket WorkSocket { get; set; }
         public ManualResetEvent MessageProcessed { get; } = new ManualResetEvent(true);
-        public int SocketId { get; }
         public long LastMessageReceivedTicks { get; set; }
 
-        public CommunicationStateObject(Socket workSocket, int socketId = 0)
+        public CommunicationStateObject(Socket workSocket)
         {
-            SocketId = socketId;
             WorkSocket = workSocket;
             LastMessageReceivedTicks = DateTime.Now.Ticks;
         }

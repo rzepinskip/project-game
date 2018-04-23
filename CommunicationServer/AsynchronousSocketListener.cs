@@ -18,7 +18,6 @@ namespace CommunicationServer
         private event Action<IMessage, int> _messageReceivedEvent;
         private readonly ManualResetEvent _readyForAccept = new ManualResetEvent(false);
 
-        private readonly Dictionary<int, Socket> _agentToSocket;
         private readonly Dictionary<int, CommunicationStateObject> _agentToCommunicationStateObject;
 
         private int _counter;
@@ -34,7 +33,6 @@ namespace CommunicationServer
 
             //Only for gameSimulation, the GM must have ID = -1 to get request queues working properly
             _counter = 0;
-            _agentToSocket = new Dictionary<int, Socket>();
             _agentToCommunicationStateObject = new Dictionary<int, CommunicationStateObject>();
             _checkKeepAliveTimer = new Timer(KeepAliveCallback, _agentToCommunicationStateObject, 0, _keepAliveTimeMiliseconds/2);
         }
@@ -85,10 +83,8 @@ namespace CommunicationServer
             }
 
             Debug.WriteLine("Accepted for " + _counter);
-            var state = new CommunicationStateObject(handler, _counter);
-            _agentToCommunicationStateObject.Add(_counter, state);
-            _agentToSocket.Add(_counter++, handler);
-
+            var state = new CommunicationStateObject(handler);
+            _agentToCommunicationStateObject.Add(_counter++, state);
             StartReading(state);
         }
 
@@ -150,7 +146,7 @@ namespace CommunicationServer
                         Debug.WriteLine("Read {0} bytes from socket. \n Data : {1}",
                             message.Length, message);
                         state.LastMessageReceivedTicks = DateTime.Today.Ticks;
-                        _messageReceivedEvent?.Invoke(_messageConverter.ConvertStringToMessage(message), state.SocketId);
+                        _messageReceivedEvent?.Invoke(_messageConverter.ConvertStringToMessage(message), _agentToCommunicationStateObject.First( x => x.Value.Equals(state)).Key);
 
                     }
                     state.Sb.Clear();
@@ -171,15 +167,15 @@ namespace CommunicationServer
         public void Send(IMessage message, int id)
         {
             var byteData = Encoding.ASCII.GetBytes(_messageConverter.ConvertMessageToString(message) + CommunicationStateObject.EtbByte);
-            var findResult = _agentToSocket.TryGetValue(id, out var handler);
+            var findResult = _agentToCommunicationStateObject.TryGetValue(id, out var handler);
             if (!findResult)
             {
                 throw new Exception("Non exsistent socket id");
             }
             try
             {
-                handler?.BeginSend(byteData, 0, byteData.Length, 0,
-                    SendCallback, handler);
+                handler.WorkSocket?.BeginSend(byteData, 0, byteData.Length, 0,
+                    SendCallback, handler.WorkSocket);
             }
             catch (Exception e)
             {
@@ -212,14 +208,13 @@ namespace CommunicationServer
                 var elapsedSpan = new TimeSpan(elapsedTicks);
 
                 if (elapsedSpan.Milliseconds > _keepAliveTimeMiliseconds)
-                    CloseSocket(csStateObject.SocketId);
+                    CloseSocket(csStateObject.WorkSocket);
             }
 
         }
 
-        private void CloseSocket(int socketId)
+        private void CloseSocket(Socket socketToClose)
         {
-            _agentToSocket.TryGetValue(socketId, out var socketToClose);
             if (socketToClose == null)
                 return;
             try
