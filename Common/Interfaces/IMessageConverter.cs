@@ -4,5 +4,6 @@
     {
         string ConvertMessageToString(IMessage message);
         IMessage ConvertStringToMessage(string message);
+        byte[] ConvertMessageToBytes(IMessage message, char etbByte);
     }
 }

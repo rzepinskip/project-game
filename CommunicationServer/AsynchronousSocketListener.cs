@@ -166,7 +166,7 @@ namespace CommunicationServer
 
         public void Send(IMessage message, int id)
         {
-            var byteData = Encoding.ASCII.GetBytes(_messageConverter.ConvertMessageToString(message) + CommunicationStateObject.EtbByte);
+            var byteData = _messageConverter.ConvertMessageToBytes(message, CommunicationStateObject.EtbByte);
             var findResult = _agentToCommunicationStateObject.TryGetValue(id, out var handler);
             if (!findResult)
             {

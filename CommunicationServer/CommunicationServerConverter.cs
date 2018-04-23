@@ -7,22 +7,16 @@ using Messaging.Serialization;
 
 namespace CommunicationServer
 {
-    public class CommunicationServerConverter : IMessageConverter
+    public class CommunicationServerConverter : MessageConverterBase
     {
-        private readonly MessageSerializer _messageSerializer;
 
-        public CommunicationServerConverter()
+        public CommunicationServerConverter():base()
         {
-            _messageSerializer = MessageSerializer.Instance;
-        }
-        public string ConvertMessageToString(IMessage message)
-        {
-            return _messageSerializer.Serialize(message as Message);
         }
 
-        public IMessage ConvertStringToMessage(string message)
+        public override IMessage ConvertStringToMessage(string message)
         {
-            return _messageSerializer.Deserialize<Message>(message);
+            return MessageSerializer.Deserialize<Message>(message);
         }
     }
 }

@@ -8,21 +8,15 @@ using Messaging.Serialization;
 
 namespace GameMaster
 {
-    public class GameMasterConverter : IMessageConverter
+    public class GameMasterConverter : MessageConverterBase
     {
-        private readonly MessageSerializer _messageSerializer;
-        public GameMasterConverter()
+        public GameMasterConverter():base()
         {
-            _messageSerializer = MessageSerializer.Instance;
         }
-        public string ConvertMessageToString(IMessage message)
+        public override IMessage ConvertStringToMessage(string message)
         {
-            return _messageSerializer.Serialize(message as Message);
+            return MessageSerializer.Deserialize<Message>(message);
         }
 
-        public IMessage ConvertStringToMessage(string message)
-        {
-            return _messageSerializer.Deserialize<Message>(message);
-        }
     }
 }
