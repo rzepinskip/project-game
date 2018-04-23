@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -19,6 +21,39 @@ namespace Common.Communication
         {
             WorkSocket = workSocket;
             LastMessageReceivedTicks = DateTime.Now.Ticks;
+        }
+        private static void SendCallback(IAsyncResult ar)
+        {
+            try
+            {
+                var handler = (Socket)ar.AsyncState;
+                var bytesSent = handler.EndSend(ar);
+                Debug.WriteLine("Sent {0} bytes to client.", bytesSent);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+        public void Send(byte[] byteData)
+        {
+            WorkSocket.BeginSend(byteData, 0, byteData.Length, 0, SendCallback, WorkSocket);
+        }
+
+        public void CloseSocket()
+        {
+            if (WorkSocket == null)
+                return;
+            try
+            {
+                WorkSocket.Shutdown(SocketShutdown.Both);
+                WorkSocket.Close();
+            }
+            catch (Exception e)
+            {
+                //
+            }
         }
     }
 }

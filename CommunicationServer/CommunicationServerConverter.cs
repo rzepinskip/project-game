@@ -9,7 +9,6 @@ namespace CommunicationServer
 {
     public class CommunicationServerConverter : MessageConverterBase
     {
-
         public CommunicationServerConverter():base()
         {
         }

@@ -15,9 +15,8 @@ namespace CommunicationServer
 {
     public class AsynchronousSocketListener : IServer
     {
-        private event Action<IMessage, int> _messageReceivedEvent;
+        private event Action<IMessage, int> MessageReceivedEvent;
         private readonly ManualResetEvent _readyForAccept = new ManualResetEvent(false);
-
         private readonly Dictionary<int, CommunicationStateObject> _agentToCommunicationStateObject;
 
         private int _counter;
@@ -29,7 +28,7 @@ namespace CommunicationServer
         {
             _keepAliveTimeMiliseconds = keepAliveTimeMiliseconds;
             _messageConverter = messageConverter;
-            _messageReceivedEvent += messageHandler;
+            MessageReceivedEvent += messageHandler;
 
             //Only for gameSimulation, the GM must have ID = -1 to get request queues working properly
             _counter = 0;
@@ -146,7 +145,7 @@ namespace CommunicationServer
                         Debug.WriteLine("Read {0} bytes from socket. \n Data : {1}",
                             message.Length, message);
                         state.LastMessageReceivedTicks = DateTime.Today.Ticks;
-                        _messageReceivedEvent?.Invoke(_messageConverter.ConvertStringToMessage(message), _agentToCommunicationStateObject.First( x => x.Value.Equals(state)).Key);
+                        MessageReceivedEvent?.Invoke(_messageConverter.ConvertStringToMessage(message), _agentToCommunicationStateObject.First( x => x.Value.Equals(state)).Key);
 
                     }
                     state.Sb.Clear();
@@ -163,7 +162,6 @@ namespace CommunicationServer
                 }
             }
         }
-
         public void Send(IMessage message, int id)
         {
             var byteData = _messageConverter.ConvertMessageToBytes(message, CommunicationStateObject.EtbByte);
@@ -174,29 +172,14 @@ namespace CommunicationServer
             }
             try
             {
-                handler.WorkSocket?.BeginSend(byteData, 0, byteData.Length, 0,
-                    SendCallback, handler.WorkSocket);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-
-        }
-
-        private void SendCallback(IAsyncResult ar)
-        {
-            try
-            {
-                var handler = (Socket)ar.AsyncState;
-                var bytesSent = handler.EndSend(ar);
-                Debug.WriteLine("Sent {0} bytes to client.", bytesSent);
+                handler.Send(byteData);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
             }
         }
+
 
         public void KeepAliveCallback(object state)
         {
@@ -208,24 +191,9 @@ namespace CommunicationServer
                 var elapsedSpan = new TimeSpan(elapsedTicks);
 
                 if (elapsedSpan.Milliseconds > _keepAliveTimeMiliseconds)
-                    CloseSocket(csStateObject.WorkSocket);
+                    csStateObject.CloseSocket();
             }
 
-        }
-
-        private void CloseSocket(Socket socketToClose)
-        {
-            if (socketToClose == null)
-                return;
-            try
-            {
-                socketToClose.Shutdown(SocketShutdown.Both);
-                socketToClose.Close();
-            }
-            catch (Exception e)
-            {
-                //
-            }
         }
     }
 }
