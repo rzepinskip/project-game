@@ -72,5 +72,10 @@ namespace Common.BoardObjects
             writer.WriteAttributeString("type", Type.GetXmlAttributeName());
             writer.WriteAttributeString("team", Team.GetXmlAttributeName());
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + $", {Team}, {Type}";
+        }
     }
 }
