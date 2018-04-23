@@ -29,30 +29,34 @@ namespace GameMaster.ActionHandlers
             var pieces = new List<Piece>();
 
             Location newPlayerLocation;
+            var newLocation = player.Location.GetNewLocation(_direction);
+            var fieldAtNewLocation = Board[newLocation];
+
+            if (fieldAtNewLocation is TaskField taskField)
+            {
+                taskField.DistanceToPiece = Board.DistanceToPieceFrom(taskField);
+                taskFields.Add(taskField);
+
+                if (taskField.PieceId.HasValue)
+                {
+                    var piece = Board.Pieces[taskField.PieceId.Value];
+                    pieces.Add(new Piece(piece.Id, PieceType.Unknown, piece.PlayerId));
+                }
+            }
+
             if (Validate())
             {
                 Board[player.Location].PlayerId = null;
-                var newLocation = player.Location.GetNewLocation(_direction);
-                var field = Board[newLocation];
-                field.PlayerId = PlayerId;
+                fieldAtNewLocation.PlayerId = PlayerId;
                 player.Location = newLocation;
 
                 newPlayerLocation = newLocation;
-                if (field is TaskField taskField)
-                {
-                    taskField.DistanceToPiece = Board.DistanceToPieceFrom(taskField);
-                    taskFields.Add(taskField);
-
-                    if (taskField.PieceId.HasValue)
-                    {
-                        var piece = Board.Pieces[taskField.PieceId.Value];
-                        pieces.Add(new Piece(piece.Id, PieceType.Unknown, piece.PlayerId));
-                    }
-                }
             }
             else
             {
                 newPlayerLocation = player.Location;
+                //if (taskFields.Count == 0)
+                //    taskFields[0].PieceId = null;
             }
 
             return DataFieldSet.Create(PlayerId, newPlayerLocation, taskFields.ToArray(), pieces.ToArray());
