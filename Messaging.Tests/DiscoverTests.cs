@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Xml.Linq;
+using FluentAssertions;
 using Messaging.Serialization;
 using Org.XmlUnit.Builder;
 using TestScenarios.DiscoverScenarios;
@@ -24,7 +26,7 @@ namespace Messaging.Tests
         {
             var xml = MessageXmlSerializer.SerializeToXml(scenario.InitialRequest);
 
-            Assert.False(XmlsHasDiffrences(scenario.InitialRequestFileContent, xml));
+            XDocument.Parse(xml).Should().BeEquivalentTo(XDocument.Parse(scenario.InitialRequestFileContent));
         }
 
         [Theory]
@@ -33,7 +35,7 @@ namespace Messaging.Tests
         {
             var xml = MessageXmlSerializer.SerializeToXml(scenario.Response);
 
-            Assert.False(XmlsHasDiffrences(scenario.ResponseFileContent, xml));
+            XDocument.Parse(xml).Should().BeEquivalentTo(XDocument.Parse(scenario.ResponseFileContent));
         }
 
         public static IEnumerable<object[]> GetData()
