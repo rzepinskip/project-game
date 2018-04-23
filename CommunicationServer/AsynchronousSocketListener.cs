@@ -13,14 +13,12 @@ using Common.Interfaces;
 
 namespace CommunicationServer
 {
-    public class AsynchronousSocketListener : ICommunicationServer
+    public class AsynchronousSocketListener : IServer
     {
-        public event Action<IMessage, int> MessageReceivedEvent;
+        private event Action<IMessage, int> _messageReceivedEvent;
         private readonly ManualResetEvent _readyForAccept = new ManualResetEvent(false);
 
         private readonly Dictionary<int, Socket> _agentToSocket;
-        private readonly Dictionary<int, int> _playerIdToGameId;
-        private readonly Dictionary<int, GameInfo> _gameIdToGameInfo;
         private readonly Dictionary<int, CommunicationStateObject> _agentToCommunicationStateObject;
 
         private int _counter;
@@ -28,15 +26,15 @@ namespace CommunicationServer
         private readonly int _keepAliveTimeMiliseconds;
         private Timer _checkKeepAliveTimer;
 
-        public AsynchronousSocketListener(IMessageConverter messageConverter, int keepAliveTimeMiliseconds)
+        public AsynchronousSocketListener(IMessageConverter messageConverter, Action<IMessage, int> messageHandler, int keepAliveTimeMiliseconds)
         {
             _keepAliveTimeMiliseconds = keepAliveTimeMiliseconds;
             _messageConverter = messageConverter;
+            _messageReceivedEvent += messageHandler;
+
             //Only for gameSimulation, the GM must have ID = -1 to get request queues working properly
             _counter = 0;
-            _gameIdToGameInfo = new Dictionary<int, GameInfo>();
             _agentToSocket = new Dictionary<int, Socket>();
-            _playerIdToGameId = new Dictionary<int, int>();
             _agentToCommunicationStateObject = new Dictionary<int, CommunicationStateObject>();
             _checkKeepAliveTimer = new Timer(KeepAliveCallback, _agentToCommunicationStateObject, 0, _keepAliveTimeMiliseconds/2);
         }
@@ -152,7 +150,7 @@ namespace CommunicationServer
                         Debug.WriteLine("Read {0} bytes from socket. \n Data : {1}",
                             message.Length, message);
                         state.LastMessageReceivedTicks = DateTime.Today.Ticks;
-                        MessageReceivedEvent?.Invoke(_messageConverter.ConvertStringToMessage(message), state.SocketId);
+                        _messageReceivedEvent?.Invoke(_messageConverter.ConvertStringToMessage(message), state.SocketId);
 
                     }
                     state.Sb.Clear();
@@ -202,62 +200,6 @@ namespace CommunicationServer
             {
                 Console.WriteLine(e.ToString());
             }
-        }
-
-        public void SetupServer(Action<IMessage, int> messageHandler)
-        {
-            MessageReceivedEvent += messageHandler;
-        }
-
-        public IEnumerable<GameInfo> GetGames()
-        {
-            return _gameIdToGameInfo.Values;
-        }
-
-        public int GetGameId(string gameName)
-        {
-            Debug.WriteLine(gameName);
-            return _gameIdToGameInfo.FirstOrDefault(x => x.Value.GameName == gameName).Key;
-        }
-
-        public void RegisterNewGame(GameInfo gameInfo, int id)
-        {
-            _gameIdToGameInfo.Add(id, gameInfo);
-        }
-
-        public void UpdateTeamCount(int gameId, TeamColor team)
-        {
-            _gameIdToGameInfo.TryGetValue(gameId, out var info);
-            if (info == null)
-                return;
-            switch (team)
-            {
-            case TeamColor.Blue:
-                info.BlueTeamPlayers--;
-                break;
-            case TeamColor.Red:
-                info.RedTeamPlayers--;
-                break;
-            default:
-                throw new Exception("Unexpected team color");
-            }
-            _gameIdToGameInfo[gameId] = info;
-        }
-
-        public void UnregisterGame(int gameId)
-        {
-            _gameIdToGameInfo.Remove(gameId);
-        }
-
-        public void AssignGameIdToPlayerId(int gameId, int playerId)
-        {
-            _playerIdToGameId.Add(playerId, gameId);
-        }
-
-        public int GetGameIdForPlayer(int playerId)
-        {
-            _playerIdToGameId.TryGetValue(playerId, out var gameId);
-            return gameId;
         }
 
         public void KeepAliveCallback(object state)
