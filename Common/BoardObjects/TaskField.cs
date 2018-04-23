@@ -12,12 +12,18 @@ namespace Common.BoardObjects
         {
         }
 
+        protected TaskField(TaskField taskField) : this(
+            new Location(taskField.X, taskField.Y), taskField.DistanceToPiece, taskField.PieceId, taskField.PlayerId,
+            DateTime.Now)
+        {
+        }
+
         public TaskField(Location location, int distanceToPiece = -1, int? pieceId = null, int? playerId = null) : this(
             location, distanceToPiece, pieceId, playerId, DateTime.Now)
         {
         }
 
-        public TaskField(Location location, int distanceToPiece, int? pieceId, int? playerId, DateTime date) : base(
+        protected TaskField(Location location, int distanceToPiece, int? pieceId, int? playerId, DateTime date) : base(
             location, playerId, date)
         {
             DistanceToPiece = distanceToPiece;
@@ -26,6 +32,14 @@ namespace Common.BoardObjects
 
         public int DistanceToPiece { get; set; }
         public int? PieceId { get; set; }
+
+        public bool Equals(TaskField other)
+        {
+            return other != null &&
+                   base.Equals(other) &&
+                   DistanceToPiece == other.DistanceToPiece &&
+                   EqualityComparer<int?>.Default.Equals(PieceId, other.PieceId);
+        }
 
         public int ManhattanDistanceTo(Location location)
         {
@@ -57,14 +71,6 @@ namespace Common.BoardObjects
             return Equals(obj as TaskField);
         }
 
-        public bool Equals(TaskField other)
-        {
-            return other != null &&
-                   base.Equals(other) &&
-                   DistanceToPiece == other.DistanceToPiece &&
-                   EqualityComparer<int?>.Default.Equals(PieceId, other.PieceId);
-        }
-
         public override int GetHashCode()
         {
             return base.GetHashCode();
@@ -83,6 +89,11 @@ namespace Common.BoardObjects
         public override string ToString()
         {
             return base.ToString() + $", PieceId={PieceId}, DistanceToPiece={DistanceToPiece}";
+        }
+
+        public TaskField Clone()
+        {
+            return new TaskField(this);
         }
     }
 }

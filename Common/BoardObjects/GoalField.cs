@@ -10,7 +10,11 @@ namespace Common.BoardObjects
     {
         protected GoalField()
         {
-            Timestamp = DateTime.Now;
+        }
+
+        protected GoalField(GoalField goalField) : this(new Location(goalField.X, goalField.Y), goalField.Team,
+            goalField.Type, goalField.PlayerId, DateTime.Now)
+        {
         }
 
         public GoalField(Location location, TeamColor team, GoalFieldType type = GoalFieldType.Unknown,
@@ -18,7 +22,7 @@ namespace Common.BoardObjects
         {
         }
 
-        public GoalField(Location location, TeamColor team, GoalFieldType type, int? playerId, DateTime timestamp) :
+        protected GoalField(Location location, TeamColor team, GoalFieldType type, int? playerId, DateTime timestamp) :
             base(location, playerId, timestamp)
         {
             Team = team;
@@ -76,6 +80,11 @@ namespace Common.BoardObjects
         public override string ToString()
         {
             return base.ToString() + $", {Team}, {Type}";
+        }
+
+        public GoalField Clone()
+        {
+            return new GoalField(this);
         }
     }
 }

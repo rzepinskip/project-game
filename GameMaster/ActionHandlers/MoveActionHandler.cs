@@ -35,7 +35,7 @@ namespace GameMaster.ActionHandlers
             if (fieldAtNewLocation is TaskField taskField)
             {
                 taskField.DistanceToPiece = Board.DistanceToPieceFrom(taskField);
-                taskFields.Add(taskField);
+                taskFields.Add(taskField.Clone());
 
                 if (taskField.PieceId.HasValue)
                 {
@@ -55,8 +55,6 @@ namespace GameMaster.ActionHandlers
             else
             {
                 newPlayerLocation = player.Location;
-                //if (taskFields.Count == 0)
-                //    taskFields[0].PieceId = null;
             }
 
             return DataFieldSet.Create(PlayerId, newPlayerLocation, taskFields.ToArray(), pieces.ToArray());
