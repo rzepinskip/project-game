@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 using Common;
 using Common.BoardObjects;
 using Common.Communication;
 using Common.Interfaces;
-using Messaging.Requests;
-using Messaging.Responses;
 using NLog;
 using Player.Logging;
 using Player.Strategy;
@@ -16,20 +14,52 @@ namespace Player
 {
     public class Player : PlayerBase, IPlayer
     {
+        private bool _hasGameEnded;
+        private ILogger _logger;
+
+        public IClient CommunicationClient;
         public ObservableConcurrentQueue<IRequest> RequestsQueue { get; set; }
         public ObservableConcurrentQueue<IMessage> ResponsesQueue { get; set; }
 
-        private Guid PlayerGuid { get; set; }
-        private PlayerBoard PlayerBoard { get; set; }
-        private ILogger _logger;
+        public Guid PlayerGuid { get; set; }
+        public PlayerBoard PlayerBoard { get; set; }
+        private PlayerCoordinator PlayerCoordinator { get; set; }
 
-        private IStrategy PlayerStrategy { get; set; }
-
+        public int GameId { get; set; }
         public IPlayerBoard Board => PlayerBoard;
 
-        public IClient CommunicationClient;
+        public void UpdateGameState(IEnumerable<GameInfo> gameInfo)
+        {
+            PlayerCoordinator.UpdateGameStateInfo(gameInfo);
+        }
 
-        private int GameId { get; set; }
+        public void UpdateJoiningInfo(bool info)
+        {
+            PlayerCoordinator.UpdateJoinInfo(info);
+        }
+
+        public void NotifyAboutGameEnd()
+        {
+            _hasGameEnded = true;
+            PlayerCoordinator.NotifyAboutGameEnd();
+        }
+
+        public void UpdatePlayer(int playerId, Guid playerGuid, PlayerBase playerBase, int gameId)
+        {
+            Id = playerId;
+            PlayerGuid = playerGuid;
+            Team = playerBase.Team;
+            Role = playerBase.Role;
+            GameId = gameId;
+        }
+
+        public void UpdatePlayerGame(Location playerLocation, BoardInfo board)
+        {
+            PlayerBoard = new PlayerBoard(board.Width, board.TasksHeight, board.GoalsHeight);
+            PlayerBoard.Players[Id] = new PlayerInfo(Id, Team, Role, playerLocation);
+            Debug.WriteLine("Player is updating game");
+            PlayerCoordinator.CreatePlayerStrategyFactory(new PlayerStrategyFactory(this));
+        }
 
         public void InitializePlayer(int id, Guid guid, TeamColor team, PlayerType role, PlayerBoard board,
             Location location)
@@ -43,84 +73,50 @@ namespace Player
             PlayerGuid = guid;
             GameId = 0;
             PlayerBoard = board;
-            PlayerStrategy = new PlayerStrategy(board, this, guid, GameId);
             PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
+
+            PlayerCoordinator = new PlayerCoordinator("", team, role);
 
             CommunicationClient = new AsynchronousClient(new PlayerConverter());
             CommunicationClient.SetupClient(HandleResponse);
             new Thread(() => CommunicationClient.StartClient()).Start();
         }
 
-        public async Task InitializePlayer(int id, Guid guid, int gameId, TeamColor team, PlayerType role, PlayerBoard board,
-            Location location)
+        public void InitializePlayer(string gameName, TeamColor color, PlayerType role)
         {
             var factory = new LoggerFactory();
-            _logger = factory.GetPlayerLogger(id);
+            _logger = factory.GetPlayerLogger(0);
 
-            Id = id;
-            Team = team;
-            Role = role;
-            PlayerGuid = guid;
-            GameId = gameId;
-            PlayerBoard = board;
-            PlayerStrategy = new PlayerStrategy(board, this, guid, GameId);
-            PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
+            PlayerCoordinator = new PlayerCoordinator(gameName, color, role);
 
-            await Task.Delay(10 * (id+1));
             CommunicationClient = new AsynchronousClient(new PlayerConverter());
             CommunicationClient.SetupClient(HandleResponse);
             new Thread(() => CommunicationClient.StartClient()).Start();
         }
 
-        public IRequest GetNextRequestMessage()
+        public IMessage GetNextRequestMessage()
         {
-            var currentLocation = PlayerBoard.Players[Id].Location;
-            return PlayerStrategy.NextMove(currentLocation);
+            return PlayerCoordinator.NextMove();
         }
 
         private void HandleResponse(IMessage response)
         {
-            //IMessage response;
-
-            //while (!ResponsesQueue.TryDequeue(out response))
+            //if (_hasGameEnded)
             //{
-                //Task.Delay(10);
+            //    _hasGameEnded = true;
+            //    return;
             //}
-            //Log received response
+
             response.Process(this);
-            //
-            //change board state based on response 
-            //  - update method in Response Message
-            //based on board state change strategy state
-            //  - implement strategy
-            //  - hold current state
-            //  - implement state changing action (stateless in next iteration) which return new message
-            //
-            //var message = new Move()
-            //{
-            //    PlayerId = player.Id,
-            //    Direction = player.Team == TeamColor.Red ? Direction.Down : Direction.Up,
-            //};
 
-            //log current state
-
-            try
+            if (PlayerCoordinator.StrategyReturnsMessage())
             {
                 var request = GetNextRequestMessage();
-                //RequestsQueue.Enqueue(request);
                 _logger.Info(request);
                 CommunicationClient.Send(request);
             }
-            catch (StrategyException s)
-            {
-                //log exception
-                throw;
-            }
-        }
 
-        //public void StartListeningToResponses()
-        //{
-        //    ResponsesQueue.ItemEnqueued += (sender, args) => { Task.Run(() => HandleResponse()); };
-        //}
+            PlayerCoordinator.NextState();
+        }
     }
 }

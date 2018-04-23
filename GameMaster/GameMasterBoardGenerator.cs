@@ -4,7 +4,6 @@ using System.Linq;
 using BoardGenerators.Generators;
 using Common;
 using Common.BoardObjects;
-using Common.Interfaces;
 using GameMaster.Configuration;
 
 namespace GameMaster
@@ -15,11 +14,36 @@ namespace GameMaster
 
         protected override GameMasterBoard Board { get; set; }
 
+        public List<(TeamColor, PlayerType)> GeneratePlayerSlots(int teamPlayerCount)
+        {
+            var playersCount = 2 * teamPlayerCount;
+            var playersSlots = new List<(TeamColor, PlayerType)>(playersCount);
+
+            for (var i = 0; i < playersCount; i++)
+            {
+                var team = i % 2 == 0 ? TeamColor.Red : TeamColor.Blue;
+                var role = PlayerType.Member;
+
+                if (i < 2)
+                    role = PlayerType.Leader;
+
+                var player = (team, role);
+                playersSlots.Add(player);
+            }
+
+            return playersSlots;
+        }
+
         public GameMasterBoard InitializeBoard(GameDefinition gameDefinition)
         {
             Board = new GameMasterBoard(gameDefinition.BoardWidth, gameDefinition.TaskAreaLength,
                 gameDefinition.GoalAreaLength);
 
+            return Board;
+        }
+
+        public void SpawnGameObjects(GameDefinition gameDefinition)
+        {
             var pieces = GeneratePieces(gameDefinition.InitialNumberOfPieces, gameDefinition.ShamProbability);
             var piecesLocations = GenerateLocationsForPieces(gameDefinition.InitialNumberOfPieces);
             var piecesWithLocation = pieces.Zip(piecesLocations, (p, l) => (p, l));
@@ -27,19 +51,18 @@ namespace GameMaster
 
             PlaceGoals(gameDefinition.Goals);
 
-            var players = GeneratePlayers(gameDefinition.NumberOfPlayersPerTeam);
             var playersLocations = GenerateLocationsForPlayers(gameDefinition.NumberOfPlayersPerTeam);
-            var playersWithLocation = AssignLocationsToPlayers(players, playersLocations);
+            var playersWithLocation = AssignLocationsToPlayers(Board.Players.Values, playersLocations);
             PlacePlayers(playersWithLocation);
-
-            return Board;
         }
 
         protected override void PlaceGoals(IEnumerable<GoalField> goals)
         {
-            base.PlaceGoals(goals);
+            var goalFields = goals.ToList();
 
-            foreach (var goal in goals)
+            base.PlaceGoals(goalFields);
+
+            foreach (var goal in goalFields)
             {
                 switch (goal.Team)
                 {
@@ -111,26 +134,6 @@ namespace GameMaster
             };
 
             return playersLocations;
-        }
-
-        private IEnumerable<PlayerBase> GeneratePlayers(int teamPlayerCount)
-        {
-            var playersCount = 2 * teamPlayerCount;
-            var players = new List<PlayerBase>(playersCount);
-
-            for (var i = 0; i < playersCount; i++)
-            {
-                var team = i % 2 == 0 ? TeamColor.Red : TeamColor.Blue;
-                var role = PlayerType.Member;
-
-                if (i < 2)
-                    role = PlayerType.Leader;
-
-                var player = new PlayerBase(i, team, role);
-                players.Add(player);
-            }
-
-            return players;
         }
 
         private List<Location> GenerateLocationsOnRectangle(int count, Location bottomLeftCorner,

@@ -6,6 +6,7 @@
         public int BlueTeamPlayers { get; set; }
         public int RedTeamPlayers { get; set; }
 
+        public GameInfo() { }
         public GameInfo(string gameName, int blueTeamPlayers, int redTeamPlayers)
         {
             GameName = gameName;

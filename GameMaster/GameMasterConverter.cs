@@ -22,7 +22,7 @@ namespace GameMaster
 
         public IMessage ConvertStringToMessage(string message)
         {
-            return _messageSerializer.Deserialize<Request>(message);
+            return _messageSerializer.Deserialize<Message>(message);
         }
     }
 }

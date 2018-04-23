@@ -63,6 +63,9 @@ namespace Messaging.Responses
 
             if (PlayerLocation != null)
                 player.Board.HandlePlayerLocation(PlayerId, PlayerLocation);
+
+            if(GameFinished)
+                player.NotifyAboutGameEnd();
         }
 
         public static IMessage ConvertToData(DataFieldSet datafieldset, bool isGameFinished)

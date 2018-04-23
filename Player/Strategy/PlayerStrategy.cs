@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using Common;
 using Common.BoardObjects;
+using Common.Interfaces;
 using Messaging.Requests;
+using Player.Strategy.StateInfo;
 using Player.Strategy.States;
+using Player.Strategy.States.StrategyStates;
 
 namespace Player.Strategy
 {
@@ -12,7 +15,8 @@ namespace Player.Strategy
         private readonly StrategyInfo strategyInfo;
         private readonly List<GoalField> undiscoveredGoalFields = new List<GoalField>();
 
-        public State CurrentState { get; set; }
+        public BaseState CurrentStrategyState { get; set; }
+        
 
         public PlayerStrategy(PlayerBoard board, PlayerBase player, Guid playerGuid, int gameId)
         {
@@ -26,19 +30,25 @@ namespace Player.Strategy
             undiscoveredGoalFields.Shuffle();
 
             strategyInfo = new StrategyInfo(null, board, playerGuid, gameId, player, undiscoveredGoalFields);
-            CurrentState = new InitState(strategyInfo);
+            CurrentStrategyState = new InitStrategyState(strategyInfo);
         }
 
 
-        public Request NextMove(Location location)
+        public IMessage NextMove()
         {
-            strategyInfo.FromLocation = location;
+            
 
-            var nextState = CurrentState.GetNextState();
-            var gameMessage = CurrentState.GetNextMessage();
+            var nextState = CurrentStrategyState.GetNextState();
+            var gameMessage = CurrentStrategyState.GetNextMessage();
 
-            CurrentState = nextState;
+            CurrentStrategyState = nextState;
             return gameMessage;
+        }
+
+        public bool StrategyReturnsMessage()
+        {
+            strategyInfo.FromLocation = strategyInfo.Board.Players[strategyInfo.PlayerId].Location;
+            return CurrentStrategyState.StateReturnsMessage();
         }
     }
 }

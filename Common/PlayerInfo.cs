@@ -12,14 +12,14 @@ namespace Common
         {
         }
 
-        public PlayerInfo(int playerId, TeamColor team, PlayerType role, Location location,
+        public PlayerInfo(int playerId, TeamColor team, PlayerType role, Location location = null,
             Piece piece = null) : base(playerId, team, role)
         {
             Location = location;
             Piece = piece;
         }
 
-        public PlayerInfo(PlayerBase basePlayer, Location location, Piece piece = null) : base(basePlayer.Id,
+        public PlayerInfo(PlayerBase basePlayer, Location location = null, Piece piece = null) : base(basePlayer.Id,
             basePlayer.Team, basePlayer.Role)
         {
             Location = location;
@@ -28,6 +28,14 @@ namespace Common
 
         public Location Location { get; set; }
         public Piece Piece { get; set; }
+
+        public bool Equals(PlayerInfo other)
+        {
+            return other != null &&
+                   base.Equals(other) &&
+                   EqualityComparer<Location>.Default.Equals(Location, other.Location) &&
+                   EqualityComparer<Piece>.Default.Equals(Piece, other.Piece);
+        }
 
         public override void ReadXml(XmlReader reader)
         {
@@ -64,14 +72,6 @@ namespace Common
         public override bool Equals(object obj)
         {
             return Equals(obj as PlayerInfo);
-        }
-
-        public bool Equals(PlayerInfo other)
-        {
-            return other != null &&
-                   base.Equals(other) &&
-                   EqualityComparer<Location>.Default.Equals(Location, other.Location) &&
-                   EqualityComparer<Piece>.Default.Equals(Piece, other.Piece);
         }
 
         public override int GetHashCode()

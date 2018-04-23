@@ -33,7 +33,7 @@ namespace CommunicationServer
             _keepAliveTimeMiliseconds = keepAliveTimeMiliseconds;
             _messageConverter = messageConverter;
             //Only for gameSimulation, the GM must have ID = -1 to get request queues working properly
-            _counter = -1;
+            _counter = 0;
             _gameIdToGameInfo = new Dictionary<int, GameInfo>();
             _agentToSocket = new Dictionary<int, Socket>();
             _playerIdToGameId = new Dictionary<int, int>();
@@ -57,7 +57,7 @@ namespace CommunicationServer
                 while (true)
                 {
                     _readyForAccept.Reset();
-                    //Debug.WriteLine("Waiting for a connection...");
+                    Debug.WriteLine("Waiting for a connection...");
                     listener.BeginAccept(AcceptCallback, listener);
 
                     _readyForAccept.WaitOne();
@@ -65,7 +65,7 @@ namespace CommunicationServer
             }
             catch (Exception e)
             {
-                //Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
 
             //Console.WriteLine("\nPress ENTER to continue...");
@@ -75,10 +75,18 @@ namespace CommunicationServer
         private void AcceptCallback(IAsyncResult ar)
         {
             _readyForAccept.Set();
-
+            var handler = default(Socket);
             var listener = (Socket)ar.AsyncState;
-            var handler = listener.EndAccept(ar);
-            //Debug.WriteLine("Accepted for " + _counter);
+            try
+            {
+                handler = listener.EndAccept(ar);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            Debug.WriteLine("Accepted for " + _counter);
             var state = new CommunicationStateObject(handler, _counter);
             _agentToCommunicationStateObject.Add(_counter, state);
             _agentToSocket.Add(_counter++, handler);
@@ -109,7 +117,7 @@ namespace CommunicationServer
             catch (Exception e)
             {
                 //After closing socket, BeginReceive will throw SocketException which has to be handled
-                //Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
         }
 
@@ -125,7 +133,7 @@ namespace CommunicationServer
             }
             catch (Exception e)
             {
-                //Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
 
             if (bytesRead > 0)
@@ -141,8 +149,8 @@ namespace CommunicationServer
                     for (var i = 0; i < numberOfMessages - 1; ++i)
                     {
                         var message = messages[i];
-                        //Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
-                        //    message.Length, message);
+                        Debug.WriteLine("Read {0} bytes from socket. \n Data : {1}",
+                            message.Length, message);
                         state.LastMessageReceivedTicks = DateTime.Today.Ticks;
                         MessageReceivedEvent?.Invoke(_messageConverter.ConvertStringToMessage(message), state.SocketId);
 
@@ -177,7 +185,7 @@ namespace CommunicationServer
             }
             catch (Exception e)
             {
-                //Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
 
         }
@@ -188,11 +196,11 @@ namespace CommunicationServer
             {
                 var handler = (Socket)ar.AsyncState;
                 var bytesSent = handler.EndSend(ar);
-                //Console.WriteLine("Sent {0} bytes to client.", bytesSent);
+                Debug.WriteLine("Sent {0} bytes to client.", bytesSent);
             }
             catch (Exception e)
             {
-                //Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
         }
 
@@ -208,6 +216,7 @@ namespace CommunicationServer
 
         public int GetGameId(string gameName)
         {
+            Debug.WriteLine(gameName);
             return _gameIdToGameInfo.FirstOrDefault(x => x.Value.GameName == gameName).Key;
         }
 

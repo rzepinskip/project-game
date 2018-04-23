@@ -14,6 +14,8 @@ namespace Common.Communication
         private const int Port = 11000;
         private readonly ManualResetEvent _connectDone =
             new ManualResetEvent(false);
+        private readonly ManualResetEvent _connectDoneForSend =
+            new ManualResetEvent(false);
         private readonly ManualResetEvent _receiveDone =
             new ManualResetEvent(false);
 
@@ -42,7 +44,7 @@ namespace Common.Communication
             }
             catch (Exception e)
             {
-                //Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
 
             //var thread = new Thread(StartReading);
@@ -58,20 +60,21 @@ namespace Common.Communication
 
                 _client.EndConnect(ar);
 
-                //Console.WriteLine("Socket connected to {0}", _client.RemoteEndPoint);
+                Debug.WriteLine("Socket connected to {0}", _client.RemoteEndPoint);
 
                 _connectDone.Set();
+                _connectDoneForSend.Set();
             }
             catch (Exception e)
             {
-                //Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
         }
 
         private void StartReading()
         {
             var state = new CommunicationStateObject(_client);
-            //Console.WriteLine("Client starts reading");
+            Debug.WriteLine("Client starts reading");
             while (true)
             {
                 _receiveDone.Reset();
@@ -92,7 +95,7 @@ namespace Common.Communication
             }
             catch (Exception e)
             {
-                //Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
         }
 
@@ -108,11 +111,11 @@ namespace Common.Communication
                 try
                 {
                     bytesRead = client.EndReceive(ar);
-                    //Debug.WriteLine("received bytes" + bytesRead);
+                    Debug.WriteLine("received bytes" + bytesRead);
                 }
                 catch (Exception e)
                 {
-                    //Console.WriteLine(e.ToString());
+                    Console.WriteLine(e.ToString());
                     return;
                 }
                 
@@ -120,7 +123,7 @@ namespace Common.Communication
                 {
                     state.Sb.Append(Encoding.ASCII.GetString(state.Buffer, 0, bytesRead));
                     response = state.Sb.ToString();
-
+                    Debug.WriteLine(response);
                     if (response.IndexOf(CommunicationStateObject.EtbByte) > -1)
                     {
                         var messages = response.Split(CommunicationStateObject.EtbByte);
@@ -150,7 +153,7 @@ namespace Common.Communication
             }
             catch (Exception e)
             {
-                //Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
         }
 
@@ -158,6 +161,7 @@ namespace Common.Communication
 
         public void Send(IMessage message)
         {
+            _connectDoneForSend.WaitOne();
             var byteData = Encoding.ASCII.GetBytes(_messageConverter.ConvertMessageToString(message) +  CommunicationStateObject.EtbByte);
             try
             {
@@ -165,7 +169,7 @@ namespace Common.Communication
             }
             catch (Exception e)
             {
-                //Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
 
         }
@@ -178,7 +182,7 @@ namespace Common.Communication
             }
             catch (Exception e)
             {
-                //Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
         }
 
