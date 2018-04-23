@@ -70,5 +70,10 @@ namespace Common.BoardObjects
             if (PlayerId.HasValue)
                 writer.WriteAttributeString("playerId", PlayerId.ToString());
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + $", PlayerId={PlayerId}";
+        }
     }
 }

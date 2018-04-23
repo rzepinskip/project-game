@@ -79,5 +79,10 @@ namespace Common.BoardObjects
         {
             return !(field1 == field2);
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + $", PieceId={PieceId}, DistanceToPiece={DistanceToPiece}";
+        }
     }
 }
