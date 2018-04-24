@@ -42,7 +42,7 @@ namespace GameMaster.ActionHandlers
                     }
                 }
 
-            return DataFieldSet.Create(PlayerId, taskFields.ToArray(), pieces.ToArray(), null);
+            return DataFieldSet.Create(PlayerId, taskFields.ToArray(), pieces.ToArray());
         }
     }
 }

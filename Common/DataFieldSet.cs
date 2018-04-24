@@ -4,8 +4,8 @@ namespace Common
 {
     public class DataFieldSet
     {
-        private DataFieldSet(int playerId, TaskField[] taskFields, GoalField[] goalFields, Piece[] pieces,
-            Location playerLocation)
+        private DataFieldSet(int playerId, Location playerLocation, TaskField[] taskFields, GoalField[] goalFields,
+            Piece[] pieces)
         {
             PlayerId = playerId;
             TaskFields = taskFields;
@@ -15,6 +15,7 @@ namespace Common
         }
 
         public int PlayerId { get; }
+
         public TaskField[] TaskFields { get; }
 
         public GoalField[] GoalFields { get; }
@@ -23,26 +24,24 @@ namespace Common
 
         public Location PlayerLocation { get; }
 
-        public static DataFieldSet Create(int playerId, TaskField[] taskFields, Piece[] pieces,
-            Location playerLocation)
+        public static DataFieldSet Create(int playerId, Location playerLocation, TaskField[] taskFields, Piece[] pieces)
         {
-            if (taskFields.Length == 0)
-                taskFields = null;
+            return new DataFieldSet(playerId, playerLocation, taskFields, new GoalField[0], pieces);
+        }
 
-            if (pieces.Length == 0)
-                pieces = null;
-
-            return new DataFieldSet(playerId, taskFields, null, pieces, playerLocation);
+        public static DataFieldSet Create(int playerId, TaskField[] taskFields, Piece[] pieces)
+        {
+            return new DataFieldSet(playerId, null, taskFields, new GoalField[0], pieces);
         }
 
         public static DataFieldSet Create(int playerId, Piece[] pieces)
         {
-            return new DataFieldSet(playerId, null, null, pieces, null);
+            return new DataFieldSet(playerId, null, new TaskField[0], new GoalField[0], pieces);
         }
 
         public static DataFieldSet Create(int playerId, GoalField[] goalFields)
         {
-            return new DataFieldSet(playerId,null, goalFields, null, null);
+            return new DataFieldSet(playerId, null, new TaskField[0], goalFields, new Piece[0]);
         }
     }
 }

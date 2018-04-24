@@ -15,6 +15,9 @@ namespace Messaging.Responses
 
         protected ResponseWithData()
         {
+            TaskFields = new TaskField[0];
+            GoalFields = new GoalField[0];
+            Pieces = new Piece[0];
         }
 
         public ResponseWithData(int playerId, Location location, IEnumerable<TaskField> taskFields = null,
@@ -29,7 +32,7 @@ namespace Messaging.Responses
         }
 
 
-    public TaskField[] TaskFields { get; set; }
+        public TaskField[] TaskFields { get; set; }
 
         public GoalField[] GoalFields { get; set; }
 
@@ -39,6 +42,17 @@ namespace Messaging.Responses
 
         [XmlAttribute("gameFinished")] public bool GameFinished { get; set; }
 
+        public bool Equals(ResponseWithData other)
+        {
+            return other != null &&
+                   base.Equals(other) &&
+                   IsCollectionsEqual(TaskFields, other.TaskFields) &&
+                   IsCollectionsEqual(GoalFields, other.GoalFields) &&
+                   IsCollectionsEqual(Pieces, other.Pieces) &&
+                   EqualityComparer<Location>.Default.Equals(PlayerLocation, other.PlayerLocation) &&
+                   GameFinished == other.GameFinished;
+        }
+
         public override IMessage Process(IGameMaster gameMaster)
         {
             throw new InvalidOperationException();
@@ -46,22 +60,19 @@ namespace Messaging.Responses
 
         public override void Process(IPlayer player)
         {
-            if (TaskFields != null)
-                foreach (var taskField in TaskFields)
-                    player.Board.HandleTaskField(PlayerId, taskField);
+            foreach (var taskField in TaskFields)
+                player.Board.HandleTaskField(PlayerId, taskField);
 
-            if (GoalFields != null)
-                foreach (var goalField in GoalFields)
-                    player.Board.HandleGoalField(PlayerId, goalField);
+            foreach (var goalField in GoalFields)
+                player.Board.HandleGoalField(PlayerId, goalField);
 
-            if (Pieces != null)
-                foreach (var piece in Pieces)
-                    player.Board.HandlePiece(PlayerId, piece);
+            foreach (var piece in Pieces)
+                player.Board.HandlePiece(PlayerId, piece);
 
             if (PlayerLocation != null)
                 player.Board.HandlePlayerLocation(PlayerId, PlayerLocation);
 
-            if(GameFinished)
+            if (GameFinished)
                 player.NotifyAboutGameEnd();
         }
 
@@ -74,17 +85,6 @@ namespace Messaging.Responses
         public override bool Equals(object obj)
         {
             return Equals(obj as ResponseWithData);
-        }
-
-        public bool Equals(ResponseWithData other)
-        {
-            return other != null &&
-                   base.Equals(other) &&
-                   IsCollectionsEqual(TaskFields, other.TaskFields) &&
-                   IsCollectionsEqual(GoalFields, other.GoalFields) &&
-                   IsCollectionsEqual(Pieces, other.Pieces) &&
-                   EqualityComparer<Location>.Default.Equals(PlayerLocation, other.PlayerLocation) &&
-                   GameFinished == other.GameFinished;
         }
 
         private bool IsCollectionsEqual<T>(IEnumerable<T> l1, IEnumerable<T> l2)
