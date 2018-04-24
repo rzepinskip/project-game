@@ -15,6 +15,7 @@ using TestScenarios.MoveScenarios.MoveToTasFieldWithoutPiece;
 using TestScenarios.MoveScenarios.MoveToTaskFieldOccupiedByPlayerWhoCarryPiece;
 using TestScenarios.MoveScenarios.MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece;
 using TestScenarios.MoveScenarios.MoveToTaskFieldWithPiece;
+using TestScenarios.MoveScenarios.MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece;
 using TestScenarios.MoveScenarios.MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece;
 
 namespace TestScenarios
@@ -48,7 +49,7 @@ namespace TestScenarios
                 new object[] {new MoveToTaskFieldWithPiece()},
                 new object[] { new MoveToTaskFieldOccupiedByPlayerWhoCarryPiece()},
                 new object[] {new MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece()},
-                //new object[] { new MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece()},
+                new object[] { new MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece()},
                 new object[] {new MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece()}
             };
         }

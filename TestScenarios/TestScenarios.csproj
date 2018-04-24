@@ -244,6 +244,27 @@
     <None Update="MoveScenarios\MoveToGoalField\MoveToGoalField-Response.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="MoveScenarios\MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece\MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece\MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece\MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece\MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece\MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece\MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece\MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="MoveScenarios\MoveToTaskFieldOccupiedByPlayerWhoCarryPiece\MoveToTaskFieldOccupiedByPlayerWhoCarryPiece-GM-Initial.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
