@@ -12,6 +12,7 @@ using TestScenarios.DiscoverScenarios.DiscoverTaskAreaEdge;
 using TestScenarios.DiscoverScenarios.DiscoverUpdate;
 using TestScenarios.MoveScenarios.MoveToGoalField;
 using TestScenarios.MoveScenarios.MoveToTasFieldWithoutPiece;
+using TestScenarios.MoveScenarios.MoveToTaskFieldOccupiedByPlayerWhoCarryPiece;
 using TestScenarios.MoveScenarios.MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece;
 using TestScenarios.MoveScenarios.MoveToTaskFieldWithPiece;
 using TestScenarios.MoveScenarios.MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece;
@@ -45,7 +46,7 @@ namespace TestScenarios
                 new object[] {new MoveToGoalField()},
                 new object[] {new MoveToTaskFieldWithoutPiece()},
                 new object[] {new MoveToTaskFieldWithPiece()},
-                //new object[] { new MoveToTaskFieldOccupiedByPlayerWhoCarryPiece()},
+                new object[] { new MoveToTaskFieldOccupiedByPlayerWhoCarryPiece()},
                 new object[] {new MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece()},
                 //new object[] { new MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece()},
                 new object[] {new MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece()}

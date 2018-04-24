@@ -244,6 +244,27 @@
     <None Update="MoveScenarios\MoveToGoalField\MoveToGoalField-Response.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="MoveScenarios\MoveToTaskFieldOccupiedByPlayerWhoCarryPiece\MoveToTaskFieldOccupiedByPlayerWhoCarryPiece-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToTaskFieldOccupiedByPlayerWhoCarryPiece\MoveToTaskFieldOccupiedByPlayerWhoCarryPiece-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToTaskFieldOccupiedByPlayerWhoCarryPiece\MoveToTaskFieldOccupiedByPlayerWhoCarryPiece-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToTaskFieldOccupiedByPlayerWhoCarryPiece\MoveToTaskFieldOccupiedByPlayerWhoCarryPiece-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToTaskFieldOccupiedByPlayerWhoCarryPiece\MoveToTaskFieldOccupiedByPlayerWhoCarryPiece-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToTaskFieldOccupiedByPlayerWhoCarryPiece\MoveToTaskFieldOccupiedByPlayerWhoCarryPiece-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveToTaskFieldOccupiedByPlayerWhoCarryPiece\MoveToTaskFieldOccupiedByPlayerWhoCarryPiece-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="MoveScenarios\MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece\MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece-GM-Initial.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
