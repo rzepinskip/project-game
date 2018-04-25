@@ -99,11 +99,15 @@ namespace Messaging.Communication
                 foreach (var message in messages)
                     Handle(_messageConverter.ConvertStringToMessage(message), Id);
 
+
+                //DONT TOUCH THAT 
+                //DANGER ZONE ************
                 if (!hasETBbyte)
                     handler.BeginReceive(state.Buffer, 0, CommunicationStateObject.BufferSize, 0,
                         ReadCallback, state);
                 else
                     MessageProcessed.Set();
+                //DANGER ZONE ****************
 
             }
         }
