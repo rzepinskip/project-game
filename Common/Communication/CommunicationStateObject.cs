@@ -1,59 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Common.Interfaces;
 
 namespace Common.Communication
 {
     public class CommunicationStateObject
     {
         public const int BufferSize = 1024;
-        public const char EtbByte = (char)23;
-        public byte[] Buffer { get; } =  new byte[BufferSize];
+        public const char EtbByte = (char) 23;
+        public byte[] Buffer { get; } = new byte[BufferSize];
         public StringBuilder Sb { get; } = new StringBuilder();
-        public Socket WorkSocket { get; set; }
-        public ManualResetEvent MessageProcessed { get; } = new ManualResetEvent(true);
         public long LastMessageReceivedTicks { get; set; }
 
-        public CommunicationStateObject(Socket workSocket)
+        public CommunicationStateObject()
         {
-            WorkSocket = workSocket;
             LastMessageReceivedTicks = DateTime.Now.Ticks;
         }
-        private static void SendCallback(IAsyncResult ar)
-        {
-            try
-            {
-                var handler = (Socket)ar.AsyncState;
-                var bytesSent = handler.EndSend(ar);
-                Debug.WriteLine("Sent {0} bytes to client.", bytesSent);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-        }
 
-        public void Send(byte[] byteData)
+        public (IEnumerable<string> messageList, bool isLastMessageRead) SplitMessages(int bytesRead)
         {
-            WorkSocket.BeginSend(byteData, 0, byteData.Length, 0, SendCallback, WorkSocket);
-        }
+            Sb.Append(Encoding.ASCII.GetString(Buffer, 0, bytesRead));
+            var content = Sb.ToString();
+            var messages = new string[0];
+            var wholeMessages = true;
 
-        public void CloseSocket()
-        {
-            if (WorkSocket == null)
-                return;
-            try
+            if (content.IndexOf(CommunicationStateObject.EtbByte) > -1)
             {
-                WorkSocket.Shutdown(SocketShutdown.Both);
-                WorkSocket.Close();
+                messages = content.Split(CommunicationStateObject.EtbByte, StringSplitOptions.RemoveEmptyEntries);
+                var numberOfMessages = messages.Length;
+                wholeMessages = string.IsNullOrEmpty(messages[numberOfMessages - 1]);
+
+                for (var i = 0; i < numberOfMessages - 1; ++i)
+                {
+                    var message = messages[i];
+                    Debug.WriteLine("Read {0} bytes from socket. \n Data : {1}",
+                        message.Length, message);
+                    LastMessageReceivedTicks = DateTime.Today.Ticks;
+                }
+
+                Sb.Clear();
+
+                if (!wholeMessages)
+                    Sb.Append(messages[numberOfMessages - 1]);
             }
-            catch (Exception e)
-            {
-                //
-            }
+
+            return (messages.ToList(), wholeMessages);
         }
     }
 }

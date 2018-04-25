@@ -73,7 +73,7 @@ namespace Common.Communication
 
         private void StartReading()
         {
-            var state = new CommunicationStateObject(_client);
+            var state = new CommunicationStateObject();
             Debug.WriteLine("Client starts reading");
             while (true)
             {
@@ -105,7 +105,7 @@ namespace Common.Communication
             try
             {
                 var state = (CommunicationStateObject)ar.AsyncState;
-                var client = state.WorkSocket;
+                var client = _client;
                 var bytesRead = 0;
 
                 try

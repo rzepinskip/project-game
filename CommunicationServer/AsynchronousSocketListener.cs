@@ -10,14 +10,15 @@ using System.Threading.Tasks;
 using Common;
 using Common.Communication;
 using Common.Interfaces;
+using Messaging.Communication;
 
 namespace CommunicationServer
 {
     public class AsynchronousSocketListener : IServer
     {
-        private event Action<IMessage, int> MessageReceivedEvent;
+        private Action<IMessage, int> MessageReceivedEvent;
         private readonly ManualResetEvent _readyForAccept = new ManualResetEvent(false);
-        private readonly Dictionary<int, CommunicationStateObject> _agentToCommunicationStateObject;
+        private readonly Dictionary<int, CommunicationHandler> _agentToCommunicationStateObject;
 
         private int _counter;
         private readonly IMessageConverter _messageConverter;
@@ -28,11 +29,11 @@ namespace CommunicationServer
         {
             _keepAliveTimeMiliseconds = keepAliveTimeMiliseconds;
             _messageConverter = messageConverter;
-            MessageReceivedEvent += messageHandler;
+            MessageReceivedEvent = messageHandler;
 
             //Only for gameSimulation, the GM must have ID = -1 to get request queues working properly
             _counter = 0;
-            _agentToCommunicationStateObject = new Dictionary<int, CommunicationStateObject>();
+            _agentToCommunicationStateObject = new Dictionary<int, CommunicationHandler>();
             _checkKeepAliveTimer = new Timer(KeepAliveCallback, _agentToCommunicationStateObject, 0, _keepAliveTimeMiliseconds/2);
         }
 
@@ -82,94 +83,26 @@ namespace CommunicationServer
             }
 
             Debug.WriteLine("Accepted for " + _counter);
-            var state = new CommunicationStateObject(handler);
+            var state = new ServerCommunicationHandler(handler, _counter, new CommunicationServerConverter(), MessageReceivedEvent);
             _agentToCommunicationStateObject.Add(_counter++, state);
             StartReading(state);
         }
 
-        private void StartReading(CommunicationStateObject state)
+        private void StartReading(CommunicationHandler handler)
         {
             while (true)
-            {
-                state.MessageProcessed.Reset();
-
-                Receive(state);
-
-                state.MessageProcessed.WaitOne();
-            }
+                handler.Receive();
         }
 
-        private void Receive(CommunicationStateObject state)
-        {
 
-            try
-            {
-                state.WorkSocket.BeginReceive(state.Buffer, 0, CommunicationStateObject.BufferSize, 0,
-                    ReadCallback, state);
-            }
-            catch (Exception e)
-            {
-                //After closing socket, BeginReceive will throw SocketException which has to be handled
-                Console.WriteLine(e.ToString());
-            }
-        }
-
-        private void ReadCallback(IAsyncResult ar)
-        {
-            var content = string.Empty;
-            var state = (CommunicationStateObject)ar.AsyncState;
-            var handler = state.WorkSocket;
-            var bytesRead = 0;
-            try
-            {
-                bytesRead = handler.EndReceive(ar);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-
-            if (bytesRead > 0)
-            {
-                state.Sb.Append(Encoding.ASCII.GetString(state.Buffer, 0, bytesRead));
-                content = state.Sb.ToString();
-                if (content.IndexOf(CommunicationStateObject.EtbByte) > -1)
-                {
-                    var messages = content.Split(CommunicationStateObject.EtbByte);
-                    var numberOfMessages = messages.Length;
-                    var wholeMessages = string.IsNullOrEmpty(messages[numberOfMessages - 1]);
-
-                    for (var i = 0; i < numberOfMessages - 1; ++i)
-                    {
-                        var message = messages[i];
-                        Debug.WriteLine("Read {0} bytes from socket. \n Data : {1}",
-                            message.Length, message);
-                        state.LastMessageReceivedTicks = DateTime.Today.Ticks;
-                        MessageReceivedEvent?.Invoke(_messageConverter.ConvertStringToMessage(message), _agentToCommunicationStateObject.First( x => x.Value.Equals(state)).Key);
-
-                    }
-                    state.Sb.Clear();
-                    if (!wholeMessages)
-                    {
-                        state.Sb.Append(messages[numberOfMessages - 1]);
-                    }
-
-                    state.MessageProcessed.Set();
-                } else
-                {
-                    handler.BeginReceive(state.Buffer, 0, CommunicationStateObject.BufferSize, 0,
-                        ReadCallback, state);
-                }
-            }
-        }
+       
         public void Send(IMessage message, int id)
         {
             var byteData = _messageConverter.ConvertMessageToBytes(message, CommunicationStateObject.EtbByte);
             var findResult = _agentToCommunicationStateObject.TryGetValue(id, out var handler);
             if (!findResult)
-            {
                 throw new Exception("Non exsistent socket id");
-            }
+
             try
             {
                 handler.Send(byteData);
@@ -183,17 +116,16 @@ namespace CommunicationServer
 
         public void KeepAliveCallback(object state)
         {
-            var dictionary = (Dictionary<int, CommunicationStateObject>)state;
+            var dictionary = (Dictionary<int, CommunicationHandler>)state;
             var currentTime = DateTime.Now.Ticks;
             foreach (var csStateObject in dictionary.Values)
             {
-                var elapsedTicks = currentTime - csStateObject.LastMessageReceivedTicks;
+                var elapsedTicks = currentTime - csStateObject.State.LastMessageReceivedTicks;
                 var elapsedSpan = new TimeSpan(elapsedTicks);
 
                 if (elapsedSpan.Milliseconds > _keepAliveTimeMiliseconds)
                     csStateObject.CloseSocket();
             }
-
         }
     }
 }
