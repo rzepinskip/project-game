@@ -59,19 +59,55 @@ namespace Messaging.Communication
                 Console.WriteLine(e.ToString());
             }
 
+            //if (bytesRead > 0)
+            //{
+            //    state.Sb.Append(Encoding.ASCII.GetString(state.Buffer, 0, bytesRead));
+            //    var content = state.Sb.ToString();
+            //    if (content.IndexOf(CommunicationStateObject.EtbByte) > 1)
+            //    {
+            //        var messages = content.Split(CommunicationStateObject.EtbByte);
+            //        var numberOfMessages = messages.Length;
+            //        var wholeMessages = string.IsNullOrEmpty(messages[numberOfMessages - 1]);
+
+            //        for (var i = 0; i < numberOfMessages - 1; ++i)
+            //        {
+            //            var message = messages[i];
+            //            Debug.WriteLine("Read {0} bytes from socket. \n Data : {1}",
+            //                message.Length, message);
+            //            state.LastMessageReceivedTicks = DateTime.Today.Ticks;
+            //            Handle(_messageConverter.ConvertStringToMessage(message), Id);
+            //        }
+            //        state.Sb.Clear();
+            //        if (!wholeMessages)
+            //        {
+            //            state.Sb.Append(messages[numberOfMessages - 1]);
+            //        }
+
+            //        MessageProcessed.Set();
+            //    }
+            //    else
+            //    {
+            //        handler.BeginReceive(state.Buffer, 0, CommunicationStateObject.BufferSize, 0,
+            //            ReadCallback, state);
+            //    }
+            //}
+
             if (bytesRead > 0)
             {
-                var (messages, lastMessageWaiting) = state.SplitMessages(bytesRead);
-                MessageProcessed.Set();
+                var (messages, hasETBbyte) = state.SplitMessages(bytesRead, Id);
 
                 foreach (var message in messages)
                     Handle(_messageConverter.ConvertStringToMessage(message), Id);
 
-                if (lastMessageWaiting)
+                if (!hasETBbyte)
                     handler.BeginReceive(state.Buffer, 0, CommunicationStateObject.BufferSize, 0,
                         ReadCallback, state);
+                else
+                    MessageProcessed.Set();
+
             }
         }
+
 
         private static void SendCallback(IAsyncResult ar)
         {

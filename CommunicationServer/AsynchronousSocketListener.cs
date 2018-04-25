@@ -94,8 +94,6 @@ namespace CommunicationServer
                 handler.Receive();
         }
 
-
-       
         public void Send(IMessage message, int id)
         {
             var byteData = _messageConverter.ConvertMessageToBytes(message, CommunicationStateObject.EtbByte);
