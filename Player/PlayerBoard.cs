@@ -61,6 +61,9 @@ namespace Player
             // Insert new data
             this[taskField] =
                 new TaskField(taskField, taskField.DistanceToPiece, taskField.PieceId, taskField.PlayerId);
+
+            if (taskField.PlayerId.HasValue)
+                Players[taskField.PlayerId.Value].Location = new Location(taskField.X, taskField.Y);
         }
 
         public void HandleGoalField(int playerId, GoalField goalField)
