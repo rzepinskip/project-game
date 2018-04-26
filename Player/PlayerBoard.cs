@@ -15,34 +15,6 @@ namespace Player
         {
         }
 
-        public void HandlePlayerLocation(int playerId, Location playerUpdatedLocation)
-        {
-            // Remove old data
-            var playerInfo = Players[playerId];
-            this[playerInfo.Location].PlayerId = null;
-
-            // Insert new data
-            playerInfo.Location = playerUpdatedLocation;
-            this[playerUpdatedLocation].PlayerId = playerId;
-        }
-
-        public void HandlePiece(int playerId, Piece piece)
-        {
-            // Insert new data
-            if (Pieces.ContainsKey(piece.Id))
-                Pieces[piece.Id] = piece;
-            else
-                Pieces.Add(piece.Id, piece);
-
-            if (piece.PlayerId.HasValue) Players[piece.PlayerId.Value].Piece = piece;
-
-            if (piece.Type == PieceType.Sham)
-            {
-                Pieces.Remove(piece.Id);
-                if (piece.PlayerId.HasValue) Players[piece.PlayerId.Value].Piece = null;
-            }
-        }
-
         public void HandleTaskField(int playerId, TaskField taskField)
         {
             // Remove old data
@@ -78,6 +50,34 @@ namespace Player
 
             // Insert new data
             this[goalField] = goalField;
+        }
+
+        public void HandlePiece(int playerId, Piece piece)
+        {
+            // Insert new data
+            if (Pieces.ContainsKey(piece.Id))
+                Pieces[piece.Id] = piece;
+            else
+                Pieces.Add(piece.Id, piece);
+
+            if (piece.PlayerId.HasValue) Players[piece.PlayerId.Value].Piece = piece;
+
+            if (piece.Type == PieceType.Sham)
+            {
+                Pieces.Remove(piece.Id);
+                if (piece.PlayerId.HasValue) Players[piece.PlayerId.Value].Piece = null;
+            }
+        }
+
+        public void HandlePlayerLocation(int playerId, Location playerUpdatedLocation)
+        {
+            // Remove old data
+            var playerInfo = Players[playerId];
+            this[playerInfo.Location].PlayerId = null;
+
+            // Insert new data
+            playerInfo.Location = playerUpdatedLocation;
+            this[playerUpdatedLocation].PlayerId = playerId;
         }
     }
 }
