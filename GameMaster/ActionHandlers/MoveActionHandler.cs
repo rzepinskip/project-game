@@ -55,6 +55,12 @@ namespace GameMaster.ActionHandlers
             else
             {
                 newPlayerLocation = player.Location;
+
+                if (fieldAtNewLocation.PlayerId.HasValue && Board.Players[fieldAtNewLocation.PlayerId.Value].Piece != null)
+                {
+                    var piece = Board.Players[fieldAtNewLocation.PlayerId.Value].Piece;
+                    pieces.Add(new Piece(piece.Id, PieceType.Unknown, piece.PlayerId));
+                }
             }
 
             return DataFieldSet.Create(PlayerId, newPlayerLocation, taskFields.ToArray(), pieces.ToArray());

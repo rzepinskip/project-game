@@ -3,6 +3,15 @@
   <Players>
     <item>
       <key>
+        <int>0</int>
+      </key>
+      <value>
+        <PlayerInfo id="0" team="red" role="leader">
+        </PlayerInfo>
+      </value>
+    </item>
+    <item>
+      <key>
         <int>1</int>
       </key>
       <value>
