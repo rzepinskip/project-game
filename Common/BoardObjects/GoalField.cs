@@ -79,7 +79,7 @@ namespace Common.BoardObjects
 
         public override string ToString()
         {
-            return base.ToString() + $", {Team}, {Type}";
+            return $"[{base.ToString()}, {Team}, {Type}";
         }
 
         public GoalField Clone()

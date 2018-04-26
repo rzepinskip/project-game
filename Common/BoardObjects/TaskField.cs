@@ -88,7 +88,7 @@ namespace Common.BoardObjects
 
         public override string ToString()
         {
-            return base.ToString() + $", PieceId={PieceId}, DistanceToPiece={DistanceToPiece}";
+            return $"[{base.ToString()}, PieceId={PieceId}, DistanceToPiece={DistanceToPiece}]";
         }
 
         public TaskField Clone()

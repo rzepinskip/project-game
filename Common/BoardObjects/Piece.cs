@@ -95,7 +95,7 @@ namespace Common.BoardObjects
 
         public override string ToString()
         {
-            return $"Id:{Id}, {Type}, PlayerId:{PlayerId}";
+            return $"[Id:{Id}, {Type}, PlayerId:{PlayerId}]";
         }
     }
 }
