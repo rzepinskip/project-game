@@ -4,12 +4,13 @@ using TestScenarios.DiscoverScenarios.DiscoverBoardCorner;
 using TestScenarios.DiscoverScenarios.DiscoverGoalAreaCorner;
 using TestScenarios.DiscoverScenarios.DiscoverGoalAreaEdge;
 using TestScenarios.DiscoverScenarios.DiscoverPiece;
+using TestScenarios.DiscoverScenarios.DiscoverPieceDisappearance;
 using TestScenarios.DiscoverScenarios.DiscoverPlayer;
+using TestScenarios.DiscoverScenarios.DiscoverPlayerDisappearance;
 using TestScenarios.DiscoverScenarios.DiscoverRegular;
 using TestScenarios.DiscoverScenarios.DiscoverTaskAreaBoardEdge;
 using TestScenarios.DiscoverScenarios.DiscoverTaskAreaCorner;
 using TestScenarios.DiscoverScenarios.DiscoverTaskAreaEdge;
-using TestScenarios.DiscoverScenarios.DiscoverUpdate;
 using TestScenarios.MoveScenarios.MoveToGoalField;
 using TestScenarios.MoveScenarios.MoveToTasFieldWithoutPiece;
 using TestScenarios.MoveScenarios.MoveToTaskFieldOccupiedByPlayerWhoCarryPiece;
@@ -66,8 +67,9 @@ namespace TestScenarios
                 new object[] {new DiscoverGoalAreaEdge()},
                 new object[] {new DiscoverBoardCorner()},
                 new object[] {new DiscoverPiece()},
+                new object[] {new DiscoverPiecePickUp()},
                 new object[] {new DiscoverPlayer()},
-                new object[] {new DiscoverUpdate()}
+                new object[] {new DiscoverPlayerDisappearance()},
             };
         }
     }

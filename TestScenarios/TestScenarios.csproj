@@ -55,6 +55,48 @@
     <None Update="DiscoverScenarios\DiscoverGoalAreaCorner\DiscoverGoalAreaCorner-Response.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="DiscoverScenarios\DiscoverPieceDisappearance\DiscoverPieceDisappearance-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPieceDisappearance\DiscoverPieceDisappearance-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPieceDisappearance\DiscoverPieceDisappearance-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPieceDisappearance\DiscoverPieceDisappearance-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPieceDisappearance\DiscoverPieceDisappearance-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPieceDisappearance\DiscoverPieceDisappearance-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPieceDisappearance\DiscoverPieceDisappearance-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPiecePickUp\DiscoverPiecePickUp-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPiecePickUp\DiscoverPiecePickUp-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPiecePickUp\DiscoverPiecePickUp-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPiecePickUp\DiscoverPiecePickUp-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPiecePickUp\DiscoverPiecePickUp-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPiecePickUp\DiscoverPiecePickUp-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPiecePickUp\DiscoverPiecePickUp-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="DiscoverScenarios\DiscoverPiece\DiscoverPiece-GM-Initial.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -74,6 +116,27 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="DiscoverScenarios\DiscoverPiece\DiscoverPiece-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPlayerDisappearance\DiscoverPlayerDisappearance-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPlayerDisappearance\DiscoverPlayerDisappearance-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPlayerDisappearance\DiscoverPlayerDisappearance-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPlayerDisappearance\DiscoverPlayerDisappearance-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPlayerDisappearance\DiscoverPlayerDisappearance-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPlayerDisappearance\DiscoverPlayerDisappearance-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DiscoverScenarios\DiscoverPlayerDisappearance\DiscoverPlayerDisappearance-Response.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="DiscoverScenarios\DiscoverUpdate\DiscoverUpdate-GM-Initial.xml">
