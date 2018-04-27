@@ -7,7 +7,7 @@ using Common.Interfaces;
 
 namespace CommunicationServer
 {
-    public class ServerTcpCommunicationTool : TcpCommunicationHandler
+    public class ServerTcpCommunicationTool : TcpCommunicationTool
     {
         private Action<IMessage, int> _handleMessage;
         public ServerTcpCommunicationTool(Socket workSocket, int id, IMessageConverter messageConverter, Action<IMessage, int> handleMessage)
