@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading;
 using Common;
 using Common.Interfaces;
+using CommunicationServer.Communication;
 using NLog;
 
 namespace CommunicationServer
@@ -16,7 +17,8 @@ namespace CommunicationServer
         private static ILogger _logger = LogManager.GetCurrentClassLogger();
         public GameCommunicationServer()
         {
-            _listener = new AsynchronousSocketListener(new CommunicationServerConverter(), HandleMessage, 1000000000);
+            _listener = new AsynchronousSocketListener(new CommunicationServerConverter(),
+                new TcpSocketAccepter(HandleMessage), 1000000000);
             CommunicationResolver = new CommunicationResolver();
             new Thread(() => _listener.StartListening()).Start();
         }

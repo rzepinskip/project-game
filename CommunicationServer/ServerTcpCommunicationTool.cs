@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
+using Common.Communication;
 using Common.Interfaces;
-using Messaging.Communication;
 
 namespace CommunicationServer
 {
-    public class ServerCommunicationHandler : CommunicationHandler
+    public class ServerTcpCommunicationTool : TcpCommunicationHandler
     {
         private Action<IMessage, int> _handleMessage;
-        public ServerCommunicationHandler(Socket workSocket, int id, IMessageConverter messageConverter, Action<IMessage, int> handleMessage)
+        public ServerTcpCommunicationTool(Socket workSocket, int id, IMessageConverter messageConverter, Action<IMessage, int> handleMessage)
             : base(workSocket, id, messageConverter)
         {
             _handleMessage = handleMessage;

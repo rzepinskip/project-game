@@ -77,8 +77,7 @@ namespace Player
 
             PlayerCoordinator = new PlayerCoordinator("", team, role);
 
-            CommunicationClient = new AsynchronousClient(new PlayerConverter());
-            CommunicationClient.SetupClient(HandleResponse);
+            CommunicationClient = new AsynchronousClient(new TcpSocketConnecter(new PlayerConverter(), HandleResponse),new PlayerConverter());
             new Thread(() => CommunicationClient.StartClient()).Start();
         }
 
@@ -89,8 +88,7 @@ namespace Player
 
             PlayerCoordinator = new PlayerCoordinator(gameName, color, role);
 
-            CommunicationClient = new AsynchronousClient(new PlayerConverter());
-            CommunicationClient.SetupClient(HandleResponse);
+            CommunicationClient = new AsynchronousClient(new TcpSocketConnecter(new PlayerConverter(), HandleResponse), new PlayerConverter());
             new Thread(() => CommunicationClient.StartClient()).Start();
         }
 

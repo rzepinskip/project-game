@@ -130,14 +130,14 @@ namespace GameMaster
             StartNewGame();
 
             var boardInfo = new BoardInfo(Board.Width, Board.TaskAreaSize, Board.GoalAreaSize);
+
+            _communicationHandler.StartListeningToRequests(PlayerGuidToId.Keys);
             foreach (var i in PlayerGuidToId)
             {
                 var playerLocation = Board.Players.Values.Single(x => x.Id == i.Value).Location;
                 var gameStartMessage = new GameMessage(i.Value, Board.Players.Values, playerLocation, boardInfo);
                 _communicationHandler.Client.Send(gameStartMessage);
             }
-
-            _communicationHandler.StartListeningToRequests(PlayerGuidToId.Keys);
         }
 
         private void StartNewGame()

@@ -23,39 +23,35 @@ namespace Common.Communication
             Sb = new StringBuilder();
         }
 
-        public (IEnumerable<string> messageList, bool hasETBbyte) SplitMessages(int bytesRead, int id)
+        public (IEnumerable<string> messageList, bool hasEtbByte) SplitMessages(int bytesRead, int id)
         {
             Sb.Append(Encoding.ASCII.GetString(Buffer, 0, bytesRead));
             var content = Sb.ToString();
             Debug.WriteLine("Read {0} bytes from socket {1} . \n Data : {2}",
                 content.Length, id, content);
+
             var messages = new string[0];
-            var wholeMessages = true;
-
-            List<string> result = new List<string>();
-
-            if (content.IndexOf(CommunicationStateObject.EtbByte) > -1)
+            var hasEtbByte = content.IndexOf(CommunicationStateObject.EtbByte) > -1;
+            
+            if (hasEtbByte)
             {
                 messages = content.Split(CommunicationStateObject.EtbByte);
                 var numberOfMessages = messages.Length;
-                wholeMessages = string.IsNullOrEmpty(messages[numberOfMessages - 1]);
+                var wholeMessages = string.IsNullOrEmpty(messages[numberOfMessages - 1]);
 
                 for (var i = 0; i < messages.Length - 1; ++i)
                 {
                     var message = messages[i];
-                    
                     LastMessageReceivedTicks = DateTime.Today.Ticks;
-                    result.Add(message);
                 }
 
                 Sb.Clear();
 
                 if (!wholeMessages)
                     Sb.Append(messages[numberOfMessages - 1]);
-
             }
 
-            return (result, content.IndexOf(CommunicationStateObject.EtbByte) > -1);
+            return (messages.Take(messages.Length - 1), hasEtbByte);
         }
     }
 }

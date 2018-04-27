@@ -22,8 +22,8 @@ namespace GameMaster
         {
             _actionCosts = gameConfiguration.ActionCosts;
 
-            Client = new AsynchronousClient(new GameMasterConverter());
-            Client.SetupClient(HandleMessagesFromClient);
+            Client = new AsynchronousClient(new TcpSocketConnecter(new GameMasterConverter(), HandleMessagesFromClient),
+                new GameMasterConverter());
             new Thread(() => Client.StartClient()).Start();
         }
 

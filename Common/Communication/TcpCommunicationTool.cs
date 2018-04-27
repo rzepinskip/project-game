@@ -1,28 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
-using Common.Communication;
 using Common.Interfaces;
 
-namespace Messaging.Communication
+namespace Common.Communication
 {
-    public abstract class CommunicationHandler
+    public abstract class TcpCommunicationTool : ICommunicationTool
     {
         public int Id { get; set; }
         public Socket WorkSocket { get; set; }
-        public ManualResetEvent MessageProcessed { get; } = new ManualResetEvent(true);
+        public ManualResetEvent MessageProcessed { get; }
         public CommunicationStateObject State { get; set; }
 
         private IMessageConverter _messageConverter;
+        public abstract void Handle(IMessage message, int id = -404);
 
-        public CommunicationHandler(Socket workSocket, int id, IMessageConverter messageConverter)
+        public TcpCommunicationTool(Socket workSocket, int id, IMessageConverter messageConverter)
         {
             WorkSocket = workSocket;
             Id = id;
             _messageConverter = messageConverter;
+            MessageProcessed = new ManualResetEvent(true);
             State = new CommunicationStateObject();
         }
 
@@ -59,46 +58,12 @@ namespace Messaging.Communication
                 Console.WriteLine(e.ToString());
             }
 
-            //if (bytesRead > 0)
-            //{
-            //    state.Sb.Append(Encoding.ASCII.GetString(state.Buffer, 0, bytesRead));
-            //    var content = state.Sb.ToString();
-            //    if (content.IndexOf(CommunicationStateObject.EtbByte) > 1)
-            //    {
-            //        var messages = content.Split(CommunicationStateObject.EtbByte);
-            //        var numberOfMessages = messages.Length;
-            //        var wholeMessages = string.IsNullOrEmpty(messages[numberOfMessages - 1]);
-
-            //        for (var i = 0; i < numberOfMessages - 1; ++i)
-            //        {
-            //            var message = messages[i];
-            //            Debug.WriteLine("Read {0} bytes from socket. \n Data : {1}",
-            //                message.Length, message);
-            //            state.LastMessageReceivedTicks = DateTime.Today.Ticks;
-            //            Handle(_messageConverter.ConvertStringToMessage(message), Id);
-            //        }
-            //        state.Sb.Clear();
-            //        if (!wholeMessages)
-            //        {
-            //            state.Sb.Append(messages[numberOfMessages - 1]);
-            //        }
-
-            //        MessageProcessed.Set();
-            //    }
-            //    else
-            //    {
-            //        handler.BeginReceive(state.Buffer, 0, CommunicationStateObject.BufferSize, 0,
-            //            ReadCallback, state);
-            //    }
-            //}
-
             if (bytesRead > 0)
             {
                 var (messages, hasETBbyte) = state.SplitMessages(bytesRead, Id);
 
                 foreach (var message in messages)
                     Handle(_messageConverter.ConvertStringToMessage(message), Id);
-
 
                 //DONT TOUCH THAT 
                 //DANGER ZONE ************
@@ -111,7 +76,10 @@ namespace Messaging.Communication
 
             }
         }
-
+        public void Send(byte[] byteData)
+        {
+            WorkSocket.BeginSend(byteData, 0, byteData.Length, 0, SendCallback, WorkSocket);
+        }
 
         private static void SendCallback(IAsyncResult ar)
         {
@@ -125,14 +93,6 @@ namespace Messaging.Communication
             {
                 Console.WriteLine(e.ToString());
             }
-        }
-
-        public abstract void Handle(IMessage message, int id = -404);
-
-
-        public void Send(byte[] byteData)
-        {
-            WorkSocket.BeginSend(byteData, 0, byteData.Length, 0, SendCallback, WorkSocket);
         }
 
         public void CloseSocket()
