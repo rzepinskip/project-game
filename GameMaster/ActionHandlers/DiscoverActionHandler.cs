@@ -40,6 +40,12 @@ namespace GameMaster.ActionHandlers
                         var piece = Board.Pieces[taskfield.PieceId.Value];
                         pieces.Add(new Piece(piece.Id, PieceType.Unknown, piece.PlayerId));
                     }
+
+                    if (taskfield.PlayerId.HasValue && Board.Players[taskfield.PlayerId.Value].Piece != null)
+                    {
+                        var piece = Board.Players[taskfield.PlayerId.Value].Piece;
+                        pieces.Add(new Piece(piece.Id, PieceType.Unknown, piece.PlayerId));
+                    }
                 }
 
             return DataFieldSet.Create(PlayerId, taskFields.ToArray(), pieces.ToArray());
