@@ -11,14 +11,14 @@ using GameMaster.Delays;
 
 namespace GameMaster
 {
-    public class CommunicationHandler
+    public class MessagingHandler
     {
         private readonly ActionCosts _actionCosts;
         public readonly IClient Client;
 
         private Dictionary<Guid, PlayerHandle> _playerHandles;
 
-        public CommunicationHandler(GameConfiguration gameConfiguration)
+        public MessagingHandler(GameConfiguration gameConfiguration)
         {
             _actionCosts = gameConfiguration.ActionCosts;
 
