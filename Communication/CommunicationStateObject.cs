@@ -2,26 +2,24 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Sockets;
 using System.Text;
-using System.Threading;
-using Common.Interfaces;
 
-namespace Common.Communication
+namespace Communication
 {
     public class CommunicationStateObject
     {
         public const int BufferSize = 1024;
         public const char EtbByte = (char) 23;
-        public byte[] Buffer { get; } = new byte[BufferSize];
-        public StringBuilder Sb { get; }
-        public long LastMessageReceivedTicks { get; set; }
 
         public CommunicationStateObject()
         {
             LastMessageReceivedTicks = DateTime.Now.Ticks;
             Sb = new StringBuilder();
         }
+
+        public byte[] Buffer { get; } = new byte[BufferSize];
+        public StringBuilder Sb { get; }
+        public long LastMessageReceivedTicks { get; set; }
 
         public (IEnumerable<string> messageList, bool hasEtbByte) SplitMessages(int bytesRead, int id)
         {
@@ -31,11 +29,11 @@ namespace Common.Communication
                 content.Length, id, content);
 
             var messages = new string[0];
-            var hasEtbByte = content.IndexOf(CommunicationStateObject.EtbByte) > -1;
-            
+            var hasEtbByte = content.IndexOf(EtbByte) > -1;
+
             if (hasEtbByte)
             {
-                messages = content.Split(CommunicationStateObject.EtbByte);
+                messages = content.Split(EtbByte);
                 var numberOfMessages = messages.Length;
                 var wholeMessages = string.IsNullOrEmpty(messages[numberOfMessages - 1]);
 

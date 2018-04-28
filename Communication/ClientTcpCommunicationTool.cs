@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Sockets;
-using System.Text;
 using Common.Interfaces;
 
-namespace Common.Communication
+namespace Communication
 {
     public class ClientTcpCommunicationTool : TcpCommunicationTool
     {
         private readonly Action<IMessage> _handler;
 
-        public ClientTcpCommunicationTool(Socket workSocket, int id, IMessageConverter messageConverter, Action<IMessage> handler)
+        public ClientTcpCommunicationTool(Socket workSocket, int id, IMessageConverter messageConverter,
+            Action<IMessage> handler)
             : base(workSocket, id, messageConverter)
         {
             _handler = handler;

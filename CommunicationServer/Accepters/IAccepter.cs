@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Common.Communication;
+﻿using System.Collections.Generic;
+using Communication;
 
-namespace CommunicationServer.Communication
+namespace CommunicationServer.Accepters
 {
     public interface IAccepter
     {

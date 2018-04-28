@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Common.Communication
+namespace Communication
 {
     public interface ICommunicationTool
     {
         void Receive();
         void Send(byte[] byteData);
         void CloseSocket();
+        void EndConnectSocket(IAsyncResult ar);
     }
 }

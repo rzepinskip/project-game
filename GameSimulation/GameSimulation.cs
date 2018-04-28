@@ -9,14 +9,14 @@ namespace GameSimulation
 {
     internal class GameSimulation
     {
-        public GameCommunicationServer CommunicationServer;
+        public GameCommunicationServerCommunicator CommunicationServerCommunicator;
 
         public GameSimulation(string configFilePath)
         {
             var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(configFilePath);
 
-            CommunicationServer = new GameCommunicationServer();
+            CommunicationServerCommunicator = new GameCommunicationServerCommunicator();
 
             GameMaster = new GameMaster.GameMaster(config);
             Players = new List<Player.Player>();

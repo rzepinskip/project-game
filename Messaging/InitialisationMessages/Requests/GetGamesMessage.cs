@@ -22,7 +22,7 @@ namespace Messaging.InitialisationMessages
             throw new NotImplementedException();
         }
 
-        public override void Process(ICommunicationServer cs, int id)
+        public override void Process(ICommunicationServerCommunicator cs, int id)
         {
             cs.Send(new RegisteredGamesMessage(cs.GetGames()), id);
         }

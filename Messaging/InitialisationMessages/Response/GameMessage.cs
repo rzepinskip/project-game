@@ -42,7 +42,7 @@ namespace Messaging.InitialisationMessages
             player.UpdatePlayerGame(PlayerLocation, Board);
         }
 
-        public override void Process(ICommunicationServer cs, int id)
+        public override void Process(ICommunicationServerCommunicator cs, int id)
         {
             cs.UnregisterGame(id);
             cs.Send(this, PlayerId);

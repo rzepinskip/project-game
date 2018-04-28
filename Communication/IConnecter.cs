@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 
-namespace Common.Communication
+namespace Communication
 {
     public interface IConnecter
     {
-        void Connect();
         ICommunicationTool ClientTcpCommunicationTool { get; set; }
         ManualResetEvent ConnectDoneForSend { get; set; }
+        void Connect();
     }
 }

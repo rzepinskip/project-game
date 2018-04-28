@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
-using Common.Communication;
 using Common.Interfaces;
+using Communication;
 using GameMaster.Configuration;
 using GameMaster.Delays;
 

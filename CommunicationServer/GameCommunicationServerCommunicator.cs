@@ -4,18 +4,18 @@ using System.Diagnostics;
 using System.Threading;
 using Common;
 using Common.Interfaces;
-using CommunicationServer.Communication;
 using NLog;
+using CommunicationServer.Accepters;
 
 namespace CommunicationServer
 {
 
-    public class GameCommunicationServer : ICommunicationServer
+    public class GameCommunicationServerCommunicator : ICommunicationServerCommunicator
     {
-        private readonly IServer _listener;
+        private readonly IServerCommunicator _listener;
         private readonly IResolver CommunicationResolver;
         private static ILogger _logger = LogManager.GetCurrentClassLogger();
-        public GameCommunicationServer()
+        public GameCommunicationServerCommunicator()
         {
             _listener = new AsynchronousSocketListener(new CommunicationServerConverter(),
                 new TcpSocketAccepter(HandleMessage), 1000000000);

@@ -4,17 +4,11 @@ using System.Net.Sockets;
 using System.Threading;
 using Common.Interfaces;
 
-namespace Common.Communication
+namespace Communication
 {
     public abstract class TcpCommunicationTool : ICommunicationTool
     {
-        public int Id { get; set; }
-        public Socket WorkSocket { get; set; }
-        public ManualResetEvent MessageProcessed { get; }
-        public CommunicationStateObject State { get; set; }
-
-        private IMessageConverter _messageConverter;
-        public abstract void Handle(IMessage message, int id = -404);
+        private readonly IMessageConverter _messageConverter;
 
         public TcpCommunicationTool(Socket workSocket, int id, IMessageConverter messageConverter)
         {
@@ -24,6 +18,12 @@ namespace Common.Communication
             MessageProcessed = new ManualResetEvent(true);
             State = new CommunicationStateObject();
         }
+
+        public int Id { get; set; }
+        public Socket WorkSocket { get; set; }
+
+        public ManualResetEvent MessageProcessed { get; }
+        public CommunicationStateObject State { get; set; }
 
         public void Receive()
         {
@@ -43,9 +43,37 @@ namespace Common.Communication
             MessageProcessed.WaitOne();
         }
 
+        public void Send(byte[] byteData)
+        {
+            WorkSocket.BeginSend(byteData, 0, byteData.Length, 0, SendCallback, WorkSocket);
+        }
+
+        public void CloseSocket()
+        {
+            if (WorkSocket == null)
+                return;
+            try
+            {
+                WorkSocket.Shutdown(SocketShutdown.Both);
+                WorkSocket.Close();
+            }
+            catch (Exception e)
+            {
+                //
+            }
+        }
+
+        public void EndConnectSocket(IAsyncResult ar)
+        {
+            WorkSocket.EndConnect(ar);
+            Debug.WriteLine("Socket connected to {0}", WorkSocket.RemoteEndPoint);
+        }
+
+        public abstract void Handle(IMessage message, int id = -404);
+
         private void ReadCallback(IAsyncResult ar)
         {
-            var state = (CommunicationStateObject)ar.AsyncState;
+            var state = (CommunicationStateObject) ar.AsyncState;
             var handler = WorkSocket;
             var bytesRead = 0;
 
@@ -72,20 +100,18 @@ namespace Common.Communication
                         ReadCallback, state);
                 else
                     MessageProcessed.Set();
+                // ManualResetEvent (Semaphore) is signaled only when whole message was received,
+                // allowing another thread to start evaluating ReadCallback. Otherwise the same thread 
+                // continues to read the rest of the message
                 //DANGER ZONE ****************
-
             }
-        }
-        public void Send(byte[] byteData)
-        {
-            WorkSocket.BeginSend(byteData, 0, byteData.Length, 0, SendCallback, WorkSocket);
         }
 
         private static void SendCallback(IAsyncResult ar)
         {
             try
             {
-                var handler = (Socket)ar.AsyncState;
+                var handler = (Socket) ar.AsyncState;
                 var bytesSent = handler.EndSend(ar);
                 Debug.WriteLine("Sent {0} bytes to client.", bytesSent);
             }
@@ -94,21 +120,5 @@ namespace Common.Communication
                 Console.WriteLine(e.ToString());
             }
         }
-
-        public void CloseSocket()
-        {
-            if (WorkSocket == null)
-                return;
-            try
-            {
-                WorkSocket.Shutdown(SocketShutdown.Both);
-                WorkSocket.Close();
-            }
-            catch (Exception e)
-            {
-                //
-            }
-        }
     }
 }
-

@@ -61,7 +61,7 @@ namespace Messaging.Responses
             return !(response1 == response2);
         }
 
-        public override void Process(ICommunicationServer cs, int id)
+        public override void Process(ICommunicationServerCommunicator cs, int id)
         {
             cs.Send(this, PlayerId);
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Common.Interfaces
 {
-    public interface ICommunicationServer : IResolver, IServer
+    public interface ICommunicationServerCommunicator : IResolver, IServerCommunicator
     {
     }
 }

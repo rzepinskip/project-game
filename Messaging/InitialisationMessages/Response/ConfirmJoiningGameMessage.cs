@@ -41,7 +41,7 @@ namespace Messaging.InitialisationMessages
             player.UpdatePlayer(PlayerId, PrivateGuid, PlayerDefinition, GameId);
         }
 
-        public override void Process(ICommunicationServer cs, int id)
+        public override void Process(ICommunicationServerCommunicator cs, int id)
         {
             //update team count
             cs.UpdateTeamCount(id, PlayerDefinition.Team);
