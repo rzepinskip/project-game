@@ -19,7 +19,7 @@ namespace GameMaster
         private readonly GameMasterBoardGenerator _gameMasterBoardGenerator;
         private readonly string _name = "game";
 
-        private readonly CommunicationHandler _communicationHandler;
+        private readonly MessagingHandler _messagingHandler;
         private readonly List<(TeamColor team, PlayerType role)> _playersSlots;
         private int _gameId;
         private bool _gameInProgress;
@@ -39,10 +39,10 @@ namespace GameMaster
             
             checkIfFullTeamTimer = new Timer(CheckIfGameFullCallback, null, 5000, 1000);
 
-            _communicationHandler = new CommunicationHandler(gameConfiguration);
-            _communicationHandler.MessageReceived += (sender, args) => MessageHandler(args);
+            _messagingHandler = new MessagingHandler(gameConfiguration);
+            _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
 
-            _communicationHandler.Client.Send(new RegisterGameMessage(new GameInfo(_name,
+            _messagingHandler.Client.Send(new RegisterGameMessage(new GameInfo(_name,
                 GameConfiguration.GameDefinition.NumberOfPlayersPerTeam,
                 GameConfiguration.GameDefinition.NumberOfPlayersPerTeam)));
         }
@@ -119,7 +119,7 @@ namespace GameMaster
             }
 
             if (response != null)
-                _communicationHandler.Client.Send(response);
+                _messagingHandler.Client.Send(response);
         }
 
         private void CheckIfGameFullCallback(object obj)
@@ -131,12 +131,12 @@ namespace GameMaster
 
             var boardInfo = new BoardInfo(Board.Width, Board.TaskAreaSize, Board.GoalAreaSize);
 
-            _communicationHandler.StartListeningToRequests(PlayerGuidToId.Keys);
+            _messagingHandler.StartListeningToRequests(PlayerGuidToId.Keys);
             foreach (var i in PlayerGuidToId)
             {
                 var playerLocation = Board.Players.Values.Single(x => x.Id == i.Value).Location;
                 var gameStartMessage = new GameMessage(i.Value, Board.Players.Values, playerLocation, boardInfo);
-                _communicationHandler.Client.Send(gameStartMessage);
+                _messagingHandler.Client.Send(gameStartMessage);
             }
         }
 

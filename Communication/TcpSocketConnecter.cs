@@ -34,11 +34,11 @@ namespace Communication
                 var ipAddress = ipHostInfo.AddressList[0];
                 var remoteEp = new IPEndPoint(ipAddress, Port);
 
-                var _client = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                var client = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 ClientTcpCommunicationTool =
-                    new ClientTcpCommunicationTool(_client, -1, _messageConverter, _messageHandler);
+                    new ClientTcpCommunicationTool(client, -1, _messageConverter, _messageHandler);
 
-                _client.BeginConnect(remoteEp, ConnectCallback, _client);
+                client.BeginConnect(remoteEp, ConnectCallback, client);
                 _connectDone.WaitOne();
             }
             catch (Exception e)

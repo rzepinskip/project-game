@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using Common;
 using Common.Interfaces;
 
 namespace CommunicationServer
 {
-    class CommunicationResolver : IResolver
+    internal class CommunicationResolver : IResolver
     {
-        private readonly Dictionary<int, int> _playerIdToGameId;
         private readonly Dictionary<int, GameInfo> _gameIdToGameInfo;
+        private readonly Dictionary<int, int> _playerIdToGameId;
 
         public CommunicationResolver()
         {
@@ -34,6 +33,7 @@ namespace CommunicationServer
         {
             _gameIdToGameInfo.Add(id, gameInfo);
         }
+
         public void UpdateTeamCount(int gameId, TeamColor team)
         {
             _gameIdToGameInfo.TryGetValue(gameId, out var info);
@@ -41,15 +41,16 @@ namespace CommunicationServer
                 return;
             switch (team)
             {
-            case TeamColor.Blue:
-                info.BlueTeamPlayers--;
-                break;
-            case TeamColor.Red:
-                info.RedTeamPlayers--;
-                break;
-            default:
-                throw new Exception("Unexpected team color");
+                case TeamColor.Blue:
+                    info.BlueTeamPlayers--;
+                    break;
+                case TeamColor.Red:
+                    info.RedTeamPlayers--;
+                    break;
+                default:
+                    throw new Exception("Unexpected team color");
             }
+
             _gameIdToGameInfo[gameId] = info;
         }
 

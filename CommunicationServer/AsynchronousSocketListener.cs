@@ -9,17 +9,19 @@ namespace CommunicationServer
 {
     public class AsynchronousSocketListener : IServerCommunicator
     {
-        private readonly IMessageConverter _messageConverter;
-        private readonly int _keepAliveTimeMiliseconds;
-        private Timer _checkKeepAliveTimer;
         private readonly IAccepter _accepter;
+        private readonly int _keepAliveTimeMiliseconds;
+        private readonly IMessageConverter _messageConverter;
+        private Timer _checkKeepAliveTimer;
+
         public AsynchronousSocketListener(IMessageConverter messageConverter,
             IAccepter accepter, int keepAliveTimeMiliseconds)
         {
             _keepAliveTimeMiliseconds = keepAliveTimeMiliseconds;
             _messageConverter = messageConverter;
             _accepter = accepter;
-            _checkKeepAliveTimer = new Timer(KeepAliveCallback, _accepter.AgentToCommunicationHandler, 0, _keepAliveTimeMiliseconds/2);
+            _checkKeepAliveTimer = new Timer(KeepAliveCallback, _accepter.AgentToCommunicationHandler, 0,
+                _keepAliveTimeMiliseconds / 2);
         }
 
         public void StartListening()
@@ -46,7 +48,7 @@ namespace CommunicationServer
 
         public void KeepAliveCallback(object state)
         {
-            var dictionary = (Dictionary<int, TcpCommunicationTool>)state;
+            var dictionary = (Dictionary<int, TcpCommunicationTool>) state;
             var currentTime = DateTime.Now.Ticks;
             foreach (var csStateObject in dictionary.Values)
             {

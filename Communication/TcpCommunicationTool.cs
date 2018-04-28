@@ -52,6 +52,7 @@ namespace Communication
         {
             if (WorkSocket == null)
                 return;
+
             try
             {
                 WorkSocket.Shutdown(SocketShutdown.Both);
@@ -88,14 +89,14 @@ namespace Communication
 
             if (bytesRead > 0)
             {
-                var (messages, hasETBbyte) = state.SplitMessages(bytesRead, Id);
+                var (messages, hasEtbByte) = state.SplitMessages(bytesRead, Id);
 
                 foreach (var message in messages)
                     Handle(_messageConverter.ConvertStringToMessage(message), Id);
 
                 //DONT TOUCH THAT 
                 //DANGER ZONE ************
-                if (!hasETBbyte)
+                if (!hasEtbByte)
                     handler.BeginReceive(state.Buffer, 0, CommunicationStateObject.BufferSize, 0,
                         ReadCallback, state);
                 else

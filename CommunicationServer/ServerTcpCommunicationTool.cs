@@ -7,8 +7,10 @@ namespace CommunicationServer
 {
     public class ServerTcpCommunicationTool : TcpCommunicationTool
     {
-        private Action<IMessage, int> _handleMessage;
-        public ServerTcpCommunicationTool(Socket workSocket, int id, IMessageConverter messageConverter, Action<IMessage, int> handleMessage)
+        private readonly Action<IMessage, int> _handleMessage;
+
+        public ServerTcpCommunicationTool(Socket workSocket, int id, IMessageConverter messageConverter,
+            Action<IMessage, int> handleMessage)
             : base(workSocket, id, messageConverter)
         {
             _handleMessage = handleMessage;

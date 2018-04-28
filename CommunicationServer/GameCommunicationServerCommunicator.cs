@@ -4,70 +4,58 @@ using System.Diagnostics;
 using System.Threading;
 using Common;
 using Common.Interfaces;
-using NLog;
 using CommunicationServer.Accepters;
+using NLog;
 
 namespace CommunicationServer
 {
-
     public class GameCommunicationServerCommunicator : ICommunicationServerCommunicator
     {
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private readonly IServerCommunicator _listener;
-        private readonly IResolver CommunicationResolver;
-        private static ILogger _logger = LogManager.GetCurrentClassLogger();
+        private readonly IResolver _communicationResolver;
+
         public GameCommunicationServerCommunicator()
         {
             _listener = new AsynchronousSocketListener(new CommunicationServerConverter(),
                 new TcpSocketAccepter(HandleMessage), 1000000000);
-            CommunicationResolver = new CommunicationResolver();
+            _communicationResolver = new CommunicationResolver();
             new Thread(() => _listener.StartListening()).Start();
-        }
-
-        public void HandleMessage(IMessage message, int i)
-        {
-            Debug.WriteLine("CS Message received from: " + i);
-            _logger.Info(message.ToString() + " from  id: " + i);
-            message.Process(this, i);
-        }
-
-        public void HandleCallback(IAsyncResult ar)
-        {
-
         }
 
         public IEnumerable<GameInfo> GetGames()
         {
-            return CommunicationResolver.GetGames();
+            return _communicationResolver.GetGames();
         }
 
         public int GetGameId(string gameName)
         {
-            return CommunicationResolver.GetGameId(gameName);
+            return _communicationResolver.GetGameId(gameName);
         }
 
         public void RegisterNewGame(GameInfo gameInfo, int id)
         {
-            CommunicationResolver.RegisterNewGame(gameInfo, id);
+            _communicationResolver.RegisterNewGame(gameInfo, id);
         }
 
         public void UpdateTeamCount(int gameId, TeamColor team)
         {
-            CommunicationResolver.UpdateTeamCount(gameId, team);
+            _communicationResolver.UpdateTeamCount(gameId, team);
         }
 
         public void UnregisterGame(int gameId)
         {
-            CommunicationResolver.UnregisterGame(gameId);
+            _communicationResolver.UnregisterGame(gameId);
         }
 
         public void AssignGameIdToPlayerId(int gameId, int playerId)
         {
-            CommunicationResolver.AssignGameIdToPlayerId(gameId, playerId);
+            _communicationResolver.AssignGameIdToPlayerId(gameId, playerId);
         }
 
         public int GetGameIdForPlayer(int playerId)
         {
-            return CommunicationResolver.GetGameIdForPlayer(playerId);
+            return _communicationResolver.GetGameIdForPlayer(playerId);
         }
 
         public void Send(IMessage message, int id)
@@ -75,10 +63,20 @@ namespace CommunicationServer
             _listener.Send(message, id);
         }
 
-
         public void StartListening()
         {
             _listener.StartListening();
+        }
+
+        public void HandleMessage(IMessage message, int i)
+        {
+            Debug.WriteLine("CS Message received from: " + i);
+            Logger.Info(message + " from  id: " + i);
+            message.Process(this, i);
+        }
+
+        public void HandleCallback(IAsyncResult ar)
+        {
         }
     }
 }

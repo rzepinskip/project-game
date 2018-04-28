@@ -11,11 +11,10 @@ namespace CommunicationServer.Accepters
 {
     public class TcpSocketAccepter : IAccepter
     {
-        public Dictionary<int, TcpCommunicationTool> AgentToCommunicationHandler { get; set; }
+        private readonly Action<IMessage, int> _messageHandler;
 
         private readonly ManualResetEvent _readyForAccept = new ManualResetEvent(false);
         private int _counter;
-        private Action<IMessage, int> _messageHandler;
 
         public TcpSocketAccepter(Action<IMessage, int> messageHandler)
         {
@@ -23,6 +22,8 @@ namespace CommunicationServer.Accepters
             _counter = 0;
             _messageHandler = messageHandler;
         }
+
+        public Dictionary<int, TcpCommunicationTool> AgentToCommunicationHandler { get; set; }
 
         public void StartListening()
         {
@@ -55,7 +56,7 @@ namespace CommunicationServer.Accepters
         {
             _readyForAccept.Set();
             var handler = default(Socket);
-            var listener = (Socket)ar.AsyncState;
+            var listener = ar.AsyncState as Socket;
             try
             {
                 handler = listener.EndAccept(ar);
@@ -66,10 +67,12 @@ namespace CommunicationServer.Accepters
             }
 
             Debug.WriteLine("Accepted for " + _counter);
-            var state = new ServerTcpCommunicationTool(handler, _counter, new CommunicationServerConverter(), _messageHandler);
+            var state = new ServerTcpCommunicationTool(handler, _counter, new CommunicationServerConverter(),
+                _messageHandler);
             AgentToCommunicationHandler.Add(_counter++, state);
             StartReading(state);
         }
+
         private void StartReading(TcpCommunicationTool tool)
         {
             while (true)
