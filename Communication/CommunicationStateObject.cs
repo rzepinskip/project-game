@@ -25,8 +25,7 @@ namespace Communication
         {
             Sb.Append(Encoding.ASCII.GetString(Buffer, 0, bytesRead));
             var content = Sb.ToString();
-            Debug.WriteLine("Read {0} bytes from socket {1} . \n Data : {2}",
-                content.Length, id, content);
+            Debug.WriteLine($"Socket {id}:\nData : {content}");
 
             var messages = new string[0];
             var hasEtbByte = content.IndexOf(EtbByte) > -1;

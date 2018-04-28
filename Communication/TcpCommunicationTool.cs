@@ -59,21 +59,21 @@ namespace Communication
             }
             catch (Exception e)
             {
-                //
+                Console.WriteLine(e.ToString());
             }
         }
 
         public void EndConnectSocket(IAsyncResult ar)
         {
             WorkSocket.EndConnect(ar);
-            Debug.WriteLine("Socket connected to {0}", WorkSocket.RemoteEndPoint);
+            Debug.WriteLine($"Socket connected to {WorkSocket.RemoteEndPoint}");
         }
 
         public abstract void Handle(IMessage message, int id = -404);
 
         private void ReadCallback(IAsyncResult ar)
         {
-            var state = (CommunicationStateObject) ar.AsyncState;
+            var state = ar.AsyncState as CommunicationStateObject;
             var handler = WorkSocket;
             var bytesRead = 0;
 
@@ -113,7 +113,7 @@ namespace Communication
             {
                 var handler = (Socket) ar.AsyncState;
                 var bytesSent = handler.EndSend(ar);
-                Debug.WriteLine("Sent {0} bytes to client.", bytesSent);
+                Debug.WriteLine($"Sent {bytesSent} bytes to client.");
             }
             catch (Exception e)
             {
