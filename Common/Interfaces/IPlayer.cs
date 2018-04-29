@@ -11,6 +11,6 @@ namespace Common.Interfaces
         void UpdateJoiningInfo(bool info);
         void NotifyAboutGameEnd();
         void UpdatePlayer(int playerid, Guid playerGuid, PlayerBase playerBase, int gameId);
-        void UpdatePlayerGame(Location playerLocation, BoardInfo board);
+        void InitializeGameData(Location playerLocation, BoardInfo board, IEnumerable<PlayerBase> players);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using Common;
 using Common.BoardObjects;
@@ -60,12 +61,18 @@ namespace Player
             GameId = gameId;
         }
 
-        public void UpdatePlayerGame(Location playerLocation, BoardInfo board)
+        public void InitializeGameData(Location playerLocation, BoardInfo board, IEnumerable<PlayerBase> players)
         {
             PlayerBoard = new PlayerBoard(board.Width, board.TasksHeight, board.GoalsHeight);
-            PlayerBoard.Players[Id] = new PlayerInfo(Id, Team, Role, playerLocation);
-            Debug.WriteLine("Player is updating game");
+            foreach (var playerBase in players)
+            {
+                PlayerBoard.Players.Add(playerBase.Id, new PlayerInfo(playerBase));
+            }
+
+            PlayerBoard.Players[Id].Location = playerLocation;
             PlayerCoordinator.CreatePlayerStrategyFactory(new PlayerStrategyFactory(this));
+
+            Debug.WriteLine("Player has updated game data and started playing");
         }
 
         public void InitializePlayer(int id, Guid guid, TeamColor team, PlayerType role, PlayerBoard board,

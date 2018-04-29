@@ -43,7 +43,7 @@ namespace Messaging.InitialisationMessages
 
         public override void Process(IPlayer player)
         {
-            player.UpdatePlayerGame(PlayerLocation, Board);
+            player.InitializeGameData(PlayerLocation, Board, Players);
         }
 
         public override void Process(ICommunicationServer cs, int id)
