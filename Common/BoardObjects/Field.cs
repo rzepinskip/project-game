@@ -14,7 +14,7 @@ namespace Common.BoardObjects
         {
         }
 
-        public Field(Location location, int? playerId, DateTime timestamp) : base(location.X, location.Y)
+        protected Field(Location location, int? playerId, DateTime timestamp) : base(location.X, location.Y)
         {
             PlayerId = playerId;
             Timestamp = timestamp;
@@ -69,6 +69,11 @@ namespace Common.BoardObjects
 
             if (PlayerId.HasValue)
                 writer.WriteAttributeString("playerId", PlayerId.ToString());
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + $", PlayerId={PlayerId}";
         }
     }
 }

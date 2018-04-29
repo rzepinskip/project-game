@@ -15,15 +15,41 @@ namespace Player
         {
         }
 
-        public void HandlePlayerLocation(int playerId, Location playerUpdatedLocation)
+        public void HandleTaskField(int playerId, TaskField taskField)
         {
             // Remove old data
-            var playerInfo = Players[playerId];
-            this[playerInfo.Location].PlayerId = null;
+            //var oldPlayer = this[taskField].PlayerId;
+            //if (oldPlayer.HasValue)
+            //{
+            //    Players[oldPlayer.Value].Location = null;
+            //}
+
+            //var oldPiece = (this[taskField] as TaskField).PieceId;
+            //if (oldPiece.HasValue)
+            //{
+            //    Pieces.Remove(oldPiece.Value);
+            //}
 
             // Insert new data
-            playerInfo.Location = playerUpdatedLocation;
-            this[playerUpdatedLocation].PlayerId = playerId;
+            this[taskField] =
+                new TaskField(taskField, taskField.DistanceToPiece, taskField.PieceId, taskField.PlayerId);
+
+            if (taskField.PlayerId.HasValue)
+                Players[taskField.PlayerId.Value].Location = new Location(taskField.X, taskField.Y);
+        }
+
+        public void HandleGoalField(int playerId, GoalField goalField)
+        {
+            // Remove old data
+            foreach (var piecesValue in Pieces.Values)
+                if (piecesValue.PlayerId == playerId)
+                {
+                    piecesValue.PlayerId = null;
+                    break;
+                }
+
+            // Insert new data
+            this[goalField] = goalField;
         }
 
         public void HandlePiece(int playerId, Piece piece)
@@ -43,38 +69,15 @@ namespace Player
             }
         }
 
-        public void HandleTaskField(int playerId, TaskField taskField)
+        public void HandlePlayerLocation(int playerId, Location playerUpdatedLocation)
         {
             // Remove old data
-            //var oldPlayer = this[taskField].PlayerId;
-            //if (oldPlayer.HasValue)
-            //{
-            //    Players[oldPlayer.Value].Location = null;
-            //}
-
-            //var oldPiece = (this[taskField] as TaskField).PieceId;
-            //if (oldPiece.HasValue)
-            //{
-            //    Pieces.Remove(oldPiece.Value);
-            //}
+            var playerInfo = Players[playerId];
+            this[playerInfo.Location].PlayerId = null;
 
             // Insert new data
-            this[taskField] =
-                new TaskField(taskField, taskField.DistanceToPiece, taskField.PieceId, taskField.PlayerId);
-        }
-
-        public void HandleGoalField(int playerId, GoalField goalField)
-        {
-            // Remove old data
-            foreach (var piecesValue in Pieces.Values)
-                if (piecesValue.PlayerId == playerId)
-                {
-                    piecesValue.PlayerId = null;
-                    break;
-                }
-
-            // Insert new data
-            this[goalField] = goalField;
+            playerInfo.Location = playerUpdatedLocation;
+            this[playerUpdatedLocation].PlayerId = playerId;
         }
     }
 }

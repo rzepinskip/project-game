@@ -1,0 +1,1 @@
+Get-ChildItem * | Rename-Item -NewName { $_.name -Replace 'OldName','NewName' }
