@@ -23,7 +23,7 @@ namespace Messaging.InitialisationMessages
             GameId = gameId;
             PlayerId = playerId;
             PrivateGuid = privateGuid;
-            PlayerDefinition = playerDefiniton;
+            PlayerDefinition = new PlayerBase(playerDefiniton.Id, playerDefiniton.Team, playerDefiniton.Role);
         }
 
         [XmlAttribute("gameId")] public int GameId { get; set; }
