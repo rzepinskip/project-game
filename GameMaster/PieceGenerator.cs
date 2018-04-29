@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Common;
 using Common.BoardObjects;
 
@@ -12,13 +13,17 @@ namespace GameMaster
         private readonly Random _random = new Random();
         private readonly double _shamProbability;
 
-        public PieceGenerator(GameMasterBoard board, double shamProbability)
+        public PieceGenerator(GameMasterBoard board, double shamProbability, double spawnFrequency)
         {
             _board = board;
             _shamProbability = shamProbability;
+            SpawnTimer = new Timer(SpawnPiece, null, TimeSpan.FromSeconds(1),
+                TimeSpan.FromMilliseconds(spawnFrequency));
         }
 
-        public void SpawnPiece()
+        public Timer SpawnTimer { get; }
+
+        private void SpawnPiece(object source)
         {
             lock (_board.Lock)
             {
