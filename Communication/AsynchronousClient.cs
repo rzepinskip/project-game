@@ -7,12 +7,10 @@ namespace Communication
     public class AsynchronousClient : IClient
     {
         private readonly IConnector _connector;
-        private readonly IMessageConverter _messageConverter;
 
-        public AsynchronousClient(IConnector connector, IMessageConverter messageConverter)
+        public AsynchronousClient(IConnector connector)
         {
             _connector = connector;
-            _messageConverter = messageConverter;
         }
 
         public void Connect()
@@ -23,9 +21,7 @@ namespace Communication
         public void Send(IMessage message)
         {
             _connector.ConnectFinalized.WaitOne();
-            var byteData =
-                Encoding.ASCII.GetBytes(_messageConverter.ConvertMessageToString(message) +
-                                        CommunicationState.EtbByte);
+            var byteData = Encoding.ASCII.GetBytes(message.SerializeToXml() + CommunicationState.EtbByte);
             try
             {
                 _connector.TcpConnection.Send(byteData);

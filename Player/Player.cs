@@ -17,7 +17,14 @@ namespace Player
         private bool _hasGameEnded;
         private ILogger _logger;
 
-        public IClient CommunicationClient;
+        public IClient CommunicationClient { get; }
+
+
+        public Player(IMessageDeserializer messageDeserializer)
+        {
+            CommunicationClient = new AsynchronousClient(new TcpSocketConnector(messageDeserializer, HandleResponse));
+        }
+
         public ObservableConcurrentQueue<IRequest> RequestsQueue { get; set; }
         public ObservableConcurrentQueue<IMessage> ResponsesQueue { get; set; }
 
@@ -77,7 +84,6 @@ namespace Player
 
             PlayerCoordinator = new PlayerCoordinator("", team, role);
 
-            CommunicationClient = new AsynchronousClient(new TcpSocketConnector(new PlayerConverter(), HandleResponse),new PlayerConverter());
             new Thread(() => CommunicationClient.Connect()).Start();
         }
 
@@ -87,8 +93,7 @@ namespace Player
             _logger = factory.GetPlayerLogger(0);
 
             PlayerCoordinator = new PlayerCoordinator(gameName, color, role);
-
-            CommunicationClient = new AsynchronousClient(new TcpSocketConnector(new PlayerConverter(), HandleResponse), new PlayerConverter());
+            
             new Thread(() => CommunicationClient.Connect()).Start();
         }
 

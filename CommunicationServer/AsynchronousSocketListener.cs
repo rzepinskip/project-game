@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using Common.Interfaces;
 using Communication;
@@ -11,14 +12,11 @@ namespace CommunicationServer
     {
         private readonly IAccepter _accepter;
         private readonly int _keepAliveTimeMiliseconds;
-        private readonly IMessageConverter _messageConverter;
         private Timer _checkKeepAliveTimer;
 
-        public AsynchronousSocketListener(IMessageConverter messageConverter,
-            IAccepter accepter, int keepAliveTimeMiliseconds)
+        public AsynchronousSocketListener(IAccepter accepter, int keepAliveTimeMiliseconds)
         {
             _keepAliveTimeMiliseconds = keepAliveTimeMiliseconds;
-            _messageConverter = messageConverter;
             _accepter = accepter;
             _checkKeepAliveTimer = new Timer(KeepAliveCallback, _accepter.AgentToCommunicationHandler, 0,
                 _keepAliveTimeMiliseconds / 2);
@@ -31,7 +29,7 @@ namespace CommunicationServer
 
         public void Send(IMessage message, int id)
         {
-            var byteData = _messageConverter.ConvertMessageToBytes(message, CommunicationState.EtbByte);
+            var byteData =  Encoding.ASCII.GetBytes(message.SerializeToXml() + CommunicationState.EtbByte);
             var findResult = _accepter.AgentToCommunicationHandler.TryGetValue(id, out var handler);
             if (!findResult)
                 throw new Exception("Non exsistent socket id");

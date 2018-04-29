@@ -9,9 +9,9 @@ namespace CommunicationServer
     {
         private readonly Action<IMessage, int> _handleMessage;
 
-        public ServerTcpConnection(Socket workSocket, int id, IMessageConverter messageConverter,
+        public ServerTcpConnection(Socket workSocket, int id, IMessageDeserializer messageDeserializer,
             Action<IMessage, int> handleMessage)
-            : base(workSocket, id, messageConverter)
+            : base(workSocket, id, messageDeserializer)
         {
             _handleMessage = handleMessage;
         }

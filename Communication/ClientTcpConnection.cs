@@ -8,9 +8,9 @@ namespace Communication
     {
         private readonly Action<IMessage> _handler;
 
-        public ClientTcpConnection(Socket workSocket, int id, IMessageConverter messageConverter,
+        public ClientTcpConnection(Socket workSocket, int id, IMessageDeserializer messageDeserializer,
             Action<IMessage> handler)
-            : base(workSocket, id, messageConverter)
+            : base(workSocket, id, messageDeserializer)
         {
             _handler = handler;
         }

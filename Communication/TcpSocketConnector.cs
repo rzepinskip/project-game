@@ -12,14 +12,14 @@ namespace Communication
         private const int Port = 11000;
 
         private readonly ManualResetEvent _connectDone;
-        private readonly IMessageConverter _messageConverter;
+        private readonly IMessageDeserializer _messageDeserializer;
         private readonly Action<IMessage> _messageHandler;
 
-        public TcpSocketConnector(IMessageConverter messageConverter, Action<IMessage> messageHandler)
+        public TcpSocketConnector(IMessageDeserializer messageDeserializer, Action<IMessage> messageHandler)
         {
             ConnectFinalized = new ManualResetEvent(false);
             _connectDone = new ManualResetEvent(false);
-            _messageConverter = messageConverter;
+            _messageDeserializer = messageDeserializer;
             _messageHandler = messageHandler;
         }
 
@@ -36,7 +36,7 @@ namespace Communication
 
                 var client = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 TcpConnection =
-                    new ClientTcpConnection(client, -1, _messageConverter, _messageHandler);
+                    new ClientTcpConnection(client, -1, _messageDeserializer, _messageHandler);
 
                 client.BeginConnect(remoteEndPoint, ConnectCallback, client);
                 _connectDone.WaitOne();

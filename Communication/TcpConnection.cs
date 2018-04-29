@@ -8,13 +8,13 @@ namespace Communication
 {
     public abstract class TcpConnection : ITcpConnection
     {
-        private readonly IMessageConverter _messageConverter;
+        private readonly IMessageDeserializer _messageDeserializer;
 
-        public TcpConnection(Socket workSocket, int id, IMessageConverter messageConverter)
+        public TcpConnection(Socket workSocket, int id, IMessageDeserializer messageDeserializer)
         {
             WorkSocket = workSocket;
             Id = id;
-            _messageConverter = messageConverter;
+            _messageDeserializer = messageDeserializer;
             MessageProcessed = new ManualResetEvent(true);
             State = new CommunicationState();
         }
@@ -92,7 +92,7 @@ namespace Communication
                 var (messages, hasEtbByte) = state.SplitMessages(bytesRead, Id);
 
                 foreach (var message in messages)
-                    Handle(_messageConverter.ConvertStringToMessage(message), Id);
+                    Handle(_messageDeserializer.Deserialize(message), Id);
 
                 //DONT TOUCH THAT 
                 //DANGER ZONE ************

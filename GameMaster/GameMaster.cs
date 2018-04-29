@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Common;
 using Common.ActionInfo;
 using Common.Interfaces;
+using Communication;
 using GameMaster.ActionHandlers;
 using GameMaster.Configuration;
 using Messaging.InitialisationMessages;
@@ -25,7 +25,7 @@ namespace GameMaster
         private bool _gameInProgress;
         private Timer checkIfFullTeamTimer;
 
-        public GameMaster(GameConfiguration gameConfiguration)
+        public GameMaster(GameConfiguration gameConfiguration, IMessageDeserializer messageDeserializer)
         {
             GameConfiguration = gameConfiguration;
 
@@ -39,7 +39,7 @@ namespace GameMaster
             
             checkIfFullTeamTimer = new Timer(CheckIfGameFullCallback, null, 5000, 1000);
 
-            _messagingHandler = new MessagingHandler(gameConfiguration);
+            _messagingHandler = new MessagingHandler(gameConfiguration, messageDeserializer);
             _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
 
             _messagingHandler.Client.Send(new RegisterGameMessage(new GameInfo(_name,
