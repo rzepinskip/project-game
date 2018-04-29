@@ -13,7 +13,7 @@ namespace CommunicationServer
     public class CommunicationServer : ICommunicationServer
     {
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
-        private readonly IServerCommunicator _listener;
+        private readonly IAsynchronousSocketListener _listener;
         private readonly IResolver _communicationResolver;
 
         public CommunicationServer(IMessageDeserializer messageDeserializer)

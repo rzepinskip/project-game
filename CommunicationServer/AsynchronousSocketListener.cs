@@ -8,7 +8,7 @@ using CommunicationServer.Accepters;
 
 namespace CommunicationServer
 {
-    public class AsynchronousSocketListener : IServerCommunicator
+    public class AsynchronousSocketListener : IAsynchronousSocketListener
     {
         private readonly IAccepter _accepter;
         private readonly int _keepAliveTimeMiliseconds;

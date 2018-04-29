@@ -1,6 +1,6 @@
 ﻿namespace Common.Interfaces
 {
-    public interface ICommunicationServer : IResolver, IServerCommunicator
+    public interface ICommunicationServer : IResolver, IAsynchronousSocketListener
     {
     }
 }
