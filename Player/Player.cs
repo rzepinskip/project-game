@@ -14,20 +14,21 @@ namespace Player
 {
     public class Player : PlayerBase, IPlayer
     {
-        private int _gameId;
         private bool _hasGameEnded;
         private ILogger _logger;
-        private PlayerBoard _playerBoard;
         private PlayerCoordinator _playerCoordinator;
-        private Guid _playerGuid;
 
         public Player(IMessageDeserializer messageDeserializer)
         {
             CommunicationClient = new AsynchronousClient(new TcpSocketConnector(messageDeserializer, HandleResponse));
         }
 
+        public int GameId { get; private set; }
+        public PlayerBoard PlayerBoard { get; private set; }
+        public Guid PlayerGuid { get; private set; }
+
         public IClient CommunicationClient { get; }
-        public IPlayerBoard Board => _playerBoard;
+        public IPlayerBoard Board => PlayerBoard;
 
         public void UpdateGameState(IEnumerable<GameInfo> gameInfo)
         {
@@ -48,18 +49,18 @@ namespace Player
         public void UpdatePlayer(int playerId, Guid playerGuid, PlayerBase playerBase, int gameId)
         {
             Id = playerId;
-            _playerGuid = playerGuid;
+            PlayerGuid = playerGuid;
             Team = playerBase.Team;
             Role = playerBase.Role;
-            _gameId = gameId;
+            GameId = gameId;
         }
 
         public void InitializeGameData(Location playerLocation, BoardInfo board, IEnumerable<PlayerBase> players)
         {
-            _playerBoard = new PlayerBoard(board.Width, board.TasksHeight, board.GoalsHeight);
-            foreach (var playerBase in players) _playerBoard.Players.Add(playerBase.Id, new PlayerInfo(playerBase));
+            PlayerBoard = new PlayerBoard(board.Width, board.TasksHeight, board.GoalsHeight);
+            foreach (var playerBase in players) PlayerBoard.Players.Add(playerBase.Id, new PlayerInfo(playerBase));
 
-            _playerBoard.Players[Id].Location = playerLocation;
+            PlayerBoard.Players[Id].Location = playerLocation;
             _playerCoordinator.CreatePlayerStrategyFactory(new PlayerStrategyFactory(this));
 
             Debug.WriteLine("Player has updated game data and started playing");
@@ -74,10 +75,10 @@ namespace Player
             Id = id;
             Team = team;
             Role = role;
-            _playerGuid = guid;
-            _gameId = 0;
-            _playerBoard = board;
-            _playerBoard.Players[id] = new PlayerInfo(id, team, role, location);
+            PlayerGuid = guid;
+            GameId = 0;
+            PlayerBoard = board;
+            PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
 
             _playerCoordinator = new PlayerCoordinator("", team, role);
 

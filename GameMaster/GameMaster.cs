@@ -23,7 +23,6 @@ namespace GameMaster
         private readonly MessagingHandler _messagingHandler;
         private readonly Dictionary<Guid, int> _playerGuidToId;
         private readonly List<(TeamColor team, PlayerType role)> _playersSlots;
-        private GameMasterBoard _board;
         private int _gameId;
         private bool _gameInProgress;
         private PieceGenerator _pieceGenerator;
@@ -34,12 +33,12 @@ namespace GameMaster
             _gameConfiguration = gameConfiguration;
 
             var boardGenerator = new GameMasterBoardGenerator();
-            _board = boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
+            Board = boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
             _playersSlots =
                 boardGenerator.GeneratePlayerSlots(_gameConfiguration.GameDefinition.NumberOfPlayersPerTeam);
 
             _playerGuidToId = new Dictionary<Guid, int>();
-            foreach (var player in _board.Players) _playerGuidToId.Add(Guid.NewGuid(), player.Key);
+            foreach (var player in Board.Players) _playerGuidToId.Add(Guid.NewGuid(), player.Key);
 
             checkIfFullTeamTimer = new Timer(CheckIfGameFullCallback, null, 2000, 1000);
 
@@ -53,10 +52,12 @@ namespace GameMaster
 
         public GameMaster(GameMasterBoard board, Dictionary<Guid, int> playerGuidToId)
         {
-            _board = board;
+            Board = board;
 
             _playerGuidToId = playerGuidToId;
         }
+
+        public GameMasterBoard Board { get; private set; }
 
         public bool IsSlotAvailable()
         {
@@ -77,7 +78,7 @@ namespace GameMaster
             _playersSlots.Remove(assignedValue);
 
             var playerInfo = new PlayerInfo(playerId, assignedValue.team, assignedValue.role);
-            _board.Players.Add(playerId, playerInfo);
+            Board.Players.Add(playerId, playerInfo);
 
             var playerGuid = Guid.NewGuid();
             _playerGuidToId.Add(playerGuid, playerId);
@@ -93,8 +94,8 @@ namespace GameMaster
         public (DataFieldSet data, bool isGameFinished) EvaluateAction(ActionInfo actionInfo)
         {
             var playerId = _playerGuidToId[actionInfo.PlayerGuid];
-            var action = new ActionHandlerDispatcher((dynamic) actionInfo, _board, playerId);
-            return (data: action.Execute(), isGameFinished: _board.IsGameFinished());
+            var action = new ActionHandlerDispatcher((dynamic) actionInfo, Board, playerId);
+            return (data: action.Execute(), isGameFinished: Board.IsGameFinished());
         }
 
         public void MessageHandler(IMessage message)
@@ -104,14 +105,14 @@ namespace GameMaster
                 PutActionLog(request);
 
             IMessage response;
-            lock (_board.Lock)
+            lock (Board.Lock)
             {
                 response = message.Process(this);
             }
 
-            if (_gameInProgress && _board.IsGameFinished())
+            if (_gameInProgress && Board.IsGameFinished())
             {
-                GameFinished?.Invoke(this, new GameFinishedEventArgs(_board.CheckWinner()));
+                GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner()));
                 FinishGame();
             }
 
@@ -126,32 +127,32 @@ namespace GameMaster
             _gameInProgress = true;
             StartNewGame();
 
-            var boardInfo = new BoardInfo(_board.Width, _board.TaskAreaSize, _board.GoalAreaSize);
+            var boardInfo = new BoardInfo(Board.Width, Board.TaskAreaSize, Board.GoalAreaSize);
 
             _messagingHandler.StartListeningToRequests(_playerGuidToId.Keys);
             foreach (var i in _playerGuidToId)
             {
-                var playerLocation = _board.Players.Values.Single(x => x.Id == i.Value).Location;
-                var gameStartMessage = new GameMessage(i.Value, _board.Players.Values, playerLocation, boardInfo);
+                var playerLocation = Board.Players.Values.Single(x => x.Id == i.Value).Location;
+                var gameStartMessage = new GameMessage(i.Value, Board.Players.Values, playerLocation, boardInfo);
                 _messagingHandler.Client.Send(gameStartMessage);
             }
         }
 
         private void StartNewGame()
         {
-            var oldBoard = _board;
+            var oldBoard = Board;
             var boardGenerator = new GameMasterBoardGenerator();
-            _board = boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
+            Board = boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
             foreach (var boardPlayer in oldBoard.Players)
             {
                 var oldPlayerInfo = boardPlayer.Value;
                 var playerInfo = new PlayerInfo(oldPlayerInfo.Id, oldPlayerInfo.Team, oldPlayerInfo.Role);
-                _board.Players.Add(boardPlayer.Key, playerInfo);
+                Board.Players.Add(boardPlayer.Key, playerInfo);
             }
 
             boardGenerator.SpawnGameObjects(_gameConfiguration.GameDefinition);
 
-            _pieceGenerator = new PieceGenerator(_board, _gameConfiguration.GameDefinition.ShamProbability,
+            _pieceGenerator = new PieceGenerator(Board, _gameConfiguration.GameDefinition.ShamProbability,
                 _gameConfiguration.GameDefinition.PlacingNewPiecesFrequency);
         }
 
@@ -171,7 +172,7 @@ namespace GameMaster
         public void PutActionLog(IRequest record)
         {
             var playerId = _playerGuidToId[record.PlayerGuid];
-            var playerInfo = _board.Players[playerId];
+            var playerInfo = Board.Players[playerId];
             var actionLog = new RequestLog(record, playerInfo.Team, playerInfo.Role);
             Logger.Info(actionLog.ToLog());
         }
