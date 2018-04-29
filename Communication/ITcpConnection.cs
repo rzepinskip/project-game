@@ -2,11 +2,11 @@
 
 namespace Communication
 {
-    public interface ICommunicationTool
+    public interface ITcpConnection
     {
         void Receive();
         void Send(byte[] byteData);
         void CloseSocket();
-        void EndConnectSocket(IAsyncResult ar);
+        void FinalizeConnect(IAsyncResult ar);
     }
 }

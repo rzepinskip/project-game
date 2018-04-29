@@ -18,12 +18,12 @@ namespace CommunicationServer.Accepters
 
         public TcpSocketAccepter(Action<IMessage, int> messageHandler)
         {
-            AgentToCommunicationHandler = new Dictionary<int, TcpCommunicationTool>();
+            AgentToCommunicationHandler = new Dictionary<int, TcpConnection>();
             _counter = 0;
             _messageHandler = messageHandler;
         }
 
-        public Dictionary<int, TcpCommunicationTool> AgentToCommunicationHandler { get; set; }
+        public Dictionary<int, TcpConnection> AgentToCommunicationHandler { get; set; }
 
         public void StartListening()
         {
@@ -67,13 +67,13 @@ namespace CommunicationServer.Accepters
             }
 
             Debug.WriteLine("Accepted for " + _counter);
-            var state = new ServerTcpCommunicationTool(handler, _counter, new CommunicationServerConverter(),
+            var state = new ServerTcpConnection(handler, _counter, new CommunicationServerConverter(),
                 _messageHandler);
             AgentToCommunicationHandler.Add(_counter++, state);
             StartReading(state);
         }
 
-        private void StartReading(TcpCommunicationTool tool)
+        private void StartReading(TcpConnection tool)
         {
             while (true)
                 tool.Receive();

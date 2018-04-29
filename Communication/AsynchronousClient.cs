@@ -6,29 +6,29 @@ namespace Communication
 {
     public class AsynchronousClient : IClient
     {
-        private readonly IConnecter _connecter;
+        private readonly IConnector _connector;
         private readonly IMessageConverter _messageConverter;
 
-        public AsynchronousClient(IConnecter connecter, IMessageConverter messageConverter)
+        public AsynchronousClient(IConnector connector, IMessageConverter messageConverter)
         {
-            _connecter = connecter;
+            _connector = connector;
             _messageConverter = messageConverter;
         }
 
-        public void StartClient()
+        public void Connect()
         {
-            _connecter.Connect();
+            _connector.Connect();
         }
 
         public void Send(IMessage message)
         {
-            _connecter.ConnectDoneForSend.WaitOne();
+            _connector.ConnectFinalized.WaitOne();
             var byteData =
                 Encoding.ASCII.GetBytes(_messageConverter.ConvertMessageToString(message) +
-                                        CommunicationStateObject.EtbByte);
+                                        CommunicationState.EtbByte);
             try
             {
-                _connecter.ClientTcpCommunicationTool.Send(byteData);
+                _connector.TcpConnection.Send(byteData);
             }
             catch (Exception e)
             {

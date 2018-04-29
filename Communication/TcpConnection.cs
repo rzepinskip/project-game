@@ -6,24 +6,24 @@ using Common.Interfaces;
 
 namespace Communication
 {
-    public abstract class TcpCommunicationTool : ICommunicationTool
+    public abstract class TcpConnection : ITcpConnection
     {
         private readonly IMessageConverter _messageConverter;
 
-        public TcpCommunicationTool(Socket workSocket, int id, IMessageConverter messageConverter)
+        public TcpConnection(Socket workSocket, int id, IMessageConverter messageConverter)
         {
             WorkSocket = workSocket;
             Id = id;
             _messageConverter = messageConverter;
             MessageProcessed = new ManualResetEvent(true);
-            State = new CommunicationStateObject();
+            State = new CommunicationState();
         }
 
         public int Id { get; set; }
         public Socket WorkSocket { get; set; }
 
         public ManualResetEvent MessageProcessed { get; }
-        public CommunicationStateObject State { get; set; }
+        public CommunicationState State { get; set; }
 
         public void Receive()
         {
@@ -31,7 +31,7 @@ namespace Communication
 
             try
             {
-                WorkSocket.BeginReceive(State.Buffer, 0, CommunicationStateObject.BufferSize, 0,
+                WorkSocket.BeginReceive(State.Buffer, 0, CommunicationState.BufferSize, 0,
                     ReadCallback, State);
             }
             catch (Exception e)
@@ -64,7 +64,7 @@ namespace Communication
             }
         }
 
-        public void EndConnectSocket(IAsyncResult ar)
+        public void FinalizeConnect(IAsyncResult ar)
         {
             WorkSocket.EndConnect(ar);
             Debug.WriteLine($"Socket connected to {WorkSocket.RemoteEndPoint}");
@@ -74,7 +74,7 @@ namespace Communication
 
         private void ReadCallback(IAsyncResult ar)
         {
-            var state = ar.AsyncState as CommunicationStateObject;
+            var state = ar.AsyncState as CommunicationState;
             var handler = WorkSocket;
             var bytesRead = 0;
 
@@ -97,7 +97,7 @@ namespace Communication
                 //DONT TOUCH THAT 
                 //DANGER ZONE ************
                 if (!hasEtbByte)
-                    handler.BeginReceive(state.Buffer, 0, CommunicationStateObject.BufferSize, 0,
+                    handler.BeginReceive(state.Buffer, 0, CommunicationState.BufferSize, 0,
                         ReadCallback, state);
                 else
                     MessageProcessed.Set();

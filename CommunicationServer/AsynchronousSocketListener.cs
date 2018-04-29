@@ -31,7 +31,7 @@ namespace CommunicationServer
 
         public void Send(IMessage message, int id)
         {
-            var byteData = _messageConverter.ConvertMessageToBytes(message, CommunicationStateObject.EtbByte);
+            var byteData = _messageConverter.ConvertMessageToBytes(message, CommunicationState.EtbByte);
             var findResult = _accepter.AgentToCommunicationHandler.TryGetValue(id, out var handler);
             if (!findResult)
                 throw new Exception("Non exsistent socket id");
@@ -48,7 +48,7 @@ namespace CommunicationServer
 
         public void KeepAliveCallback(object state)
         {
-            var dictionary = (Dictionary<int, TcpCommunicationTool>) state;
+            var dictionary = (Dictionary<int, TcpConnection>) state;
             var currentTime = DateTime.Now.Ticks;
             foreach (var csStateObject in dictionary.Values)
             {

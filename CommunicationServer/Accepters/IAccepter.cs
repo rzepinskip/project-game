@@ -5,7 +5,7 @@ namespace CommunicationServer.Accepters
 {
     public interface IAccepter
     {
-        Dictionary<int, TcpCommunicationTool> AgentToCommunicationHandler { get; set; }
+        Dictionary<int, TcpConnection> AgentToCommunicationHandler { get; set; }
         void StartListening();
     }
 }

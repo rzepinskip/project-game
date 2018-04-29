@@ -15,7 +15,6 @@ namespace GameSimulation
         {
             var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(configFilePath);
-
             CommunicationServerCommunicator = new GameCommunicationServerCommunicator();
 
             GameMaster = new GameMaster.GameMaster(config);
