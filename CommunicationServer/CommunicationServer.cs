@@ -10,13 +10,13 @@ using NLog;
 
 namespace CommunicationServer
 {
-    public class GameCommunicationServerCommunicator : ICommunicationServerCommunicator
+    public class CommunicationServer : ICommunicationServer
     {
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private readonly IServerCommunicator _listener;
         private readonly IResolver _communicationResolver;
 
-        public GameCommunicationServerCommunicator(IMessageDeserializer messageDeserializer)
+        public CommunicationServer(IMessageDeserializer messageDeserializer)
         {
             _listener = new AsynchronousSocketListener(new TcpSocketAccepter(HandleMessage, messageDeserializer), 1000000000);
             _communicationResolver = new CommunicationResolver();

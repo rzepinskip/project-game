@@ -4,7 +4,7 @@
     {
         IMessage Process(IGameMaster gameMaster);
         void Process(IPlayer player);
-        void Process(ICommunicationServerCommunicator cs, int id);
+        void Process(ICommunicationServer cs, int id);
         string SerializeToXml();
     }
 }

@@ -34,7 +34,7 @@ namespace Messaging.InitialisationMessages
             throw new NotImplementedException();
         }
 
-        public override void Process(ICommunicationServerCommunicator cs, int id)
+        public override void Process(ICommunicationServer cs, int id)
         {
             cs.RegisterNewGame(NewGameInfo, id);
             cs.Send(new ConfirmGameRegistrationMessage(id), id);

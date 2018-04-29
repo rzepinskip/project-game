@@ -6,7 +6,7 @@ namespace CommunicationServer.App
     {
         static void Main(string[] args)
         {
-            var cs = new GameCommunicationServerCommunicator(MessageSerializer.Instance);
+            var cs = new CommunicationServer(MessageSerializer.Instance);
         }
     }
 }
