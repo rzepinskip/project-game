@@ -52,6 +52,17 @@ namespace CommunicationServer.Accepters
             }
             catch (Exception e)
             {
+                /// [ERROR_STATE]
+                /// Bind throws throws SocketException (error when attempting to access socket)
+                /// and ObjectDisposedException (when socket is closed)
+                
+                /// BeginAccept throws SocketException, ObjectDisposedException and ArgumentOutOfRange when receiveSize is 0
+                ///
+                /// In case of SocketException and ObjectDisposedException CS cannot communicate with outside, process shutdown 
+                /// 
+
+
+
                 Console.WriteLine(e.ToString());
             }
         }
@@ -67,6 +78,9 @@ namespace CommunicationServer.Accepters
             }
             catch (Exception e)
             {
+                /// [ERROR_STATE]
+                /// CS cannot communicate with outside
+                /// CS process should shutdown
                 Console.WriteLine(e.ToString());
             }
 

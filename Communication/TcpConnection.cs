@@ -36,7 +36,12 @@ namespace Communication
             }
             catch (Exception e)
             {
-                //After closing socket, BeginReceive will throw SocketException which has to be handled
+
+                /// [ERROR_STATE]
+                /// After closing socket from sender side in case of keepAlive exceeding or in case of shutdown, 
+                /// BeginReceive throws ObjectDisposed, thrown when Players or GM socket closes, when Player or GM
+                /// tries to reconnect CS should authorize him by GUID and recognize his id 
+
                 Console.WriteLine(e.ToString());
             }
 
@@ -65,6 +70,9 @@ namespace Communication
             }
             catch (Exception e)
             {
+                /// [ERROR_STATE]
+                /// SocketException has error codes and ObjectDisposedException 
+                /// thrown when trying to shutdown closed socket (more cases in ERROR CODE of SocketException)
                 Console.WriteLine(e.ToString());
             }
         }
@@ -95,6 +103,9 @@ namespace Communication
             }
             catch (Exception e)
             {
+                /// [ERROR_STATE]
+                /// SocketException and ObjectDisposedException 
+                /// used in both client and server should be handled in generic way
                 Console.WriteLine(e.ToString());
             }
 
@@ -134,6 +145,9 @@ namespace Communication
             }
             catch (Exception e)
             {
+                /// [ERROR_STATE]
+                /// SocketException and ObjectDisposedException 
+                /// used in both client and server should be handled in generic way
                 Console.WriteLine(e.ToString());
             }
         }

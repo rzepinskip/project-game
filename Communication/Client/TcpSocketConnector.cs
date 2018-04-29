@@ -45,6 +45,9 @@ namespace Communication.Client
             }
             catch (Exception e)
             {
+                /// [ERROR_STATE]
+                /// SocketException and ObjectDisposedException 
+                /// used in client should be handled with sleep and reconection.
                 Console.WriteLine(e.ToString());
             }
             StartReading();
