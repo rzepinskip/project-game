@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using Common;
 using Common.BoardObjects;
@@ -15,62 +14,53 @@ namespace Player
 {
     public class Player : PlayerBase, IPlayer
     {
+        private int _gameId;
         private bool _hasGameEnded;
         private ILogger _logger;
-
-        public IClient CommunicationClient { get; }
-
+        private PlayerBoard _playerBoard;
+        private PlayerCoordinator _playerCoordinator;
+        private Guid _playerGuid;
 
         public Player(IMessageDeserializer messageDeserializer)
         {
             CommunicationClient = new AsynchronousClient(new TcpSocketConnector(messageDeserializer, HandleResponse));
         }
 
-        public ObservableConcurrentQueue<IRequest> RequestsQueue { get; set; }
-        public ObservableConcurrentQueue<IMessage> ResponsesQueue { get; set; }
-
-        public Guid PlayerGuid { get; set; }
-        public PlayerBoard PlayerBoard { get; set; }
-        private PlayerCoordinator PlayerCoordinator { get; set; }
-
-        public int GameId { get; set; }
-        public IPlayerBoard Board => PlayerBoard;
+        public IClient CommunicationClient { get; }
+        public IPlayerBoard Board => _playerBoard;
 
         public void UpdateGameState(IEnumerable<GameInfo> gameInfo)
         {
-            PlayerCoordinator.UpdateGameStateInfo(gameInfo);
+            _playerCoordinator.UpdateGameStateInfo(gameInfo);
         }
 
         public void UpdateJoiningInfo(bool info)
         {
-            PlayerCoordinator.UpdateJoinInfo(info);
+            _playerCoordinator.UpdateJoinInfo(info);
         }
 
         public void NotifyAboutGameEnd()
         {
             _hasGameEnded = true;
-            PlayerCoordinator.NotifyAboutGameEnd();
+            _playerCoordinator.NotifyAboutGameEnd();
         }
 
         public void UpdatePlayer(int playerId, Guid playerGuid, PlayerBase playerBase, int gameId)
         {
             Id = playerId;
-            PlayerGuid = playerGuid;
+            _playerGuid = playerGuid;
             Team = playerBase.Team;
             Role = playerBase.Role;
-            GameId = gameId;
+            _gameId = gameId;
         }
 
         public void InitializeGameData(Location playerLocation, BoardInfo board, IEnumerable<PlayerBase> players)
         {
-            PlayerBoard = new PlayerBoard(board.Width, board.TasksHeight, board.GoalsHeight);
-            foreach (var playerBase in players)
-            {
-                PlayerBoard.Players.Add(playerBase.Id, new PlayerInfo(playerBase));
-            }
+            _playerBoard = new PlayerBoard(board.Width, board.TasksHeight, board.GoalsHeight);
+            foreach (var playerBase in players) _playerBoard.Players.Add(playerBase.Id, new PlayerInfo(playerBase));
 
-            PlayerBoard.Players[Id].Location = playerLocation;
-            PlayerCoordinator.CreatePlayerStrategyFactory(new PlayerStrategyFactory(this));
+            _playerBoard.Players[Id].Location = playerLocation;
+            _playerCoordinator.CreatePlayerStrategyFactory(new PlayerStrategyFactory(this));
 
             Debug.WriteLine("Player has updated game data and started playing");
         }
@@ -84,12 +74,12 @@ namespace Player
             Id = id;
             Team = team;
             Role = role;
-            PlayerGuid = guid;
-            GameId = 0;
-            PlayerBoard = board;
-            PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
+            _playerGuid = guid;
+            _gameId = 0;
+            _playerBoard = board;
+            _playerBoard.Players[id] = new PlayerInfo(id, team, role, location);
 
-            PlayerCoordinator = new PlayerCoordinator("", team, role);
+            _playerCoordinator = new PlayerCoordinator("", team, role);
 
             new Thread(() => CommunicationClient.Connect()).Start();
         }
@@ -99,14 +89,14 @@ namespace Player
             var factory = new LoggerFactory();
             _logger = factory.GetPlayerLogger(0);
 
-            PlayerCoordinator = new PlayerCoordinator(gameName, color, role);
-            
+            _playerCoordinator = new PlayerCoordinator(gameName, color, role);
+
             new Thread(() => CommunicationClient.Connect()).Start();
         }
 
         public IMessage GetNextRequestMessage()
         {
-            return PlayerCoordinator.NextMove();
+            return _playerCoordinator.NextMove();
         }
 
         private void HandleResponse(IMessage response)
@@ -119,14 +109,14 @@ namespace Player
 
             response.Process(this);
 
-            if (PlayerCoordinator.StrategyReturnsMessage())
+            if (_playerCoordinator.StrategyReturnsMessage())
             {
                 var request = GetNextRequestMessage();
                 _logger.Info(request);
                 CommunicationClient.Send(request);
             }
 
-            PlayerCoordinator.NextState();
+            _playerCoordinator.NextState();
         }
     }
 }
