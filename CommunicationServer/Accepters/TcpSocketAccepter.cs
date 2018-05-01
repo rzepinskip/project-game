@@ -16,16 +16,18 @@ namespace CommunicationServer.Accepters
 
         private readonly ManualResetEvent _readyForAccept = new ManualResetEvent(false);
         private int _counter;
-
-        public TcpSocketAccepter(Action<IMessage, int> messageHandler, IMessageDeserializer messageDeserializer)
+        private KeepAliveHandler _keepAliveHandler;
+        public TcpSocketAccepter(Action<IMessage, int> messageHandler, IMessageDeserializer messageDeserializer, int keepAliveInterval)
         {
-            AgentToCommunicationHandler = new Dictionary<int, TcpConnection>();
+            AgentToCommunicationHandler = new Dictionary<int, ITcpConnection>();
             _counter = 0;
             _messageHandler = messageHandler;
             _messageDeserializer = messageDeserializer;
+            _keepAliveHandler = new KeepAliveHandler(keepAliveInterval,
+                new KeepAliveServerCollection(AgentToCommunicationHandler));
         }
 
-        public Dictionary<int, TcpConnection> AgentToCommunicationHandler { get; set; }
+        public Dictionary<int, ITcpConnection> AgentToCommunicationHandler { get; set; }
 
         public void StartListening()
         {
@@ -69,7 +71,7 @@ namespace CommunicationServer.Accepters
             }
 
             Debug.WriteLine("Accepted for " + _counter);
-            var state = new ServerTcpConnection(handler, _counter, _messageDeserializer, _messageHandler);
+            var state = new ServerTcpConnection(handler, _counter, _messageDeserializer, _messageHandler, new KeepAliveServerCollection(AgentToCommunicationHandler));
             AgentToCommunicationHandler.Add(_counter++, state);
             StartReading(state);
         }

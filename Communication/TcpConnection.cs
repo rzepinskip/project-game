@@ -10,7 +10,7 @@ namespace Communication
     {
         private readonly IMessageDeserializer _messageDeserializer;
 
-        public TcpConnection(Socket workSocket, int id, IMessageDeserializer messageDeserializer)
+        public TcpConnection(Socket workSocket, int id, IMessageDeserializer messageDeserializer, IKeepAliveGetter keepAliveGetter)
         {
             WorkSocket = workSocket;
             Id = id;
@@ -48,6 +48,11 @@ namespace Communication
             WorkSocket.BeginSend(byteData, 0, byteData.Length, 0, SendCallback, WorkSocket);
         }
 
+        public void SendKeepAlive()
+        {
+            WorkSocket.Send(new[] {Convert.ToByte(CommunicationState.EtbByte)});
+        }
+
         public void CloseSocket()
         {
             if (WorkSocket == null)
@@ -70,7 +75,13 @@ namespace Communication
             Debug.WriteLine($"Socket connected to {WorkSocket.RemoteEndPoint}");
         }
 
+        public long GetLastMessageReceivedTicks()
+        {
+            return State.LastMessageReceivedTicks;
+        }
+
         public abstract void Handle(IMessage message, int id = -404);
+        public abstract void HandleKeepAliveMessage();
 
         private void ReadCallback(IAsyncResult ar)
         {
@@ -92,7 +103,12 @@ namespace Communication
                 var (messages, hasEtbByte) = state.SplitMessages(bytesRead, Id);
 
                 foreach (var message in messages)
-                    Handle(_messageDeserializer.Deserialize(message), Id);
+                {
+                    if (string.IsNullOrEmpty(message))
+                        HandleKeepAliveMessage();
+                    else
+                        Handle(_messageDeserializer.Deserialize(message), Id);
+                }
 
                 //DONT TOUCH THAT 
                 //DANGER ZONE ************
@@ -121,5 +137,6 @@ namespace Communication
                 Console.WriteLine(e.ToString());
             }
         }
+
     }
 }
