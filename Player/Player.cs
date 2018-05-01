@@ -6,6 +6,7 @@ using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
 using Communication;
+using Communication.Client;
 using NLog;
 using Player.Logging;
 using Player.Strategy;

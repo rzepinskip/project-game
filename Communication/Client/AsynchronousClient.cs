@@ -2,12 +2,12 @@
 using System.Text;
 using Common.Interfaces;
 
-namespace Communication
+namespace Communication.Client
 {
     public class AsynchronousClient : IClient
     {
         private readonly IConnector _connector;
-
+        private KeepAliveClientHandler _keepAliveClientHandler;
         public AsynchronousClient(IConnector connector)
         {
             _connector = connector;

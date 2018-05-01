@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace Communication
+namespace Communication.Client
 {
     public interface IConnector
     {

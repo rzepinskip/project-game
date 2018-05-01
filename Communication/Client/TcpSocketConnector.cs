@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Threading;
 using Common.Interfaces;
 
-namespace Communication
+namespace Communication.Client
 {
     public class TcpSocketConnector : IConnector
     {
@@ -14,13 +14,15 @@ namespace Communication
         private readonly ManualResetEvent _connectDone;
         private readonly IMessageDeserializer _messageDeserializer;
         private readonly Action<IMessage> _messageHandler;
-
-        public TcpSocketConnector(IMessageDeserializer messageDeserializer, Action<IMessage> messageHandler)
+        private KeepAliveClientHandler _keepAliveClientHandler;
+        private readonly int _keepAliveInterval;
+        public TcpSocketConnector(IMessageDeserializer messageDeserializer, Action<IMessage> messageHandler, int keepAliveInterval = 1000)
         {
             ConnectFinalized = new ManualResetEvent(false);
             _connectDone = new ManualResetEvent(false);
             _messageDeserializer = messageDeserializer;
             _messageHandler = messageHandler;
+            _keepAliveInterval = keepAliveInterval;
         }
 
         public ITcpConnection TcpConnection { get; set; }
@@ -36,7 +38,7 @@ namespace Communication
 
                 var client = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 TcpConnection =
-                    new ClientTcpConnection(client, -1, _messageDeserializer, _messageHandler);
+                    new ClientTcpConnection(client, -1, _messageDeserializer, _messageHandler, new KeepAliveClientCollection(TcpConnection));
 
                 client.BeginConnect(remoteEndPoint, ConnectCallback, client);
                 _connectDone.WaitOne();
@@ -45,7 +47,7 @@ namespace Communication
             {
                 Console.WriteLine(e.ToString());
             }
-
+            _keepAliveClientHandler = new KeepAliveClientHandler(_keepAliveInterval, new KeepAliveClientCollection(TcpConnection));
             StartReading();
         }
 
