@@ -15,12 +15,12 @@ namespace Communication.Client
 
         private void SendKeepAliveCallback(object state)
         {
-            _keepAliveGetter.Get().First().SendKeepAlive();
+            KeepAliveGetter.Get().First().SendKeepAlive();
         }
 
         public void ResetTimer()
         {
-            _sendKeepAliveTimer.Change(0, _keepAliveTimeInterval);
+            _sendKeepAliveTimer.Change(0, KeepAliveTimeInterval);
         }
 
     }

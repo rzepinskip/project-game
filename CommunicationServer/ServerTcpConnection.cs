@@ -11,7 +11,7 @@ namespace CommunicationServer
 
         public ServerTcpConnection(Socket workSocket, int id, IMessageDeserializer messageDeserializer,
             Action<IMessage, int> handleMessage, IKeepAliveGetter keepAliveGetter)
-            : base(workSocket, id, messageDeserializer, keepAliveGetter)
+            : base(workSocket, id, messageDeserializer)
         {
             _handleMessage = handleMessage;
         }

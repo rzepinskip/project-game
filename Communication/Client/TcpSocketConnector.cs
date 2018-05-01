@@ -14,7 +14,6 @@ namespace Communication.Client
         private readonly ManualResetEvent _connectDone;
         private readonly IMessageDeserializer _messageDeserializer;
         private readonly Action<IMessage> _messageHandler;
-        private KeepAliveClientHandler _keepAliveClientHandler;
         private readonly int _keepAliveInterval;
         public TcpSocketConnector(IMessageDeserializer messageDeserializer, Action<IMessage> messageHandler, int keepAliveInterval = 1000)
         {
@@ -37,17 +36,17 @@ namespace Communication.Client
                 var remoteEndPoint = new IPEndPoint(ipAddress, Port);
 
                 var client = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                TcpConnection =
-                    new ClientTcpConnection(client, -1, _messageDeserializer, _messageHandler, new KeepAliveClientCollection(TcpConnection));
+                var tcpConnection = new ClientTcpConnection(client, -1, _messageDeserializer, _messageHandler);
+                TcpConnection = tcpConnection;
 
                 client.BeginConnect(remoteEndPoint, ConnectCallback, client);
                 _connectDone.WaitOne();
+                tcpConnection.StartKeepAliveTimer(_keepAliveInterval);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
             }
-            _keepAliveClientHandler = new KeepAliveClientHandler(_keepAliveInterval, new KeepAliveClientCollection(TcpConnection));
             StartReading();
         }
 

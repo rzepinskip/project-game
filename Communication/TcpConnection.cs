@@ -10,7 +10,7 @@ namespace Communication
     {
         private readonly IMessageDeserializer _messageDeserializer;
 
-        public TcpConnection(Socket workSocket, int id, IMessageDeserializer messageDeserializer, IKeepAliveGetter keepAliveGetter)
+        protected TcpConnection(Socket workSocket, int id, IMessageDeserializer messageDeserializer)
         {
             WorkSocket = workSocket;
             Id = id;
@@ -43,7 +43,7 @@ namespace Communication
             MessageProcessed.WaitOne();
         }
 
-        public void Send(byte[] byteData)
+        public virtual void Send(byte[] byteData)
         {
             WorkSocket.BeginSend(byteData, 0, byteData.Length, 0, SendCallback, WorkSocket);
         }
