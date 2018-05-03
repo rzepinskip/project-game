@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Common;
 using Common.Interfaces;
 using Communication;
+using Communication.Client;
 using GameMaster.Configuration;
 using GameMaster.Delays;
 

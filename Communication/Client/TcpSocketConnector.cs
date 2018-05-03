@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Threading;
 using Common.Interfaces;
 
-namespace Communication
+namespace Communication.Client
 {
     public class TcpSocketConnector : IConnector
     {
@@ -14,13 +14,14 @@ namespace Communication
         private readonly ManualResetEvent _connectDone;
         private readonly IMessageDeserializer _messageDeserializer;
         private readonly Action<IMessage> _messageHandler;
-
-        public TcpSocketConnector(IMessageDeserializer messageDeserializer, Action<IMessage> messageHandler)
+        private readonly TimeSpan _keepAliveInterval;
+        public TcpSocketConnector(IMessageDeserializer messageDeserializer, Action<IMessage> messageHandler, TimeSpan keepAliveInterval = default(TimeSpan))
         {
             ConnectFinalized = new ManualResetEvent(false);
             _connectDone = new ManualResetEvent(false);
             _messageDeserializer = messageDeserializer;
             _messageHandler = messageHandler;
+            _keepAliveInterval = keepAliveInterval == default(TimeSpan) ? TimeSpan.FromMilliseconds(1000) : keepAliveInterval;
         }
 
         public ITcpConnection TcpConnection { get; set; }
@@ -35,17 +36,17 @@ namespace Communication
                 var remoteEndPoint = new IPEndPoint(ipAddress, Port);
 
                 var client = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                TcpConnection =
-                    new ClientTcpConnection(client, -1, _messageDeserializer, _messageHandler);
+                var tcpConnection = new ClientTcpConnection(client, -1, _messageDeserializer, _messageHandler);
+                TcpConnection = tcpConnection;
 
                 client.BeginConnect(remoteEndPoint, ConnectCallback, client);
                 _connectDone.WaitOne();
+                tcpConnection.StartKeepAliveTimer(_keepAliveInterval);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
             }
-
             StartReading();
         }
 

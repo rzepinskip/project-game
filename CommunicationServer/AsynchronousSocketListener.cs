@@ -11,15 +11,10 @@ namespace CommunicationServer
     public class AsynchronousSocketListener : IAsynchronousSocketListener
     {
         private readonly IAccepter _accepter;
-        private readonly int _keepAliveTimeMiliseconds;
-        private Timer _checkKeepAliveTimer;
 
-        public AsynchronousSocketListener(IAccepter accepter, int keepAliveTimeMiliseconds)
+        public AsynchronousSocketListener(IAccepter accepter)
         {
-            _keepAliveTimeMiliseconds = keepAliveTimeMiliseconds;
             _accepter = accepter;
-            _checkKeepAliveTimer = new Timer(KeepAliveCallback, _accepter.AgentToCommunicationHandler, 0,
-                _keepAliveTimeMiliseconds / 2);
         }
 
         public void StartListening()
@@ -44,18 +39,6 @@ namespace CommunicationServer
             }
         }
 
-        public void KeepAliveCallback(object state)
-        {
-            var dictionary = (Dictionary<int, TcpConnection>) state;
-            var currentTime = DateTime.Now.Ticks;
-            foreach (var csStateObject in dictionary.Values)
-            {
-                var elapsedTicks = currentTime - csStateObject.State.LastMessageReceivedTicks;
-                var elapsedSpan = new TimeSpan(elapsedTicks);
-
-                if (elapsedSpan.Milliseconds > _keepAliveTimeMiliseconds)
-                    csStateObject.CloseSocket();
-            }
-        }
+        
     }
 }
