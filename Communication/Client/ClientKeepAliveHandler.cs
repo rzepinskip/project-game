@@ -24,5 +24,9 @@ namespace Communication.Client
             _sendKeepAliveTimer.Change(0, KeepAliveTimeInterval.Milliseconds);
         }
 
+        protected override void ConnectionFailureHandler(ITcpConnection connection)
+        {
+            connection.CloseSocket();
+        }
     }
 }

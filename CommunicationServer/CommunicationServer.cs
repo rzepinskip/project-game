@@ -10,15 +10,16 @@ using NLog;
 
 namespace CommunicationServer
 {
-    public class CommunicationServer : ICommunicationServer
+    public class CommunicationServer : ICommunicationServer, IConnectionTimeoutable
     {
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
-        private readonly IAsynchronousSocketListener _listener;
         private readonly IResolver _communicationResolver;
+        private readonly IAsynchronousSocketListener _listener;
 
         public CommunicationServer(IMessageDeserializer messageDeserializer)
         {
-            _listener = new AsynchronousSocketListener(new TcpSocketAccepter(HandleMessage, messageDeserializer, TimeSpan.FromMilliseconds(1000)));
+            _listener = new AsynchronousSocketListener(new TcpSocketAccepter(HandleMessage, messageDeserializer,
+                TimeSpan.FromMilliseconds(1000), this));
             _communicationResolver = new CommunicationResolver();
             new Thread(() => _listener.StartListening()).Start();
         }
@@ -68,15 +69,17 @@ namespace CommunicationServer
             _listener.StartListening();
         }
 
+        public void HandleConnectionTimeout(int socketId)
+        {
+            Console.WriteLine($"Socket #{socketId} exceeded keep alive timeout");
+            throw new NotImplementedException();
+        }
+
         public void HandleMessage(IMessage message, int i)
         {
             Debug.WriteLine("CS Message received from: " + i);
             Logger.Info(message + " from  id: " + i);
             message.Process(this, i);
-        }
-
-        public void HandleCallback(IAsyncResult ar)
-        {
         }
     }
 }

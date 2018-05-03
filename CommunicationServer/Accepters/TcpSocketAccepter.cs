@@ -18,14 +18,14 @@ namespace CommunicationServer.Accepters
         private readonly ManualResetEvent _readyForAccept = new ManualResetEvent(false);
         private int _counter;
         private KeepAliveHandler _keepAliveHandler;
-        public TcpSocketAccepter(Action<IMessage, int> messageHandler, IMessageDeserializer messageDeserializer, TimeSpan keepAliveInterval)
+        public TcpSocketAccepter(Action<IMessage, int> messageHandler, IMessageDeserializer messageDeserializer, TimeSpan keepAliveInterval, IConnectionTimeoutable connectionTimeoutHandler)
         {
             AgentToCommunicationHandler = new Dictionary<int, ITcpConnection>();
             _counter = 0;
             _messageHandler = messageHandler;
             _messageDeserializer = messageDeserializer;
-            _keepAliveHandler = new KeepAliveHandler(keepAliveInterval,
-                new ServerMaintainedConnections(AgentToCommunicationHandler));
+            _keepAliveHandler = new ServerKeepAliveHandler(keepAliveInterval,
+                new ServerMaintainedConnections(AgentToCommunicationHandler), connectionTimeoutHandler);
         }
 
         public Dictionary<int, ITcpConnection> AgentToCommunicationHandler { get; set; }
