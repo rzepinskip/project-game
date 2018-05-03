@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
@@ -11,10 +10,7 @@ namespace Common
     {
         public static T GetEnumValueFor<T>(this string str) where T : struct, IConvertible
         {
-            if (!typeof(T).IsEnum)
-            {
-                throw new ArgumentException("T must be an enum");
-            }
+            if (!typeof(T).IsEnum) throw new ArgumentException("T must be an enum");
 
             var members = typeof(T).GetMembers();
             var map = new Dictionary<string, T>();
@@ -22,13 +18,11 @@ namespace Common
             {
                 if (!(member.GetCustomAttributes(typeof(XmlEnumAttribute), false).FirstOrDefault() is XmlEnumAttribute
                     enumAttrib))
-                {
                     continue;
-                }
 
                 var xmlEnumValue = enumAttrib.Name;
-                var enumVal = ((FieldInfo)member).GetRawConstantValue();
-                map.Add(xmlEnumValue, (T)enumVal);
+                var enumVal = ((FieldInfo) member).GetRawConstantValue();
+                map.Add(xmlEnumValue, (T) enumVal);
             }
 
             return map[str];
@@ -41,7 +35,7 @@ namespace Common
         {
             var type = enumVal.GetType();
             var info = type.GetField(Enum.GetName(typeof(T), enumVal));
-            var att = (XmlEnumAttribute)info.GetCustomAttributes(typeof(XmlEnumAttribute), false)[0];
+            var att = (XmlEnumAttribute) info.GetCustomAttributes(typeof(XmlEnumAttribute), false)[0];
 
             return att.Name;
         }

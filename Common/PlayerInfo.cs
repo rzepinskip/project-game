@@ -39,7 +39,7 @@ namespace Common
 
         public override void ReadXml(XmlReader reader)
         {
-            base.ReadXml(reader);
+            ReadContent(reader);
 
             reader.ReadStartElement();
 

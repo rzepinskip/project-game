@@ -7,7 +7,7 @@ namespace GameSimulation
     {
         private static void Main(string[] args)
         {
-            var simulation = new GameSimulation("Resources/ExampleConfig.xml");
+            var simulation = new GameSimulation("Resources/ExampleAdvancedConfig.xml");
             simulation.StartSimulation();
             while (true)
             {

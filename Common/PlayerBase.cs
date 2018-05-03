@@ -28,11 +28,17 @@ namespace Common
             return null;
         }
 
-        public virtual void ReadXml(XmlReader reader)
+        public void ReadContent(XmlReader reader)
         {
-            Id = int.Parse(reader.GetAttribute("id"));
+             Id = int.Parse(reader.GetAttribute("id"));
             Team = reader.GetAttribute("team").GetEnumValueFor<TeamColor>();
             Role = reader.GetAttribute("role").GetEnumValueFor<PlayerType>();
+        }
+
+        public virtual void ReadXml(XmlReader reader)
+        {
+            ReadContent(reader);
+            reader.Skip();
         }
 
         public virtual void WriteXml(XmlWriter writer)
