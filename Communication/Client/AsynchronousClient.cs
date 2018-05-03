@@ -27,6 +27,7 @@ namespace Communication.Client
             }
             catch (Exception e)
             {
+                /// [ERROR_STATE]
                 Console.WriteLine(e.ToString());
             }
         }
