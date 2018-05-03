@@ -1,6 +1,9 @@
-﻿namespace Messaging.Serialization
+﻿using Common.Interfaces;
+using Communication;
+
+namespace Messaging.Serialization
 {
-    public class MessageSerializer
+    public class MessageSerializer : IMessageDeserializer
     {
         private const string DefaultNameSpace = "https://se2.mini.pw.edu.pl/17-results/";
 
@@ -17,7 +20,7 @@
         public static MessageSerializer Instance => _instance ?? (_instance = new MessageSerializer());
 
 
-        public Message Deserialize<TMessage>(string xml) where TMessage : Message
+        public IMessage Deserialize(string xml)
         {
             return _requestSerializer.Deserialize(xml);
         }

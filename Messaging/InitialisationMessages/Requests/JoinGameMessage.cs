@@ -6,7 +6,7 @@ using Common.Interfaces;
 namespace Messaging.InitialisationMessages
 {
     /// <summary>
-    /// Player's request to GM to join game
+    ///     Player's request to GM to join game
     /// </summary>
     [XmlType(XmlRootName)]
     public class JoinGameMessage : Message
@@ -26,16 +26,17 @@ namespace Messaging.InitialisationMessages
             PreferedTeam = preferedTeam;
         }
 
-        public string GameName { get; set; }
-        public PlayerType PreferedRole { get; set; }
-        public TeamColor PreferedTeam { get; set; }
+        [XmlAttribute("gameName")] public string GameName { get; set; }
+        [XmlAttribute("preferredRole")] public PlayerType PreferedRole { get; set; }
+        [XmlAttribute("preferredTeam")] public TeamColor PreferedTeam { get; set; }
 
         public override IMessage Process(IGameMaster gameMaster)
         {
-            if(!gameMaster.IsSlotAvailable())
+            if (!gameMaster.IsSlotAvailable())
                 return new RejectJoiningGame(GameName, PlayerId);
 
-            var (gameId, guid, playerInfo) = gameMaster.AssignPlayerToAvailableSlotWithPrefered(PlayerId, PreferedTeam, PreferedRole);
+            var (gameId, guid, playerInfo) =
+                gameMaster.AssignPlayerToAvailableSlotWithPrefered(PlayerId, PreferedTeam, PreferedRole);
 
             return new ConfirmJoiningGameMessage(gameId, PlayerId, guid, playerInfo);
         }
@@ -45,7 +46,7 @@ namespace Messaging.InitialisationMessages
             throw new NotImplementedException();
         }
 
-        public override void Process(ICommunicationServerCommunicator cs, int id)
+        public override void Process(ICommunicationServer cs, int id)
         {
             PlayerId = id;
 

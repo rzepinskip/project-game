@@ -5,13 +5,13 @@ using Communication;
 
 namespace CommunicationServer
 {
-    public class ServerTcpCommunicationTool : TcpCommunicationTool
+    public class ServerTcpConnection : TcpConnection
     {
         private readonly Action<IMessage, int> _handleMessage;
 
-        public ServerTcpCommunicationTool(Socket workSocket, int id, IMessageConverter messageConverter,
+        public ServerTcpConnection(Socket workSocket, int id, IMessageDeserializer messageDeserializer,
             Action<IMessage, int> handleMessage)
-            : base(workSocket, id, messageConverter)
+            : base(workSocket, id, messageDeserializer)
         {
             _handleMessage = handleMessage;
         }

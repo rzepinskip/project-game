@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Player.Interfaces;
+﻿using Player.Interfaces;
 
 namespace Player.Strategy
 {

@@ -4,21 +4,21 @@ using System.Diagnostics;
 using System.Threading;
 using Common;
 using Common.Interfaces;
+using Communication;
 using CommunicationServer.Accepters;
 using NLog;
 
 namespace CommunicationServer
 {
-    public class GameCommunicationServerCommunicator : ICommunicationServerCommunicator
+    public class CommunicationServer : ICommunicationServer
     {
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
-        private readonly IServerCommunicator _listener;
+        private readonly IAsynchronousSocketListener _listener;
         private readonly IResolver _communicationResolver;
 
-        public GameCommunicationServerCommunicator()
+        public CommunicationServer(IMessageDeserializer messageDeserializer)
         {
-            _listener = new AsynchronousSocketListener(new CommunicationServerConverter(),
-                new TcpSocketAccepter(HandleMessage), 1000000000);
+            _listener = new AsynchronousSocketListener(new TcpSocketAccepter(HandleMessage, messageDeserializer), 1000000000);
             _communicationResolver = new CommunicationResolver();
             new Thread(() => _listener.StartListening()).Start();
         }

@@ -11,19 +11,21 @@ namespace CommunicationServer.Accepters
 {
     public class TcpSocketAccepter : IAccepter
     {
+        private readonly IMessageDeserializer _messageDeserializer;
         private readonly Action<IMessage, int> _messageHandler;
 
         private readonly ManualResetEvent _readyForAccept = new ManualResetEvent(false);
         private int _counter;
 
-        public TcpSocketAccepter(Action<IMessage, int> messageHandler)
+        public TcpSocketAccepter(Action<IMessage, int> messageHandler, IMessageDeserializer messageDeserializer)
         {
-            AgentToCommunicationHandler = new Dictionary<int, TcpCommunicationTool>();
+            AgentToCommunicationHandler = new Dictionary<int, TcpConnection>();
             _counter = 0;
             _messageHandler = messageHandler;
+            _messageDeserializer = messageDeserializer;
         }
 
-        public Dictionary<int, TcpCommunicationTool> AgentToCommunicationHandler { get; set; }
+        public Dictionary<int, TcpConnection> AgentToCommunicationHandler { get; set; }
 
         public void StartListening()
         {
@@ -67,13 +69,12 @@ namespace CommunicationServer.Accepters
             }
 
             Debug.WriteLine("Accepted for " + _counter);
-            var state = new ServerTcpCommunicationTool(handler, _counter, new CommunicationServerConverter(),
-                _messageHandler);
+            var state = new ServerTcpConnection(handler, _counter, _messageDeserializer, _messageHandler);
             AgentToCommunicationHandler.Add(_counter++, state);
             StartReading(state);
         }
 
-        private void StartReading(TcpCommunicationTool tool)
+        private void StartReading(TcpConnection tool)
         {
             while (true)
                 tool.Receive();

@@ -7,7 +7,7 @@ using Messaging.Responses;
 namespace Messaging.InitialisationMessages
 {
     /// <summary>
-    /// GM sends confirmation to player about his registration
+    ///     GM sends confirmation to player about his registration
     /// </summary>
     [XmlType(XmlRootName)]
     public class ConfirmJoiningGameMessage : Response
@@ -23,11 +23,11 @@ namespace Messaging.InitialisationMessages
             GameId = gameId;
             PlayerId = playerId;
             PrivateGuid = privateGuid;
-            PlayerDefinition = playerDefiniton;
+            PlayerDefinition = new PlayerBase(playerDefiniton.Id, playerDefiniton.Team, playerDefiniton.Role);
         }
 
-        public int GameId { get; set; }
-        public Guid PrivateGuid { get; set; }
+        [XmlAttribute("gameId")] public int GameId { get; set; }
+        [XmlAttribute("privateGuid")] public Guid PrivateGuid { get; set; }
         public PlayerBase PlayerDefinition { get; set; }
 
         public override IMessage Process(IGameMaster gameMaster)
@@ -41,7 +41,7 @@ namespace Messaging.InitialisationMessages
             player.UpdatePlayer(PlayerId, PrivateGuid, PlayerDefinition, GameId);
         }
 
-        public override void Process(ICommunicationServerCommunicator cs, int id)
+        public override void Process(ICommunicationServer cs, int id)
         {
             //update team count
             cs.UpdateTeamCount(id, PlayerDefinition.Team);

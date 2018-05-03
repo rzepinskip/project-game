@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
 using Messaging.Responses;
+using Messaging.Serialization;
 
 namespace Messaging.InitialisationMessages
 {
@@ -23,12 +25,14 @@ namespace Messaging.InitialisationMessages
         public GameMessage(int playerId, IEnumerable<PlayerBase> players, Location playerLocation, BoardInfo board) :
             base(playerId)
         {
-            //Players = players.ToArray();
+            Players = players.Select(p => new PlayerBase(p.Id, p.Team, p.Role)).ToArray();
             PlayerLocation = playerLocation;
             Board = board;
         }
 
-        //public PlayerBase[] Players { get; set; }
+        [XmlArray("Players")]
+        [XmlArrayItem("Player")]
+        public PlayerBase[] Players { get; set; }
         public Location PlayerLocation { get; set; }
         public BoardInfo Board { get; set; }
 
@@ -39,10 +43,10 @@ namespace Messaging.InitialisationMessages
 
         public override void Process(IPlayer player)
         {
-            player.UpdatePlayerGame(PlayerLocation, Board);
+            player.InitializeGameData(PlayerLocation, Board, Players);
         }
 
-        public override void Process(ICommunicationServerCommunicator cs, int id)
+        public override void Process(ICommunicationServer cs, int id)
         {
             cs.UnregisterGame(id);
             cs.Send(this, PlayerId);

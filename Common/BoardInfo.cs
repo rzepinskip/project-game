@@ -1,12 +1,14 @@
-﻿namespace Common
+﻿using System.Xml.Serialization;
+
+namespace Common
 {
     public class BoardInfo
     {
-        public int Width { get; set; }
-        public int TasksHeight { get; set; }
-        public int GoalsHeight { get; set; }
+        [XmlAttribute("width")] public int Width { get; set; }
+        [XmlAttribute("tasksHeight")] public int TasksHeight { get; set; }
+        [XmlAttribute("goalsHeight")] public int GoalsHeight { get; set; }
 
-        public BoardInfo()
+        protected BoardInfo()
         {
         }
 

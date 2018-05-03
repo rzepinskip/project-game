@@ -23,7 +23,7 @@ namespace Messaging.InitialisationMessages
             PlayerId = playerId;
         }
 
-        public string GameName { get; set; }
+        [XmlAttribute("gameName")] public string GameName { get; set; }
 
         public override IMessage Process(IGameMaster gameMaster)
         {
@@ -35,7 +35,7 @@ namespace Messaging.InitialisationMessages
             player.UpdateJoiningInfo(false);
         }
 
-        public override void Process(ICommunicationServerCommunicator cs, int id)
+        public override void Process(ICommunicationServer cs, int id)
         {
             cs.Send(this, PlayerId);
         }

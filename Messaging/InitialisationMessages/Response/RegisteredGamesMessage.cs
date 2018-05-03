@@ -37,7 +37,7 @@ namespace Messaging.InitialisationMessages
             player.UpdateGameState(Games);
         }
 
-        public override void Process(ICommunicationServerCommunicator cs, int id)
+        public override void Process(ICommunicationServer cs, int id)
         {
             throw new NotImplementedException();
         }

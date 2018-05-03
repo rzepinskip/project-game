@@ -18,13 +18,12 @@ namespace GameMaster
 
         private Dictionary<Guid, PlayerHandle> _playerHandles;
 
-        public MessagingHandler(GameConfiguration gameConfiguration)
+        public MessagingHandler(GameConfiguration gameConfiguration, IMessageDeserializer messageDeserializer)
         {
             _actionCosts = gameConfiguration.ActionCosts;
 
-            Client = new AsynchronousClient(new TcpSocketConnecter(new GameMasterConverter(), HandleMessagesFromClient),
-                new GameMasterConverter());
-            new Thread(() => Client.StartClient()).Start();
+            Client = new AsynchronousClient(new TcpSocketConnector(messageDeserializer, HandleMessagesFromClient));
+            new Thread(() => Client.Connect()).Start();
         }
 
         private async void HandleMessagesFromPlayer(Guid playerGuid)

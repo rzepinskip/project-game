@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using Common.Interfaces;
 using Communication;
@@ -7,18 +8,15 @@ using CommunicationServer.Accepters;
 
 namespace CommunicationServer
 {
-    public class AsynchronousSocketListener : IServerCommunicator
+    public class AsynchronousSocketListener : IAsynchronousSocketListener
     {
         private readonly IAccepter _accepter;
         private readonly int _keepAliveTimeMiliseconds;
-        private readonly IMessageConverter _messageConverter;
         private Timer _checkKeepAliveTimer;
 
-        public AsynchronousSocketListener(IMessageConverter messageConverter,
-            IAccepter accepter, int keepAliveTimeMiliseconds)
+        public AsynchronousSocketListener(IAccepter accepter, int keepAliveTimeMiliseconds)
         {
             _keepAliveTimeMiliseconds = keepAliveTimeMiliseconds;
-            _messageConverter = messageConverter;
             _accepter = accepter;
             _checkKeepAliveTimer = new Timer(KeepAliveCallback, _accepter.AgentToCommunicationHandler, 0,
                 _keepAliveTimeMiliseconds / 2);
@@ -31,7 +29,7 @@ namespace CommunicationServer
 
         public void Send(IMessage message, int id)
         {
-            var byteData = _messageConverter.ConvertMessageToBytes(message, CommunicationStateObject.EtbByte);
+            var byteData =  Encoding.ASCII.GetBytes(message.SerializeToXml() + CommunicationState.EtbByte);
             var findResult = _accepter.AgentToCommunicationHandler.TryGetValue(id, out var handler);
             if (!findResult)
                 throw new Exception("Non exsistent socket id");
@@ -48,7 +46,7 @@ namespace CommunicationServer
 
         public void KeepAliveCallback(object state)
         {
-            var dictionary = (Dictionary<int, TcpCommunicationTool>) state;
+            var dictionary = (Dictionary<int, TcpConnection>) state;
             var currentTime = DateTime.Now.Ticks;
             foreach (var csStateObject in dictionary.Values)
             {

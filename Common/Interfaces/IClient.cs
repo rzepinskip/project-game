@@ -3,7 +3,6 @@
     public interface IClient
     {
         void Send(IMessage message);
-
-        void StartClient();
+        void Connect();
     }
 }
