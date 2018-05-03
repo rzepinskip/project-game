@@ -14,14 +14,14 @@ namespace Communication.Client
         private readonly ManualResetEvent _connectDone;
         private readonly IMessageDeserializer _messageDeserializer;
         private readonly Action<IMessage> _messageHandler;
-        private readonly int _keepAliveInterval;
-        public TcpSocketConnector(IMessageDeserializer messageDeserializer, Action<IMessage> messageHandler, int keepAliveInterval = 1000)
+        private readonly TimeSpan _keepAliveInterval;
+        public TcpSocketConnector(IMessageDeserializer messageDeserializer, Action<IMessage> messageHandler, TimeSpan keepAliveInterval = default(TimeSpan))
         {
             ConnectFinalized = new ManualResetEvent(false);
             _connectDone = new ManualResetEvent(false);
             _messageDeserializer = messageDeserializer;
             _messageHandler = messageHandler;
-            _keepAliveInterval = keepAliveInterval;
+            _keepAliveInterval = keepAliveInterval == default(TimeSpan) ? TimeSpan.FromMilliseconds(1000) : keepAliveInterval;
         }
 
         public ITcpConnection TcpConnection { get; set; }

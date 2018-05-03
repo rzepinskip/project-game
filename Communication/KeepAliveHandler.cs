@@ -1,32 +1,38 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Communication
 {
     public class KeepAliveHandler
     {
-        private Timer _checkKeepAliveTimer;
-        protected readonly int KeepAliveTimeInterval;
-        protected readonly IKeepAliveGetter KeepAliveGetter;
-        public KeepAliveHandler(int keepAliveTimeInterval, IKeepAliveGetter keepAliveGetter)
+        private Timer _checkKeepAlivesTimer;
+        protected readonly TimeSpan KeepAliveTimeInterval;
+        protected readonly IEnumerable<ITcpConnection> MaintainedConnections;
+        public KeepAliveHandler(TimeSpan keepAliveTimeInterval, IEnumerable<ITcpConnection> maintainedConnections)
         {
-            KeepAliveGetter = keepAliveGetter;
+            MaintainedConnections = maintainedConnections;
             KeepAliveTimeInterval = keepAliveTimeInterval;
-            _checkKeepAliveTimer = new Timer(KeepAliveCallback, null, 0,
-                KeepAliveTimeInterval/2);
+            _checkKeepAlivesTimer = new Timer(CheckKeepAlivesCallback, null, 0,
+                KeepAliveTimeInterval.Milliseconds/2);
         }
 
-        private void KeepAliveCallback(object state)
+        private void CheckKeepAlivesCallback(object state)
         {
             var currentTime = DateTime.Now.Ticks;
-            foreach (var csStateObject in KeepAliveGetter.Get())
+            foreach (var csStateObject in MaintainedConnections)
             {
                 var elapsedTicks = currentTime - csStateObject.GetLastMessageReceivedTicks();
                 var elapsedSpan = new TimeSpan(elapsedTicks);
 
-                if (elapsedSpan.Milliseconds > KeepAliveTimeInterval)
-                    csStateObject.CloseSocket();
+                if (elapsedSpan > KeepAliveTimeInterval)
+                    ConnectionFailureHandler(csStateObject);
             }
+        }
+
+        protected virtual void ConnectionFailureHandler(ITcpConnection connection)
+        {
+            connection.CloseSocket();
         }
     }
 }

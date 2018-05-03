@@ -7,7 +7,7 @@ namespace Communication.Client
     public class ClientTcpConnection : TcpConnection
     {
         private readonly Action<IMessage> _handler;
-        private KeepAliveClientHandler _keepAliveClientHandler;
+        private ClientKeepAliveHandler _clientKeepAliveHandler;
 
         public ClientTcpConnection(Socket workSocket, int id, IMessageDeserializer messageDeserializer,
             Action<IMessage> handler)
@@ -16,9 +16,10 @@ namespace Communication.Client
             _handler = handler;
         }
 
-        public void StartKeepAliveTimer(int keepAliveInterval)
+        public void StartKeepAliveTimer(TimeSpan keepAliveInterval)
         {
-            _keepAliveClientHandler = new KeepAliveClientHandler(keepAliveInterval, new KeepAliveClientCollection(this));
+            _clientKeepAliveHandler =
+                new ClientKeepAliveHandler(keepAliveInterval, new ClientMaintainedConnections(this));
         }
 
         public override void Handle(IMessage message, int id = -404)
@@ -28,13 +29,12 @@ namespace Communication.Client
 
         public override void Send(byte[] data)
         {
-            _keepAliveClientHandler.ResetTimer();
+            _clientKeepAliveHandler.ResetTimer();
             base.Send(data);
         }
 
         public override void HandleKeepAliveMessage()
         {
-            
         }
     }
 }

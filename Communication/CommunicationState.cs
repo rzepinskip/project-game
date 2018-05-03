@@ -36,7 +36,7 @@ namespace Communication
                 var numberOfMessages = messages.Length;
                 var wholeMessages = string.IsNullOrEmpty(messages[numberOfMessages - 1]);
 
-                LastMessageReceivedTicks = DateTime.Today.Ticks;
+                LastMessageReceivedTicks = DateTime.Now.Ticks;
                 MessageContentBuilder.Clear();
 
                 if (!wholeMessages)
