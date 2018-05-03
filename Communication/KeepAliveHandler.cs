@@ -4,17 +4,18 @@ using System.Threading;
 
 namespace Communication
 {
-    public class KeepAliveHandler
+    public abstract class KeepAliveHandler
     {
-        private Timer _checkKeepAlivesTimer;
         protected readonly TimeSpan KeepAliveTimeInterval;
         protected readonly IEnumerable<ITcpConnection> MaintainedConnections;
+        private Timer _checkKeepAlivesTimer;
+
         public KeepAliveHandler(TimeSpan keepAliveTimeInterval, IEnumerable<ITcpConnection> maintainedConnections)
         {
             MaintainedConnections = maintainedConnections;
             KeepAliveTimeInterval = keepAliveTimeInterval;
             _checkKeepAlivesTimer = new Timer(CheckKeepAlivesCallback, null, 0,
-                KeepAliveTimeInterval.Milliseconds/2);
+                KeepAliveTimeInterval.Milliseconds / 2);
         }
 
         private void CheckKeepAlivesCallback(object state)
@@ -25,14 +26,10 @@ namespace Communication
                 var elapsedTicks = currentTime - csStateObject.GetLastMessageReceivedTicks();
                 var elapsedSpan = new TimeSpan(elapsedTicks);
 
-                if (elapsedSpan > KeepAliveTimeInterval)
-                    ConnectionFailureHandler(csStateObject);
+                if (elapsedSpan > KeepAliveTimeInterval) ConnectionFailureHandler(csStateObject);
             }
         }
 
-        protected virtual void ConnectionFailureHandler(ITcpConnection connection)
-        {
-            connection.CloseSocket();
-        }
+        protected abstract void ConnectionFailureHandler(ITcpConnection connection);
     }
 }

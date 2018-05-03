@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using Common.Interfaces;
 using Communication;
+using Communication.Exceptions;
 
 namespace CommunicationServer.Accepters
 {
@@ -44,7 +45,7 @@ namespace CommunicationServer.Accepters
                 while (true)
                 {
                     _readyForAccept.Reset();
-                    Debug.WriteLine("Waiting for a connection...");
+                    Debug.WriteLine("CS waiting for a connections...");
                     listener.BeginAccept(AcceptCallback, listener);
 
                     _readyForAccept.WaitOne();
@@ -52,25 +53,14 @@ namespace CommunicationServer.Accepters
             }
             catch (Exception e)
             {
-                /// [ERROR_STATE]
-                /// Bind throws throws SocketException (error when attempting to access socket)
-                /// and ObjectDisposedException (when socket is closed)
-                
-                /// BeginAccept throws SocketException, ObjectDisposedException and ArgumentOutOfRange when receiveSize is 0
-                ///
-                /// In case of SocketException and ObjectDisposedException CS cannot communicate with outside, process shutdown 
-                /// 
-
-
-
-                Console.WriteLine(e.ToString());
+                throw new ConnectionException("Unable to start listening", e);
             }
         }
 
         private void AcceptCallback(IAsyncResult ar)
         {
             _readyForAccept.Set();
-            var handler = default(Socket);
+            Socket handler;
             var listener = ar.AsyncState as Socket;
             try
             {
@@ -78,13 +68,10 @@ namespace CommunicationServer.Accepters
             }
             catch (Exception e)
             {
-                /// [ERROR_STATE]
-                /// CS cannot communicate with outside
-                /// CS process should shutdown
-                Console.WriteLine(e.ToString());
+                throw new ConnectionException("Unable to start listening", e);
             }
 
-            Debug.WriteLine("Accepted for " + _counter);
+            Debug.WriteLine("CS accepted connection for " + _counter);
             var state = new ServerTcpConnection(handler, _counter, _messageDeserializer, _messageHandler, new ServerMaintainedConnections(AgentToCommunicationHandler));
             AgentToCommunicationHandler.Add(_counter++, state);
             StartReading(state);

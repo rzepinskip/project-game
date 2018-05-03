@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Common.Interfaces;
+using Communication.Exceptions;
 
 namespace Communication.Client
 {
@@ -45,10 +46,7 @@ namespace Communication.Client
             }
             catch (Exception e)
             {
-                /// [ERROR_STATE]
-                /// SocketException and ObjectDisposedException 
-                /// used in client should be handled with sleep and reconection.
-                Console.WriteLine(e.ToString());
+                throw new ConnectionException("Unable to connect", e);
             }
             StartReading();
         }
@@ -63,15 +61,23 @@ namespace Communication.Client
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                throw new ConnectionException("Unable to connect", e);
             }
         }
 
         private void StartReading()
         {
-            Debug.WriteLine("Client starts reading");
             while (true)
-                TcpConnection.Receive();
+            {
+                try
+                {
+                    TcpConnection.Receive();
+                }
+                catch (Exception e)
+                {
+                    throw new ConnectionException("Unable to read", e);
+                }
+            }
         }
     }
 }
