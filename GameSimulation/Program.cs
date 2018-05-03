@@ -1,21 +1,25 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
+using Common;
+using NLog;
 
 namespace GameSimulation
 {
     internal class Program
     {
+        private static ILogger _logger;
+
         private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             var simulation = new GameSimulation("Resources/ExampleAdvancedConfig.xml");
+            _logger = GameMaster.GameMaster.Logger;
             simulation.StartSimulation();
             while (true)
             {
                 var boardVisualizer = new BoardVisualizer();
-                for (var i = 0; ; i++)
+                for (var i = 0;; i++)
                 {
                     if (simulation.GameFinished)
                         break;
@@ -23,11 +27,7 @@ namespace GameSimulation
                     Thread.Sleep(200);
                     boardVisualizer.VisualizeBoard(simulation.GameMaster.Board);
                     Console.WriteLine(i);
-
-                    throw new NotImplementedException();
                 }
-
-
 
                 if (simulation.GameFinished)
                 {
@@ -35,16 +35,13 @@ namespace GameSimulation
                     simulation.GameFinished = false;
                 }
 
-
-
                 Thread.Sleep(1000);
             }
         }
 
-        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs args)
         {
-            Debug.WriteLine("GLOBAL EXCEPTION");
-            Console.WriteLine("GLOBAL EXCEPTION");
+            GlobalException.HandleGlobalException(args, _logger);
         }
     }
 }

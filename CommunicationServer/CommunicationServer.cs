@@ -12,7 +12,7 @@ namespace CommunicationServer
 {
     public class CommunicationServer : ICommunicationServer, IConnectionTimeoutable
     {
-        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
+        public static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private readonly IResolver _communicationResolver;
         private readonly IAsynchronousSocketListener _listener;
 
