@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Common;
 
 namespace Communication.Client
 {
     public class ClientKeepAliveHandler : KeepAliveHandler
     {
-        private readonly Timer _sendKeepAliveTimer;
-       
-        public ClientKeepAliveHandler(TimeSpan keepAliveTimeInterval, IEnumerable<ITcpConnection> maintainedConnections) : base(keepAliveTimeInterval, maintainedConnections)
+        private readonly Timer _sentKeepAliveTimer;
+
+        public ClientKeepAliveHandler(TimeSpan keepAliveTimeInterval, IEnumerable<ITcpConnection> maintainedConnections)
+            : base(keepAliveTimeInterval, maintainedConnections)
         {
-            _sendKeepAliveTimer = new Timer(SendKeepAliveCallback, null, 0, keepAliveTimeInterval.Milliseconds/2);
+            _sentKeepAliveTimer = new Timer(SendKeepAliveCallback, null, 0, keepAliveTimeInterval.Milliseconds / 2);
         }
 
         private void SendKeepAliveCallback(object state)
@@ -21,12 +23,16 @@ namespace Communication.Client
 
         public void ResetTimer()
         {
-            _sendKeepAliveTimer.Change(0, KeepAliveTimeInterval.Milliseconds);
+            _sentKeepAliveTimer.Change(0, KeepAliveTimeInterval.Milliseconds);
         }
 
         protected override void ConnectionFailureHandler(ITcpConnection connection)
         {
+            _sentKeepAliveTimer.Dispose();
+            ReceivedKeepAlivesTimer.Dispose();
             connection.CloseSocket();
+
+            throw new GlobalException("Keep alive timeout");
         }
     }
 }

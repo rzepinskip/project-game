@@ -8,14 +8,14 @@ namespace Communication
     {
         protected readonly TimeSpan KeepAliveTimeInterval;
         protected readonly IEnumerable<ITcpConnection> MaintainedConnections;
-        private Timer _checkKeepAlivesTimer;
+        protected Timer ReceivedKeepAlivesTimer;
 
         public KeepAliveHandler(TimeSpan keepAliveTimeInterval, IEnumerable<ITcpConnection> maintainedConnections)
         {
             MaintainedConnections = maintainedConnections;
             KeepAliveTimeInterval = keepAliveTimeInterval;
-            _checkKeepAlivesTimer = new Timer(CheckKeepAlivesCallback, null, 0,
-                KeepAliveTimeInterval.Milliseconds / 2);
+            ReceivedKeepAlivesTimer = new Timer(CheckKeepAlivesCallback, null, 0,
+                keepAliveTimeInterval.Milliseconds / 2);
         }
 
         private void CheckKeepAlivesCallback(object state)
