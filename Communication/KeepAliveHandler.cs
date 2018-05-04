@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Timers;
+
 
 namespace Communication
 {
@@ -8,17 +9,21 @@ namespace Communication
     {
         protected readonly TimeSpan KeepAliveTimeInterval;
         protected readonly IEnumerable<ITcpConnection> MaintainedConnections;
-        protected Timer ReceivedKeepAlivesTimer;
+        public Timer ReceivedKeepAlivesTimer;
 
         public KeepAliveHandler(TimeSpan keepAliveTimeInterval, IEnumerable<ITcpConnection> maintainedConnections)
         {
             MaintainedConnections = maintainedConnections;
             KeepAliveTimeInterval = keepAliveTimeInterval;
-            ReceivedKeepAlivesTimer = new Timer(CheckKeepAlivesCallback, null, 25000,
-                (keepAliveTimeInterval.Seconds*1000 + keepAliveTimeInterval.Milliseconds) / 8);
+            ReceivedKeepAlivesTimer = new Timer((keepAliveTimeInterval.Seconds * 1000 + keepAliveTimeInterval.Milliseconds) / 8);
+            ReceivedKeepAlivesTimer.Elapsed += CheckKeepAlivesCallback;
+            ReceivedKeepAlivesTimer.Start();
+
+                //new Timer(CheckKeepAlivesCallback, null, 25000,
+                //(keepAliveTimeInterval.Seconds*1000 + keepAliveTimeInterval.Milliseconds) / 8);
         }
 
-        private void CheckKeepAlivesCallback(object state)
+        private void CheckKeepAlivesCallback(Object source, System.Timers.ElapsedEventArgs e)
         {
             int counter = 0;
             var currentTime = DateTime.Now.Ticks;
@@ -27,7 +32,7 @@ namespace Communication
                 var elapsedTicks = currentTime - csStateObject.GetLastMessageReceivedTicks();
                 var elapsedSpan = new TimeSpan(elapsedTicks);
                 Console.WriteLine(counter + " " + currentTime + " " + csStateObject.GetLastMessageReceivedTicks() + " " + elapsedSpan);
-                if (elapsedSpan > 2*KeepAliveTimeInterval)
+                if (elapsedSpan > KeepAliveTimeInterval)
                     ConnectionFailureHandler(csStateObject);
                 counter++;
             }
