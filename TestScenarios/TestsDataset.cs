@@ -18,6 +18,7 @@ using TestScenarios.MoveScenarios.MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryP
 using TestScenarios.MoveScenarios.MoveToTaskFieldWithPiece;
 using TestScenarios.MoveScenarios.MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece;
 using TestScenarios.MoveScenarios.MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece;
+using TestScenarios.PlaceScenarios.PlaceValidPieceOnGoalFieldWithGoal;
 
 namespace TestScenarios
 {
@@ -27,8 +28,9 @@ namespace TestScenarios
 
         public TestsDataset()
         {
-            _testScenarios.AddRange(GetMoveTests());
-            _testScenarios.AddRange(GetDiscoverTests());
+            //_testScenarios.AddRange(GetMoveTests());
+            //_testScenarios.AddRange(GetDiscoverTests());
+            _testScenarios.AddRange(GetPlaceTests());
         }
 
         public IEnumerator<object[]> GetEnumerator()
@@ -48,9 +50,9 @@ namespace TestScenarios
                 new object[] {new MoveToGoalField()},
                 new object[] {new MoveToTaskFieldWithoutPiece()},
                 new object[] {new MoveToTaskFieldWithPiece()},
-                new object[] { new MoveToTaskFieldOccupiedByPlayerWhoCarryPiece()},
+                new object[] {new MoveToTaskFieldOccupiedByPlayerWhoCarryPiece()},
                 new object[] {new MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece()},
-                new object[] { new MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece()},
+                new object[] {new MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece()},
                 new object[] {new MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece()}
             };
         }
@@ -70,6 +72,21 @@ namespace TestScenarios
                 new object[] {new DiscoverPiecePickUp()},
                 new object[] {new DiscoverPlayer()},
                 new object[] {new DiscoverPlayerDisappearance()},
+            };
+        }
+
+        private IEnumerable<object[]> GetPlaceTests()
+        {
+            return new List<object[]>
+            {
+                new  object[] {new PlaceValidPieceOnGoalFieldWithGoal()},
+                //new  object[] {new PlaceValidPieceOnGoalFieldWithNonGoal()},
+                //new  object[] {new PlaceValidPieceOnTaskFieldWithPiece()},
+                //new  object[] {new PlaceValidPieceOnTaskFieldWithoutPiece()}
+                //new  object[] {new PlaceShamPieceOnGoalFieldWithGoal()},
+                //new  object[] {new PlaceShamPieceOnGoalFieldWithNonGoal()},
+                //new  object[] {new PlaceShamPieceOnTaskFieldWithPiece()},
+                //new  object[] {new PlaceShaPieceOnTaskFieldWithoutPiece()},
             };
         }
     }
