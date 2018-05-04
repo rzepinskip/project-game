@@ -129,8 +129,6 @@ namespace Common.BoardObjects
             var types = new[] {typeof(GoalField), typeof(TaskField)};
             var readElements = ReadCollection<Field>(reader, nameof(Content), types);
             foreach (var element in readElements) this[element] = element;
-
-            reader.ReadEndElement();
         }
 
         public virtual void WriteXml(XmlWriter writer)
@@ -149,7 +147,6 @@ namespace Common.BoardObjects
                 field.WriteXml(writer);
                 writer.WriteEndElement();
             }
-
             writer.WriteEndElement();
         }
 
@@ -158,13 +155,13 @@ namespace Common.BoardObjects
             throw new NotSupportedException("Add is not supported.");
         }
 
-        private void ReadCollection<TCollection>(XmlReader reader, TCollection collection, string collectionName)
+        protected void ReadCollection<TCollection>(XmlReader reader, TCollection collection, string collectionName)
             where TCollection : IEnumerable, IXmlSerializable
         {
             collection.ReadXml(reader);
         }
 
-        private void WriteCollection<TCollection>(XmlWriter writer, TCollection collection, string collectionName)
+        protected void WriteCollection<TCollection>(XmlWriter writer, TCollection collection, string collectionName)
             where TCollection : IEnumerable, IXmlSerializable
         {
             writer.WriteStartElement(collectionName);
@@ -172,7 +169,7 @@ namespace Common.BoardObjects
             writer.WriteEndElement();
         }
 
-        private List<T> ReadCollection<T>(XmlReader reader, string collectionName, IEnumerable<Type> derivedTypes)
+        protected List<T> ReadCollection<T>(XmlReader reader, string collectionName, IEnumerable<Type> derivedTypes)
             where T : class
         {
             var serializers = new Dictionary<string, XmlSerializer>();
