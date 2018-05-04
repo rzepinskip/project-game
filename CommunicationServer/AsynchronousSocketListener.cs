@@ -11,10 +11,11 @@ namespace CommunicationServer
     public class AsynchronousSocketListener : IAsynchronousSocketListener
     {
         private readonly IAccepter _accepter;
-
+        private readonly ClientManager _clientManager;
         public AsynchronousSocketListener(IAccepter accepter)
         {
             _accepter = accepter;
+            _clientManager = new ClientManager(_accepter.AgentToCommunicationHandler);
         }
 
         public void StartListening()
@@ -49,6 +50,16 @@ namespace CommunicationServer
 
                 Console.WriteLine(e.ToString());
             }
+        }
+
+        public void MarkClientAsPlayer(int id)
+        {
+            _clientManager.MarkClientAsPlayer(id);
+        }
+
+        public void MarkClientAsGameMaster(int id)
+        {
+            _clientManager.MarkClientAsGameMaster(id);
         }
 
         

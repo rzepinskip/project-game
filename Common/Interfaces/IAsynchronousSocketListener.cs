@@ -1,6 +1,6 @@
 ﻿namespace Common.Interfaces
 {
-    public interface IAsynchronousSocketListener
+    public interface IAsynchronousSocketListener: IClientManager
     {
         void Send(IMessage message, int id);
         void StartListening();
