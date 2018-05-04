@@ -13,7 +13,7 @@ namespace Communication.Client
         public ClientKeepAliveHandler(TimeSpan keepAliveTimeInterval, IEnumerable<ITcpConnection> maintainedConnections)
             : base(keepAliveTimeInterval, maintainedConnections)
         {
-            _sentKeepAliveTimer = new Timer(SendKeepAliveCallback, null, 0, (keepAliveTimeInterval.Seconds*1000+keepAliveTimeInterval.Milliseconds) / 2);
+            _sentKeepAliveTimer = new Timer(SendKeepAliveCallback, null, 20000, (keepAliveTimeInterval.Seconds*1000+keepAliveTimeInterval.Milliseconds) / 8);
         }
 
         private void SendKeepAliveCallback(object state)
@@ -23,7 +23,7 @@ namespace Communication.Client
 
         public void ResetTimer()
         {
-            _sentKeepAliveTimer.Change(0, KeepAliveTimeInterval.Milliseconds);
+            _sentKeepAliveTimer.Change((KeepAliveTimeInterval.Seconds * 1000 + KeepAliveTimeInterval.Milliseconds) / 8, (KeepAliveTimeInterval.Seconds * 1000 + KeepAliveTimeInterval.Milliseconds) / 8);
         }
 
         protected override void ConnectionFailureHandler(ITcpConnection connection)

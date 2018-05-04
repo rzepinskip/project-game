@@ -138,14 +138,20 @@ namespace Communication
             if (bytesRead > 0)
             {
                 state.UpdateLastMessageTicks();
-                Console.WriteLine(Id + " updated ticks to " + state.LastMessageReceivedTicks);
+                //Console.WriteLine(Id + " updated ticks to " + state.LastMessageReceivedTicks);
                 var (messages, hasEtbByte) = state.SplitMessages(bytesRead, Id);
 
+                var handledKeepAlive = false;
                 foreach (var message in messages)
-                    if (string.IsNullOrEmpty(message))
-                        HandleKeepAliveMessage();
-                    else
+                {
+                    if (!string.IsNullOrEmpty(message))
                         Handle(_messageDeserializer.Deserialize(message), Id);
+                    //if (!handledKeepAlive)
+                    //{
+                    HandleKeepAliveMessage();
+                        //handledKeepAlive = true;
+                    //}
+                }
 
                 //DONT TOUCH THAT 
                 //DANGER ZONE ************
