@@ -106,6 +106,11 @@ namespace Communication
             return State.LastMessageReceivedTicks;
         }
 
+        public void UpdateLastMessageTicks()
+        {
+            State.UpdateLastMessageTicks();
+        }
+
         public abstract void Handle(IMessage message, int id = -404);
         public abstract void HandleKeepAliveMessage();
 
@@ -132,6 +137,8 @@ namespace Communication
 
             if (bytesRead > 0)
             {
+                state.UpdateLastMessageTicks();
+                Console.WriteLine(Id + " updated ticks to " + state.LastMessageReceivedTicks);
                 var (messages, hasEtbByte) = state.SplitMessages(bytesRead, Id);
 
                 foreach (var message in messages)

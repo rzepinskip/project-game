@@ -42,6 +42,7 @@ namespace Communication.Client
 
                 client.BeginConnect(remoteEndPoint, ConnectCallback, client);
                 _connectDone.WaitOne();
+                tcpConnection.UpdateLastMessageTicks();
                 tcpConnection.StartKeepAliveTimer(_keepAliveInterval);
             }
             catch (Exception e)
