@@ -72,7 +72,7 @@ namespace CommunicationServer.Accepters
             }
 
             Debug.WriteLine("CS accepted connection for " + _counter);
-            var state = new ServerTcpConnection(handler, _counter, _messageDeserializer, _messageHandler, new ServerMaintainedConnections(AgentToCommunicationHandler));
+            var state = new ServerTcpConnection(handler, _counter, _messageDeserializer, _messageHandler);
             AgentToCommunicationHandler.Add(_counter++, state);
             StartReading(state);
         }
