@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading;
+using GameMaster;
+using Messaging.Serialization;
 
 namespace GameSimulation
 {
@@ -9,6 +11,10 @@ namespace GameSimulation
         {
             var simulation = new GameSimulation("Resources/ExampleConfig.xml");
             simulation.StartSimulation();
+
+
+            var xmlSerializer = new ExtendedXmlSerializer(string.Empty);
+
             while (true)
             {
                 var boardVisualizer = new BoardVisualizer();
@@ -20,6 +26,11 @@ namespace GameSimulation
                     Thread.Sleep(200);
                     boardVisualizer.VisualizeBoard(simulation.GameMaster.Board);
                     Console.WriteLine(i);
+                    if (i == 22)
+                    {
+                        var xml = xmlSerializer.SerializeToXml(simulation.GameMaster.Board);
+                        var board = xmlSerializer.DeserializeFromXml<GameMasterBoard>(xml);
+                    }
                 }
 
                 if (simulation.GameFinished)

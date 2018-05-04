@@ -19,6 +19,7 @@ using TestScenarios.MoveScenarios.MoveToTaskFieldWithPiece;
 using TestScenarios.MoveScenarios.MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece;
 using TestScenarios.MoveScenarios.MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece;
 using TestScenarios.PlaceScenarios.PlaceValidPieceOnGoalFieldWithGoal;
+using TestScenarios.PlaceScenarios.PlaceValidPieceOnGoalFieldWithNonGoal;
 
 namespace TestScenarios
 {
@@ -79,14 +80,14 @@ namespace TestScenarios
         {
             return new List<object[]>
             {
-                new  object[] {new PlaceValidPieceOnGoalFieldWithGoal()},
-                //new  object[] {new PlaceValidPieceOnGoalFieldWithNonGoal()},
+                //new  object[] {new PlaceValidPieceOnGoalFieldWithGoal()},
+                new  object[] {new PlaceValidPieceOnGoalFieldWithNonGoal()},
                 //new  object[] {new PlaceValidPieceOnTaskFieldWithPiece()},
                 //new  object[] {new PlaceValidPieceOnTaskFieldWithoutPiece()}
                 //new  object[] {new PlaceShamPieceOnGoalFieldWithGoal()},
                 //new  object[] {new PlaceShamPieceOnGoalFieldWithNonGoal()},
                 //new  object[] {new PlaceShamPieceOnTaskFieldWithPiece()},
-                //new  object[] {new PlaceShaPieceOnTaskFieldWithoutPiece()},
+                //new  object[] {new PlaceShamPieceOnTaskFieldWithoutPiece()},
             };
         }
     }

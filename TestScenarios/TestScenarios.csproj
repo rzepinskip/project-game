@@ -433,6 +433,27 @@
     <None Update="MoveScenarios\MoveToTaskFieldWithoutPiece\MoveToTaskFieldWithoutPiece-Response.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="PlaceScenarios\PlaceValidPieceOnGoalFieldWithNonGoal\PlaceValidPieceOnGoalFieldWithNonGoal-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PlaceScenarios\PlaceValidPieceOnGoalFieldWithNonGoal\PlaceValidPieceOnGoalFieldWithNonGoal-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PlaceScenarios\PlaceValidPieceOnGoalFieldWithNonGoal\PlaceValidPieceOnGoalFieldWithNonGoal-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PlaceScenarios\PlaceValidPieceOnGoalFieldWithNonGoal\PlaceValidPieceOnGoalFieldWithNonGoal-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PlaceScenarios\PlaceValidPieceOnGoalFieldWithNonGoal\PlaceValidPieceOnGoalFieldWithNonGoal-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PlaceScenarios\PlaceValidPieceOnGoalFieldWithNonGoal\PlaceValidPieceOnGoalFieldWithNonGoal-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PlaceScenarios\PlaceValidPieceOnGoalFieldWithNonGoal\PlaceValidPieceOnGoalFieldWithNonGoal-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="PlaceScenarios\PlaceValidPieceOnGoalFieldWithGoal\PlaceValidPieceOnGoalFieldWithGoal-GM-Initial.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

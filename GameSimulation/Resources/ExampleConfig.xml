@@ -4,6 +4,8 @@
   <GameDefinition>
     <Goals team="red" x="4" y="15" type="goal" />
     <Goals team="blue" x="6" y="1" type="goal" />
+    <Goals team="red" x="3" y="15" type="goal" />
+    <Goals team="blue" x="5" y="1" type="goal" />
     <ShamProbability>0.33</ShamProbability>
     <PlacingNewPiecesFrequency>200</PlacingNewPiecesFrequency>
     <InitialNumberOfPieces>10</InitialNumberOfPieces>
