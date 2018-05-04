@@ -6,6 +6,13 @@ using Common.Interfaces;
 
 namespace Communication
 {
+    public enum ComponentType
+    {
+        NonInitialized,
+        GameMaster,
+        Player
+    };
+
     public abstract class TcpConnection : ITcpConnection
     {
         private readonly IMessageDeserializer _messageDeserializer;
@@ -17,6 +24,7 @@ namespace Communication
             _messageDeserializer = messageDeserializer;
             MessageProcessed = new ManualResetEvent(true);
             State = new CommunicationState();
+            ComponentType = ComponentType.NonInitialized;
         }
 
         public int Id { get; set; }
@@ -26,6 +34,7 @@ namespace Communication
         public CommunicationState State { get; set; }
 
         public int SocketId => Id;
+        public ComponentType ComponentType { get; set; }
 
         public void Receive()
         {
@@ -104,6 +113,16 @@ namespace Communication
         public long GetLastMessageReceivedTicks()
         {
             return State.LastMessageReceivedTicks;
+        }
+
+        public void MarkClientAsPlayer()
+        {
+            ComponentType = ComponentType.Player;
+        }
+
+        public void MarkClientAsGameMaster()
+        {
+            ComponentType = ComponentType.GameMaster;
         }
 
         public void UpdateLastMessageTicks()
