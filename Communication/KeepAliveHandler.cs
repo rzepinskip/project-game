@@ -15,18 +15,20 @@ namespace Communication
             MaintainedConnections = maintainedConnections;
             KeepAliveTimeInterval = keepAliveTimeInterval;
             ReceivedKeepAlivesTimer = new Timer(CheckKeepAlivesCallback, null, 0,
-                keepAliveTimeInterval.Milliseconds / 2);
+                (keepAliveTimeInterval.Seconds*1000 + keepAliveTimeInterval.Milliseconds) / 2);
         }
 
         private void CheckKeepAlivesCallback(object state)
         {
+            int counter = 0;
             var currentTime = DateTime.Now.Ticks;
             foreach (var csStateObject in MaintainedConnections)
             {
                 var elapsedTicks = currentTime - csStateObject.GetLastMessageReceivedTicks();
                 var elapsedSpan = new TimeSpan(elapsedTicks);
-
-                if (elapsedSpan > KeepAliveTimeInterval) ConnectionFailureHandler(csStateObject);
+                if (elapsedSpan > KeepAliveTimeInterval)
+                    ConnectionFailureHandler(csStateObject);
+                counter++;
             }
         }
 
