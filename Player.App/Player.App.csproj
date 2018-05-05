@@ -6,6 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Mono.Options.Core" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BoardGenerators\BoardGenerators.csproj" />
+    <ProjectReference Include="..\GameMaster\GameMaster.csproj" />
     <ProjectReference Include="..\Player\Player.csproj" />
   </ItemGroup>
 

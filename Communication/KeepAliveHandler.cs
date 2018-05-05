@@ -13,8 +13,8 @@ namespace Communication
         {
             MaintainedConnections = maintainedConnections;
             KeepAliveTimeInterval = keepAliveTimeInterval;
-            _checkKeepAlivesTimer = new Timer(CheckKeepAlivesCallback, null, 0,
-                KeepAliveTimeInterval.Milliseconds/2);
+            //_checkKeepAlivesTimer = new Timer(CheckKeepAlivesCallback, null, 0,
+            //    KeepAliveTimeInterval.Milliseconds/2);
         }
 
         private void CheckKeepAlivesCallback(object state)

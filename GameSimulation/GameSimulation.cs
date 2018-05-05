@@ -15,7 +15,7 @@ namespace GameSimulation
         {
             var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(configFilePath);
-            CommunicationServer = new CommunicationServer.CommunicationServer(MessageSerializer.Instance);
+            CommunicationServer = new CommunicationServer.CommunicationServer(MessageSerializer.Instance, config.KeepAliveInterval, 11000);
 
             GameMaster = new GameMaster.GameMaster(config, MessageSerializer.Instance);
             Players = new List<Player.Player>();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
 using System.Threading;
 using Common;
 using Common.BoardObjects;
@@ -19,9 +20,9 @@ namespace Player
         private ILogger _logger;
         private PlayerCoordinator _playerCoordinator;
 
-        public Player(IMessageDeserializer messageDeserializer)
+        public Player(IMessageDeserializer messageDeserializer, int port, int keepAliveInterval, IPAddress address)
         {
-            CommunicationClient = new AsynchronousClient(new TcpSocketConnector(messageDeserializer, HandleResponse));
+            CommunicationClient = new AsynchronousClient(new TcpSocketConnector(messageDeserializer, HandleResponse, port, address, TimeSpan.FromMilliseconds(keepAliveInterval)));
         }
 
         public int GameId { get; private set; }

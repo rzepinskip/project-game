@@ -15,12 +15,16 @@ namespace Communication.Client
         private readonly IMessageDeserializer _messageDeserializer;
         private readonly Action<IMessage> _messageHandler;
         private readonly TimeSpan _keepAliveInterval;
-        public TcpSocketConnector(IMessageDeserializer messageDeserializer, Action<IMessage> messageHandler, TimeSpan keepAliveInterval = default(TimeSpan))
+        private readonly int _port;
+        private readonly IPAddress _address;
+        public TcpSocketConnector(IMessageDeserializer messageDeserializer, Action<IMessage> messageHandler, int port, IPAddress address, TimeSpan keepAliveInterval = default(TimeSpan))
         {
             ConnectFinalized = new ManualResetEvent(false);
             _connectDone = new ManualResetEvent(false);
             _messageDeserializer = messageDeserializer;
             _messageHandler = messageHandler;
+            _port = port;
+            _address = address;
             _keepAliveInterval = keepAliveInterval == default(TimeSpan) ? TimeSpan.FromMilliseconds(1000) : keepAliveInterval;
         }
 
@@ -31,9 +35,9 @@ namespace Communication.Client
         {
             try
             {
-                var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-                var ipAddress = ipHostInfo.AddressList[0];
-                var remoteEndPoint = new IPEndPoint(ipAddress, Port);
+                //var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
+                var ipAddress = _address;
+                var remoteEndPoint = new IPEndPoint(ipAddress, _port);
 
                 var client = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 var tcpConnection = new ClientTcpConnection(client, -1, _messageDeserializer, _messageHandler);

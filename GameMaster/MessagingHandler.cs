@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
@@ -23,7 +24,7 @@ namespace GameMaster
         {
             _actionCosts = gameConfiguration.ActionCosts;
 
-            Client = new AsynchronousClient(new TcpSocketConnector(messageDeserializer, HandleMessagesFromClient));
+            Client = new AsynchronousClient(new TcpSocketConnector(messageDeserializer, HandleMessagesFromClient, 11000, IPAddress.Parse("127.0.0.1")));
             new Thread(() => Client.Connect()).Start();
         }
 
