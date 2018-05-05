@@ -67,6 +67,23 @@ namespace Player
             Debug.WriteLine("Player has updated game data and started playing");
         }
 
+        public void InitializePlayerWithoutCommunicationClient(int id, Guid guid, TeamColor team, PlayerType role, PlayerBoard board,
+            Location location)
+        {
+            var factory = new LoggerFactory();
+            Logger = factory.GetPlayerLogger(id);
+
+            Id = id;
+            Team = team;
+            Role = role;
+            PlayerGuid = guid;
+            GameId = 0;
+            PlayerBoard = board;
+            PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
+
+            _playerCoordinator = new PlayerCoordinator("", team, role);
+        }
+
         public void InitializePlayer(int id, Guid guid, TeamColor team, PlayerType role, PlayerBoard board,
             Location location)
         {

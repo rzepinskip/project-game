@@ -13,7 +13,7 @@ namespace Player.Tests
         {
             var player = new Player(MessageSerializer.Instance);
             var playerInfo = scenario.InitialPlayerBoard.Players[scenario.PlayerId];
-            player.InitializePlayer(scenario.PlayerId, scenario.PlayerGuid, playerInfo.Team, playerInfo.Role,
+            player.InitializePlayerWithoutCommunicationClient(scenario.PlayerId, scenario.PlayerGuid, playerInfo.Team, playerInfo.Role,
                 scenario.InitialPlayerBoard, playerInfo.Location);
 
             scenario.Response.Process(player);
