@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NLog" Version="4.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="NLog">
       <HintPath>..\..\..\..\.nuget\packages\nlog\4.5.0-rc07\lib\netstandard2.0\NLog.dll</HintPath>
     </Reference>
