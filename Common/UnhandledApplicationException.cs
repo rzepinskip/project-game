@@ -4,21 +4,21 @@ using NLog;
 
 namespace Common
 {
-    public class GlobalException : Exception
+    public class UnhandledApplicationException : Exception
     {
-        public GlobalException()
+        public UnhandledApplicationException()
         {
         }
 
-        public GlobalException(string message) : base(message)
+        public UnhandledApplicationException(string message) : base(message)
         {
         }
 
-        public GlobalException(string message, Exception innerException) : base(message, innerException)
+        public UnhandledApplicationException(string message, Exception innerException) : base(message, innerException)
         {
         }
 
-        protected GlobalException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected UnhandledApplicationException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
 

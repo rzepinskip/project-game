@@ -21,7 +21,7 @@ namespace Player.App
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs args)
         {
-            GlobalException.HandleGlobalException(args, _logger);
+            UnhandledApplicationException.HandleGlobalException(args, _logger);
         }
     }
 }

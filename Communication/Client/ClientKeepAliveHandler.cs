@@ -43,7 +43,7 @@ namespace Communication.Client
             ReceivedKeepAlivesTimer.Dispose();
             connection.CloseSocket();
 
-            throw new GlobalException("Keep alive timeout");
+            throw new UnhandledApplicationException("Keep alive timeout");
         }
     }
 }
