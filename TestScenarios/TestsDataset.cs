@@ -25,6 +25,7 @@ using TestScenarios.PlaceScenarios.PlaceValidPieceOnGoalFieldWithGoal;
 using TestScenarios.PlaceScenarios.PlaceValidPieceOnGoalFieldWithNonGoal;
 using TestScenarios.TestPieceScenarios.TestShamPiece;
 using TestScenarios.TestPieceScenarios.TestValidPiece;
+using TestScenarios.TestPieceScenarios.TestWithoutPiece;
 
 namespace TestScenarios
 {
@@ -115,7 +116,8 @@ namespace TestScenarios
             return new List<object[]>
             {
                 //new  object[] { new TestValidPiece()},
-                new  object[] { new TestShamPiece()},
+                //new  object[] { new TestShamPiece()},
+                new  object[] { new TestWithoutPiece()},
             };
         }
     }
