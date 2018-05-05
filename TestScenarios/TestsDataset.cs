@@ -20,6 +20,7 @@ using TestScenarios.MoveScenarios.MoveToTaskFieldWithPieceOccupiedByPlayerWhoCar
 using TestScenarios.MoveScenarios.MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece;
 using TestScenarios.PickUpScenarios.PickUpPieceOnGoalArea;
 using TestScenarios.PickUpScenarios.PickUpPieceOnTaskFieldWithoutPiece;
+using TestScenarios.PickUpScenarios.PickUpPieceOnTaskFieldWithPiece;
 using TestScenarios.PlaceScenarios.PlaceValidPieceOnGoalFieldWithGoal;
 using TestScenarios.PlaceScenarios.PlaceValidPieceOnGoalFieldWithNonGoal;
 
@@ -99,7 +100,7 @@ namespace TestScenarios
         {
             return new List<object[]>
             {
-                //new  object[] { new PickUpPieceOnTaskFieldWithPiece()},                new  object[] { new PickUpPieceOnTaskFieldWithoutPiece()},                //new  object[] { new PickUpPieceOnGoalArea()},
+                new  object[] { new PickUpPieceOnTaskFieldWithPiece()},                //new  object[] { new PickUpPieceOnTaskFieldWithoutPiece()},                //new  object[] { new PickUpPieceOnGoalArea()},
             };
         }
     }
