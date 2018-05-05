@@ -100,7 +100,18 @@ namespace TestScenarios
         {
             return new List<object[]>
             {
-                new  object[] { new PickUpPieceOnTaskFieldWithPiece()},                //new  object[] { new PickUpPieceOnTaskFieldWithoutPiece()},                //new  object[] { new PickUpPieceOnGoalArea()},
+                new  object[] { new PickUpPieceOnTaskFieldWithPiece()},
+                new  object[] { new PickUpPieceOnTaskFieldWithoutPiece()},
+                new  object[] { new PickUpPieceOnGoalArea()},
+            };
+        }
+
+        private IEnumerable<object[]> TestPieceTests()
+        {
+            return new List<object[]>
+            {
+                //new  object[] { new TestShamPiece()},
+                //new  object[] { new TestValidPiece()},
             };
         }
     }
