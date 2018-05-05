@@ -23,6 +23,7 @@ using TestScenarios.PickUpScenarios.PickUpPieceOnTaskFieldWithoutPiece;
 using TestScenarios.PickUpScenarios.PickUpPieceOnTaskFieldWithPiece;
 using TestScenarios.PlaceScenarios.PlaceValidPieceOnGoalFieldWithGoal;
 using TestScenarios.PlaceScenarios.PlaceValidPieceOnGoalFieldWithNonGoal;
+using TestScenarios.TestPieceScenarios.TestValidPiece;
 
 namespace TestScenarios
 {
@@ -35,8 +36,10 @@ namespace TestScenarios
             //_testScenarios.AddRange(GetMoveTests());
             //_testScenarios.AddRange(GetDiscoverTests());
             //_testScenarios.AddRange(GetPlaceTests());
-            _testScenarios.AddRange(GetPickUpTests());
+            //_testScenarios.AddRange(GetPickUpTests());
+            _testScenarios.AddRange(TestPieceTests());
         }
+        
 
         public IEnumerator<object[]> GetEnumerator()
         {
@@ -110,8 +113,8 @@ namespace TestScenarios
         {
             return new List<object[]>
             {
+                new  object[] { new TestValidPiece()},
                 //new  object[] { new TestShamPiece()},
-                //new  object[] { new TestValidPiece()},
             };
         }
     }
