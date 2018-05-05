@@ -38,8 +38,8 @@ namespace TestScenarios
         {
             //_testScenarios.AddRange(GetMoveTests());
             //_testScenarios.AddRange(GetDiscoverTests());
-            //_testScenarios.AddRange(GetPlaceTests());
-            _testScenarios.AddRange(GetPickUpTests());
+            _testScenarios.AddRange(GetPlaceTests());
+            //_testScenarios.AddRange(GetPickUpTests());
             //_testScenarios.AddRange(TestPieceTests());
         }
         
@@ -90,8 +90,8 @@ namespace TestScenarios
         {
             return new List<object[]>
             {
-                //new  object[] {new PlaceValidPieceOnGoalFieldWithGoal()},
-                new  object[] {new PlaceValidPieceOnGoalFieldWithNonGoal()},
+                new  object[] {new PlaceValidPieceOnGoalFieldWithGoal()},
+                //new  object[] {new PlaceValidPieceOnGoalFieldWithNonGoal()},
                 //new  object[] {new PlaceValidPieceOnTaskFieldWithPiece()},
                 //new  object[] {new PlaceValidPieceOnTaskFieldWithoutPiece()}
                 //new  object[] {new PlaceWithoutPiece()}
@@ -106,10 +106,10 @@ namespace TestScenarios
         {
             return new List<object[]>
             {
-                //new  object[] { new PickUpPieceOnTaskFieldWithPiece()},
+                new  object[] { new PickUpPieceOnTaskFieldWithPiece()},
                 new  object[] { new PickUpPieceOnTaskFieldWithPieceHavingPiece()},
-                //new  object[] { new PickUpPieceOnTaskFieldWithoutPiece()},
-                //new  object[] { new PickUpPieceOnGoalArea()},
+                new  object[] { new PickUpPieceOnTaskFieldWithoutPiece()},
+                new  object[] { new PickUpPieceOnGoalArea()},
             };
         }
 
