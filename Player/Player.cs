@@ -16,7 +16,7 @@ namespace Player
     public class Player : PlayerBase, IPlayer
     {
         private bool _hasGameEnded;
-        private ILogger _logger;
+        public ILogger Logger;
         private PlayerCoordinator _playerCoordinator;
 
         public Player(IMessageDeserializer messageDeserializer)
@@ -71,7 +71,7 @@ namespace Player
             Location location)
         {
             var factory = new LoggerFactory();
-            _logger = factory.GetPlayerLogger(id);
+            Logger = factory.GetPlayerLogger(id);
 
             Id = id;
             Team = team;
@@ -89,7 +89,7 @@ namespace Player
         public void InitializePlayer(string gameName, TeamColor color, PlayerType role)
         {
             var factory = new LoggerFactory();
-            _logger = factory.GetPlayerLogger(0);
+            Logger = factory.GetPlayerLogger(0);
 
             _playerCoordinator = new PlayerCoordinator(gameName, color, role);
 
@@ -114,7 +114,7 @@ namespace Player
             if (_playerCoordinator.StrategyReturnsMessage())
             {
                 var request = GetNextRequestMessage();
-                _logger.Info(request);
+                Logger.Info(request);
                 CommunicationClient.Send(request);
             }
 

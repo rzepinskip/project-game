@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Common.Interfaces;
+using Communication.Exceptions;
 
 namespace Communication.Client
 {
@@ -21,7 +22,7 @@ namespace Communication.Client
             _connectDone = new ManualResetEvent(false);
             _messageDeserializer = messageDeserializer;
             _messageHandler = messageHandler;
-            _keepAliveInterval = keepAliveInterval == default(TimeSpan) ? TimeSpan.FromMilliseconds(1000) : keepAliveInterval;
+            _keepAliveInterval = keepAliveInterval == default(TimeSpan) ? TimeSpan.FromMilliseconds(30000) : keepAliveInterval;
         }
 
         public ITcpConnection TcpConnection { get; set; }
@@ -41,11 +42,12 @@ namespace Communication.Client
 
                 client.BeginConnect(remoteEndPoint, ConnectCallback, client);
                 _connectDone.WaitOne();
+                tcpConnection.UpdateLastMessageTicks();
                 tcpConnection.StartKeepAliveTimer(_keepAliveInterval);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                throw new ConnectionException("Unable to connect", e);
             }
             StartReading();
         }
@@ -60,15 +62,23 @@ namespace Communication.Client
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                throw new ConnectionException("Unable to connect", e);
             }
         }
 
         private void StartReading()
         {
-            Debug.WriteLine("Client starts reading");
             while (true)
-                TcpConnection.Receive();
+            {
+                try
+                {
+                    TcpConnection.Receive();
+                }
+                catch (Exception e)
+                {
+                    throw new ConnectionException("Unable to read", e);
+                }
+            }
         }
     }
 }

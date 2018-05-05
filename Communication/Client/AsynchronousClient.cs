@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using Common.Interfaces;
+using Communication.Exceptions;
 
 namespace Communication.Client
 {
@@ -27,7 +28,7 @@ namespace Communication.Client
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                throw new ConnectionException("Unable to send message", e);
             }
         }
     }

@@ -25,6 +25,8 @@ namespace Communication
         public ManualResetEvent MessageProcessed { get; }
         public CommunicationState State { get; set; }
 
+        public int SocketId => Id;
+
         public void Receive()
         {
             MessageProcessed.Reset();
@@ -36,8 +38,13 @@ namespace Communication
             }
             catch (Exception e)
             {
-                //After closing socket, BeginReceive will throw SocketException which has to be handled
-                Console.WriteLine(e.ToString());
+                if (e is SocketException || e is ObjectDisposedException)
+                {
+                    Console.WriteLine(e.ToString());
+                    return;
+                }
+
+                throw;
             }
 
             MessageProcessed.WaitOne();
@@ -45,12 +52,25 @@ namespace Communication
 
         public virtual void Send(byte[] byteData)
         {
-            WorkSocket.BeginSend(byteData, 0, byteData.Length, 0, SendCallback, WorkSocket);
+            try
+            {
+                WorkSocket.BeginSend(byteData, 0, byteData.Length, 0, SendCallback, WorkSocket);
+            }
+            catch (Exception e)
+            {
+                if (e is SocketException || e is ObjectDisposedException)
+                {
+                    Console.WriteLine(e.ToString());
+                    return;
+                }
+
+                throw;
+            }
         }
 
         public void SendKeepAlive()
         {
-            WorkSocket.Send(new[] {Convert.ToByte(CommunicationState.EtbByte)});
+            Send(new[] {Convert.ToByte(CommunicationState.EtbByte)});
         }
 
         public void CloseSocket()
@@ -65,7 +85,13 @@ namespace Communication
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                if (e is SocketException || e is ObjectDisposedException)
+                {
+                    Console.WriteLine(e.ToString());
+                    return;
+                }
+
+                throw;
             }
         }
 
@@ -78,6 +104,11 @@ namespace Communication
         public long GetLastMessageReceivedTicks()
         {
             return State.LastMessageReceivedTicks;
+        }
+
+        public void UpdateLastMessageTicks()
+        {
+            State.UpdateLastMessageTicks();
         }
 
         public abstract void Handle(IMessage message, int id = -404);
@@ -95,28 +126,54 @@ namespace Communication
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                if (e is SocketException || e is ObjectDisposedException)
+                {
+                    Console.WriteLine(e.ToString());
+                    return;
+                }
+
+                throw;
             }
 
             if (bytesRead > 0)
             {
+                state.UpdateLastMessageTicks();
                 var (messages, hasEtbByte) = state.SplitMessages(bytesRead, Id);
 
+                var handledKeepAlive = false;
                 foreach (var message in messages)
                 {
-                    if (string.IsNullOrEmpty(message))
-                        HandleKeepAliveMessage();
-                    else
+                    if (!string.IsNullOrEmpty(message))
+                    {
                         Handle(_messageDeserializer.Deserialize(message), Id);
+                    }
+                    HandleKeepAliveMessage();
                 }
 
                 //DONT TOUCH THAT 
                 //DANGER ZONE ************
                 if (!hasEtbByte)
-                    handler.BeginReceive(state.Buffer, 0, CommunicationState.BufferSize, 0,
-                        ReadCallback, state);
+                {
+                    try
+                    {
+                        handler.BeginReceive(state.Buffer, 0, CommunicationState.BufferSize, 0,
+                            ReadCallback, state);
+                    }
+                    catch (Exception e)
+                    {
+                        if (e is SocketException || e is ObjectDisposedException)
+                        {
+                            Console.WriteLine(e.ToString());
+                            return;
+                        }
+
+                        throw;
+                    }
+                }
                 else
+                {
                     MessageProcessed.Set();
+                }
                 // ManualResetEvent (Semaphore) is signaled only when whole message was received,
                 // allowing another thread to start evaluating ReadCallback. Otherwise the same thread 
                 // continues to read the rest of the message
@@ -134,9 +191,14 @@ namespace Communication
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                if (e is SocketException || e is ObjectDisposedException)
+                {
+                    Console.WriteLine(e.ToString());
+                    return;
+                }
+
+                throw;
             }
         }
-
     }
 }

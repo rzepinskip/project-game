@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using Common.Interfaces;
 using Communication;
+using Communication.Exceptions;
 
 namespace CommunicationServer.Accepters
 {
@@ -17,14 +18,14 @@ namespace CommunicationServer.Accepters
         private readonly ManualResetEvent _readyForAccept = new ManualResetEvent(false);
         private int _counter;
         private KeepAliveHandler _keepAliveHandler;
-        public TcpSocketAccepter(Action<IMessage, int> messageHandler, IMessageDeserializer messageDeserializer, TimeSpan keepAliveInterval)
+        public TcpSocketAccepter(Action<IMessage, int> messageHandler, IMessageDeserializer messageDeserializer, TimeSpan keepAliveInterval, IConnectionTimeoutable connectionTimeoutHandler)
         {
             AgentToCommunicationHandler = new Dictionary<int, ITcpConnection>();
             _counter = 0;
             _messageHandler = messageHandler;
             _messageDeserializer = messageDeserializer;
-            _keepAliveHandler = new KeepAliveHandler(keepAliveInterval,
-                new ServerMaintainedConnections(AgentToCommunicationHandler));
+            _keepAliveHandler = new ServerKeepAliveHandler(keepAliveInterval,
+                new ServerMaintainedConnections(AgentToCommunicationHandler), connectionTimeoutHandler);
         }
 
         public Dictionary<int, ITcpConnection> AgentToCommunicationHandler { get; set; }
@@ -44,7 +45,7 @@ namespace CommunicationServer.Accepters
                 while (true)
                 {
                     _readyForAccept.Reset();
-                    Debug.WriteLine("Waiting for a connection...");
+                    Debug.WriteLine("CS waiting for a connections...");
                     listener.BeginAccept(AcceptCallback, listener);
 
                     _readyForAccept.WaitOne();
@@ -52,14 +53,14 @@ namespace CommunicationServer.Accepters
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                throw new ConnectionException("Unable to start listening", e);
             }
         }
 
         private void AcceptCallback(IAsyncResult ar)
         {
             _readyForAccept.Set();
-            var handler = default(Socket);
+            Socket handler;
             var listener = ar.AsyncState as Socket;
             try
             {
@@ -67,11 +68,11 @@ namespace CommunicationServer.Accepters
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                throw new ConnectionException("Unable to start listening", e);
             }
 
-            Debug.WriteLine("Accepted for " + _counter);
-            var state = new ServerTcpConnection(handler, _counter, _messageDeserializer, _messageHandler, new ServerMaintainedConnections(AgentToCommunicationHandler));
+            Debug.WriteLine("CS accepted connection for " + _counter);
+            var state = new ServerTcpConnection(handler, _counter, _messageDeserializer, _messageHandler);
             AgentToCommunicationHandler.Add(_counter++, state);
             StartReading(state);
         }

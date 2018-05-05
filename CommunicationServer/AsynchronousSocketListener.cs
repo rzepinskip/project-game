@@ -35,6 +35,18 @@ namespace CommunicationServer
             }
             catch (Exception e)
             {
+                /// [ERROR_STATE]
+                /// BeginSend throws throws SocketException (error when attempting to access socket)
+                /// and ObjectDisposedException (when socket is closed)
+                /// ArgumentOutOfRangeException
+                ///    offset is less than the length of buffer.
+                ///-or -
+                ///    size is less than 0.
+                ///- or -
+                ///    size is greater than the length of buffer minus the value of the offset parameter.
+                /// 
+                /// handle as connection error (shutdown or reconnection)
+
                 Console.WriteLine(e.ToString());
             }
         }

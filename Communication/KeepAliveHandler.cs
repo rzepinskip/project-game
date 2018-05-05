@@ -1,38 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Timers;
+
 
 namespace Communication
 {
-    public class KeepAliveHandler
+    public abstract class KeepAliveHandler
     {
-        private Timer _checkKeepAlivesTimer;
         protected readonly TimeSpan KeepAliveTimeInterval;
         protected readonly IEnumerable<ITcpConnection> MaintainedConnections;
+        public Timer ReceivedKeepAlivesTimer;
+
         public KeepAliveHandler(TimeSpan keepAliveTimeInterval, IEnumerable<ITcpConnection> maintainedConnections)
         {
             MaintainedConnections = maintainedConnections;
             KeepAliveTimeInterval = keepAliveTimeInterval;
-            _checkKeepAlivesTimer = new Timer(CheckKeepAlivesCallback, null, 0,
-                KeepAliveTimeInterval.Milliseconds/2);
+            ReceivedKeepAlivesTimer = new Timer((keepAliveTimeInterval.Seconds * 1000 + keepAliveTimeInterval.Milliseconds) / 8);
+            ReceivedKeepAlivesTimer.Elapsed += CheckKeepAlivesCallback;
+            ReceivedKeepAlivesTimer.Start();
         }
 
-        private void CheckKeepAlivesCallback(object state)
+        private void CheckKeepAlivesCallback(Object source, System.Timers.ElapsedEventArgs e)
         {
             var currentTime = DateTime.Now.Ticks;
             foreach (var csStateObject in MaintainedConnections)
             {
                 var elapsedTicks = currentTime - csStateObject.GetLastMessageReceivedTicks();
                 var elapsedSpan = new TimeSpan(elapsedTicks);
-
                 if (elapsedSpan > KeepAliveTimeInterval)
                     ConnectionFailureHandler(csStateObject);
             }
         }
 
-        protected virtual void ConnectionFailureHandler(ITcpConnection connection)
-        {
-            connection.CloseSocket();
-        }
+        protected abstract void ConnectionFailureHandler(ITcpConnection connection);
     }
 }

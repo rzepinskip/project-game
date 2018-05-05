@@ -11,7 +11,7 @@ namespace CommunicationServer
         private readonly Action<IMessage, int> _handleMessage;
 
         public ServerTcpConnection(Socket workSocket, int id, IMessageDeserializer messageDeserializer,
-            Action<IMessage, int> handleMessage, IEnumerable<ITcpConnection> maintainedConnections)
+            Action<IMessage, int> handleMessage)
             : base(workSocket, id, messageDeserializer)
         {
             _handleMessage = handleMessage;

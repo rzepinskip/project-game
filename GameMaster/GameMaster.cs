@@ -16,7 +16,7 @@ namespace GameMaster
     public class GameMaster : IGameMaster
     {
         private const string Name = "game";
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        public static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly GameConfiguration _gameConfiguration;
 
