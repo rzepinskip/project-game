@@ -4,10 +4,10 @@ using Communication;
 
 namespace CommunicationServer
 {
-    public class ClientManager : IClientManager
+    public class ClientTypeManager : IClientTypeManager
     {
         private readonly Dictionary<int, ITcpConnection> _agentToCommunicationHandler;
-        public ClientManager(Dictionary<int, ITcpConnection> agentToCommunicationHandler)
+        public ClientTypeManager(Dictionary<int, ITcpConnection> agentToCommunicationHandler)
         {
             _agentToCommunicationHandler = agentToCommunicationHandler;
         }

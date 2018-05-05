@@ -1,6 +1,6 @@
 ﻿namespace Common.Interfaces
 {
-    public interface IClientManager
+    public interface IClientTypeManager
     {
         void MarkClientAsPlayer(int id);
         void MarkClientAsGameMaster(int id);

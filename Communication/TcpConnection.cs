@@ -6,7 +6,7 @@ using Common.Interfaces;
 
 namespace Communication
 {
-    public enum ComponentType
+    public enum ClientType
     {
         NonInitialized,
         GameMaster,
@@ -24,7 +24,7 @@ namespace Communication
             _messageDeserializer = messageDeserializer;
             MessageProcessed = new ManualResetEvent(true);
             State = new CommunicationState();
-            ComponentType = ComponentType.NonInitialized;
+            ClientType = ClientType.NonInitialized;
         }
 
         public int Id { get; set; }
@@ -34,7 +34,7 @@ namespace Communication
         public CommunicationState State { get; set; }
 
         public int SocketId => Id;
-        public ComponentType ComponentType { get; set; }
+        public ClientType ClientType { get; set; }
 
         public void Receive()
         {
@@ -117,12 +117,12 @@ namespace Communication
 
         public void MarkClientAsPlayer()
         {
-            ComponentType = ComponentType.Player;
+            ClientType = ClientType.Player;
         }
 
         public void MarkClientAsGameMaster()
         {
-            ComponentType = ComponentType.GameMaster;
+            ClientType = ClientType.GameMaster;
         }
 
         public void UpdateLastMessageTicks()
