@@ -58,7 +58,7 @@
     <BoardWidth>20</BoardWidth>
     <TaskAreaLength>10</TaskAreaLength>
     <GoalAreaLength>3</GoalAreaLength>
-    <NumberOfPlayersPerTeam>2</NumberOfPlayersPerTeam>
+    <NumberOfPlayersPerTeam>12</NumberOfPlayersPerTeam>
     <GameName>Endgame</GameName>
   </GameDefinition>
   <ActionCosts>

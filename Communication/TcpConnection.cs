@@ -106,6 +106,11 @@ namespace Communication
             return State.LastMessageReceivedTicks;
         }
 
+        public void UpdateLastMessageTicks()
+        {
+            State.UpdateLastMessageTicks();
+        }
+
         public abstract void Handle(IMessage message, int id = -404);
         public abstract void HandleKeepAliveMessage();
 
@@ -132,13 +137,18 @@ namespace Communication
 
             if (bytesRead > 0)
             {
+                state.UpdateLastMessageTicks();
                 var (messages, hasEtbByte) = state.SplitMessages(bytesRead, Id);
 
+                var handledKeepAlive = false;
                 foreach (var message in messages)
-                    if (string.IsNullOrEmpty(message))
-                        HandleKeepAliveMessage();
-                    else
+                {
+                    if (!string.IsNullOrEmpty(message))
+                    {
                         Handle(_messageDeserializer.Deserialize(message), Id);
+                    }
+                    HandleKeepAliveMessage();
+                }
 
                 //DONT TOUCH THAT 
                 //DANGER ZONE ************

@@ -22,7 +22,7 @@ namespace Communication.Client
             _connectDone = new ManualResetEvent(false);
             _messageDeserializer = messageDeserializer;
             _messageHandler = messageHandler;
-            _keepAliveInterval = keepAliveInterval == default(TimeSpan) ? TimeSpan.FromMilliseconds(1000) : keepAliveInterval;
+            _keepAliveInterval = keepAliveInterval == default(TimeSpan) ? TimeSpan.FromMilliseconds(30000) : keepAliveInterval;
         }
 
         public ITcpConnection TcpConnection { get; set; }
@@ -42,6 +42,7 @@ namespace Communication.Client
 
                 client.BeginConnect(remoteEndPoint, ConnectCallback, client);
                 _connectDone.WaitOne();
+                tcpConnection.UpdateLastMessageTicks();
                 tcpConnection.StartKeepAliveTimer(_keepAliveInterval);
             }
             catch (Exception e)

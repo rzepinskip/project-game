@@ -12,5 +12,6 @@ namespace Communication
         void CloseSocket();
         void FinalizeConnect(IAsyncResult ar);
         long GetLastMessageReceivedTicks();
+        void UpdateLastMessageTicks();
     }
 }

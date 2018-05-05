@@ -25,16 +25,25 @@ namespace Player.Strategy.Conditions.StrategyConditions
 
         public override BaseState GetNextState(BaseState fromStrategyState)
         {
-            switch (fromStrategyState)
+            var onlyTaskArea = false;
+            Randomize4WayDirection(StrategyInfo, onlyTaskArea, out var isAnyMoveAvailable);
+            if (isAnyMoveAvailable)
             {
-                case InGoalAreaMovingToTaskStrategyState inGoalAreaMovingToTaskState:
-                    return new InGoalAreaMovingToTaskStrategyState(StrategyInfo);
-                case MoveToPieceStrategyState moveToPieceState:
-                    return new MoveToPieceStrategyState(StrategyInfo);
-                case MoveToUndiscoveredGoalStrategyState moveToUndiscoveredGoalState:
-                    return new MoveToUndiscoveredGoalStrategyState(StrategyInfo);
-                default:
-                    throw new StrategyException("Unknown state", fromStrategyState, StrategyInfo);
+                switch (fromStrategyState)
+                {
+                    case InGoalAreaMovingToTaskStrategyState inGoalAreaMovingToTaskState:
+                        return new InGoalAreaMovingToTaskStrategyState(StrategyInfo);
+                    case MoveToPieceStrategyState moveToPieceState:
+                        return new MoveToPieceStrategyState(StrategyInfo);
+                    case MoveToUndiscoveredGoalStrategyState moveToUndiscoveredGoalState:
+                        return new MoveToUndiscoveredGoalStrategyState(StrategyInfo);
+                    default:
+                        throw new StrategyException("Unknown state", fromStrategyState, StrategyInfo);
+                }
+            }
+            else
+            {
+                return new DiscoverStrategyState(StrategyInfo);
             }
         }
 
@@ -56,8 +65,12 @@ namespace Player.Strategy.Conditions.StrategyConditions
                 default:
                     throw new StrategyException("Unknown state", fromStrategyState, StrategyInfo);
             }
-
-            direction = Randomize4WayDirection(StrategyInfo, onlyTaskArea);
+            
+            direction = Randomize4WayDirection(StrategyInfo, onlyTaskArea, out var isAnyMoveAvailable);
+            if (!isAnyMoveAvailable)
+            {
+                return new DiscoverRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId);
+            }
             StrategyInfo.ToLocation = StrategyInfo.FromLocation.GetNewLocation(direction);
             return new MoveRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId, direction);
         }
@@ -67,13 +80,15 @@ namespace Player.Strategy.Conditions.StrategyConditions
             return true;
         }
 
-        private Direction Randomize4WayDirection(StrategyInfo strategyInfo, bool onlyTaskArea)
+        private Direction Randomize4WayDirection(StrategyInfo strategyInfo, bool onlyTaskArea, out bool isAnyMoveAvailable)
         {
+            isAnyMoveAvailable = true;
             var currentLocation = strategyInfo.FromLocation;
             var desiredLocation = strategyInfo.ToLocation;
-            var directionValue = _directionGenerator.Next() % 4;
+            var directionValue = 0;
             var direction = (Direction) directionValue;
             var newLocation = currentLocation.GetNewLocation(direction);
+            var checkDirectionsCounter = 0;
             while (desiredLocation.Equals(currentLocation.GetNewLocation(direction)) ||
                    !new MoveAvailabilityChain(currentLocation, direction, StrategyInfo.Team, StrategyInfo.Board)
                        .ActionAvailable() || onlyTaskArea && !StrategyInfo.Board.IsLocationInTaskArea(newLocation))
@@ -81,6 +96,13 @@ namespace Player.Strategy.Conditions.StrategyConditions
                 directionValue = (directionValue + 1) % 4;
                 direction = (Direction) directionValue;
                 newLocation = currentLocation.GetNewLocation(direction);
+                checkDirectionsCounter++;
+
+                if (checkDirectionsCounter >= 4)
+                {
+                    isAnyMoveAvailable = false;
+                    break;
+                }
             }
 
             return direction;

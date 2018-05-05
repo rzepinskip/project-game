@@ -6,7 +6,7 @@ Start-Process -FilePath "dotnet" -ArgumentList  ".\GameMaster.App\bin\Debug\netc
 Start-Sleep -s 2
 
 
-For ($i=0; $i -le 1; $i++) 
+For ($i=0; $i -le 23; $i++) 
 {
     Start-Process -FilePath "dotnet" -ArgumentList  ".\Player.App\bin\Debug\netcoreapp2.0\Player.App.dll"
     Start-Sleep -s 1
