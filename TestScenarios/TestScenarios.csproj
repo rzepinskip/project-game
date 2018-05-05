@@ -475,6 +475,27 @@
     <None Update="PickUpScenarios\PickUpPieceOnTaskFieldWithoutPiece\PickUpPieceOnTaskFieldWithoutPiece-Response.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="PickUpScenarios\PickUpPieceOnTaskFieldWithPieceHavingPiece\PickUpPieceOnTaskFieldWithPieceHavingPiece-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PickUpScenarios\PickUpPieceOnTaskFieldWithPieceHavingPiece\PickUpPieceOnTaskFieldWithPieceHavingPiece-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PickUpScenarios\PickUpPieceOnTaskFieldWithPieceHavingPiece\PickUpPieceOnTaskFieldWithPieceHavingPiece-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PickUpScenarios\PickUpPieceOnTaskFieldWithPieceHavingPiece\PickUpPieceOnTaskFieldWithPieceHavingPiece-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PickUpScenarios\PickUpPieceOnTaskFieldWithPieceHavingPiece\PickUpPieceOnTaskFieldWithPieceHavingPiece-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PickUpScenarios\PickUpPieceOnTaskFieldWithPieceHavingPiece\PickUpPieceOnTaskFieldWithPieceHavingPiece-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PickUpScenarios\PickUpPieceOnTaskFieldWithPieceHavingPiece\PickUpPieceOnTaskFieldWithPieceHavingPiece-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="PickUpScenarios\PickUpPieceOnTaskFieldWithPiece\PickUpPieceOnTaskFieldWithPiece-GM-Initial.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
