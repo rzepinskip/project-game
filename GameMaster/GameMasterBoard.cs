@@ -14,8 +14,7 @@ namespace GameMaster
         {
         }
 
-        public GameMasterBoard(int boardWidth, int taskAreaSize, int goalAreaSize) : base(boardWidth, taskAreaSize,
-            goalAreaSize)
+        public GameMasterBoard(int boardWidth, int taskAreaSize, int goalAreaSize) : base(boardWidth, taskAreaSize, goalAreaSize, GoalFieldType.NonGoal)
         {
         }
 
