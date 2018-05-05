@@ -17,7 +17,7 @@ namespace Communication.Client
             _sentKeepAliveTimer = new Timer((keepAliveTimeInterval.Seconds * 1000 + keepAliveTimeInterval.Milliseconds) / 8);
             _sentKeepAliveTimer.Elapsed += SendKeepAliveCallback;
             _sentKeepAliveTimer.Start();
-            _helperTimer.Elapsed += wakeUpMainTimer;
+            _helperTimer.Elapsed += WakeUpMainTimer;
         }
 
         private void SendKeepAliveCallback(Object source, System.Timers.ElapsedEventArgs e)
@@ -27,14 +27,11 @@ namespace Communication.Client
 
         public void ResetTimer()
         {
-            _helperTimer.Stop();
             _sentKeepAliveTimer.Stop();
             _helperTimer.Start();
-            //_sentKeepAliveTimer.Change((KeepAliveTimeInterval.Seconds * 1000 + KeepAliveTimeInterval.Milliseconds) / 8, (KeepAliveTimeInterval.Seconds * 1000 + KeepAliveTimeInterval.Milliseconds) / 8);
-
         }
 
-        private void wakeUpMainTimer(Object source, System.Timers.ElapsedEventArgs e)
+        private void WakeUpMainTimer(Object source, System.Timers.ElapsedEventArgs e)
         {
             _sentKeepAliveTimer.Start();
             _helperTimer.Stop();
