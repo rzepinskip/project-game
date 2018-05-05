@@ -18,6 +18,8 @@ using TestScenarios.MoveScenarios.MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryP
 using TestScenarios.MoveScenarios.MoveToTaskFieldWithPiece;
 using TestScenarios.MoveScenarios.MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece;
 using TestScenarios.MoveScenarios.MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece;
+using TestScenarios.PickUpScenarios.PickUpPieceOnGoalArea;
+using TestScenarios.PickUpScenarios.PickUpPieceOnTaskFieldWithoutPiece;
 using TestScenarios.PlaceScenarios.PlaceValidPieceOnGoalFieldWithGoal;
 using TestScenarios.PlaceScenarios.PlaceValidPieceOnGoalFieldWithNonGoal;
 
@@ -31,7 +33,8 @@ namespace TestScenarios
         {
             //_testScenarios.AddRange(GetMoveTests());
             //_testScenarios.AddRange(GetDiscoverTests());
-            _testScenarios.AddRange(GetPlaceTests());
+            //_testScenarios.AddRange(GetPlaceTests());
+            _testScenarios.AddRange(GetPickUpTests());
         }
 
         public IEnumerator<object[]> GetEnumerator()
@@ -84,10 +87,19 @@ namespace TestScenarios
                 new  object[] {new PlaceValidPieceOnGoalFieldWithNonGoal()},
                 //new  object[] {new PlaceValidPieceOnTaskFieldWithPiece()},
                 //new  object[] {new PlaceValidPieceOnTaskFieldWithoutPiece()}
+                //new  object[] {new PlaceWithoutPiece()}
                 //new  object[] {new PlaceShamPieceOnGoalFieldWithGoal()},
                 //new  object[] {new PlaceShamPieceOnGoalFieldWithNonGoal()},
                 //new  object[] {new PlaceShamPieceOnTaskFieldWithPiece()},
                 //new  object[] {new PlaceShamPieceOnTaskFieldWithoutPiece()},
+            };
+        }
+
+        private IEnumerable<object[]> GetPickUpTests()
+        {
+            return new List<object[]>
+            {
+                //new  object[] { new PickUpPieceOnTaskFieldWithPiece()},                new  object[] { new PickUpPieceOnTaskFieldWithoutPiece()},                //new  object[] { new PickUpPieceOnGoalArea()},
             };
         }
     }

@@ -433,6 +433,48 @@
     <None Update="MoveScenarios\MoveToTaskFieldWithoutPiece\MoveToTaskFieldWithoutPiece-Response.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="PickUpScenarios\PickUpPieceOnTaskFieldWithoutPiece\PickUpPieceOnTaskFieldWithoutPiece-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PickUpScenarios\PickUpPieceOnTaskFieldWithoutPiece\PickUpPieceOnTaskFieldWithoutPiece-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PickUpScenarios\PickUpPieceOnTaskFieldWithoutPiece\PickUpPieceOnTaskFieldWithoutPiece-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PickUpScenarios\PickUpPieceOnTaskFieldWithoutPiece\PickUpPieceOnTaskFieldWithoutPiece-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PickUpScenarios\PickUpPieceOnTaskFieldWithoutPiece\PickUpPieceOnTaskFieldWithoutPiece-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PickUpScenarios\PickUpPieceOnTaskFieldWithoutPiece\PickUpPieceOnTaskFieldWithoutPiece-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PickUpScenarios\PickUpPieceOnTaskFieldWithoutPiece\PickUpPieceOnTaskFieldWithoutPiece-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PickUpScenarios\PickUpPieceOnGoalArea\PickUpPieceOnGoalArea-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PickUpScenarios\PickUpPieceOnGoalArea\PickUpPieceOnGoalArea-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PickUpScenarios\PickUpPieceOnGoalArea\PickUpPieceOnGoalArea-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PickUpScenarios\PickUpPieceOnGoalArea\PickUpPieceOnGoalArea-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PickUpScenarios\PickUpPieceOnGoalArea\PickUpPieceOnGoalArea-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PickUpScenarios\PickUpPieceOnGoalArea\PickUpPieceOnGoalArea-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PickUpScenarios\PickUpPieceOnGoalArea\PickUpPieceOnGoalArea-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="PlaceScenarios\PlaceValidPieceOnGoalFieldWithNonGoal\PlaceValidPieceOnGoalFieldWithNonGoal-GM-Initial.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
