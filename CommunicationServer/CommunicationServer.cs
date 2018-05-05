@@ -58,6 +58,16 @@ namespace CommunicationServer
             return _communicationResolver.GetGameIdForPlayer(playerId);
         }
 
+        public void MarkClientAsPlayer(int id)
+        {
+            _listener.MarkClientAsPlayer(id);
+        }
+
+        public void MarkClientAsGameMaster(int id)
+        {
+            _listener.MarkClientAsGameMaster(id);
+        }
+
         public void Send(IMessage message, int id)
         {
             _listener.Send(message, id);

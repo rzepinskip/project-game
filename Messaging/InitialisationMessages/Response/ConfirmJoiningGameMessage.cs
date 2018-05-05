@@ -44,6 +44,7 @@ namespace Messaging.InitialisationMessages
         public override void Process(ICommunicationServer cs, int id)
         {
             //update team count
+            cs.MarkClientAsPlayer(id);
             cs.UpdateTeamCount(id, PlayerDefinition.Team);
             cs.AssignGameIdToPlayerId(id, PlayerId);
             cs.Send(this, PlayerId);

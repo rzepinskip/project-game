@@ -13,5 +13,7 @@ namespace Communication
         void FinalizeConnect(IAsyncResult ar);
         long GetLastMessageReceivedTicks();
         void UpdateLastMessageTicks();
+        void MarkClientAsPlayer();
+        void MarkClientAsGameMaster();
     }
 }

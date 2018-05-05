@@ -36,6 +36,7 @@ namespace Messaging.InitialisationMessages
 
         public override void Process(ICommunicationServer cs, int id)
         {
+            cs.MarkClientAsGameMaster(id);
             cs.RegisterNewGame(NewGameInfo, id);
             cs.Send(new ConfirmGameRegistrationMessage(id), id);
         }
