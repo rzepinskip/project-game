@@ -20,7 +20,7 @@ namespace Player
         private ILogger _logger;
         private PlayerCoordinator _playerCoordinator;
 
-        public Player(IMessageDeserializer messageDeserializer, int port, int keepAliveInterval, IPAddress address)
+        public Player(IMessageDeserializer messageDeserializer, int port=11000, int keepAliveInterval=500, IPAddress address=default(IPAddress))
         {
             CommunicationClient = new AsynchronousClient(new TcpSocketConnector(messageDeserializer, HandleResponse, port, address, TimeSpan.FromMilliseconds(keepAliveInterval)));
         }

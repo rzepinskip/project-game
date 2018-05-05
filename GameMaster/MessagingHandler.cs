@@ -20,11 +20,11 @@ namespace GameMaster
 
         private Dictionary<Guid, PlayerHandle> _playerHandles;
 
-        public MessagingHandler(GameConfiguration gameConfiguration, IMessageDeserializer messageDeserializer)
+        public MessagingHandler(GameConfiguration gameConfiguration, IMessageDeserializer messageDeserializer, int port, IPAddress address)
         {
             _actionCosts = gameConfiguration.ActionCosts;
 
-            Client = new AsynchronousClient(new TcpSocketConnector(messageDeserializer, HandleMessagesFromClient, 11000, IPAddress.Parse("127.0.0.1")));
+            Client = new AsynchronousClient(new TcpSocketConnector(messageDeserializer, HandleMessagesFromClient, port, address));
             new Thread(() => Client.Connect()).Start();
         }
 

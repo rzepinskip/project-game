@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using Common;
 using Common.ActionInfo;
@@ -28,7 +29,7 @@ namespace GameMaster
         private PieceGenerator _pieceGenerator;
         private Timer checkIfFullTeamTimer;
 
-        public GameMaster(GameConfiguration gameConfiguration, IMessageDeserializer messageDeserializer)
+        public GameMaster(GameConfiguration gameConfiguration, IMessageDeserializer messageDeserializer, int port, IPAddress address)
         {
             _gameConfiguration = gameConfiguration;
 
@@ -42,7 +43,7 @@ namespace GameMaster
 
             checkIfFullTeamTimer = new Timer(CheckIfGameFullCallback, null, 2000, 1000);
 
-            _messagingHandler = new MessagingHandler(gameConfiguration, messageDeserializer);
+            _messagingHandler = new MessagingHandler(gameConfiguration, messageDeserializer, port, address);
             _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
 
             _messagingHandler.Client.Send(new RegisterGameMessage(new GameInfo(Name,
