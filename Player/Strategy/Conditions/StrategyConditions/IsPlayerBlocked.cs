@@ -1,6 +1,6 @@
 ﻿using System;
+using ClientsCommon.ActionAvailability.AvailabilityChain;
 using Common;
-using Common.ActionAvailability.AvailabilityChain;
 using Common.Interfaces;
 using Messaging.Requests;
 using Player.Strategy.StateInfo;

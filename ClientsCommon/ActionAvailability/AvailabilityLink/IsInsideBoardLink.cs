@@ -1,7 +1,8 @@
-﻿using Common.ActionAvailability.Helpers;
+﻿using ClientsCommon.ActionAvailability.Helpers;
+using Common;
 using Common.BoardObjects;
 
-namespace Common.ActionAvailability.AvailabilityLink
+namespace ClientsCommon.ActionAvailability.AvailabilityLink
 {
     internal class IsInsideBoardLink : AvailabilityLinkBase
     {

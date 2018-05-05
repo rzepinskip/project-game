@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using Common.ActionAvailability.AvailabilityLink;
+﻿using ClientsCommon.ActionAvailability.AvailabilityLink;
 using Common.BoardObjects;
 using Common.Interfaces;
 
-namespace Common.ActionAvailability.AvailabilityChain
+namespace ClientsCommon.ActionAvailability.AvailabilityChain
 {
     public class PlaceAvailabilityChain : IAvailabilityChain
     {

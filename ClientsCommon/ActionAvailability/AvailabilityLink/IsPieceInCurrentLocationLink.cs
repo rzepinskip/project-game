@@ -1,8 +1,8 @@
-﻿using Common.ActionAvailability.Helpers;
+﻿using ClientsCommon.ActionAvailability.Helpers;
 using Common.BoardObjects;
 using Common.Interfaces;
 
-namespace Common.ActionAvailability.AvailabilityLink
+namespace ClientsCommon.ActionAvailability.AvailabilityLink
 {
     internal class IsPieceInCurrentLocationLink : AvailabilityLinkBase
     {

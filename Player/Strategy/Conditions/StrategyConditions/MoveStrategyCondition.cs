@@ -1,5 +1,5 @@
-﻿using Common;
-using Common.ActionAvailability.Helpers;
+﻿using ClientsCommon.ActionAvailability.Helpers;
+using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
 using Messaging.Requests;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using ClientsCommon;
 using Common;
 using Common.Interfaces;
 using Communication;
