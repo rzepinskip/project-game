@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
 
-namespace Common.ActionAvailability.Helpers
+namespace ClientsCommon.ActionAvailability.Helpers
 {
     public class PieceRelatedAvailability
     {

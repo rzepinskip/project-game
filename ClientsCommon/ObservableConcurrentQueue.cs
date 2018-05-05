@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 
-namespace Common
+namespace ClientsCommon
 {
     public class ObservableConcurrentQueue<T> : ConcurrentQueue<T>
     {

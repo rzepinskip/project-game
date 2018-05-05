@@ -29,7 +29,7 @@ namespace Communication.Client
 
         public override void Send(byte[] data)
         {
-            _clientKeepAliveHandler.ResetTimer();
+            //_clientKeepAliveHandler.ResetTimer();
             base.Send(data);
         }
 

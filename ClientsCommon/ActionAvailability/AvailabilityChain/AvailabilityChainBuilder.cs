@@ -1,6 +1,6 @@
-﻿using Common.ActionAvailability.AvailabilityLink;
+﻿using ClientsCommon.ActionAvailability.AvailabilityLink;
 
-namespace Common.ActionAvailability.AvailabilityChain
+namespace ClientsCommon.ActionAvailability.AvailabilityChain
 {
     internal class AvailabilityChainBuilder
     {

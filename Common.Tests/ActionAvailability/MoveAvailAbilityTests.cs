@@ -1,8 +1,9 @@
-﻿using Common.ActionAvailability.Helpers;
+﻿using ClientsCommon.ActionAvailability.Helpers;
+using Common;
 using Common.BoardObjects;
 using Xunit;
 
-namespace Common.Tests.ActionAvailability
+namespace ClientsCommon.Tests.ActionAvailability
 {
     public class MoveAvailabilityTests
     {

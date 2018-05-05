@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using ClientsCommon;
 using Common;
 using Common.Interfaces;
 using Communication;
@@ -19,11 +21,11 @@ namespace GameMaster
 
         private Dictionary<Guid, PlayerHandle> _playerHandles;
 
-        public MessagingHandler(GameConfiguration gameConfiguration, IMessageDeserializer messageDeserializer)
+        public MessagingHandler(GameConfiguration gameConfiguration, IMessageDeserializer messageDeserializer, int port, IPAddress address)
         {
             _actionCosts = gameConfiguration.ActionCosts;
 
-            Client = new AsynchronousClient(new TcpSocketConnector(messageDeserializer, HandleMessagesFromClient));
+            Client = new AsynchronousClient(new TcpSocketConnector(messageDeserializer, HandleMessagesFromClient, port, address));
             new Thread(() => Client.Connect()).Start();
         }
 

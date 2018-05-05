@@ -1,7 +1,7 @@
 ﻿using Common.BoardObjects;
 using Xunit;
 
-namespace Common.Tests
+namespace ClientsCommon.Tests
 {
     public class BoardTests
     {

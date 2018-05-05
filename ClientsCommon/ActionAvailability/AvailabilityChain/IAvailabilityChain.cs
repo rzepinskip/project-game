@@ -1,4 +1,4 @@
-﻿namespace Common.ActionAvailability.AvailabilityChain
+﻿namespace ClientsCommon.ActionAvailability.AvailabilityChain
 {
     internal interface IAvailabilityChain
     {

@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
-using Common.ActionAvailability.AvailabilityLink;
+using ClientsCommon.ActionAvailability.AvailabilityLink;
+using Common;
 
-namespace Common.ActionAvailability.AvailabilityChain
+namespace ClientsCommon.ActionAvailability.AvailabilityChain
 {
     public class TestAvailabilityChain : IAvailabilityChain
     {

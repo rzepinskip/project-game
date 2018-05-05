@@ -1,4 +1,4 @@
-﻿namespace Common.ActionAvailability.Helpers
+﻿namespace ClientsCommon.ActionAvailability.Helpers
 {
     public class DiscoverAvailability
     {

@@ -1,4 +1,4 @@
-﻿namespace Common.ActionAvailability.AvailabilityLink
+﻿namespace ClientsCommon.ActionAvailability.AvailabilityLink
 {
     internal abstract class AvailabilityLinkBase
     {

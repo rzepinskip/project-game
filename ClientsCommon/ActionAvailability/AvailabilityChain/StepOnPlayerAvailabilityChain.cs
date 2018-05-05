@@ -1,17 +1,18 @@
-﻿using Common.ActionAvailability.AvailabilityLink;
+﻿using ClientsCommon.ActionAvailability.AvailabilityLink;
+using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
 
-namespace Common.ActionAvailability.AvailabilityChain
+namespace ClientsCommon.ActionAvailability.AvailabilityChain
 {
-    public class MoveAvailabilityChain : IAvailabilityChain
+    public class StepOnPlayerAvailabilityChain : IAvailabilityChain
     {
         private readonly IBoard board;
         private readonly Direction direction;
         private readonly Location location;
         private readonly TeamColor team;
 
-        public MoveAvailabilityChain(Location location, Direction direction, TeamColor team, IBoard board)
+        public StepOnPlayerAvailabilityChain(Location location, Direction direction, TeamColor team, IBoard board)
         {
             this.location = location;
             this.direction = direction;
@@ -25,7 +26,7 @@ namespace Common.ActionAvailability.AvailabilityChain
                 new AvailabilityChainBuilder(new IsInsideBoardLink(location, direction, board.Width, board.Height))
                     .AddNextLink(new IsAvailableTeamAreaLink(location, direction, board.GoalAreaSize,
                         board.TaskAreaSize, team))
-                    .AddNextLink(new IsFieldPlayerUnoccupiedLink(location, direction, board));
+                    .AddNextLink(new IsFieldPlayerOccupiedLink(location, direction, board));
             return builder.Build().ValidateLink();
         }
     }

@@ -15,12 +15,15 @@ namespace CommunicationServer.Accepters
         private readonly IMessageDeserializer _messageDeserializer;
         private readonly Action<IMessage, int> _messageHandler;
 
+        private readonly int _port;
+
         private readonly ManualResetEvent _readyForAccept = new ManualResetEvent(false);
         private int _counter;
         private KeepAliveHandler _keepAliveHandler;
-        public TcpSocketAccepter(Action<IMessage, int> messageHandler, IMessageDeserializer messageDeserializer, TimeSpan keepAliveInterval, IConnectionTimeoutable connectionTimeoutHandler)
+        public TcpSocketAccepter(Action<IMessage, int> messageHandler, IMessageDeserializer messageDeserializer, TimeSpan keepAliveInterval, IConnectionTimeoutable connectionTimeoutHandler, int port)
         {
             AgentToCommunicationHandler = new Dictionary<int, ITcpConnection>();
+            _port = port;
             _counter = 0;
             _messageHandler = messageHandler;
             _messageDeserializer = messageDeserializer;
@@ -34,7 +37,7 @@ namespace CommunicationServer.Accepters
         {
             var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             var ipAddress = ipHostInfo.AddressList[0];
-            var localEndPoint = new IPEndPoint(ipAddress, 11000);
+            var localEndPoint = new IPEndPoint(ipAddress, _port);
 
             var listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             try

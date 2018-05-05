@@ -1,7 +1,7 @@
 ﻿using Common.BoardObjects;
 using Common.Interfaces;
 
-namespace Common.Tests
+namespace ClientsCommon.Tests
 {
     public class MockBoard : BoardBase, IGameMasterBoard
     {
