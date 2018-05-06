@@ -12,7 +12,7 @@ namespace GameSimulation
         private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            var simulation = new GameSimulation("Resources/ExampleConfig.xml");
+            var simulation = new GameSimulation("../ExampleConfig.xml");
 
             _logger = GameMaster.GameMaster.Logger;
             simulation.StartSimulation();
