@@ -50,7 +50,7 @@ namespace Communication
             {
                 if (e is SocketException || e is ObjectDisposedException)
                 {
-                    ConnectionException.HandleUnexpectedConnectionError(e);
+                    ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                     return;
                 }
 
@@ -74,7 +74,7 @@ namespace Communication
                     throw;
                 }
 
-                ConnectionException.HandleUnexpectedConnectionError(e);
+                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
         }
@@ -98,7 +98,7 @@ namespace Communication
             {
                 if (e is SocketException || e is ObjectDisposedException)
                 {
-                    ConnectionException.HandleUnexpectedConnectionError(e);
+                    ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                     return;
                 }
 
@@ -156,7 +156,7 @@ namespace Communication
                     return;
                 }
 
-                ConnectionException.HandleUnexpectedConnectionError(e);
+                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
 
@@ -183,7 +183,7 @@ namespace Communication
                     {
                         if (e is SocketException || e is ObjectDisposedException)
                         {
-                            ConnectionException.HandleUnexpectedConnectionError(e);
+                            ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                             return;
                         }
 
@@ -211,7 +211,7 @@ namespace Communication
             {
                 if (e is SocketException || e is ObjectDisposedException)
                 {
-                    ConnectionException.HandleUnexpectedConnectionError(e);
+                    ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                     return;
                 }
 

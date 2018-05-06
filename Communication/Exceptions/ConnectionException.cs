@@ -23,7 +23,7 @@ namespace Communication.Exceptions
         {
         }
 
-        public static void HandleUnexpectedConnectionError(Exception e)
+        public static void PrintUnexpectedConnectionErrorDetails(Exception e)
         {
             var errorMessage = new StringBuilder();
 

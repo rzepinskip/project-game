@@ -54,7 +54,7 @@ namespace CommunicationServer
                     throw;
                 }
 
-                ConnectionException.HandleUnexpectedConnectionError(e);
+                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
         }
