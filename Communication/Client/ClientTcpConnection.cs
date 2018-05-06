@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Sockets;
+using Common;
 using Common.Interfaces;
 
 namespace Communication.Client
@@ -35,6 +36,11 @@ namespace Communication.Client
 
         public override void HandleKeepAliveMessage()
         {
+        }
+
+        protected override void HandleConnectionException(Exception e)
+        {
+            throw new ApplicationFatalException("Communication Server disconnected");
         }
     }
 }

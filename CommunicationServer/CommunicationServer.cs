@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.Sockets;
 using System.Threading;
 using Common;
 using Common.Interfaces;
@@ -16,8 +17,11 @@ namespace CommunicationServer
         private readonly IResolver _communicationResolver;
         private readonly IAsynchronousSocketListener _listener;
 
+        private readonly Dictionary<int, ClientType> _clientTypes;
+
         public CommunicationServer(IMessageDeserializer messageDeserializer, double keepAliveInterval, int port)
         {
+            _clientTypes = new Dictionary<int, ClientType>();
             _listener = new AsynchronousSocketListener(new TcpSocketAccepter(HandleMessage, messageDeserializer,
                 TimeSpan.FromMilliseconds(keepAliveInterval), this, port));
             _communicationResolver = new CommunicationResolver();
@@ -61,17 +65,41 @@ namespace CommunicationServer
 
         public void MarkClientAsPlayer(int id)
         {
-            _listener.MarkClientAsPlayer(id);
+            Console.WriteLine($"{id} added as {ClientType.Player}");
+            _clientTypes.TryAdd(id, ClientType.Player);
         }
 
         public void MarkClientAsGameMaster(int id)
         {
-            _listener.MarkClientAsGameMaster(id);
+            Console.WriteLine($"{id} added as {ClientType.GameMaster}");
+            _clientTypes.TryAdd(id, ClientType.GameMaster);
+        }
+
+        public ClientType GetClientTypeFrom(int id)
+        {
+            return !_clientTypes.ContainsKey(id) ? ClientType.NonInitialized : _clientTypes[id];
         }
 
         public void Send(IMessage message, int id)
         {
-            _listener.Send(message, id);
+            try
+            {
+                _listener.Send(message, id);
+
+            }
+            catch (Exception e)
+            {
+                if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset || e is ObjectDisposedException)
+                {
+                    var clientType = GetClientTypeFrom(id);
+
+                    Console.WriteLine($"{clientType} #{e.Data["socketId"]} disconnected");
+
+                    return;
+                }
+
+                throw;
+            }
         }
 
         public void StartListening()
@@ -81,8 +109,7 @@ namespace CommunicationServer
 
         public void HandleConnectionTimeout(int socketId)
         {
-            Console.WriteLine($"Socket #{socketId} exceeded keep alive timeout");
-            throw new NotImplementedException();
+            Console.WriteLine($"{GetClientTypeFrom(socketId)} #{socketId} exceeded keep alive timeout");
         }
 
         public void HandleMessage(IMessage message, int i)

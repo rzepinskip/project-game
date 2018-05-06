@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using Common.Interfaces;
 using Communication;
+using Communication.Exceptions;
 
 namespace CommunicationServer
 {
@@ -24,6 +25,11 @@ namespace CommunicationServer
         public override void HandleKeepAliveMessage()
         {
             SendKeepAlive();
+        }
+
+        protected override void HandleConnectionException(Exception e)
+        {
+            //Console.WriteLine("Next send will give us better exception so we do nothing");
         }
     }
 }

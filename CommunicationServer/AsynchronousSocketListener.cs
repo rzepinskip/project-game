@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Net.Sockets;
 using System.Text;
+using Common;
 using Common.Interfaces;
 using Communication;
+using Communication.Exceptions;
 using CommunicationServer.Accepters;
 
 namespace CommunicationServer
@@ -9,12 +12,10 @@ namespace CommunicationServer
     public class AsynchronousSocketListener : IAsynchronousSocketListener
     {
         private readonly IAccepter _accepter;
-        private readonly ClientTypeManager _clientTypeManager;
 
         public AsynchronousSocketListener(IAccepter accepter)
         {
             _accepter = accepter;
-            _clientTypeManager = new ClientTypeManager(_accepter.AgentToCommunicationHandler);
         }
 
         public void StartListening()
@@ -47,18 +48,14 @@ namespace CommunicationServer
                 /// 
                 /// handle as connection error (shutdown or reconnection)
 
-                Console.WriteLine(e.ToString());
+                if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset)
+                {
+                    throw;
+                }
+
+                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                throw;
             }
-        }
-
-        public void MarkClientAsPlayer(int id)
-        {
-            _clientTypeManager.MarkClientAsPlayer(id);
-        }
-
-        public void MarkClientAsGameMaster(int id)
-        {
-            _clientTypeManager.MarkClientAsGameMaster(id);
         }
     }
 }

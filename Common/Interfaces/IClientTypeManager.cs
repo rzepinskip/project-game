@@ -4,5 +4,6 @@
     {
         void MarkClientAsPlayer(int id);
         void MarkClientAsGameMaster(int id);
+        ClientType GetClientTypeFrom(int id);
     }
 }
