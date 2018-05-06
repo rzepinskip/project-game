@@ -11,6 +11,7 @@ using TestScenarios.DiscoverScenarios.DiscoverRegular;
 using TestScenarios.DiscoverScenarios.DiscoverTaskAreaBoardEdge;
 using TestScenarios.DiscoverScenarios.DiscoverTaskAreaCorner;
 using TestScenarios.DiscoverScenarios.DiscoverTaskAreaEdge;
+using TestScenarios.MoveScenarios.MoveToEnemyGoalArea;
 using TestScenarios.MoveScenarios.MoveToGoalField;
 using TestScenarios.MoveScenarios.MoveToTasFieldWithoutPiece;
 using TestScenarios.MoveScenarios.MoveToTaskFieldOccupiedByPlayerWhoCarryPiece;
@@ -40,10 +41,10 @@ namespace TestScenarios
         public TestsDataset()
         {
             _testScenarios.AddRange(GetMoveTests());
-            _testScenarios.AddRange(GetDiscoverTests());
-            _testScenarios.AddRange(GetPlaceTests());
-            _testScenarios.AddRange(GetPickUpTests());
-            _testScenarios.AddRange(TestPieceTests());
+            //_testScenarios.AddRange(GetDiscoverTests());
+            //_testScenarios.AddRange(GetPlaceTests());
+            //_testScenarios.AddRange(GetPickUpTests());
+            //_testScenarios.AddRange(TestPieceTests());
         }
         
 
@@ -61,13 +62,16 @@ namespace TestScenarios
         {
             return new List<object[]>
             {
-                new object[] {new MoveToGoalField()},
-                new object[] {new MoveToTaskFieldWithoutPiece()},
-                new object[] {new MoveToTaskFieldWithPiece()},
-                new object[] {new MoveToTaskFieldOccupiedByPlayerWhoCarryPiece()},
-                new object[] {new MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece()},
-                new object[] {new MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece()},
-                new object[] {new MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece()}
+                //new object[] {new MoveToGoalField()},
+                //new object[] {new MoveToTaskFieldWithoutPiece()},
+                //new object[] {new MoveToTaskFieldWithPiece()},
+                //new object[] {new MoveToTaskFieldOccupiedByPlayerWhoCarryPiece()},
+                //new object[] {new MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece()},
+                //new object[] {new MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece()},
+                //new object[] {new MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece()}
+                //new object[] {new MoveOutsideBoardInTaskArea()},
+                //new object[] {new MoveOutsideBoardInGoalArea()},
+                new object[] {new MoveToEnemyGoalArea()},
             };
         }
 
