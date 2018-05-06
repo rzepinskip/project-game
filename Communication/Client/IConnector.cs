@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
+using Common.Interfaces;
 
 namespace Communication.Client
 {
@@ -6,6 +8,7 @@ namespace Communication.Client
     {
         ITcpConnection TcpConnection { get; set; }
         ManualResetEvent ConnectFinalized { get; set; }
+        void SetIncomingMessageHandler(Action<IMessage> handler);
         void Connect();
     }
 }
