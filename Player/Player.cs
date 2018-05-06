@@ -17,10 +17,6 @@ namespace Player
         private PlayerCoordinator _playerCoordinator;
         public ILogger Logger;
 
-        public Player()
-        {
-        }
-
         public Player(IClient communicationClient, string gameName, TeamColor color, PlayerType role)
         {
             communicationClient.SetIncomingMessageHandler(HandleResponse);
@@ -31,6 +27,20 @@ namespace Player
 
             _playerCoordinator = new PlayerCoordinator(gameName, color, role);
             new Thread(() => CommunicationClient.Connect()).Start();
+        }
+
+        public Player(int id, Guid guid, TeamColor team, PlayerType role,
+            PlayerBoard board, Location location)
+        {
+            Id = id;
+            Team = team;
+            Role = role;
+            PlayerGuid = guid;
+            GameId = 0;
+            PlayerBoard = board;
+            PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
+
+            _playerCoordinator = new PlayerCoordinator("", team, role);
         }
 
         public int GameId { get; private set; }

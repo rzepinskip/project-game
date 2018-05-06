@@ -11,9 +11,8 @@ namespace Player.Tests
         [ClassData (typeof(TestsDataset))]
         public void TestActionBoardsUpdate(ScenarioBase scenario)
         {
-            var player = new Player();
             var playerInfo = scenario.InitialPlayerBoard.Players[scenario.PlayerId];
-            player.InitializePlayerWithoutCommunicationClient(scenario.PlayerId, scenario.PlayerGuid, playerInfo.Team, playerInfo.Role,
+            var player = new Player(scenario.PlayerId, scenario.PlayerGuid, playerInfo.Team, playerInfo.Role,
                 scenario.InitialPlayerBoard, playerInfo.Location);
 
             scenario.Response.Process(player);
