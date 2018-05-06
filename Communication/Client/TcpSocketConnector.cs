@@ -22,7 +22,7 @@ namespace Communication.Client
 
             _port = port;
             _address = address;
-            _keepAliveInterval = keepAliveInterval == default(TimeSpan) ? Constants.DefaultKeepAliveInterval : keepAliveInterval;
+            _keepAliveInterval = keepAliveInterval == default(TimeSpan) ? Constants.DefaultMaxUnresponsivenessDuration : keepAliveInterval;
         }
 
         public ITcpConnection TcpConnection { get; set; }

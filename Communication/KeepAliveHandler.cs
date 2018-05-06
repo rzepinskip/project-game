@@ -15,7 +15,7 @@ namespace Communication
         {
             MaintainedConnections = maintainedConnections;
             KeepAliveTimeInterval = keepAliveTimeInterval;
-            ReceivedKeepAlivesTimer = new Timer(keepAliveTimeInterval.TotalMilliseconds);
+            ReceivedKeepAlivesTimer = new Timer(keepAliveTimeInterval.TotalMilliseconds / Constants.KeepAliveIntervalFrequencyDivisor);
             ReceivedKeepAlivesTimer.Elapsed += CheckKeepAlivesCallback;
             ReceivedKeepAlivesTimer.Start();
         }

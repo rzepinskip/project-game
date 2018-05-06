@@ -13,8 +13,10 @@ namespace Communication.Client
         public ClientKeepAliveHandler(TimeSpan keepAliveTimeInterval, IEnumerable<ITcpConnection> maintainedConnections)
             : base(keepAliveTimeInterval, maintainedConnections)
         {
-            _helperTimer = new Timer(keepAliveTimeInterval.TotalMilliseconds);
-            _sentKeepAliveTimer = new Timer(keepAliveTimeInterval.TotalMilliseconds);
+            var keepAliveCheckInterval =
+                keepAliveTimeInterval.TotalMilliseconds / Constants.KeepAliveIntervalFrequencyDivisor;
+            _helperTimer = new Timer(keepAliveCheckInterval);
+            _sentKeepAliveTimer = new Timer(keepAliveCheckInterval);
             _sentKeepAliveTimer.Elapsed += SendKeepAliveCallback;
             _sentKeepAliveTimer.Start();
             _helperTimer.Elapsed += WakeUpMainTimer;
