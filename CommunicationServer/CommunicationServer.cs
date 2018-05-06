@@ -70,6 +70,11 @@ namespace CommunicationServer
             _listener.MarkClientAsGameMaster(id);
         }
 
+        public ClientType GetClientTypeFrom(int id)
+        {
+            return _listener.GetClientTypeFrom(id);
+        }
+
         public void Send(IMessage message, int id)
         {
             try
@@ -84,6 +89,11 @@ namespace CommunicationServer
                 {
                     // TODO Client disconnected
                     Console.WriteLine("Should handle CLIENT(GM or Player) disconnection HERE");
+
+                    var clientType = GetClientTypeFrom(id);
+
+                    Console.WriteLine($"{clientType} disconnected");
+
                     return;
                 }
 

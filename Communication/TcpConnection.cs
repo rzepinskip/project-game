@@ -2,18 +2,12 @@
 using System.Diagnostics;
 using System.Net.Sockets;
 using System.Threading;
+using Common;
 using Common.Interfaces;
 using Communication.Exceptions;
 
 namespace Communication
 {
-    public enum ClientType
-    {
-        NonInitialized,
-        GameMaster,
-        Player
-    }
-
     public abstract class TcpConnection : ITcpConnection
     {
         private readonly IMessageDeserializer _messageDeserializer;
@@ -33,7 +27,7 @@ namespace Communication
 
         private ManualResetEvent MessageProcessed { get; }
         private CommunicationState State { get; }
-        private ClientType ClientType { get; set; }
+        public ClientType ClientType { get; set; }
 
         public int SocketId => Id;
 
@@ -149,10 +143,9 @@ namespace Communication
             {
                 if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset)
                 {
-                    // TODO Communication Server disconnected
-                    Console.WriteLine("Should handle CS disconnection HERE");
-                    Console.WriteLine($"RECEIVE: socket #{SocketId} is disconnected.");
-
+                    Console.WriteLine("Somebody disconnected - bubbling up exception...");
+                        
+                    HandleConnectionException(e);
                     return;
                 }
 
@@ -218,5 +211,7 @@ namespace Communication
                 throw;
             }
         }
+
+        protected abstract void HandleConnectionException(Exception e);
     }
 }

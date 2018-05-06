@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Text;
+using Common;
 using Common.Interfaces;
 using Communication;
 using Communication.Exceptions;
@@ -67,6 +68,11 @@ namespace CommunicationServer
         public void MarkClientAsGameMaster(int id)
         {
             _clientTypeManager.MarkClientAsGameMaster(id);
+        }
+
+        public ClientType GetClientTypeFrom(int id)
+        {
+            return _clientTypeManager.GetClientTypeFrom(id);
         }
     }
 }

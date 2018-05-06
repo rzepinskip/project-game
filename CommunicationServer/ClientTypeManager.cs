@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Common;
 using Common.Interfaces;
 using Communication;
 
@@ -21,6 +22,11 @@ namespace CommunicationServer
         public void MarkClientAsGameMaster(int id)
         {
             _agentToCommunicationHandler[id].MarkClientAsGameMaster();
+        }
+
+        public ClientType GetClientTypeFrom(int id)
+        {
+            return _agentToCommunicationHandler[id].ClientType;
         }
     }
 }
