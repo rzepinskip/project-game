@@ -11,6 +11,7 @@ using TestScenarios.DiscoverScenarios.DiscoverRegular;
 using TestScenarios.DiscoverScenarios.DiscoverTaskAreaBoardEdge;
 using TestScenarios.DiscoverScenarios.DiscoverTaskAreaCorner;
 using TestScenarios.DiscoverScenarios.DiscoverTaskAreaEdge;
+using TestScenarios.MoveScenarios.MoveOutsideBoardInGoalArea;
 using TestScenarios.MoveScenarios.MoveOutsideBoardInTaskArea;
 using TestScenarios.MoveScenarios.MoveToEnemyGoalArea;
 using TestScenarios.MoveScenarios.MoveToGoalField;
@@ -70,8 +71,8 @@ namespace TestScenarios
                 //new object[] {new MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece()},
                 //new object[] {new MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece()},
                 //new object[] {new MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece()}
-                new object[] {new MoveOutsideBoardInTaskArea()},
-                //new object[] {new MoveOutsideBoardInGoalArea()},
+                //new object[] {new MoveOutsideBoardInTaskArea()},
+                new object[] {new MoveOutsideBoardInGoalArea()},
                 //new object[] {new MoveToEnemyGoalArea()},
             };
         }

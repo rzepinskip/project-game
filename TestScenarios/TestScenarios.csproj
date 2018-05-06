@@ -286,6 +286,27 @@
     <None Update="DiscoverScenarios\DiscoverRegular\DiscoverRegular-Response.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="MoveScenarios\MoveOutsideBoardInGoalArea\MoveOutsideBoardInGoalArea-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveOutsideBoardInGoalArea\MoveOutsideBoardInGoalArea-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveOutsideBoardInGoalArea\MoveOutsideBoardInGoalArea-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveOutsideBoardInGoalArea\MoveOutsideBoardInGoalArea-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveOutsideBoardInGoalArea\MoveOutsideBoardInGoalArea-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveOutsideBoardInGoalArea\MoveOutsideBoardInGoalArea-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveOutsideBoardInGoalArea\MoveOutsideBoardInGoalArea-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="MoveScenarios\MoveOutsideBoardInTaskArea\MoveOutsideBoardInTaskArea-GM-Initial.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
