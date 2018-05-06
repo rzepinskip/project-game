@@ -286,6 +286,27 @@
     <None Update="DiscoverScenarios\DiscoverRegular\DiscoverRegular-Response.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="MoveScenarios\MoveOutsideBoardInTaskArea\MoveOutsideBoardInTaskArea-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveOutsideBoardInTaskArea\MoveOutsideBoardInTaskArea-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveOutsideBoardInTaskArea\MoveOutsideBoardInTaskArea-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveOutsideBoardInTaskArea\MoveOutsideBoardInTaskArea-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveOutsideBoardInTaskArea\MoveOutsideBoardInTaskArea-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveOutsideBoardInTaskArea\MoveOutsideBoardInTaskArea-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MoveScenarios\MoveOutsideBoardInTaskArea\MoveOutsideBoardInTaskArea-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="MoveScenarios\MoveToEnemyGoalArea\MoveToEnemyGoalArea-GM-Initial.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
