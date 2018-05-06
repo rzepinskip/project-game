@@ -3,25 +3,25 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using BoardGenerators.Loaders;
+using Common;
 using Communication.Client;
 using GameMaster.Configuration;
 using Messaging.Serialization;
 using Mono.Options;
+using NLog;
 
 namespace GameMaster.App
 {
     internal class Program
     {
-        private static void Usage(OptionSet options)
-        {
-            Console.WriteLine("Usage:");
-            options.WriteOptionDescriptions(Console.Out);
-        }
+        private static ILogger _logger;
 
         private static void Main(string[] args)
         {
-            var gm = CreateGameMasterFrom(args);
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
+            var gm = CreateGameMasterFrom(args);
+            _logger = GameMaster.Logger;
             while (true)
             {
                 var boardVisualizer = new BoardVisualizer();
@@ -59,10 +59,22 @@ namespace GameMaster.App
             var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(gameConfigPath);
 
-            var communicationClient = new AsynchronousClient(new TcpSocketConnector(MessageSerializer.Instance, port, address,
+            var communicationClient = new AsynchronousClient(new TcpSocketConnector(MessageSerializer.Instance, port,
+                address,
                 TimeSpan.FromMilliseconds((int) config.KeepAliveInterval)));
 
             return new GameMaster(config, communicationClient);
+        }
+
+        private static void Usage(OptionSet options)
+        {
+            Console.WriteLine("Usage:");
+            options.WriteOptionDescriptions(Console.Out);
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs args)
+        {
+            UnhandledApplicationException.HandleGlobalException(args, _logger);
         }
     }
 }
