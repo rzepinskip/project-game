@@ -48,7 +48,8 @@ namespace Common
         PickUp,
         Place,
         Test,
-        Destroy
+        Destroy,
+        AuthorizeKnowledgeExchange,
     }
 
     public enum GoalFieldType
