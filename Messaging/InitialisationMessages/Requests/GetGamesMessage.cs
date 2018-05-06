@@ -5,7 +5,7 @@ using Common.Interfaces;
 namespace Messaging.InitialisationMessages
 {
     /// <summary>
-    /// Player's request to list all games handled by CS that can be joined(not in progress)
+    ///     Player's request to list all games handled by CS that can be joined(not in progress)
     /// </summary>
     [XmlType(XmlRootName)]
     public class GetGamesMessage : Message

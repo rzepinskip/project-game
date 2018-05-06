@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml.Serialization;
 using Common;
 using Common.ActionInfo;
@@ -12,7 +10,9 @@ namespace Messaging.Requests
     {
         public const string XmlRootName = "DestroyPiece";
 
-        protected DestroyPieceRequest() { }
+        protected DestroyPieceRequest()
+        {
+        }
 
         public DestroyPieceRequest(Guid playerGuid, int gameId) : base(playerGuid, gameId)
         {
@@ -25,7 +25,7 @@ namespace Messaging.Requests
 
         public override string ToLog()
         {
-            return String.Join(',', ActionType.Destroy, base.ToLog());
+            return string.Join(',', ActionType.Destroy, base.ToLog());
         }
     }
 }

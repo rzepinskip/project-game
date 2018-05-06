@@ -20,7 +20,7 @@ namespace ClientsCommon.ActionAvailability.AvailabilityLink
 
         protected override bool Validate()
         {
-            return ! new MoveAvailability().IsFieldPlayerUnoccupied(location, move, board);
+            return !new MoveAvailability().IsFieldPlayerUnoccupied(location, move, board);
         }
     }
 }

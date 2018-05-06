@@ -1,6 +1,5 @@
 ﻿using Player.Strategy.Conditions.GameConditions;
 using Player.Strategy.StateInfo;
-using Player.Strategy.States;
 
 namespace Player.Strategy.States.GameStates
 {
@@ -8,7 +7,7 @@ namespace Player.Strategy.States.GameStates
     {
         public GameStartedState(GameStateInfo gameStateInfo) : base(gameStateInfo)
         {
-            if(gameStateInfo.PlayerStrategyFactory != null)
+            if (gameStateInfo.PlayerStrategyFactory != null)
                 gameStateInfo.CreatePlayerStrategy();
             gameStateInfo.IsRunning = true;
             transitionConditions.Add(new HasGameStartedCondition(gameStateInfo));

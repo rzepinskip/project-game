@@ -6,6 +6,13 @@ namespace Player.Strategy.StateInfo
 {
     public class GameStateInfo : BaseInfo
     {
+        public GameStateInfo(string gameName, TeamColor color, PlayerType role)
+        {
+            GameName = gameName;
+            Color = color;
+            Role = role;
+        }
+
         public string GameName { get; set; }
         public TeamColor Color { get; set; }
         public PlayerType Role { get; set; }
@@ -14,13 +21,6 @@ namespace Player.Strategy.StateInfo
         public bool IsRunning { get; set; }
         public IStrategy PlayerStrategy { get; set; }
         public IPlayerStrategyFactory PlayerStrategyFactory { get; set; }
-
-        public GameStateInfo(string gameName, TeamColor color, PlayerType role)
-        {
-            GameName = gameName;
-            Color = color;
-            Role = role;
-        }
 
         public void CreatePlayerStrategy()
         {

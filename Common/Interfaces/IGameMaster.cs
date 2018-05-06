@@ -9,6 +9,8 @@ namespace Common.Interfaces
         void SetGameId(int gameId);
 
         bool IsSlotAvailable();
-        (int gameId, Guid playerGuid, PlayerBase playerInfo) AssignPlayerToAvailableSlotWithPrefered(int playerId, TeamColor preferedTeam, PlayerType preferedRole);
+
+        (int gameId, Guid playerGuid, PlayerBase playerInfo) AssignPlayerToAvailableSlotWithPrefered(int playerId,
+            TeamColor preferedTeam, PlayerType preferedRole);
     }
 }

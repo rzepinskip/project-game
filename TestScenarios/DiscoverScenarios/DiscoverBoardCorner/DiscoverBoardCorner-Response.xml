@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <Data playerId="1" gameFinished="false" xmlns="https://se2.mini.pw.edu.pl/17-results/">
-  <TaskFields/>
-  <GoalFields/>
-  <Pieces/>
+  <TaskFields />
+  <GoalFields />
+  <Pieces />
 </Data>

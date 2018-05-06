@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NLog;
+﻿using NLog;
 
 namespace Player.Logging
 {
-    interface ILoggerFactory
+    internal interface ILoggerFactory
     {
         ILogger GetPlayerLogger(int id);
     }

@@ -6,12 +6,11 @@ using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
 using Messaging.Responses;
-using Messaging.Serialization;
 
 namespace Messaging.InitialisationMessages
 {
     /// <summary>
-    /// Game start messages sent to every player 
+    ///     Game start messages sent to every player
     /// </summary>
     [XmlType(XmlRootName)]
     public class GameMessage : Response
@@ -33,6 +32,7 @@ namespace Messaging.InitialisationMessages
         [XmlArray("Players")]
         [XmlArrayItem("Player")]
         public PlayerBase[] Players { get; set; }
+
         public Location PlayerLocation { get; set; }
         public BoardInfo Board { get; set; }
 

@@ -1,5 +1,4 @@
-﻿using System;
-using ClientsCommon.ActionAvailability.AvailabilityChain;
+﻿using ClientsCommon.ActionAvailability.AvailabilityChain;
 using Common;
 using Common.BoardObjects;
 

@@ -18,7 +18,8 @@ namespace CommunicationServer
 
         public CommunicationServer(IMessageDeserializer messageDeserializer, double keepAliveInterval, int port)
         {
-            _listener = new AsynchronousSocketListener(new TcpSocketAccepter(HandleMessage, messageDeserializer, TimeSpan.FromMilliseconds(keepAliveInterval), this, port));
+            _listener = new AsynchronousSocketListener(new TcpSocketAccepter(HandleMessage, messageDeserializer,
+                TimeSpan.FromMilliseconds(keepAliveInterval), this, port));
             _communicationResolver = new CommunicationResolver();
             new Thread(() => _listener.StartListening()).Start();
         }

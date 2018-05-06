@@ -1,5 +1,4 @@
-﻿using System;
-using ClientsCommon.ActionAvailability.AvailabilityChain;
+﻿using ClientsCommon.ActionAvailability.AvailabilityChain;
 using Common;
 using Common.BoardObjects;
 
@@ -21,7 +20,7 @@ namespace GameMaster.ActionHandlers
         public override DataFieldSet Respond()
         {
             if (!Validate())
-                return  DataFieldSet.Create(PlayerId, new Piece[0]);
+                return DataFieldSet.Create(PlayerId, new Piece[0]);
 
             var player = Board.Players[PlayerId];
             var playerPiece = player.Piece;
@@ -29,7 +28,7 @@ namespace GameMaster.ActionHandlers
             //if (playerPiece.Type == PieceType.Sham)
             //    player.Piece = null;
 
-            return DataFieldSet.Create(PlayerId, new [] { playerPiece });
+            return DataFieldSet.Create(PlayerId, new[] {playerPiece});
         }
     }
 }

@@ -20,7 +20,9 @@ namespace CommunicationServer.Accepters
         private readonly ManualResetEvent _readyForAccept = new ManualResetEvent(false);
         private int _counter;
         private KeepAliveHandler _keepAliveHandler;
-        public TcpSocketAccepter(Action<IMessage, int> messageHandler, IMessageDeserializer messageDeserializer, TimeSpan keepAliveInterval, IConnectionTimeoutable connectionTimeoutHandler, int port)
+
+        public TcpSocketAccepter(Action<IMessage, int> messageHandler, IMessageDeserializer messageDeserializer,
+            TimeSpan keepAliveInterval, IConnectionTimeoutable connectionTimeoutHandler, int port)
         {
             AgentToCommunicationHandler = new Dictionary<int, ITcpConnection>();
             _port = port;

@@ -11,7 +11,7 @@ namespace Communication
         NonInitialized,
         GameMaster,
         Player
-    };
+    }
 
     public abstract class TcpConnection : ITcpConnection
     {
@@ -27,14 +27,14 @@ namespace Communication
             ClientType = ClientType.NonInitialized;
         }
 
-        private int Id { get; set; }
-        private Socket WorkSocket { get; set; }
+        private int Id { get; }
+        private Socket WorkSocket { get; }
 
         private ManualResetEvent MessageProcessed { get; }
-        private CommunicationState State { get; set; }
+        private CommunicationState State { get; }
+        private ClientType ClientType { get; set; }
 
         public int SocketId => Id;
-        private ClientType ClientType { get; set; }
 
         public void Receive()
         {
@@ -161,17 +161,13 @@ namespace Communication
                 var handledKeepAlive = false;
                 foreach (var message in messages)
                 {
-                    if (!string.IsNullOrEmpty(message))
-                    {
-                        Handle(_messageDeserializer.Deserialize(message), Id);
-                    }
+                    if (!string.IsNullOrEmpty(message)) Handle(_messageDeserializer.Deserialize(message), Id);
                     HandleKeepAliveMessage();
                 }
 
                 //DONT TOUCH THAT 
                 //DANGER ZONE ************
                 if (!hasEtbByte)
-                {
                     try
                     {
                         handler.BeginReceive(state.Buffer, 0, Constants.BufferSize, 0,
@@ -187,11 +183,9 @@ namespace Communication
 
                         throw;
                     }
-                }
                 else
-                {
                     MessageProcessed.Set();
-                }
+
                 // ManualResetEvent (Semaphore) is signaled only when whole message was received,
                 // allowing another thread to start evaluating ReadCallback. Otherwise the same thread 
                 // continues to read the rest of the message

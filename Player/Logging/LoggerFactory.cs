@@ -19,7 +19,7 @@ namespace Player.Logging
                     FileName = $"${{basedir}}/logs/players/player{id}_${{longdate:cached=true}}.csv",
                     ArchiveFileName = $"${{basedir}}/logs/archives/players/player{id}_${{longdate:cached=true}}.csv",
                     ArchiveEvery = FileArchivePeriod.Day,
-                    Layout = "${longdate},${message}",
+                    Layout = "${longdate},${message}"
                 };
                 config.LoggingRules.Add(new LoggingRule(loggerName, LogLevel.Info, logfile));
                 LogManager.Configuration = config;

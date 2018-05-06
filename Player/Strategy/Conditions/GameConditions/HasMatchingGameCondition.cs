@@ -9,7 +9,6 @@ namespace Player.Strategy.Conditions.GameConditions
 {
     public class HasMatchingGame : GameCondition
     {
-
         public HasMatchingGame(GameStateInfo gameStateInfo) : base(gameStateInfo)
         {
         }

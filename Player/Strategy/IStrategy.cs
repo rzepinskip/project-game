@@ -5,8 +5,8 @@ namespace Player.Strategy
 {
     public interface IStrategy
     {
-        IMessage NextMove();
         BaseState CurrentStrategyState { get; set; }
+        IMessage NextMove();
         bool StrategyReturnsMessage();
     }
 }

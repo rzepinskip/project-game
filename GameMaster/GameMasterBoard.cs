@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml;
 using System.Linq;
+using System.Xml;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
@@ -12,15 +12,23 @@ namespace GameMaster
     {
         protected GameMasterBoard()
         {
-
         }
 
-        public GameMasterBoard(int boardWidth, int taskAreaSize, int goalAreaSize) : base(boardWidth, taskAreaSize, goalAreaSize)
+        public GameMasterBoard(int boardWidth, int taskAreaSize, int goalAreaSize) : base(boardWidth, taskAreaSize,
+            goalAreaSize)
         {
         }
 
         public List<Location> UncompletedBlueGoalsLocations { get; set; } = new List<Location>();
         public List<Location> UncompletedRedGoalsLocations { get; set; } = new List<Location>();
+
+        public bool Equals(GameMasterBoard other)
+        {
+            return other != null &&
+                   base.Equals(other) &&
+                   UncompletedBlueGoalsLocations.SequenceEqual(other.UncompletedBlueGoalsLocations) &&
+                   UncompletedRedGoalsLocations.SequenceEqual(other.UncompletedRedGoalsLocations);
+        }
 
         public void MarkGoalAsCompleted(GoalField goal)
         {
@@ -57,20 +65,14 @@ namespace GameMaster
             return Equals(obj as GameMasterBoard);
         }
 
-        public bool Equals(GameMasterBoard other)
-        {
-            return other != null &&
-                   base.Equals(other) &&
-                   UncompletedBlueGoalsLocations.SequenceEqual(other.UncompletedBlueGoalsLocations) &&
-                   UncompletedRedGoalsLocations.SequenceEqual(other.UncompletedRedGoalsLocations);
-        }
-
         public override int GetHashCode()
         {
             var hashCode = -961712695;
             hashCode = hashCode * -1521134295 + base.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<List<Location>>.Default.GetHashCode(UncompletedBlueGoalsLocations);
-            hashCode = hashCode * -1521134295 + EqualityComparer<List<Location>>.Default.GetHashCode(UncompletedRedGoalsLocations);
+            hashCode = hashCode * -1521134295 +
+                       EqualityComparer<List<Location>>.Default.GetHashCode(UncompletedBlueGoalsLocations);
+            hashCode = hashCode * -1521134295 +
+                       EqualityComparer<List<Location>>.Default.GetHashCode(UncompletedRedGoalsLocations);
             return hashCode;
         }
 
@@ -105,6 +107,5 @@ namespace GameMaster
                 }
             }
         }
-
     }
 }

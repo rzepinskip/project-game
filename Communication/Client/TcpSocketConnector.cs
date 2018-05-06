@@ -9,12 +9,14 @@ namespace Communication.Client
 {
     public class TcpSocketConnector : IConnector
     {
-        private readonly ManualResetEvent _connectDone;
-        private readonly IMessageDeserializer _messageDeserializer;
-        private readonly TimeSpan _keepAliveInterval;
-        private readonly int _port;
         private readonly IPAddress _address;
-        public TcpSocketConnector(IMessageDeserializer messageDeserializer, int port, IPAddress address, TimeSpan keepAliveInterval = default(TimeSpan))
+        private readonly ManualResetEvent _connectDone;
+        private readonly TimeSpan _keepAliveInterval;
+        private readonly IMessageDeserializer _messageDeserializer;
+        private readonly int _port;
+
+        public TcpSocketConnector(IMessageDeserializer messageDeserializer, int port, IPAddress address,
+            TimeSpan keepAliveInterval = default(TimeSpan))
         {
             ConnectFinalized = new ManualResetEvent(false);
             _connectDone = new ManualResetEvent(false);
@@ -22,7 +24,9 @@ namespace Communication.Client
 
             _port = port;
             _address = address;
-            _keepAliveInterval = keepAliveInterval == default(TimeSpan) ? Constants.DefaultMaxUnresponsivenessDuration : keepAliveInterval;
+            _keepAliveInterval = keepAliveInterval == default(TimeSpan)
+                ? Constants.DefaultMaxUnresponsivenessDuration
+                : keepAliveInterval;
         }
 
         public ITcpConnection TcpConnection { get; set; }
@@ -48,6 +52,7 @@ namespace Communication.Client
             {
                 throw new ConnectionException("Unable to connect", e);
             }
+
             StartReading();
         }
 
@@ -68,7 +73,6 @@ namespace Communication.Client
         private void StartReading()
         {
             while (true)
-            {
                 try
                 {
                     TcpConnection.Receive();
@@ -77,7 +81,6 @@ namespace Communication.Client
                 {
                     throw new ConnectionException("Unable to read", e);
                 }
-            }
         }
     }
 }

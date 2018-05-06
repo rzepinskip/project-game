@@ -13,7 +13,8 @@ namespace TestScenarios.DeterministicGame
         {
             Board = new PlayerBoard(config.BoardWidth, config.TaskAreaLength, config.GoalAreaLength);
 
-            var players = config.Players.Where(p => p.Id == playerId).Select((x, i) => (new PlayerBase(i, x.Team, x.Role), x.Location)).ToList();
+            var players = config.Players.Where(p => p.Id == playerId)
+                .Select((x, i) => (new PlayerBase(i, x.Team, x.Role), x.Location)).ToList();
             PlacePlayers(players);
 
             return Board;

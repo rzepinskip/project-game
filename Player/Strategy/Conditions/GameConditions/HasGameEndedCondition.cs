@@ -8,8 +8,10 @@ namespace Player.Strategy.Conditions.GameConditions
 {
     public class HasGameEndedCondition : GameCondition
     {
-        public HasGameEndedCondition(GameStateInfo gameStateInfo) 
-            : base(gameStateInfo) { }
+        public HasGameEndedCondition(GameStateInfo gameStateInfo)
+            : base(gameStateInfo)
+        {
+        }
 
         public override bool CheckCondition()
         {

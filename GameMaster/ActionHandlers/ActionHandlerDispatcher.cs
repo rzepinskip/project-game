@@ -17,7 +17,7 @@ namespace GameMaster.ActionHandlers
             return new MoveActionHandler(playerId, board, actionInfo.Direction);
         }
 
-        public DiscoverActionHandler  ActionHandler(DiscoverActionInfo actionInfo, GameMasterBoard board, int playerId)
+        public DiscoverActionHandler ActionHandler(DiscoverActionInfo actionInfo, GameMasterBoard board, int playerId)
         {
             return new DiscoverActionHandler(playerId, board);
         }
@@ -37,7 +37,8 @@ namespace GameMaster.ActionHandlers
             return new TestPieceActionHandler(playerId, board);
         }
 
-        public DestroyPieceActionHandler ActionHandler(DestroyActionInfo actionInfo, GameMasterBoard board, int playerId)
+        public DestroyPieceActionHandler ActionHandler(DestroyActionInfo actionInfo, GameMasterBoard board,
+            int playerId)
         {
             return new DestroyPieceActionHandler(playerId, board);
         }

@@ -23,16 +23,17 @@ namespace Common
         public TeamColor Team { get; set; }
         public PlayerType Role { get; set; }
 
+        public bool Equals(PlayerBase other)
+        {
+            return other != null &&
+                   Id == other.Id &&
+                   Team == other.Team &&
+                   Role == other.Role;
+        }
+
         public virtual XmlSchema GetSchema()
         {
             return null;
-        }
-
-        public void ReadContent(XmlReader reader)
-        {
-             Id = int.Parse(reader.GetAttribute("id"));
-            Team = reader.GetAttribute("team").GetEnumValueFor<TeamColor>();
-            Role = reader.GetAttribute("role").GetEnumValueFor<PlayerType>();
         }
 
         public virtual void ReadXml(XmlReader reader)
@@ -48,17 +49,16 @@ namespace Common
             writer.WriteAttributeString("role", Role.GetXmlAttributeName());
         }
 
+        public void ReadContent(XmlReader reader)
+        {
+            Id = int.Parse(reader.GetAttribute("id"));
+            Team = reader.GetAttribute("team").GetEnumValueFor<TeamColor>();
+            Role = reader.GetAttribute("role").GetEnumValueFor<PlayerType>();
+        }
+
         public override bool Equals(object obj)
         {
             return Equals(obj as PlayerBase);
-        }
-
-        public bool Equals(PlayerBase other)
-        {
-            return other != null &&
-                   Id == other.Id &&
-                   Team == other.Team &&
-                   Role == other.Role;
         }
 
         public override int GetHashCode()

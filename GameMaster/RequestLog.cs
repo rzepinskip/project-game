@@ -15,6 +15,7 @@ namespace GameMaster
         public IRequest Message { get; set; }
         public TeamColor Color { get; set; }
         public PlayerType Role { get; set; }
+
         public string ToLog()
         {
             return string.Join(',', Message.ToLog(), Color, Role);

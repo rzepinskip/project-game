@@ -1,4 +1,5 @@
-﻿using Common.Interfaces;
+﻿using System;
+using Common.Interfaces;
 using Player.Strategy.StateInfo;
 using Player.Strategy.States;
 using Player.Strategy.States.GameStates;
@@ -24,7 +25,7 @@ namespace Player.Strategy.Conditions.GameConditions
         public override IMessage GetNextMessage(BaseState fromStrategyState)
         {
             //Wainting for another response, not sending message
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override bool ReturnsMessage(BaseState fromStrategyState)

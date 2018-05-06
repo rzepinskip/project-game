@@ -1,18 +1,18 @@
 ﻿using System;
-using Common;
 using BoardGenerators.Loaders;
+using Common;
 using GameMaster.Configuration;
 using Messaging.Serialization;
-using NLog;
 using Mono.Options;
+using NLog;
 
 namespace CommunicationServer.App
 {
-    class Program
+    internal class Program
     {
         private static ILogger _logger;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
@@ -28,7 +28,7 @@ namespace CommunicationServer.App
             var options = new OptionSet
             {
                 {"port=", "port number", (int p) => port = p},
-                {"conf=", "configuration filename", c => gameConfigPath = c},
+                {"conf=", "configuration filename", c => gameConfigPath = c}
             };
 
             options.Parse(args);

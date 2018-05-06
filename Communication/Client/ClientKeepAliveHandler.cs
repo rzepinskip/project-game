@@ -8,8 +8,9 @@ namespace Communication.Client
 {
     public class ClientKeepAliveHandler : KeepAliveHandler
     {
-        private readonly Timer _sentKeepAliveTimer;
         private readonly Timer _helperTimer;
+        private readonly Timer _sentKeepAliveTimer;
+
         public ClientKeepAliveHandler(TimeSpan keepAliveTimeInterval, IEnumerable<ITcpConnection> maintainedConnections)
             : base(keepAliveTimeInterval, maintainedConnections)
         {
@@ -22,7 +23,7 @@ namespace Communication.Client
             _helperTimer.Elapsed += WakeUpMainTimer;
         }
 
-        private void SendKeepAliveCallback(object source, System.Timers.ElapsedEventArgs e)
+        private void SendKeepAliveCallback(object source, ElapsedEventArgs e)
         {
             MaintainedConnections.First().SendKeepAlive();
         }
@@ -33,7 +34,7 @@ namespace Communication.Client
             _helperTimer.Start();
         }
 
-        private void WakeUpMainTimer(object source, System.Timers.ElapsedEventArgs e)
+        private void WakeUpMainTimer(object source, ElapsedEventArgs e)
         {
             _sentKeepAliveTimer.Start();
             _helperTimer.Stop();

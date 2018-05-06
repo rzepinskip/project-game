@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Common;
+﻿using Common;
 using Common.Interfaces;
 using Messaging.Requests;
 using Player.Strategy.StateInfo;
@@ -12,7 +9,10 @@ namespace Player.Strategy.Conditions.StrategyConditions
 {
     public class HasShamCondition : StrategyCondition
     {
-        public HasShamCondition(StrategyInfo strategyInfo) : base(strategyInfo) { }
+        public HasShamCondition(StrategyInfo strategyInfo) : base(strategyInfo)
+        {
+        }
+
         public override bool CheckCondition()
         {
             var currentLocation = StrategyInfo.FromLocation;

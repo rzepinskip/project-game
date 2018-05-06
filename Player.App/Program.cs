@@ -55,7 +55,8 @@ namespace Player.App
             var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(gameConfigPath);
 
-            var communicationClient = new AsynchronousClient(new TcpSocketConnector(MessageSerializer.Instance, port, address,
+            var communicationClient = new AsynchronousClient(new TcpSocketConnector(MessageSerializer.Instance, port,
+                address,
                 TimeSpan.FromMilliseconds((int) config.KeepAliveInterval)));
 
             var player = new Player(communicationClient, gameName, team, role);

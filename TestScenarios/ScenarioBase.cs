@@ -76,6 +76,7 @@ namespace TestScenarios
             {
                 InitialRequestFileContent = reader.ReadToEnd();
             }
+
             using (var reader = new StreamReader(ScenarioFileBase + ResponseSufix))
             {
                 ResponseFileContent = reader.ReadToEnd();

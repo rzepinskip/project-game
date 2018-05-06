@@ -9,7 +9,7 @@ using Messaging.Responses;
 namespace Messaging.InitialisationMessages
 {
     /// <summary>
-    /// CS's response to player about listing all joinable games
+    ///     CS's response to player about listing all joinable games
     /// </summary>
     [XmlType(XmlRootName)]
     public class RegisteredGamesMessage : Response

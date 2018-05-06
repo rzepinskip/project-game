@@ -6,7 +6,7 @@ using Common.Interfaces;
 namespace Messaging.InitialisationMessages
 {
     /// <summary>
-    /// GM's request to register game
+    ///     GM's request to register game
     /// </summary>
     [XmlType(XmlRootName)]
     public class RegisterGameMessage : Message

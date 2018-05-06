@@ -63,7 +63,6 @@ namespace GameMaster
             base.PlaceGoals(goalFields);
 
             foreach (var goal in goalFields)
-            {
                 switch (goal.Team)
                 {
                     case TeamColor.Blue:
@@ -73,7 +72,6 @@ namespace GameMaster
                         Board.UncompletedRedGoalsLocations.Add(goal);
                         break;
                 }
-            }
         }
 
         private IEnumerable<(PlayerBase player, Location location)> AssignLocationsToPlayers(
@@ -120,12 +118,14 @@ namespace GameMaster
             var redBottomLeftCorner = new Location(0, Board.Height - Board.GoalAreaSize);
             var redTopRightCorner = new Location(Board.Width - 1, Board.Height - 1);
             var redTeamLocations =
-                new Stack<Location>(GenerateLocationsOnRectangle(teamPlayerCount, redBottomLeftCorner, redTopRightCorner));
+                new Stack<Location>(GenerateLocationsOnRectangle(teamPlayerCount, redBottomLeftCorner,
+                    redTopRightCorner));
 
             var blueBottomLeftCorner = new Location(0, 0);
             var blueTopRightCorner = new Location(Board.Width - 1, Board.GoalAreaSize - 1);
             var blueTeamLocations =
-                new Stack<Location>(GenerateLocationsOnRectangle(teamPlayerCount, blueBottomLeftCorner, blueTopRightCorner));
+                new Stack<Location>(GenerateLocationsOnRectangle(teamPlayerCount, blueBottomLeftCorner,
+                    blueTopRightCorner));
 
             var playersLocations = new Dictionary<TeamColor, Stack<Location>>
             {
@@ -155,6 +155,5 @@ namespace GameMaster
 
             return new List<Location>(randomLocations);
         }
-
     }
 }

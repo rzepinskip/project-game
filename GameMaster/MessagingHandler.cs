@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using ClientsCommon;
 using Common.Interfaces;
-using Communication;
-using Communication.Client;
 using GameMaster.Configuration;
 using GameMaster.Delays;
-using Messaging.Requests;
 
 namespace GameMaster
 {

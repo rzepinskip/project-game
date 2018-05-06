@@ -1,8 +1,6 @@
 ﻿using Common.Interfaces;
-using Messaging.Requests;
 using Player.Strategy.StateInfo;
 using Player.Strategy.States;
-using Player.Strategy.States.StrategyStates;
 
 namespace Player.Strategy.Conditions.StrategyConditions
 {

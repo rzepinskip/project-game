@@ -48,9 +48,9 @@ namespace TestScenarios
                 new object[] {new MoveToGoalField()},
                 new object[] {new MoveToTaskFieldWithoutPiece()},
                 new object[] {new MoveToTaskFieldWithPiece()},
-                new object[] { new MoveToTaskFieldOccupiedByPlayerWhoCarryPiece()},
+                new object[] {new MoveToTaskFieldOccupiedByPlayerWhoCarryPiece()},
                 new object[] {new MoveToTaskFieldOccupiedByPlayerWhoDoesntCarryPiece()},
-                new object[] { new MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece()},
+                new object[] {new MoveToTaskFieldWithPieceOccupiedByPlayerWhoCarryPiece()},
                 new object[] {new MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece()}
             };
         }
@@ -69,7 +69,7 @@ namespace TestScenarios
                 new object[] {new DiscoverPiece()},
                 new object[] {new DiscoverPiecePickUp()},
                 new object[] {new DiscoverPlayer()},
-                new object[] {new DiscoverPlayerDisappearance()},
+                new object[] {new DiscoverPlayerDisappearance()}
             };
         }
     }

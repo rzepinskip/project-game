@@ -8,41 +8,42 @@ using Player.Strategy.States.GameStates;
 
 namespace Player.Strategy
 {
-    class PlayerCoordinator : IStrategy
+    internal class PlayerCoordinator : IStrategy
     {
         /// <summary>
-        /// TODO: Implement visitor pattern for PlayerStrategy creation
-        /// 
+        ///     TODO: Implement visitor pattern for PlayerStrategy creation
         /// </summary>
-
         public readonly GameStateInfo _gameStateInfo;
+
         public PlayerCoordinator(string gameName, TeamColor color, PlayerType role)
         {
             _gameStateInfo = new GameStateInfo(gameName, color, role);
             CurrentStrategyState = new GetGamesState(_gameStateInfo);
         }
 
-        public void UpdateJoinInfo(bool info)
-        {
-            _gameStateInfo.JoiningSuccessful = info;
-        }
-        
         public IMessage NextMove()
         {
-            var message = this.CurrentStrategyState.GetNextMessage();
+            var message = CurrentStrategyState.GetNextMessage();
             //CurrentStrategyState = CurrentStrategyState.GetNextState();
 
             return message;
         }
 
-        public void NextState()
-        {
-            CurrentStrategyState = CurrentStrategyState.GetNextState();
-        }
-
         public bool StrategyReturnsMessage()
         {
             return CurrentStrategyState.StateReturnsMessage();
+        }
+
+        public BaseState CurrentStrategyState { get; set; }
+
+        public void UpdateJoinInfo(bool info)
+        {
+            _gameStateInfo.JoiningSuccessful = info;
+        }
+
+        public void NextState()
+        {
+            CurrentStrategyState = CurrentStrategyState.GetNextState();
         }
 
         public void UpdateGameStateInfo(IEnumerable<GameInfo> gameInfo)
@@ -65,8 +66,5 @@ namespace Player.Strategy
             _gameStateInfo.PlayerStrategyFactory = playerStrategyFactory;
             _gameStateInfo.CreatePlayerStrategy();
         }
-
-        public BaseState CurrentStrategyState { get; set; }
-        
     }
 }

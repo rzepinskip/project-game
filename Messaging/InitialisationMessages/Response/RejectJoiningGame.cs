@@ -6,7 +6,7 @@ using Messaging.Responses;
 namespace Messaging.InitialisationMessages
 {
     /// <summary>
-    /// GM's response to Player about join game denial
+    ///     GM's response to Player about join game denial
     /// </summary>
     [XmlType(XmlRootName)]
     public class RejectJoiningGame : Response

@@ -22,11 +22,11 @@ namespace ClientsCommon
 
     public class ItemEnqueuedEventArgs<T> : EventArgs
     {
-        public T Item { get; private set; }
-
         public ItemEnqueuedEventArgs(T item)
         {
-            this.Item = item;
+            Item = item;
         }
+
+        public T Item { get; }
     }
 }

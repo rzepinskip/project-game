@@ -7,6 +7,7 @@ namespace CommunicationServer
     public class ClientTypeManager : IClientTypeManager
     {
         private readonly Dictionary<int, ITcpConnection> _agentToCommunicationHandler;
+
         public ClientTypeManager(Dictionary<int, ITcpConnection> agentToCommunicationHandler)
         {
             _agentToCommunicationHandler = agentToCommunicationHandler;

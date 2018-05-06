@@ -6,12 +6,12 @@ namespace Player.Strategy.Conditions.GameConditions
 {
     public abstract class GameCondition : ICondition
     {
-        public GameStateInfo GameStateInfo { get; set; }
-
         public GameCondition(GameStateInfo gameStateInfo)
         {
             GameStateInfo = gameStateInfo;
         }
+
+        public GameStateInfo GameStateInfo { get; set; }
 
         public abstract bool CheckCondition();
 

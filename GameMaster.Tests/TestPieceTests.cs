@@ -1,6 +1,4 @@
-﻿using BoardGenerators.Loaders;
-using TestScenarios.DeterministicGame;
-using Xunit;
+﻿using Xunit;
 
 namespace GameMaster.Tests
 {
@@ -9,13 +7,11 @@ namespace GameMaster.Tests
         [Fact]
         public void TestShamPiece()
         {
-
         }
 
         [Fact]
         public void TestValidPiece()
         {
-
         }
     }
 }

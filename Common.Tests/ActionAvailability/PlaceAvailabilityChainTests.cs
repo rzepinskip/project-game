@@ -23,8 +23,10 @@ namespace ClientsCommon.Tests.ActionAvailability
             board.PlacePieceInTaskArea(1, locationFail);
 
             board.Players.Add(playerIdSuccess,
-                new PlayerInfo(playerIdSuccess, TeamColor.Blue, PlayerType.Member, locationSuccess, new Piece(0, PieceType.Normal)));
-            board.Players.Add(playerIdFail, new PlayerInfo(playerIdFail, TeamColor.Blue, PlayerType.Member, locationFail));
+                new PlayerInfo(playerIdSuccess, TeamColor.Blue, PlayerType.Member, locationSuccess,
+                    new Piece(0, PieceType.Normal)));
+            board.Players.Add(playerIdFail,
+                new PlayerInfo(playerIdFail, TeamColor.Blue, PlayerType.Member, locationFail));
         }
 
         private readonly int boardWidth = 5;

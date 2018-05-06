@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
-using System.Threading;
 using Common.Interfaces;
 using Communication;
 using CommunicationServer.Accepters;
@@ -12,6 +10,7 @@ namespace CommunicationServer
     {
         private readonly IAccepter _accepter;
         private readonly ClientTypeManager _clientTypeManager;
+
         public AsynchronousSocketListener(IAccepter accepter)
         {
             _accepter = accepter;
@@ -25,7 +24,7 @@ namespace CommunicationServer
 
         public void Send(IMessage message, int id)
         {
-            var byteData =  Encoding.ASCII.GetBytes(message.SerializeToXml() + Constants.EtbByte);
+            var byteData = Encoding.ASCII.GetBytes(message.SerializeToXml() + Constants.EtbByte);
             var findResult = _accepter.AgentToCommunicationHandler.TryGetValue(id, out var handler);
             if (!findResult)
                 throw new Exception("Non exsistent socket id");
@@ -61,7 +60,5 @@ namespace CommunicationServer
         {
             _clientTypeManager.MarkClientAsGameMaster(id);
         }
-
-        
     }
 }

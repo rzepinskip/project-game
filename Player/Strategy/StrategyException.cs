@@ -1,7 +1,4 @@
 ﻿using System;
-using Player.Strategy.StateInfo;
-using Player.Strategy.States;
-using Player.Strategy.States.StrategyStates;
 
 namespace Player.Strategy
 {
@@ -12,7 +9,8 @@ namespace Player.Strategy
         {
         }
 
-        public StrategyException(string message, IExceptionContentProvider currentStrategyState, IExceptionContentProvider context)
+        public StrategyException(string message, IExceptionContentProvider currentStrategyState,
+            IExceptionContentProvider context)
             : base(string.Join("\n", message, "StrategyState: " + currentStrategyState, context))
         {
         }

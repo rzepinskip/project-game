@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Player.Strategy.Conditions.GameConditions;
+﻿using Player.Strategy.Conditions.GameConditions;
 using Player.Strategy.StateInfo;
 
 namespace Player.Strategy.States.GameStates
@@ -13,7 +10,5 @@ namespace Player.Strategy.States.GameStates
         {
             transitionConditions.Add(new GetGamesCondition(gameStateInfo));
         }
-
-
     }
 }

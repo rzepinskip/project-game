@@ -14,9 +14,20 @@ namespace GameMaster.Delays
         public double KnowledgeExchangeDelay { get; set; }
         public double DestroyDelay { get; set; }
 
+        public bool Equals(ActionCosts other)
+        {
+            return other != null &&
+                   MoveDelay == other.MoveDelay &&
+                   DiscoverDelay == other.DiscoverDelay &&
+                   TestDelay == other.TestDelay &&
+                   PickUpDelay == other.PickUpDelay &&
+                   PlacingDelay == other.PlacingDelay &&
+                   KnowledgeExchangeDelay == other.KnowledgeExchangeDelay;
+        }
+
         internal double GetDelayFor(ActionInfo actionInfo)
         {
-            return GetDelayFor((dynamic)actionInfo);
+            return GetDelayFor((dynamic) actionInfo);
         }
 
         private double GetDelayFor(MoveActionInfo actionInfo)
@@ -47,17 +58,6 @@ namespace GameMaster.Delays
         private double GetDelayFor(DestroyActionInfo actionInfo)
         {
             return DestroyDelay;
-        }
-
-        public bool Equals(ActionCosts other)
-        {
-            return other != null &&
-                   MoveDelay == other.MoveDelay &&
-                   DiscoverDelay == other.DiscoverDelay &&
-                   TestDelay == other.TestDelay &&
-                   PickUpDelay == other.PickUpDelay &&
-                   PlacingDelay == other.PlacingDelay &&
-                   KnowledgeExchangeDelay == other.KnowledgeExchangeDelay;
         }
 
         public override bool Equals(object obj)

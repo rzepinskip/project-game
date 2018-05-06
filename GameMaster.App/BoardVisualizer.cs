@@ -35,19 +35,11 @@ namespace GameMaster.App
                         else if (field is GoalField goalField)
                         {
                             if (goalField.Type == GoalFieldType.Goal)
-                            {
                                 if (board.UncompletedRedGoalsLocations.Contains(goalField) ||
                                     board.UncompletedBlueGoalsLocations.Contains(goalField))
-                                {
                                     symbol.Data = "G ";
-                                }
                                 else
-                                {
                                     symbol = new ColoredString("G ", ConsoleColor.DarkGray);
-                                }
-
-
-                            }
                             else
                                 symbol.Data = "+ ";
                         }

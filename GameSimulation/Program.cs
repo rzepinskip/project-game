@@ -19,7 +19,7 @@ namespace GameSimulation
             while (true)
             {
                 var boardVisualizer = new BoardVisualizer();
-                for (var i = 0; ; i++)
+                for (var i = 0;; i++)
                 {
                     if (simulation.GameFinished)
                         break;
@@ -38,7 +38,7 @@ namespace GameSimulation
                 Thread.Sleep(1000);
             }
         }
-        
+
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs args)
         {
             UnhandledApplicationException.HandleGlobalException(args, _logger);

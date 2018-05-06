@@ -25,12 +25,7 @@ namespace Common
 
         public static void HandleGlobalException(UnhandledExceptionEventArgs args, ILogger logger)
         {
-            if (args.ExceptionObject is Exception innerException)
-            {
-                logger.Fatal($"FATAL error: {innerException}");
-            }
-                
+            if (args.ExceptionObject is Exception innerException) logger.Fatal($"FATAL error: {innerException}");
         }
     }
-
 }

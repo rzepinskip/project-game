@@ -6,7 +6,7 @@ using Messaging.Responses;
 namespace Messaging.InitialisationMessages
 {
     /// <summary>
-    /// CS response to GM registration
+    ///     CS response to GM registration
     /// </summary>
     [XmlType(XmlRootName)]
     public class ConfirmGameRegistrationMessage : Response

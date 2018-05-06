@@ -1,8 +1,8 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Xml.Serialization;
 using Common;
 using Common.ActionInfo;
-using System;
-using System.Collections.Generic;
 
 namespace Messaging.Requests
 {
@@ -22,6 +22,13 @@ namespace Messaging.Requests
 
         [XmlAttribute("direction")] public Direction Direction { get; set; }
 
+        public bool Equals(MoveRequest other)
+        {
+            return other != null &&
+                   base.Equals(other) &&
+                   Direction == other.Direction;
+        }
+
         public override ActionInfo GetActionInfo()
         {
             return new MoveActionInfo(PlayerGuid, Direction);
@@ -35,13 +42,6 @@ namespace Messaging.Requests
         public override bool Equals(object obj)
         {
             return Equals(obj as MoveRequest);
-        }
-
-        public bool Equals(MoveRequest other)
-        {
-            return other != null &&
-                   base.Equals(other) &&
-                   Direction == other.Direction;
         }
 
         public override int GetHashCode()

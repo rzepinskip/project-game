@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Player.Strategy.Conditions.StrategyConditions;
+﻿using Player.Strategy.Conditions.StrategyConditions;
 using Player.Strategy.StateInfo;
 
 namespace Player.Strategy.States.StrategyStates

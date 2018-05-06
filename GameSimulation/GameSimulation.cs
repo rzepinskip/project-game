@@ -22,15 +22,18 @@ namespace GameSimulation
 
             var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(configFilePath);
-            var communicationClient = new AsynchronousClient(new TcpSocketConnector(MessageSerializer.Instance, port, ipAddress,
+            var communicationClient = new AsynchronousClient(new TcpSocketConnector(MessageSerializer.Instance, port,
+                ipAddress,
                 TimeSpan.FromMilliseconds((int) config.KeepAliveInterval)));
 
-            CommunicationServer = new CommunicationServer.CommunicationServer(MessageSerializer.Instance, config.KeepAliveInterval, port);
+            CommunicationServer =
+                new CommunicationServer.CommunicationServer(MessageSerializer.Instance, config.KeepAliveInterval, port);
             GameMaster = new GameMaster.GameMaster(config, communicationClient);
             Players = new List<Player.Player>();
             for (var i = 0; i < 2 * config.GameDefinition.NumberOfPlayersPerTeam; i++)
             {
-                communicationClient = new AsynchronousClient(new TcpSocketConnector(MessageSerializer.Instance, port, ipAddress,
+                communicationClient = new AsynchronousClient(new TcpSocketConnector(MessageSerializer.Instance, port,
+                    ipAddress,
                     TimeSpan.FromMilliseconds((int) config.KeepAliveInterval)));
                 var player = new Player.Player(communicationClient, "game", TeamColor.Blue, PlayerType.Leader);
                 Players.Add(player);

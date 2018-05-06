@@ -28,7 +28,6 @@ namespace Player.Strategy.Conditions.StrategyConditions
             var onlyTaskArea = false;
             Randomize4WayDirection(StrategyInfo, onlyTaskArea, out var isAnyMoveAvailable);
             if (isAnyMoveAvailable)
-            {
                 switch (fromStrategyState)
                 {
                     case InGoalAreaMovingToTaskStrategyState inGoalAreaMovingToTaskState:
@@ -40,11 +39,7 @@ namespace Player.Strategy.Conditions.StrategyConditions
                     default:
                         throw new StrategyException("Unknown state", fromStrategyState, StrategyInfo);
                 }
-            }
-            else
-            {
-                return new DiscoverStrategyState(StrategyInfo);
-            }
+            return new DiscoverStrategyState(StrategyInfo);
         }
 
         public override IMessage GetNextMessage(BaseState fromStrategyState)
@@ -65,12 +60,9 @@ namespace Player.Strategy.Conditions.StrategyConditions
                 default:
                     throw new StrategyException("Unknown state", fromStrategyState, StrategyInfo);
             }
-            
+
             direction = Randomize4WayDirection(StrategyInfo, onlyTaskArea, out var isAnyMoveAvailable);
-            if (!isAnyMoveAvailable)
-            {
-                return new DiscoverRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId);
-            }
+            if (!isAnyMoveAvailable) return new DiscoverRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId);
             StrategyInfo.ToLocation = StrategyInfo.FromLocation.GetNewLocation(direction);
             return new MoveRequest(StrategyInfo.PlayerGuid, StrategyInfo.GameId, direction);
         }
@@ -80,7 +72,8 @@ namespace Player.Strategy.Conditions.StrategyConditions
             return true;
         }
 
-        private Direction Randomize4WayDirection(StrategyInfo strategyInfo, bool onlyTaskArea, out bool isAnyMoveAvailable)
+        private Direction Randomize4WayDirection(StrategyInfo strategyInfo, bool onlyTaskArea,
+            out bool isAnyMoveAvailable)
         {
             isAnyMoveAvailable = true;
             var currentLocation = strategyInfo.FromLocation;

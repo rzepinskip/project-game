@@ -21,6 +21,13 @@ namespace Messaging.Requests
 
         [XmlAttribute("gameId")] public int GameId { get; set; }
 
+        public bool Equals(Request other)
+        {
+            return other != null &&
+                   GameId == other.GameId &&
+                   PlayerGuid == other.PlayerGuid;
+        }
+
         [XmlAttribute("playerGuid")] public Guid PlayerGuid { get; set; }
 
         public override IMessage Process(IGameMaster gameMaster)
@@ -45,17 +52,10 @@ namespace Messaging.Requests
         {
             return string.Join(',', PlayerGuid, GameId);
         }
-        
+
         public override bool Equals(object obj)
         {
             return Equals(obj as Request);
-        }
-
-        public bool Equals(Request other)
-        {
-            return other != null &&
-                   GameId == other.GameId &&
-                   PlayerGuid == other.PlayerGuid;
         }
 
         public override int GetHashCode()

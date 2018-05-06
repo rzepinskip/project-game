@@ -2,7 +2,8 @@
 {
     public sealed class MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece : MoveScenarioBase
     {
-        public MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece() : base(nameof(MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece))
+        public MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece() : base(
+            nameof(MoveToTaskFieldWithPieceOccupiedByPlayerWhoDoesntCarryPiece))
         {
         }
     }

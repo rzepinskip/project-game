@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Timers;
 
-
 namespace Communication
 {
     public abstract class KeepAliveHandler
@@ -15,12 +14,13 @@ namespace Communication
         {
             MaintainedConnections = maintainedConnections;
             KeepAliveTimeInterval = keepAliveTimeInterval;
-            ReceivedKeepAlivesTimer = new Timer(keepAliveTimeInterval.TotalMilliseconds / Constants.KeepAliveIntervalFrequencyDivisor);
+            ReceivedKeepAlivesTimer =
+                new Timer(keepAliveTimeInterval.TotalMilliseconds / Constants.KeepAliveIntervalFrequencyDivisor);
             ReceivedKeepAlivesTimer.Elapsed += CheckKeepAlivesCallback;
             ReceivedKeepAlivesTimer.Start();
         }
 
-        private void CheckKeepAlivesCallback(Object source, ElapsedEventArgs e)
+        private void CheckKeepAlivesCallback(object source, ElapsedEventArgs e)
         {
             var currentTime = DateTime.Now.Ticks;
             foreach (var csStateObject in MaintainedConnections)

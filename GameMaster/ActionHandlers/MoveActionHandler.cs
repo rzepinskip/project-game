@@ -56,7 +56,8 @@ namespace GameMaster.ActionHandlers
             {
                 newPlayerLocation = player.Location;
 
-                if (fieldAtNewLocation.PlayerId.HasValue && Board.Players[fieldAtNewLocation.PlayerId.Value].Piece != null)
+                if (fieldAtNewLocation.PlayerId.HasValue &&
+                    Board.Players[fieldAtNewLocation.PlayerId.Value].Piece != null)
                 {
                     var piece = Board.Players[fieldAtNewLocation.PlayerId.Value].Piece;
                     pieces.Add(new Piece(piece.Id, PieceType.Unknown, piece.PlayerId));

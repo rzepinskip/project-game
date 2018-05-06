@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Messaging.Serialization;
 using TestScenarios;
 using Xunit;
 
@@ -8,7 +7,7 @@ namespace Player.Tests
     public class ActionsTests
     {
         [Theory]
-        [ClassData (typeof(TestsDataset))]
+        [ClassData(typeof(TestsDataset))]
         public void TestActionBoardsUpdate(ScenarioBase scenario)
         {
             var playerInfo = scenario.InitialPlayerBoard.Players[scenario.PlayerId];
@@ -16,7 +15,7 @@ namespace Player.Tests
                 scenario.InitialPlayerBoard, playerInfo.Location);
 
             scenario.Response.Process(player);
-            
+
             player.Board.Should().BeEquivalentTo(scenario.UpdatedPlayerBoard);
             player.Board.Should().Be(scenario.UpdatedPlayerBoard);
         }

@@ -4,10 +4,6 @@ namespace Common
 {
     public class BoardInfo
     {
-        [XmlAttribute("width")] public int Width { get; set; }
-        [XmlAttribute("tasksHeight")] public int TasksHeight { get; set; }
-        [XmlAttribute("goalsHeight")] public int GoalsHeight { get; set; }
-
         protected BoardInfo()
         {
         }
@@ -18,5 +14,9 @@ namespace Common
             TasksHeight = tasksHeight;
             GoalsHeight = goalsHeight;
         }
+
+        [XmlAttribute("width")] public int Width { get; set; }
+        [XmlAttribute("tasksHeight")] public int TasksHeight { get; set; }
+        [XmlAttribute("goalsHeight")] public int GoalsHeight { get; set; }
     }
 }

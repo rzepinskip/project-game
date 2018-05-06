@@ -8,6 +8,7 @@ namespace Communication.Client
     public class AsynchronousClient : IClient
     {
         private readonly IConnector _connector;
+
         public AsynchronousClient(IConnector connector)
         {
             _connector = connector;

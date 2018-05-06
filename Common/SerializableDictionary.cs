@@ -13,6 +13,7 @@ namespace Common
         private const string ValueTag = "value";
 
         #region IXmlSerializable Members
+
         public XmlSchema GetSchema()
         {
             return null;
@@ -46,7 +47,7 @@ namespace Common
             }
 
             reader.ReadEndElement();
-        } 
+        }
 
         public void WriteXml(XmlWriter writer)
         {

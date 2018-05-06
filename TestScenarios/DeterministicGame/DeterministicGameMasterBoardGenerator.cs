@@ -31,7 +31,6 @@ namespace TestScenarios.DeterministicGame
             base.PlaceGoals(goals);
 
             foreach (var goal in goals)
-            {
                 switch (goal.Team)
                 {
                     case TeamColor.Blue:
@@ -41,7 +40,6 @@ namespace TestScenarios.DeterministicGame
                         Board.UncompletedRedGoalsLocations.Add(goal);
                         break;
                 }
-            }
         }
     }
 }

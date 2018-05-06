@@ -6,7 +6,6 @@ namespace Player.Strategy.Conditions.GameConditions
 {
     internal class HasGameStartedCondition : GameCondition
     {
-
         public HasGameStartedCondition(GameStateInfo gameStateInfo)
             : base(gameStateInfo)
         {

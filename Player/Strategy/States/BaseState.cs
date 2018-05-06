@@ -5,11 +5,17 @@ using Player.Strategy.StateInfo;
 
 namespace Player.Strategy.States
 {
-    public abstract class BaseState:IExceptionContentProvider
+    public abstract class BaseState : IExceptionContentProvider
 
     {
-    protected List<ICondition> transitionConditions;
-    protected BaseInfo stateInfo;
+        protected BaseInfo stateInfo;
+        protected List<ICondition> transitionConditions;
+
+
+        public string GetExceptionInfo()
+        {
+            return ToString();
+        }
 
         public IMessage GetNextMessage()
         {
@@ -18,6 +24,7 @@ namespace Player.Strategy.States
                     return condition.GetNextMessage(this);
             throw new StrategyException("GetNextMessage error", this, stateInfo);
         }
+
         public BaseState GetNextState()
         {
             foreach (var condition in transitionConditions)
@@ -34,12 +41,6 @@ namespace Player.Strategy.States
                     return condition.ReturnsMessage(this);
 
             throw new StrategyException("StateReturnsMessage error", stateInfo);
-        }
-
-
-        public string GetExceptionInfo()
-        {
-            return ToString();
         }
     }
 }

@@ -7,7 +7,7 @@ using Player.Strategy.States.GameStates;
 
 namespace Player.Strategy.Conditions.GameConditions
 {
-    class IsJoinUnsuccessfulCondition : GameCondition
+    internal class IsJoinUnsuccessfulCondition : GameCondition
     {
         public IsJoinUnsuccessfulCondition(GameStateInfo gameStateInfo) : base(gameStateInfo)
         {

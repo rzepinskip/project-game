@@ -16,6 +16,12 @@ namespace Messaging.Responses
             PlayerId = playerId;
         }
 
+        public bool Equals(Response other)
+        {
+            return other != null &&
+                   PlayerId == other.PlayerId;
+        }
+
         public virtual string ToLog()
         {
             return string.Join(',', PlayerId);
@@ -32,16 +38,15 @@ namespace Messaging.Responses
         {
             throw new NotImplementedException();
         }
-        
+
+        public override void Process(ICommunicationServer cs, int id)
+        {
+            cs.Send(this, PlayerId);
+        }
+
         public override bool Equals(object obj)
         {
             return Equals(obj as Response);
-        }
-
-        public bool Equals(Response other)
-        {
-            return other != null &&
-                   PlayerId == other.PlayerId;
         }
 
         public override int GetHashCode()
@@ -59,11 +64,6 @@ namespace Messaging.Responses
         public static bool operator !=(Response response1, Response response2)
         {
             return !(response1 == response2);
-        }
-
-        public override void Process(ICommunicationServer cs, int id)
-        {
-            cs.Send(this, PlayerId);
         }
     }
 }

@@ -75,7 +75,7 @@ namespace Messaging.Serialization
                 {
                     DestroyPieceRequest.XmlRootName,
                     GetDefaultXmlSerializer(typeof(DestroyPieceRequest))
-                },
+                }
             };
         }
 

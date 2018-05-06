@@ -4,7 +4,7 @@ using Player.Strategy.StateInfo;
 
 namespace Player.Strategy.States.GameStates
 {
-    public class GameInitState: BaseState
+    public class GameInitState : BaseState
     {
         protected GameInitState(GameStateInfo gameStateInfo)
         {

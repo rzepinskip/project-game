@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
-using Messaging.Requests;
 using Player.Strategy.StateInfo;
 using Player.Strategy.States;
 using Player.Strategy.States.StrategyStates;
@@ -15,8 +14,6 @@ namespace Player.Strategy
         private readonly StrategyInfo strategyInfo;
         private readonly List<GoalField> undiscoveredGoalFields = new List<GoalField>();
 
-        public BaseState CurrentStrategyState { get; set; }
-        
 
         public PlayerStrategy(PlayerBoard board, PlayerBase player, Guid playerGuid, int gameId)
         {
@@ -33,11 +30,11 @@ namespace Player.Strategy
             CurrentStrategyState = new InitStrategyState(strategyInfo);
         }
 
+        public BaseState CurrentStrategyState { get; set; }
+
 
         public IMessage NextMove()
         {
-            
-
             var nextState = CurrentStrategyState.GetNextState();
             var gameMessage = CurrentStrategyState.GetNextMessage();
 

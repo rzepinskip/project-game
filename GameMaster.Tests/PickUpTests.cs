@@ -5,21 +5,18 @@ namespace GameMaster.Tests
     public class PickUpTests
     {
         [Fact]
-        public void PickUpPieceOnTaskFieldWithPiece()
+        public void PickUpPieceOnGoalArea()
         {
-
         }
 
         [Fact]
         public void PickUpPieceOnTaskFieldWithoutPiece()
         {
-
         }
 
         [Fact]
-        public void PickUpPieceOnGoalArea()
+        public void PickUpPieceOnTaskFieldWithPiece()
         {
-
         }
     }
 }

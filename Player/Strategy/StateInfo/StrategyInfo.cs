@@ -48,6 +48,5 @@ namespace Player.Strategy.StateInfo
 
             return string.Join('\n', "Strategy Info:", fields);
         }
-
     }
 }
