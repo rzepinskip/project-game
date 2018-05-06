@@ -46,7 +46,7 @@ namespace Communication.Client
             ReceivedKeepAlivesTimer.Dispose();
             connection.CloseSocket();
 
-            throw new UnhandledApplicationException("Keep alive timeout");
+            throw new ApplicationFatalException("Keep alive timeout");
         }
     }
 }
