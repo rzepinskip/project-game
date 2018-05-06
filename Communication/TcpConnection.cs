@@ -42,7 +42,7 @@ namespace Communication
 
             try
             {
-                WorkSocket.BeginReceive(State.Buffer, 0, CommunicationState.BufferSize, 0,
+                WorkSocket.BeginReceive(State.Buffer, 0, Constants.BufferSize, 0,
                     ReadCallback, State);
             }
             catch (Exception e)
@@ -79,7 +79,7 @@ namespace Communication
 
         public void SendKeepAlive()
         {
-            Send(new[] {Convert.ToByte(CommunicationState.EtbByte)});
+            Send(new[] {Convert.ToByte(Constants.EtbByte)});
         }
 
         public void CloseSocket()
@@ -174,7 +174,7 @@ namespace Communication
                 {
                     try
                     {
-                        handler.BeginReceive(state.Buffer, 0, CommunicationState.BufferSize, 0,
+                        handler.BeginReceive(state.Buffer, 0, Constants.BufferSize, 0,
                             ReadCallback, state);
                     }
                     catch (Exception e)

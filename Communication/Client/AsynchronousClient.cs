@@ -26,7 +26,7 @@ namespace Communication.Client
         public void Send(IMessage message)
         {
             _connector.ConnectFinalized.WaitOne();
-            var byteData = Encoding.ASCII.GetBytes(message.SerializeToXml() + CommunicationState.EtbByte);
+            var byteData = Encoding.ASCII.GetBytes(message.SerializeToXml() + Constants.EtbByte);
             try
             {
                 _connector.TcpConnection.Send(byteData);
