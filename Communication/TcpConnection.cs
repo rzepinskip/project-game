@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Net.Sockets;
 using System.Threading;
 using Common.Interfaces;
+using Communication.Exceptions;
 
 namespace Communication
 {
@@ -49,7 +50,7 @@ namespace Communication
             {
                 if (e is SocketException || e is ObjectDisposedException)
                 {
-                    Console.WriteLine(e.ToString());
+                    ConnectionException.HandleUnexpectedConnectionError(e);
                     return;
                 }
 
@@ -67,12 +68,13 @@ namespace Communication
             }
             catch (Exception e)
             {
-                if (e is SocketException || e is ObjectDisposedException)
+                if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset)
                 {
-                    Console.WriteLine(e.ToString());
-                    return;
+                    Console.WriteLine($"SEND: socket #{SocketId} is disconnected.");
+                    throw;
                 }
 
+                ConnectionException.HandleUnexpectedConnectionError(e);
                 throw;
             }
         }
@@ -96,7 +98,7 @@ namespace Communication
             {
                 if (e is SocketException || e is ObjectDisposedException)
                 {
-                    Console.WriteLine(e.ToString());
+                    ConnectionException.HandleUnexpectedConnectionError(e);
                     return;
                 }
 
@@ -145,12 +147,16 @@ namespace Communication
             }
             catch (Exception e)
             {
-                if (e is SocketException || e is ObjectDisposedException)
+                if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset)
                 {
-                    Console.WriteLine(e.ToString());
+                    // TODO Communication Server disconnected
+                    Console.WriteLine("Should handle CS disconnection HERE");
+                    Console.WriteLine($"RECEIVE: socket #{SocketId} is disconnected.");
+
                     return;
                 }
 
+                ConnectionException.HandleUnexpectedConnectionError(e);
                 throw;
             }
 
@@ -177,7 +183,7 @@ namespace Communication
                     {
                         if (e is SocketException || e is ObjectDisposedException)
                         {
-                            Console.WriteLine(e.ToString());
+                            ConnectionException.HandleUnexpectedConnectionError(e);
                             return;
                         }
 
@@ -205,7 +211,7 @@ namespace Communication
             {
                 if (e is SocketException || e is ObjectDisposedException)
                 {
-                    Console.WriteLine(e.ToString());
+                    ConnectionException.HandleUnexpectedConnectionError(e);
                     return;
                 }
 

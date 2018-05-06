@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Net.Sockets;
 using System.Text;
 using Common.Interfaces;
 using Communication;
+using Communication.Exceptions;
 using CommunicationServer.Accepters;
 
 namespace CommunicationServer
@@ -47,7 +49,13 @@ namespace CommunicationServer
                 /// 
                 /// handle as connection error (shutdown or reconnection)
 
-                Console.WriteLine(e.ToString());
+                if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset)
+                {
+                    throw;
+                }
+
+                ConnectionException.HandleUnexpectedConnectionError(e);
+                throw;
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.Sockets;
 using System.Threading;
 using Common;
 using Common.Interfaces;
@@ -71,7 +72,23 @@ namespace CommunicationServer
 
         public void Send(IMessage message, int id)
         {
-            _listener.Send(message, id);
+            try
+            {
+                _listener.Send(message, id);
+
+            }
+            catch (Exception e)
+            {
+                if (e is SocketException socketException &&
+                    socketException.SocketErrorCode == SocketError.ConnectionReset)
+                {
+                    // TODO Client disconnected
+                    Console.WriteLine("Should handle CLIENT(GM or Player) disconnection HERE");
+                    return;
+                }
+
+                throw;
+            }
         }
 
         public void StartListening()
@@ -82,7 +99,7 @@ namespace CommunicationServer
         public void HandleConnectionTimeout(int socketId)
         {
             Console.WriteLine($"Socket #{socketId} exceeded keep alive timeout");
-            throw new NotImplementedException();
+            //throw new ConnectionException("");
         }
 
         public void HandleMessage(IMessage message, int i)
