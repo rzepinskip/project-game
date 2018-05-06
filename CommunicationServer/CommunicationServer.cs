@@ -17,11 +17,11 @@ namespace CommunicationServer
         private readonly IResolver _communicationResolver;
         private readonly IAsynchronousSocketListener _listener;
 
-        private Dictionary<int, ClientType> clientTypes;
+        private readonly Dictionary<int, ClientType> _clientTypes;
 
         public CommunicationServer(IMessageDeserializer messageDeserializer, double keepAliveInterval, int port)
         {
-            clientTypes = new Dictionary<int, ClientType>();
+            _clientTypes = new Dictionary<int, ClientType>();
             _listener = new AsynchronousSocketListener(new TcpSocketAccepter(HandleMessage, messageDeserializer,
                 TimeSpan.FromMilliseconds(keepAliveInterval), this, port));
             _communicationResolver = new CommunicationResolver();
@@ -66,18 +66,18 @@ namespace CommunicationServer
         public void MarkClientAsPlayer(int id)
         {
             Console.WriteLine($"{id} added as {ClientType.Player}");
-            clientTypes.TryAdd(id, ClientType.Player);
+            _clientTypes.TryAdd(id, ClientType.Player);
         }
 
         public void MarkClientAsGameMaster(int id)
         {
             Console.WriteLine($"{id} added as {ClientType.GameMaster}");
-            clientTypes.TryAdd(id, ClientType.GameMaster);
+            _clientTypes.TryAdd(id, ClientType.GameMaster);
         }
 
         public ClientType GetClientTypeFrom(int id)
         {
-            return !clientTypes.ContainsKey(id) ? ClientType.NonInitialized : clientTypes[id];
+            return !_clientTypes.ContainsKey(id) ? ClientType.NonInitialized : _clientTypes[id];
         }
 
         public void Send(IMessage message, int id)
@@ -89,7 +89,7 @@ namespace CommunicationServer
             }
             catch (Exception e)
             {
-                if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset)
+                if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset || e is ObjectDisposedException)
                 {
                     var clientType = GetClientTypeFrom(id);
 
@@ -109,8 +109,7 @@ namespace CommunicationServer
 
         public void HandleConnectionTimeout(int socketId)
         {
-            Console.WriteLine($"Socket #{socketId} exceeded keep alive timeout");
-            //throw new ConnectionException("");
+            Console.WriteLine($"{GetClientTypeFrom(socketId)} #{socketId} exceeded keep alive timeout");
         }
 
         public void HandleMessage(IMessage message, int i)

@@ -29,7 +29,7 @@ namespace CommunicationServer
 
         protected override void HandleConnectionException(Exception e)
         {
-            Console.WriteLine("Next send will give us better exception so we do nothing");
+            //Console.WriteLine("Next send will give us better exception so we do nothing");
         }
     }
 }

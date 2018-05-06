@@ -62,7 +62,7 @@ namespace Communication
             }
             catch (Exception e)
             {
-                if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset)
+                if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset || e is ObjectDisposedException)
                 {
                     Console.WriteLine($"SEND: socket #{SocketId} is disconnected.");
                     e.Data.Add("socketId", SocketId);
@@ -91,11 +91,13 @@ namespace Communication
             }
             catch (Exception e)
             {
-                if (e is SocketException || e is ObjectDisposedException)
+                if (e is SocketException)
                 {
                     ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                     return;
                 }
+                if(e is ObjectDisposedException)
+                    return;
 
                 throw;
             }
@@ -132,7 +134,7 @@ namespace Communication
             }
             catch (Exception e)
             {
-                if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset)
+                if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset || e is ObjectDisposedException)
                 {
                     Console.WriteLine("READ: Somebody disconnected - bubbling up exception...");
                         
