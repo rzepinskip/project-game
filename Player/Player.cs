@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net;
 using System.Threading;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
-using Communication;
-using Communication.Client;
 using NLog;
 using Player.Logging;
 using Player.Strategy;
@@ -17,12 +14,17 @@ namespace Player
     public class Player : PlayerBase, IPlayer
     {
         private bool _hasGameEnded;
-        public ILogger Logger;
         private PlayerCoordinator _playerCoordinator;
+        public ILogger Logger;
 
-        public Player(IMessageDeserializer messageDeserializer, int port=11000, int keepAliveInterval=500, IPAddress address=default(IPAddress))
+        public Player()
         {
-            CommunicationClient = new AsynchronousClient(new TcpSocketConnector(messageDeserializer, HandleResponse, port, address, TimeSpan.FromMilliseconds(keepAliveInterval)));
+        }
+
+        public Player(IClient communicationClient)
+        {
+            communicationClient.SetIncomingMessageHandler(HandleResponse);
+            CommunicationClient = communicationClient;
         }
 
         public int GameId { get; private set; }
@@ -68,7 +70,8 @@ namespace Player
             Debug.WriteLine("Player has updated game data and started playing");
         }
 
-        public void InitializePlayerWithoutCommunicationClient(int id, Guid guid, TeamColor team, PlayerType role, PlayerBoard board,
+        public void InitializePlayerWithoutCommunicationClient(int id, Guid guid, TeamColor team, PlayerType role,
+            PlayerBoard board,
             Location location)
         {
             var factory = new LoggerFactory();

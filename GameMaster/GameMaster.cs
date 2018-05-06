@@ -29,7 +29,7 @@ namespace GameMaster
         private PieceGenerator _pieceGenerator;
         private Timer checkIfFullTeamTimer;
 
-        public GameMaster(GameConfiguration gameConfiguration, IMessageDeserializer messageDeserializer, int port, IPAddress address)
+        public GameMaster(GameConfiguration gameConfiguration, IClient communicationClient)
         {
             _gameConfiguration = gameConfiguration;
 
@@ -43,7 +43,7 @@ namespace GameMaster
 
             checkIfFullTeamTimer = new Timer(CheckIfGameFullCallback, null, 2000, 1000);
 
-            _messagingHandler = new MessagingHandler(gameConfiguration, messageDeserializer, port, address);
+            _messagingHandler = new MessagingHandler(gameConfiguration, communicationClient);
             _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
 
             _messagingHandler.Client.Send(new RegisterGameMessage(new GameInfo(Name,
