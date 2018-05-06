@@ -3,10 +3,10 @@
       playerId="1"
       gameFinished="false">
   <TaskFields>
-    <TaskField x="0" y="1" timestamp="2018-04-12T15:33:40" distanceToPiece="-1" pieceId="1" playerId="1"/>
+    <TaskField x="0" y="1" timestamp="2018-04-12T15:33:40" distanceToPiece="-1" pieceId="0" playerId="1"/>
   </TaskFields>
   <GoalFields/>
   <Pieces>
-    <Piece id="1" type="unknown" timestamp="2018-04-12T15:33:40" />
+    <Piece id="0" type="unknown" timestamp="2018-04-12T15:33:40" />
   </Pieces>
 </Data>

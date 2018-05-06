@@ -517,6 +517,27 @@
     <None Update="PickUpScenarios\PickUpPieceOnTaskFieldWithPiece\PickUpPieceOnTaskFieldWithPiece-Response.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="PlaceScenarios\PlaceValidPieceOnTaskFieldWithoutPiece\PlaceValidPieceOnTaskFieldWithoutPiece-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PlaceScenarios\PlaceValidPieceOnTaskFieldWithoutPiece\PlaceValidPieceOnTaskFieldWithoutPiece-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PlaceScenarios\PlaceValidPieceOnTaskFieldWithoutPiece\PlaceValidPieceOnTaskFieldWithoutPiece-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PlaceScenarios\PlaceValidPieceOnTaskFieldWithoutPiece\PlaceValidPieceOnTaskFieldWithoutPiece-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PlaceScenarios\PlaceValidPieceOnTaskFieldWithoutPiece\PlaceValidPieceOnTaskFieldWithoutPiece-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PlaceScenarios\PlaceValidPieceOnTaskFieldWithoutPiece\PlaceValidPieceOnTaskFieldWithoutPiece-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PlaceScenarios\PlaceValidPieceOnTaskFieldWithoutPiece\PlaceValidPieceOnTaskFieldWithoutPiece-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="PlaceScenarios\PlaceValidPieceOnTaskFieldWithPiece\PlaceValidPieceOnTaskFieldWithPiece-GM-Initial.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

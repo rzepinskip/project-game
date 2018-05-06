@@ -24,6 +24,7 @@ using TestScenarios.PickUpScenarios.PickUpPieceOnTaskFieldWithPiece;
 using TestScenarios.PickUpScenarios.PickUpPieceOnTaskFieldWithPieceHavingPiece;
 using TestScenarios.PlaceScenarios.PlaceValidPieceOnGoalFieldWithGoal;
 using TestScenarios.PlaceScenarios.PlaceValidPieceOnGoalFieldWithNonGoal;
+using TestScenarios.PlaceScenarios.PlaceValidPieceOnTaskFieldWithoutPiece;
 using TestScenarios.PlaceScenarios.PlaceValidPieceOnTaskFieldWithPiece;
 using TestScenarios.PlaceScenarios.PlaceWithoutPiece;
 using TestScenarios.TestPieceScenarios.TestShamPiece;
@@ -38,11 +39,11 @@ namespace TestScenarios
 
         public TestsDataset()
         {
-            //_testScenarios.AddRange(GetMoveTests());
-            //_testScenarios.AddRange(GetDiscoverTests());
+            _testScenarios.AddRange(GetMoveTests());
+            _testScenarios.AddRange(GetDiscoverTests());
             _testScenarios.AddRange(GetPlaceTests());
-            //_testScenarios.AddRange(GetPickUpTests());
-            //_testScenarios.AddRange(TestPieceTests());
+            _testScenarios.AddRange(GetPickUpTests());
+            _testScenarios.AddRange(TestPieceTests());
         }
         
 
@@ -92,15 +93,11 @@ namespace TestScenarios
         {
             return new List<object[]>
             {
-                //new  object[] {new PlaceValidPieceOnGoalFieldWithGoal()},
-                //new  object[] {new PlaceValidPieceOnGoalFieldWithNonGoal()},
+                new  object[] {new PlaceValidPieceOnGoalFieldWithGoal()},
+                new  object[] {new PlaceValidPieceOnGoalFieldWithNonGoal()},
                 new  object[] {new PlaceValidPieceOnTaskFieldWithPiece()},
-                //new  object[] {new PlaceValidPieceOnTaskFieldWithoutPiece()}
-                //new  object[] {new PlaceWithoutPiece()}
-                //new  object[] {new PlaceShamPieceOnGoalFieldWithGoal()},
-                //new  object[] {new PlaceShamPieceOnGoalFieldWithNonGoal()},
-                //new  object[] {new PlaceShamPieceOnTaskFieldWithPiece()},
-                //new  object[] {new PlaceShamPieceOnTaskFieldWithoutPiece()},
+                new  object[] {new PlaceValidPieceOnTaskFieldWithoutPiece()},
+                new  object[] {new PlaceWithoutPiece()}
             };
         }
 
