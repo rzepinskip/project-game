@@ -20,7 +20,7 @@ namespace Communication.Client
             _helperTimer.Elapsed += WakeUpMainTimer;
         }
 
-        private void SendKeepAliveCallback(Object source, System.Timers.ElapsedEventArgs e)
+        private void SendKeepAliveCallback(object source, System.Timers.ElapsedEventArgs e)
         {
             MaintainedConnections.First().SendKeepAlive();
         }
@@ -31,7 +31,7 @@ namespace Communication.Client
             _helperTimer.Start();
         }
 
-        private void WakeUpMainTimer(Object source, System.Timers.ElapsedEventArgs e)
+        private void WakeUpMainTimer(object source, System.Timers.ElapsedEventArgs e)
         {
             _sentKeepAliveTimer.Start();
             _helperTimer.Stop();

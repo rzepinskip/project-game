@@ -9,9 +9,9 @@ namespace Communication
     {
         protected readonly TimeSpan KeepAliveTimeInterval;
         protected readonly IEnumerable<ITcpConnection> MaintainedConnections;
-        public Timer ReceivedKeepAlivesTimer;
+        protected Timer ReceivedKeepAlivesTimer;
 
-        public KeepAliveHandler(TimeSpan keepAliveTimeInterval, IEnumerable<ITcpConnection> maintainedConnections)
+        protected KeepAliveHandler(TimeSpan keepAliveTimeInterval, IEnumerable<ITcpConnection> maintainedConnections)
         {
             MaintainedConnections = maintainedConnections;
             KeepAliveTimeInterval = keepAliveTimeInterval;
