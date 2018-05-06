@@ -15,7 +15,7 @@ namespace Common.BoardObjects
         {
         }
 
-        protected BoardBase(int boardWidth, int taskAreaSize, int goalAreaSize)
+        protected BoardBase(int boardWidth, int taskAreaSize, int goalAreaSize, GoalFieldType defaultGoalFieldType=GoalFieldType.Unknown)
         {
             GoalAreaSize = goalAreaSize;
             TaskAreaSize = taskAreaSize;
@@ -25,13 +25,13 @@ namespace Common.BoardObjects
             for (var i = 0; i < boardWidth; ++i)
             {
                 for (var j = 0; j < goalAreaSize; ++j)
-                    Content[i, j] = new GoalField(new Location(i, j), TeamColor.Blue);
+                    Content[i, j] = new GoalField(new Location(i, j), TeamColor.Blue, defaultGoalFieldType);
 
                 for (var j = goalAreaSize; j < taskAreaSize + goalAreaSize; ++j)
                     Content[i, j] = new TaskField(new Location(i, j));
 
                 for (var j = taskAreaSize + goalAreaSize; j < Height; ++j)
-                    Content[i, j] = new GoalField(new Location(i, j), TeamColor.Red);
+                    Content[i, j] = new GoalField(new Location(i, j), TeamColor.Red, defaultGoalFieldType);
             }
         }
 
