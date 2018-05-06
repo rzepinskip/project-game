@@ -20,7 +20,7 @@ namespace Communication
             ReceivedKeepAlivesTimer.Start();
         }
 
-        private void CheckKeepAlivesCallback(Object source, System.Timers.ElapsedEventArgs e)
+        private void CheckKeepAlivesCallback(Object source, ElapsedEventArgs e)
         {
             var currentTime = DateTime.Now.Ticks;
             foreach (var csStateObject in MaintainedConnections)
