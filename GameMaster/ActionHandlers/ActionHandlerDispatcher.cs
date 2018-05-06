@@ -37,6 +37,11 @@ namespace GameMaster.ActionHandlers
             return new TestPieceActionHandler(playerId, board);
         }
 
+        public DestroyPieceActionHandler ActionHandler(DestroyActionInfo actionInfo, GameMasterBoard board, int playerId)
+        {
+            return new DestroyPieceActionHandler(playerId, board);
+        }
+
         public DataFieldSet Execute()
         {
             return _actionHandler.Respond();

@@ -26,8 +26,8 @@ namespace GameMaster.ActionHandlers
             var player = Board.Players[PlayerId];
             var playerPiece = player.Piece;
 
-            if (playerPiece.Type == PieceType.Sham)
-                player.Piece = null;
+            //if (playerPiece.Type == PieceType.Sham)
+            //    player.Piece = null;
 
             return DataFieldSet.Create(PlayerId, new [] { playerPiece });
         }
