@@ -88,11 +88,8 @@ namespace Messaging.Serialization
                 {
                     AcceptExchangeRequestMessage.XmlRootName,
                     GetDefaultXmlSerializer(typeof(AcceptExchangeRequestMessage))
-                },
-                {
-                    AcceptExchangeRequestMessage.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(AcceptExchangeRequestMessage))
                 }
+
             };
         }
 
