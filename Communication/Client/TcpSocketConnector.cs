@@ -11,7 +11,6 @@ namespace Communication.Client
     {
         private readonly ManualResetEvent _connectDone;
         private readonly IMessageDeserializer _messageDeserializer;
-        private Action<IMessage> _messageHandler;
         private readonly TimeSpan _keepAliveInterval;
         private readonly int _port;
         private readonly IPAddress _address;
@@ -29,12 +28,7 @@ namespace Communication.Client
         public ITcpConnection TcpConnection { get; set; }
         public ManualResetEvent ConnectFinalized { get; set; }
 
-        public void SetIncomingMessageHandler(Action<IMessage> messageHandler)
-        {
-            _messageHandler = messageHandler;
-        }
-
-        public void Connect()
+        public void Connect(Action<IMessage> messageHandler)
         {
             try
             {
@@ -42,7 +36,7 @@ namespace Communication.Client
                 var remoteEndPoint = new IPEndPoint(ipAddress, _port);
 
                 var client = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                var tcpConnection = new ClientTcpConnection(client, -1, _messageDeserializer, _messageHandler);
+                var tcpConnection = new ClientTcpConnection(client, -1, _messageDeserializer, messageHandler);
                 TcpConnection = tcpConnection;
 
                 client.BeginConnect(remoteEndPoint, ConnectCallback, client);

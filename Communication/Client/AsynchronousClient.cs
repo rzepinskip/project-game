@@ -13,14 +13,9 @@ namespace Communication.Client
             _connector = connector;
         }
 
-        public void SetIncomingMessageHandler(Action<IMessage> messageHandler)
+        public void Connect(Action<IMessage> messageHandler)
         {
-            _connector.SetIncomingMessageHandler(messageHandler);
-        }
-
-        public void Connect()
-        {
-            _connector.Connect();
+            _connector.Connect(messageHandler);
         }
 
         public void Send(IMessage message)

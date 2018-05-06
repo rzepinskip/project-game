@@ -25,8 +25,7 @@ namespace GameMaster
             _actionCosts = gameConfiguration.ActionCosts;
 
             Client = communicationClient;
-            communicationClient.SetIncomingMessageHandler(HandleMessagesFromClient);
-            new Thread(() => Client.Connect()).Start();
+            new Thread(() => Client.Connect(HandleMessagesFromClient)).Start();
         }
 
         private async void HandleMessagesFromPlayer(Guid playerGuid)

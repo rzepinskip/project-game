@@ -19,14 +19,13 @@ namespace Player
 
         public Player(IClient communicationClient, string gameName, TeamColor color, PlayerType role)
         {
-            communicationClient.SetIncomingMessageHandler(HandleResponse);
             CommunicationClient = communicationClient;
 
             var factory = new LoggerFactory();
             Logger = factory.GetPlayerLogger(0);
 
             _playerCoordinator = new PlayerCoordinator(gameName, color, role);
-            new Thread(() => CommunicationClient.Connect()).Start();
+            new Thread(() => CommunicationClient.Connect(HandleResponse)).Start();
         }
 
         public Player(int id, Guid guid, TeamColor team, PlayerType role,
@@ -101,8 +100,6 @@ namespace Player
             PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
 
             _playerCoordinator = new PlayerCoordinator("", team, role);
-
-            new Thread(() => CommunicationClient.Connect()).Start();
         }
 
         public IMessage GetNextRequestMessage()

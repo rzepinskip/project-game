@@ -4,8 +4,7 @@ namespace Common.Interfaces
 {
     public interface IClient
     {
-        void SetIncomingMessageHandler(Action<IMessage> messageHandler);
-        void Connect();
+        void Connect(Action<IMessage> messageHandler);
         void Send(IMessage message);
     }
 }

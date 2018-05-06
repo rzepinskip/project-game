@@ -8,7 +8,6 @@ namespace Communication.Client
     {
         ITcpConnection TcpConnection { get; set; }
         ManualResetEvent ConnectFinalized { get; set; }
-        void SetIncomingMessageHandler(Action<IMessage> handler);
-        void Connect();
+        void Connect(Action<IMessage> handler);
     }
 }
