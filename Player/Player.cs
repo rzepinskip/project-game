@@ -21,10 +21,16 @@ namespace Player
         {
         }
 
-        public Player(IClient communicationClient)
+        public Player(IClient communicationClient, string gameName, TeamColor color, PlayerType role)
         {
             communicationClient.SetIncomingMessageHandler(HandleResponse);
             CommunicationClient = communicationClient;
+
+            var factory = new LoggerFactory();
+            Logger = factory.GetPlayerLogger(0);
+
+            _playerCoordinator = new PlayerCoordinator(gameName, color, role);
+            new Thread(() => CommunicationClient.Connect()).Start();
         }
 
         public int GameId { get; private set; }
@@ -70,24 +76,6 @@ namespace Player
             Debug.WriteLine("Player has updated game data and started playing");
         }
 
-        public void InitializePlayerWithoutCommunicationClient(int id, Guid guid, TeamColor team, PlayerType role,
-            PlayerBoard board,
-            Location location)
-        {
-            var factory = new LoggerFactory();
-            Logger = factory.GetPlayerLogger(id);
-
-            Id = id;
-            Team = team;
-            Role = role;
-            PlayerGuid = guid;
-            GameId = 0;
-            PlayerBoard = board;
-            PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
-
-            _playerCoordinator = new PlayerCoordinator("", team, role);
-        }
-
         public void InitializePlayer(int id, Guid guid, TeamColor team, PlayerType role, PlayerBoard board,
             Location location)
         {
@@ -103,16 +91,6 @@ namespace Player
             PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
 
             _playerCoordinator = new PlayerCoordinator("", team, role);
-
-            new Thread(() => CommunicationClient.Connect()).Start();
-        }
-
-        public void InitializePlayer(string gameName, TeamColor color, PlayerType role)
-        {
-            var factory = new LoggerFactory();
-            Logger = factory.GetPlayerLogger(0);
-
-            _playerCoordinator = new PlayerCoordinator(gameName, color, role);
 
             new Thread(() => CommunicationClient.Connect()).Start();
         }

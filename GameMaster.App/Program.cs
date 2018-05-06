@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using BoardGenerators.Loaders;
@@ -19,6 +20,22 @@ namespace GameMaster.App
 
         private static void Main(string[] args)
         {
+            var gm = CreateGameMasterFrom(args);
+
+            while (true)
+            {
+                var boardVisualizer = new BoardVisualizer();
+                for (var i = 0;; i++)
+                {
+                    Thread.Sleep(200);
+                    boardVisualizer.VisualizeBoard(gm.Board);
+                    Console.WriteLine(i);
+                }
+            }
+        }
+
+        private static GameMaster CreateGameMasterFrom(IEnumerable<string> parameters)
+        {
             var addressFlag = false;
             var port = default(int);
             var gameConfigPath = default(string);
@@ -33,7 +50,7 @@ namespace GameMaster.App
                 {"game=", "name of the game", g => gameName = g}
             };
 
-            options.Parse(args);
+            options.Parse(parameters);
 
             if (port == default(int) || gameConfigPath == default(string) || gameName == default(string) ||
                 !addressFlag)
@@ -45,18 +62,7 @@ namespace GameMaster.App
             var communicationClient = new AsynchronousClient(new TcpSocketConnector(MessageSerializer.Instance, port, address,
                 TimeSpan.FromMilliseconds((int) config.KeepAliveInterval)));
 
-            var gm = new GameMaster(config, communicationClient);
-
-            while (true)
-            {
-                var boardVisualizer = new BoardVisualizer();
-                for (var i = 0;; i++)
-                {
-                    Thread.Sleep(200);
-                    boardVisualizer.VisualizeBoard(gm.Board);
-                    Console.WriteLine(i);
-                }
-            }
+            return new GameMaster(config, communicationClient);
         }
     }
 }

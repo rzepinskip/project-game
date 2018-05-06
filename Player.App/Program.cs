@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using BoardGenerators.Loaders;
 using Common;
@@ -14,16 +15,18 @@ namespace Player.App
     {
         private static ILogger _logger;
 
-        private static void Usage(OptionSet options)
-        {
-            Console.WriteLine("Usage:");
-            options.WriteOptionDescriptions(Console.Out);
-        }
-
         private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
+            var player = CreatePlayerFrom(args);
+
+            _logger = player.Logger;
+            player.CommunicationClient.Send(player.GetNextRequestMessage());
+        }
+
+        private static Player CreatePlayerFrom(IEnumerable<string> parameters)
+        {
             bool teamFlag = false, roleFlag = false, addressFlag = false;
             var address = default(IPAddress);
             var port = default(int);
@@ -42,7 +45,7 @@ namespace Player.App
                 {"role=", "leader|player", r => roleFlag = Enum.TryParse(r, true, out role)}
             };
 
-            options.Parse(args);
+            options.Parse(parameters);
 
             if (port == default(int) || gameConfigPath == default(string) || gameName == default(string) ||
                 !addressFlag || !teamFlag || !roleFlag)
@@ -55,10 +58,15 @@ namespace Player.App
             var communicationClient = new AsynchronousClient(new TcpSocketConnector(MessageSerializer.Instance, port, address,
                 TimeSpan.FromMilliseconds((int) config.KeepAliveInterval)));
 
-            var player = new Player(communicationClient);
-            _logger = player.Logger;
-            player.InitializePlayer(gameName, team, role);
-            player.CommunicationClient.Send(player.GetNextRequestMessage());
+            var player = new Player(communicationClient, gameName, team, role);
+
+            return player;
+        }
+
+        private static void Usage(OptionSet options)
+        {
+            Console.WriteLine("Usage:");
+            options.WriteOptionDescriptions(Console.Out);
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs args)
