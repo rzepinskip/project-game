@@ -12,12 +12,10 @@ namespace CommunicationServer
     public class AsynchronousSocketListener : IAsynchronousSocketListener
     {
         private readonly IAccepter _accepter;
-        private readonly ClientTypeManager _clientTypeManager;
 
         public AsynchronousSocketListener(IAccepter accepter)
         {
             _accepter = accepter;
-            _clientTypeManager = new ClientTypeManager(_accepter.AgentToCommunicationHandler);
         }
 
         public void StartListening()
@@ -58,21 +56,6 @@ namespace CommunicationServer
                 ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
-        }
-
-        public void MarkClientAsPlayer(int id)
-        {
-            _clientTypeManager.MarkClientAsPlayer(id);
-        }
-
-        public void MarkClientAsGameMaster(int id)
-        {
-            _clientTypeManager.MarkClientAsGameMaster(id);
-        }
-
-        public ClientType GetClientTypeFrom(int id)
-        {
-            return _clientTypeManager.GetClientTypeFrom(id);
         }
     }
 }

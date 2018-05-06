@@ -17,8 +17,11 @@ namespace CommunicationServer
         private readonly IResolver _communicationResolver;
         private readonly IAsynchronousSocketListener _listener;
 
+        private Dictionary<int, ClientType> clientTypes;
+
         public CommunicationServer(IMessageDeserializer messageDeserializer, double keepAliveInterval, int port)
         {
+            clientTypes = new Dictionary<int, ClientType>();
             _listener = new AsynchronousSocketListener(new TcpSocketAccepter(HandleMessage, messageDeserializer,
                 TimeSpan.FromMilliseconds(keepAliveInterval), this, port));
             _communicationResolver = new CommunicationResolver();
@@ -62,17 +65,19 @@ namespace CommunicationServer
 
         public void MarkClientAsPlayer(int id)
         {
-            _listener.MarkClientAsPlayer(id);
+            Console.WriteLine($"{id} added as {ClientType.Player}");
+            clientTypes.TryAdd(id, ClientType.Player);
         }
 
         public void MarkClientAsGameMaster(int id)
         {
-            _listener.MarkClientAsGameMaster(id);
+            Console.WriteLine($"{id} added as {ClientType.GameMaster}");
+            clientTypes.TryAdd(id, ClientType.GameMaster);
         }
 
         public ClientType GetClientTypeFrom(int id)
         {
-            return _listener.GetClientTypeFrom(id);
+            return !clientTypes.ContainsKey(id) ? ClientType.NonInitialized : clientTypes[id];
         }
 
         public void Send(IMessage message, int id)

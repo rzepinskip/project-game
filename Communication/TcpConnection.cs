@@ -111,16 +111,6 @@ namespace Communication
             return State.LastMessageReceivedTicks;
         }
 
-        public void MarkClientAsPlayer()
-        {
-            ClientType = ClientType.Player;
-        }
-
-        public void MarkClientAsGameMaster()
-        {
-            ClientType = ClientType.GameMaster;
-        }
-
         public void UpdateLastMessageTicks()
         {
             State.UpdateLastMessageTicks();
