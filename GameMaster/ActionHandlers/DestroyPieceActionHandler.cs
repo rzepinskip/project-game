@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ClientsCommon.ActionAvailability.AvailabilityChain;
 using Common;
 using Common.BoardObjects;
 
@@ -17,7 +18,7 @@ namespace GameMaster.ActionHandlers
         protected override bool Validate()
         {
             var playerInfo = Board.Players[PlayerId];
-            return false;
+            return new DestroyAvailabilityChain(PlayerId, Board.Players).ActionAvailable();
         }
 
         public override DataFieldSet Respond()

@@ -10,6 +10,7 @@ using Communication;
 using Communication.Client;
 using GameMaster.Configuration;
 using GameMaster.Delays;
+using Messaging.Requests;
 
 namespace GameMaster
 {
