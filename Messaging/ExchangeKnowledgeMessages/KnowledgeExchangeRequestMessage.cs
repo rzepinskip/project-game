@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Text;
 using Common.Interfaces;
+using System.Xml.Serialization;
 
 namespace Messaging.ExchangeKnowledgeMessages
 {
+    [XmlType(XmlRootName)]
     public class KnowledgeExchangeRequestMessage : KnowledgeExchangeMessage
     {
+        public const string XmlRootName = "KnowledgeExchangeRequest";
+
         public override IMessage Process(IGameMaster gameMaster)
         {
             throw new NotImplementedException();

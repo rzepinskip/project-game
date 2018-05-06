@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using Messaging.ExchangeKnowledgeMessages;
 using Messaging.InitialisationMessages;
 using Messaging.Requests;
 using Messaging.Responses;
@@ -75,6 +76,22 @@ namespace Messaging.Serialization
                 {
                     DestroyPieceRequest.XmlRootName,
                     GetDefaultXmlSerializer(typeof(DestroyPieceRequest))
+                },
+                {
+                    AuthorizeKnowledgeExchangeRequest.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(AuthorizeKnowledgeExchangeRequest))
+                },
+                {
+                    KnowledgeExchangeRequestMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(KnowledgeExchangeRequestMessage))
+                },
+                {
+                    AcceptExchangeRequestMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(AcceptExchangeRequestMessage))
+                },
+                {
+                    AcceptExchangeRequestMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(AcceptExchangeRequestMessage))
                 }
             };
         }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using Common.Interfaces;
@@ -8,11 +7,9 @@ using Common.Interfaces;
 namespace Messaging.ExchangeKnowledgeMessages
 {
     [XmlType(XmlRootName)]
-    public class RejectKnowledgeExchangeMessage : KnowledgeExchangeMessage
+    public class AcceptExchangeRequestMessage : KnowledgeExchangeMessage
     {
-        public const string XmlRootName = "RejectKnowledgeExchange";
-
-        public bool Permanent { get; set; }
+        public const string XmlRootName = "AcceptExchangeRequest";
         public override IMessage Process(IGameMaster gameMaster)
         {
             return this;
