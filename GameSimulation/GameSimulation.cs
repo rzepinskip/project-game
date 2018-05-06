@@ -28,7 +28,7 @@ namespace GameSimulation
 
             CommunicationServer =
                 new CommunicationServer.CommunicationServer(MessageSerializer.Instance, config.KeepAliveInterval, port);
-            GameMaster = new GameMaster.GameMaster(config, communicationClient);
+            GameMaster = new GameMaster.GameMaster(config, communicationClient, "game");
             Players = new List<Player.Player>();
             for (var i = 0; i < 2 * config.GameDefinition.NumberOfPlayersPerTeam; i++)
             {
