@@ -14,7 +14,6 @@ namespace GameMaster
 {
     public class GameMaster : IGameMaster
     {
-        private const string Name = "game";
         public static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly GameConfiguration _gameConfiguration;
@@ -27,7 +26,7 @@ namespace GameMaster
         private PieceGenerator _pieceGenerator;
         private Timer checkIfFullTeamTimer;
 
-        public GameMaster(GameConfiguration gameConfiguration, IClient communicationClient)
+        public GameMaster(GameConfiguration gameConfiguration, IClient communicationClient, string gameName)
         {
             _gameConfiguration = gameConfiguration;
 
@@ -46,7 +45,7 @@ namespace GameMaster
             _messagingHandler = new MessagingHandler(gameConfiguration, communicationClient);
             _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
 
-            _messagingHandler.Client.Send(new RegisterGameMessage(new GameInfo(Name,
+            _messagingHandler.Client.Send(new RegisterGameMessage(new GameInfo(gameName,
                 _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam,
                 _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam)));
         }

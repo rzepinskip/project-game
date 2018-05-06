@@ -63,7 +63,7 @@ namespace GameMaster.App
                 address,
                 TimeSpan.FromMilliseconds((int) config.KeepAliveInterval)));
 
-            return new GameMaster(config, communicationClient);
+            return new GameMaster(config, communicationClient, gameName);
         }
 
         private static void Usage(OptionSet options)
