@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.15
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameMaster.Tests", "GameMaster.Tests\GameMaster.Tests.csproj", "{B2A3B305-F130-49EB-AB58-3E7C34F566D8}"
 EndProject
@@ -35,7 +35,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Player.App", "Player.App\Pl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Communication", "Communication\Communication.csproj", "{15EF65AF-E187-4EB2-B661-F03F29427E02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientsCommon", "ClientsCommon\ClientsCommon.csproj", "{445AC1E2-1B6C-4C35-ADAD-34FD140D7464}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientsCommon", "ClientsCommon\ClientsCommon.csproj", "{445AC1E2-1B6C-4C35-ADAD-34FD140D7464}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{A05155D2-C268-412B-B46A-91A3254FACE3}"
+	ProjectSection(SolutionItems) = preProject
+		ExampleAdvancedConfig.xml = ExampleAdvancedConfig.xml
+		ExampleConfig.xml = ExampleConfig.xml
+		ExampleSimpleConfig.xml = ExampleSimpleConfig.xml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
