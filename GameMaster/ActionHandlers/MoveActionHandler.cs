@@ -28,8 +28,16 @@ namespace GameMaster.ActionHandlers
             var taskFields = new List<TaskField>();
             var pieces = new List<Piece>();
 
+
+
             Location newPlayerLocation;
             var newLocation = player.Location.GetNewLocation(_direction);
+
+            //QUICK FIX
+            if (newLocation.X < 0 || newLocation.Y < 0 || newLocation.X >= Board.Width || newLocation.Y >= Board.Height)
+                return DataFieldSet.Create(PlayerId, player.Location, taskFields.ToArray(), pieces.ToArray());
+
+
             var fieldAtNewLocation = Board[newLocation];
 
             if (fieldAtNewLocation is TaskField taskField)

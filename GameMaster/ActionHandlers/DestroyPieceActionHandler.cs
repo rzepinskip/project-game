@@ -28,6 +28,7 @@ namespace GameMaster.ActionHandlers
 
             player.Piece = null;
             playerPiece.Type = PieceType.Destroyed;
+            Board.Pieces.Remove(playerPiece.Id);
 
             return DataFieldSet.Create(PlayerId, new[] {playerPiece});
         }
