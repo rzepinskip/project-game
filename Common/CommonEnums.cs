@@ -96,4 +96,11 @@ namespace Common
 
         [XmlEnum(Name = "leader")] Leader
     }
+
+    public enum ClientType
+    {
+        NonInitialized,
+        GameMaster,
+        Player
+    }
 }

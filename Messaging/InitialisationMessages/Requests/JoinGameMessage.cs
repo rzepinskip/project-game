@@ -49,7 +49,7 @@ namespace Messaging.InitialisationMessages
         public override void Process(ICommunicationServer cs, int id)
         {
             PlayerId = id;
-
+            cs.MarkClientAsPlayer(id);
             cs.Send(this, cs.GetGameId(GameName));
         }
     }

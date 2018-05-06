@@ -41,7 +41,7 @@ namespace GameSimulation
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs args)
         {
-            UnhandledApplicationException.HandleGlobalException(args, _logger);
+            ApplicationFatalException.HandleFatalException(args, _logger);
         }
     }
 }

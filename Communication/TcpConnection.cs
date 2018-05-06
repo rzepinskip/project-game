@@ -2,17 +2,12 @@
 using System.Diagnostics;
 using System.Net.Sockets;
 using System.Threading;
+using Common;
 using Common.Interfaces;
+using Communication.Exceptions;
 
 namespace Communication
 {
-    public enum ClientType
-    {
-        NonInitialized,
-        GameMaster,
-        Player
-    }
-
     public abstract class TcpConnection : ITcpConnection
     {
         private readonly IMessageDeserializer _messageDeserializer;
@@ -32,7 +27,7 @@ namespace Communication
 
         private ManualResetEvent MessageProcessed { get; }
         private CommunicationState State { get; }
-        private ClientType ClientType { get; set; }
+        public ClientType ClientType { get; set; }
 
         public int SocketId => Id;
 
@@ -49,7 +44,7 @@ namespace Communication
             {
                 if (e is SocketException || e is ObjectDisposedException)
                 {
-                    Console.WriteLine(e.ToString());
+                    ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                     return;
                 }
 
@@ -67,12 +62,14 @@ namespace Communication
             }
             catch (Exception e)
             {
-                if (e is SocketException || e is ObjectDisposedException)
+                if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset || e is ObjectDisposedException)
                 {
-                    Console.WriteLine(e.ToString());
-                    return;
+                    Console.WriteLine($"SEND: socket #{SocketId} is disconnected.");
+                    e.Data.Add("socketId", SocketId);
+                    throw;
                 }
 
+                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
         }
@@ -94,11 +91,13 @@ namespace Communication
             }
             catch (Exception e)
             {
-                if (e is SocketException || e is ObjectDisposedException)
+                if (e is SocketException)
                 {
-                    Console.WriteLine(e.ToString());
+                    ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                     return;
                 }
+                if(e is ObjectDisposedException)
+                    return;
 
                 throw;
             }
@@ -113,16 +112,6 @@ namespace Communication
         public long GetLastMessageReceivedTicks()
         {
             return State.LastMessageReceivedTicks;
-        }
-
-        public void MarkClientAsPlayer()
-        {
-            ClientType = ClientType.Player;
-        }
-
-        public void MarkClientAsGameMaster()
-        {
-            ClientType = ClientType.GameMaster;
         }
 
         public void UpdateLastMessageTicks()
@@ -145,12 +134,15 @@ namespace Communication
             }
             catch (Exception e)
             {
-                if (e is SocketException || e is ObjectDisposedException)
+                if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset || e is ObjectDisposedException)
                 {
-                    Console.WriteLine(e.ToString());
+                    Console.WriteLine("READ: Somebody disconnected - bubbling up exception...");
+                        
+                    HandleConnectionException(e);
                     return;
                 }
 
+                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
 
@@ -177,7 +169,7 @@ namespace Communication
                     {
                         if (e is SocketException || e is ObjectDisposedException)
                         {
-                            Console.WriteLine(e.ToString());
+                            ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                             return;
                         }
 
@@ -205,12 +197,14 @@ namespace Communication
             {
                 if (e is SocketException || e is ObjectDisposedException)
                 {
-                    Console.WriteLine(e.ToString());
+                    ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                     return;
                 }
 
                 throw;
             }
         }
+
+        protected abstract void HandleConnectionException(Exception e);
     }
 }

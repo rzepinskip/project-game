@@ -1,10 +1,12 @@
 ﻿using System;
+using Common;
 
 namespace Communication
 {
     public interface ITcpConnection
     {
         int SocketId { get; }
+        ClientType ClientType { get; }
 
         void Receive();
         void Send(byte[] byteData);
@@ -13,7 +15,5 @@ namespace Communication
         void FinalizeConnect(IAsyncResult ar);
         long GetLastMessageReceivedTicks();
         void UpdateLastMessageTicks();
-        void MarkClientAsPlayer();
-        void MarkClientAsGameMaster();
     }
 }
