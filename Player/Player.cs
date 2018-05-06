@@ -107,6 +107,10 @@ namespace Player
             return _playerCoordinator.NextMove();
         }
 
+        public void HandleExchangeKnowledge(int senderPlayerId)
+        {
+            //evaluate
+        }
         private void HandleResponse(IMessage response)
         {
             //if (_hasGameEnded)
