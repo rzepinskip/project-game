@@ -157,7 +157,7 @@ namespace Communication
             if (bytesRead > 0)
             {
                 var (messages, hasEtbByte) = state.SplitMessages(bytesRead, Id);
-
+                State.UpdateLastMessageTicks();
                 var handledKeepAlive = false;
                 foreach (var message in messages)
                 {
