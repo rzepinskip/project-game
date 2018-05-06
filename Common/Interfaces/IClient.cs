@@ -1,8 +1,11 @@
-﻿namespace Common.Interfaces
+﻿using System;
+
+namespace Common.Interfaces
 {
     public interface IClient
     {
-        void Send(IMessage message);
+        void SetIncomingMessageHandler(Action<IMessage> messageHandler);
         void Connect();
+        void Send(IMessage message);
     }
 }

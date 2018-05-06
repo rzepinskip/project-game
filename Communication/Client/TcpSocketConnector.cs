@@ -9,20 +9,18 @@ namespace Communication.Client
 {
     public class TcpSocketConnector : IConnector
     {
-        private const int Port = 11000;
-
         private readonly ManualResetEvent _connectDone;
         private readonly IMessageDeserializer _messageDeserializer;
-        private readonly Action<IMessage> _messageHandler;
+        private Action<IMessage> _messageHandler;
         private readonly TimeSpan _keepAliveInterval;
         private readonly int _port;
         private readonly IPAddress _address;
-        public TcpSocketConnector(IMessageDeserializer messageDeserializer, Action<IMessage> messageHandler, int port, IPAddress address, TimeSpan keepAliveInterval = default(TimeSpan))
+        public TcpSocketConnector(IMessageDeserializer messageDeserializer, int port, IPAddress address, TimeSpan keepAliveInterval = default(TimeSpan))
         {
             ConnectFinalized = new ManualResetEvent(false);
             _connectDone = new ManualResetEvent(false);
             _messageDeserializer = messageDeserializer;
-            _messageHandler = messageHandler;
+
             _port = port;
             _address = address;
             _keepAliveInterval = keepAliveInterval == default(TimeSpan) ? TimeSpan.FromMilliseconds(30000) : keepAliveInterval;
@@ -31,11 +29,15 @@ namespace Communication.Client
         public ITcpConnection TcpConnection { get; set; }
         public ManualResetEvent ConnectFinalized { get; set; }
 
+        public void SetIncomingMessageHandler(Action<IMessage> messageHandler)
+        {
+            _messageHandler = messageHandler;
+        }
+
         public void Connect()
         {
             try
             {
-                //var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
                 var ipAddress = _address;
                 var remoteEndPoint = new IPEndPoint(ipAddress, _port);
 

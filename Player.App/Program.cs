@@ -1,28 +1,32 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using BoardGenerators.Loaders;
 using Common;
+using Communication.Client;
 using GameMaster.Configuration;
 using Messaging.Serialization;
-using NLog;
 using Mono.Options;
+using NLog;
 
 namespace Player.App
 {
-    class Program
+    internal class Program
     {
         private static ILogger _logger;
 
-        static void Usage(OptionSet options)
-        {
-            Console.WriteLine("Usage:");
-            options.WriteOptionDescriptions(Console.Out);
-        }
-
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
+            var player = CreatePlayerFrom(args);
+
+            _logger = player.Logger;
+            player.CommunicationClient.Send(player.GetNextRequestMessage());
+        }
+
+        private static Player CreatePlayerFrom(IEnumerable<string> parameters)
+        {
             bool teamFlag = false, roleFlag = false, addressFlag = false;
             var address = default(IPAddress);
             var port = default(int);
@@ -31,28 +35,38 @@ namespace Player.App
             var team = default(TeamColor);
             var role = default(PlayerType);
 
-            var options = new OptionSet {
-                { "port=", "port number", (int p) => port = p },
-                { "conf=",  "configuration filename", c => gameConfigPath=c},
-                { "address=", "server adress or hostname", a => addressFlag = IPAddress.TryParse(a, out address)},
-                { "game=", "name of the game", g => gameName = g},
-                { "team=", "red|blue", t =>  teamFlag = TeamColor.TryParse(t, true, out team)},
-                { "role=", "leader|player", r => roleFlag = PlayerType.TryParse(r, true, out role)}
+            var options = new OptionSet
+            {
+                {"port=", "port number", (int p) => port = p},
+                {"conf=", "configuration filename", c => gameConfigPath = c},
+                {"address=", "server adress or hostname", a => addressFlag = IPAddress.TryParse(a, out address)},
+                {"game=", "name of the game", g => gameName = g},
+                {"team=", "red|blue", t => teamFlag = Enum.TryParse(t, true, out team)},
+                {"role=", "leader|player", r => roleFlag = Enum.TryParse(r, true, out role)}
             };
 
-            options.Parse(args);
+            options.Parse(parameters);
 
-            if (port == default(int) || gameConfigPath == default(string) || gameName == default(string) ||!addressFlag || !teamFlag || !roleFlag)
+            if (port == default(int) || gameConfigPath == default(string) || gameName == default(string) ||
+                !addressFlag || !teamFlag || !roleFlag)
                 Usage(options);
 
 
             var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(gameConfigPath);
 
-            var player = new Player(MessageSerializer.Instance, port, (int)config.KeepAliveInterval, address);
-            _logger = player.Logger;
-            player.InitializePlayer(gameName, team, role);
-            player.CommunicationClient.Send(player.GetNextRequestMessage());
+            var communicationClient = new AsynchronousClient(new TcpSocketConnector(MessageSerializer.Instance, port, address,
+                TimeSpan.FromMilliseconds((int) config.KeepAliveInterval)));
+
+            var player = new Player(communicationClient, gameName, team, role);
+
+            return player;
+        }
+
+        private static void Usage(OptionSet options)
+        {
+            Console.WriteLine("Usage:");
+            options.WriteOptionDescriptions(Console.Out);
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs args)
