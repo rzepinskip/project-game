@@ -24,6 +24,7 @@ using TestScenarios.PickUpScenarios.PickUpPieceOnTaskFieldWithPiece;
 using TestScenarios.PickUpScenarios.PickUpPieceOnTaskFieldWithPieceHavingPiece;
 using TestScenarios.PlaceScenarios.PlaceValidPieceOnGoalFieldWithGoal;
 using TestScenarios.PlaceScenarios.PlaceValidPieceOnGoalFieldWithNonGoal;
+using TestScenarios.PlaceScenarios.PlaceWithoutPiece;
 using TestScenarios.TestPieceScenarios.TestShamPiece;
 using TestScenarios.TestPieceScenarios.TestValidPiece;
 using TestScenarios.TestPieceScenarios.TestWithoutPiece;
@@ -90,11 +91,11 @@ namespace TestScenarios
         {
             return new List<object[]>
             {
-                new  object[] {new PlaceValidPieceOnGoalFieldWithGoal()},
+                //new  object[] {new PlaceValidPieceOnGoalFieldWithGoal()},
                 //new  object[] {new PlaceValidPieceOnGoalFieldWithNonGoal()},
                 //new  object[] {new PlaceValidPieceOnTaskFieldWithPiece()},
                 //new  object[] {new PlaceValidPieceOnTaskFieldWithoutPiece()}
-                //new  object[] {new PlaceWithoutPiece()}
+                new  object[] {new PlaceWithoutPiece()}
                 //new  object[] {new PlaceShamPieceOnGoalFieldWithGoal()},
                 //new  object[] {new PlaceShamPieceOnGoalFieldWithNonGoal()},
                 //new  object[] {new PlaceShamPieceOnTaskFieldWithPiece()},

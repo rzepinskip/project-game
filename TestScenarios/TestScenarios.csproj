@@ -517,6 +517,27 @@
     <None Update="PickUpScenarios\PickUpPieceOnTaskFieldWithPiece\PickUpPieceOnTaskFieldWithPiece-Response.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="PlaceScenarios\PlaceWithoutPiece\PlaceWithoutPiece-GM-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PlaceScenarios\PlaceWithoutPiece\PlaceWithoutPiece-GM-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PlaceScenarios\PlaceWithoutPiece\PlaceWithoutPiece-Identifiers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PlaceScenarios\PlaceWithoutPiece\PlaceWithoutPiece-Player-Initial.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PlaceScenarios\PlaceWithoutPiece\PlaceWithoutPiece-Player-Updated.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PlaceScenarios\PlaceWithoutPiece\PlaceWithoutPiece-Request.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="PlaceScenarios\PlaceWithoutPiece\PlaceWithoutPiece-Response.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="PlaceScenarios\PlaceValidPieceOnGoalFieldWithNonGoal\PlaceValidPieceOnGoalFieldWithNonGoal-GM-Initial.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
