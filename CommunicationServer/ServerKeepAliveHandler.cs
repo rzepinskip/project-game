@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Common.Interfaces;
 using Communication;
 
 namespace CommunicationServer

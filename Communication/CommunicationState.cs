@@ -8,7 +8,7 @@ namespace Communication
 {
     public class CommunicationState
     {
-        public const int BufferSize = 1024;
+        public const int BufferSize = 1024;        
         public const char EtbByte = (char) 23;
 
         public CommunicationState()
@@ -18,7 +18,7 @@ namespace Communication
         }
 
         public byte[] Buffer { get; } = new byte[BufferSize];
-        public StringBuilder MessageContentBuilder { get; }
+        private StringBuilder MessageContentBuilder { get; }
         public long LastMessageReceivedTicks { get; set; }
 
         public (IEnumerable<string> messageList, bool hasEtbByte) SplitMessages(int bytesRead, int id)
@@ -36,7 +36,6 @@ namespace Communication
                 var numberOfMessages = messages.Length;
                 var wholeMessages = string.IsNullOrEmpty(messages[numberOfMessages - 1]);
 
-                //LastMessageReceivedTicks = DateTime.Now.Ticks;
                 MessageContentBuilder.Clear();
 
                 if (!wholeMessages)

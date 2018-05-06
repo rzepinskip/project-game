@@ -27,14 +27,14 @@ namespace Communication
             ClientType = ClientType.NonInitialized;
         }
 
-        public int Id { get; set; }
-        public Socket WorkSocket { get; set; }
+        private int Id { get; set; }
+        private Socket WorkSocket { get; set; }
 
-        public ManualResetEvent MessageProcessed { get; }
-        public CommunicationState State { get; set; }
+        private ManualResetEvent MessageProcessed { get; }
+        private CommunicationState State { get; set; }
 
         public int SocketId => Id;
-        public ClientType ClientType { get; set; }
+        private ClientType ClientType { get; set; }
 
         public void Receive()
         {
@@ -156,7 +156,6 @@ namespace Communication
 
             if (bytesRead > 0)
             {
-                state.UpdateLastMessageTicks();
                 var (messages, hasEtbByte) = state.SplitMessages(bytesRead, Id);
 
                 var handledKeepAlive = false;
