@@ -16,7 +16,7 @@ namespace GameSimulation
 
         public GameSimulation(string configFilePath)
         {
-            int port = 11000;
+            var port = Constants.DefaultPortNumber;
             var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             var ipAddress = ipHostInfo.AddressList[0];
 

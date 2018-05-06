@@ -8,16 +8,13 @@ namespace Communication
 {
     public class CommunicationState
     {
-        public const int BufferSize = 1024;        
-        public const char EtbByte = (char) 23;
-
         public CommunicationState()
         {
             LastMessageReceivedTicks = DateTime.Now.Ticks;
             MessageContentBuilder = new StringBuilder();
         }
 
-        public byte[] Buffer { get; } = new byte[BufferSize];
+        public byte[] Buffer { get; } = new byte[Constants.BufferSize];
         private StringBuilder MessageContentBuilder { get; }
         public long LastMessageReceivedTicks { get; set; }
 
@@ -28,11 +25,11 @@ namespace Communication
             Debug.WriteLine($"Socket {id}:\nData : {content}");
 
             var messages = new string[0];
-            var hasEtbByte = content.IndexOf(EtbByte) > -1;
+            var hasEtbByte = content.IndexOf(Constants.EtbByte) > -1;
 
             if (hasEtbByte)
             {
-                messages = content.Split(EtbByte);
+                messages = content.Split(Constants.EtbByte);
                 var numberOfMessages = messages.Length;
                 var wholeMessages = string.IsNullOrEmpty(messages[numberOfMessages - 1]);
 

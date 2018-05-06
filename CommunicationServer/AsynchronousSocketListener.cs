@@ -25,7 +25,7 @@ namespace CommunicationServer
 
         public void Send(IMessage message, int id)
         {
-            var byteData =  Encoding.ASCII.GetBytes(message.SerializeToXml() + CommunicationState.EtbByte);
+            var byteData =  Encoding.ASCII.GetBytes(message.SerializeToXml() + Constants.EtbByte);
             var findResult = _accepter.AgentToCommunicationHandler.TryGetValue(id, out var handler);
             if (!findResult)
                 throw new Exception("Non exsistent socket id");

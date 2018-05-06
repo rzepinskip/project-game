@@ -15,12 +15,12 @@ namespace Communication
         {
             MaintainedConnections = maintainedConnections;
             KeepAliveTimeInterval = keepAliveTimeInterval;
-            ReceivedKeepAlivesTimer = new Timer((keepAliveTimeInterval.Seconds * 1000 + keepAliveTimeInterval.Milliseconds) / 8);
+            ReceivedKeepAlivesTimer = new Timer(keepAliveTimeInterval.TotalMilliseconds);
             ReceivedKeepAlivesTimer.Elapsed += CheckKeepAlivesCallback;
             ReceivedKeepAlivesTimer.Start();
         }
 
-        private void CheckKeepAlivesCallback(Object source, System.Timers.ElapsedEventArgs e)
+        private void CheckKeepAlivesCallback(Object source, ElapsedEventArgs e)
         {
             var currentTime = DateTime.Now.Ticks;
             foreach (var csStateObject in MaintainedConnections)

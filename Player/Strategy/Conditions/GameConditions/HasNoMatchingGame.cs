@@ -30,7 +30,7 @@ namespace Player.Strategy.Conditions.GameConditions
         public override IMessage GetNextMessage(BaseState fromStrategyState)
         {
             //Thread Sleep to avoid CS spamming
-            Thread.Sleep(1000);
+            Thread.Sleep(Constants.DefaultRequestRetryInterval);
             return new GetGamesMessage();
         }
 

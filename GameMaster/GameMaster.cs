@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading;
 using Common;
 using Common.ActionInfo;
 using Common.Interfaces;
-using Communication;
 using GameMaster.ActionHandlers;
 using GameMaster.Configuration;
 using Messaging.InitialisationMessages;
@@ -41,7 +39,9 @@ namespace GameMaster
             _playerGuidToId = new Dictionary<Guid, int>();
             foreach (var player in Board.Players) _playerGuidToId.Add(Guid.NewGuid(), player.Key);
 
-            checkIfFullTeamTimer = new Timer(CheckIfGameFullCallback, null, 2000, 1000);
+            checkIfFullTeamTimer = new Timer(CheckIfGameFullCallback, null,
+                (int) Constants.GameFullCheckStartDelay.TotalMilliseconds,
+                (int) Constants.GameFullCheckInterval.TotalMilliseconds);
 
             _messagingHandler = new MessagingHandler(gameConfiguration, communicationClient);
             _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
