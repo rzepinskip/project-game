@@ -12,6 +12,7 @@ namespace GameMaster.Delays
         public double PickUpDelay { get; set; }
         public double PlacingDelay { get; set; }
         public double KnowledgeExchangeDelay { get; set; }
+        public double DestroyDelay { get; set; }
 
         internal double GetDelayFor(ActionInfo actionInfo)
         {
@@ -41,6 +42,11 @@ namespace GameMaster.Delays
         private double GetDelayFor(TestActionInfo actionInfo)
         {
             return TestDelay;
+        }
+
+        private double GetDelayFor(DestroyActionInfo actionInfo)
+        {
+            return DestroyDelay;
         }
 
         public bool Equals(ActionCosts other)

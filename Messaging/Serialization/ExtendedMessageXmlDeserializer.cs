@@ -72,6 +72,10 @@ namespace Messaging.Serialization
                     ConfirmJoiningGameMessage.XmlRootName,
                     GetDefaultXmlSerializer(typeof(ConfirmJoiningGameMessage))
                 },
+                {
+                    DestroyPieceRequest.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(DestroyPieceRequest))
+                },
             };
         }
 
@@ -109,7 +113,6 @@ namespace Messaging.Serialization
         private string ReadRootName(XDocument document)
         {
             var node = document.Root;
-
             return node?.Name.LocalName;
         }
     }

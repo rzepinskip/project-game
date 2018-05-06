@@ -9,6 +9,7 @@ namespace Player.Strategy.States.StrategyStates
         {
             transitionConditions.Add(new HasNoPieceStrategyCondition(strategyInfo));
             transitionConditions.Add(new HasNormalPieceStrategyCondition(strategyInfo));
+            transitionConditions.Add(new HasShamCondition(strategyInfo));
         }
     }
 }

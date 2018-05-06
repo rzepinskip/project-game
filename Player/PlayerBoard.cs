@@ -62,7 +62,7 @@ namespace Player
 
             if (piece.PlayerId.HasValue) Players[piece.PlayerId.Value].Piece = piece;
 
-            if (piece.Type == PieceType.Sham)
+            if (piece.Type == PieceType.Destroyed)
             {
                 Pieces.Remove(piece.Id);
                 if (piece.PlayerId.HasValue) Players[piece.PlayerId.Value].Piece = null;

@@ -47,7 +47,8 @@ namespace Common
         Discover,
         PickUp,
         Place,
-        Test
+        Test,
+        Destroy
     }
 
     public enum GoalFieldType
@@ -76,7 +77,9 @@ namespace Common
 
         [XmlEnum("sham")] Sham,
 
-        [XmlEnum("normal")] Normal
+        [XmlEnum("normal")] Normal,
+
+        [XmlEnum("destroyed")] Destroyed
     }
 
     public enum TeamColor

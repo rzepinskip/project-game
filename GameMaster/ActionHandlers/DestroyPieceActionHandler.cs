@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using ClientsCommon.ActionAvailability.AvailabilityChain;
 using Common;
 using Common.BoardObjects;
 
 namespace GameMaster.ActionHandlers
 {
-    internal class TestPieceActionHandler : ActionHandler
+    public class DestroyPieceActionHandler : ActionHandler
     {
-        public TestPieceActionHandler(int playerId, GameMasterBoard board) : base(playerId, board)
+        public DestroyPieceActionHandler(int playerId, GameMasterBoard board) : base(playerId, board)
         {
             PlayerId = playerId;
             Board = board;
@@ -15,19 +17,20 @@ namespace GameMaster.ActionHandlers
 
         protected override bool Validate()
         {
-            return new TestAvailabilityChain(PlayerId, Board.Players).ActionAvailable();
+            var playerInfo = Board.Players[PlayerId];
+            return new DestroyAvailabilityChain(PlayerId, Board.Players).ActionAvailable();
         }
 
         public override DataFieldSet Respond()
         {
-            if (!Validate())
-                return  DataFieldSet.Create(PlayerId, new Piece[0]);
+            if(!Validate())
+                return DataFieldSet.Create(PlayerId, new Piece[0]);
 
             var player = Board.Players[PlayerId];
             var playerPiece = player.Piece;
 
-            //if (playerPiece.Type == PieceType.Sham)
-            //    player.Piece = null;
+            player.Piece = null;
+            playerPiece.Type = PieceType.Destroyed;
 
             return DataFieldSet.Create(PlayerId, new [] { playerPiece });
         }
