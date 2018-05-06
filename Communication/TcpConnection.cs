@@ -65,6 +65,7 @@ namespace Communication
                 if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset)
                 {
                     Console.WriteLine($"SEND: socket #{SocketId} is disconnected.");
+                    e.Data.Add("socketId", SocketId);
                     throw;
                 }
 
@@ -133,7 +134,7 @@ namespace Communication
             {
                 if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset)
                 {
-                    Console.WriteLine("Somebody disconnected - bubbling up exception...");
+                    Console.WriteLine("READ: Somebody disconnected - bubbling up exception...");
                         
                     HandleConnectionException(e);
                     return;

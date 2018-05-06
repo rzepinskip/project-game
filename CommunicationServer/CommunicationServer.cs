@@ -89,15 +89,11 @@ namespace CommunicationServer
             }
             catch (Exception e)
             {
-                if (e is SocketException socketException &&
-                    socketException.SocketErrorCode == SocketError.ConnectionReset)
+                if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset)
                 {
-                    // TODO Client disconnected
-                    Console.WriteLine("Should handle CLIENT(GM or Player) disconnection HERE");
-
                     var clientType = GetClientTypeFrom(id);
 
-                    Console.WriteLine($"{clientType} disconnected");
+                    Console.WriteLine($"{clientType} #{e.Data["socketId"]} disconnected");
 
                     return;
                 }
