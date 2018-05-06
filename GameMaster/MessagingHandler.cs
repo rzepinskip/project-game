@@ -25,6 +25,7 @@ namespace GameMaster
             _actionCosts = gameConfiguration.ActionCosts;
 
             Client = communicationClient;
+            communicationClient.SetIncomingMessageHandler(HandleMessagesFromClient);
             new Thread(() => Client.Connect()).Start();
         }
 
