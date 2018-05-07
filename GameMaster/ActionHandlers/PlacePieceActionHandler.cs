@@ -36,6 +36,7 @@ namespace GameMaster.ActionHandlers
             if (playerGoalField != null && playerGoalField.Type == GoalFieldType.Goal)
                 Board.MarkGoalAsCompleted(playerGoalField);
 
+            Board.Pieces.Remove(piece.Id);
             return DataFieldSet.Create(PlayerId, new[] {playerGoalField});
         }
     }
