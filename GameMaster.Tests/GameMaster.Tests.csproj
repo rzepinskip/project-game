@@ -6,7 +6,9 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
+
   <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.3.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
@@ -14,13 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BoardGenerators\BoardGenerators.csproj" />
     <ProjectReference Include="..\GameMaster\GameMaster.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Resources\ConfigurationLoaderTestsData.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\Player\Player.csproj" />
+    <ProjectReference Include="..\TestScenarios\TestScenarios.csproj" />
   </ItemGroup>
 
 </Project>

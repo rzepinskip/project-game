@@ -5,9 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ActionHelpers\**" />
-    <EmbeddedResource Remove="ActionHelpers\**" />
-    <None Remove="ActionHelpers\**" />
+    <PackageReference Include="NLog" Version="4.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

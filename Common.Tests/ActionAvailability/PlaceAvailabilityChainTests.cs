@@ -1,8 +1,9 @@
-﻿using Common.ActionAvailability.AvailabilityChain;
+﻿using ClientsCommon.ActionAvailability.AvailabilityChain;
+using Common;
 using Common.BoardObjects;
 using Xunit;
 
-namespace Common.Tests.ActionAvailability
+namespace ClientsCommon.Tests.ActionAvailability
 {
     public class PlaceAvailabilityChainTests
     {
@@ -22,8 +23,10 @@ namespace Common.Tests.ActionAvailability
             board.PlacePieceInTaskArea(1, locationFail);
 
             board.Players.Add(playerIdSuccess,
-                new PlayerInfo(TeamColor.Blue, PlayerType.Member, locationSuccess, new Piece(0, PieceType.Normal)));
-            board.Players.Add(playerIdFail, new PlayerInfo(TeamColor.Blue, PlayerType.Member, locationFail));
+                new PlayerInfo(playerIdSuccess, TeamColor.Blue, PlayerType.Member, locationSuccess,
+                    new Piece(0, PieceType.Normal)));
+            board.Players.Add(playerIdFail,
+                new PlayerInfo(playerIdFail, TeamColor.Blue, PlayerType.Member, locationFail));
         }
 
         private readonly int boardWidth = 5;

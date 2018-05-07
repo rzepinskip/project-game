@@ -1,94 +1,134 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 using Common;
 using Common.BoardObjects;
-using Messaging.Requests;
-using Messaging.Responses;
+using Common.Interfaces;
 using NLog;
 using Player.Logging;
 using Player.Strategy;
 
 namespace Player
 {
-    public class Player : PlayerBase
+    public class Player : PlayerBase, IPlayer
     {
-        public ObservableConcurrentQueue<Request> RequestsQueue { get; set; }
-        public ObservableConcurrentQueue<Response> ResponsesQueue { get; set; }
+        private bool _hasGameEnded;
+        private PlayerCoordinator _playerCoordinator;
+        public ILogger Logger;
 
-        private string PlayerGuid { get; set; }
-        private PlayerBoard PlayerBoard { get; set; }
-        private ILogger _logger;
+        public Player(IClient communicationClient, string gameName, TeamColor color, PlayerType role)
+        {
+            CommunicationClient = communicationClient;
 
-        private List<PlayerBase> Players { get; set; }
+            var factory = new LoggerFactory();
+            Logger = factory.GetPlayerLogger(0);
 
-        //public Location Location { get; set; }
-        private IStrategy PlayerStrategy { get; set; }
+            _playerCoordinator = new PlayerCoordinator(gameName, color, role);
+            new Thread(() => CommunicationClient.Connect(HandleResponse)).Start();
+        }
 
-        public void InitializePlayer(int id, TeamColor team, PlayerType type, PlayerBoard board,
+        public Player(int id, Guid guid, TeamColor team, PlayerType role,
+            PlayerBoard board, Location location)
+        {
+            Id = id;
+            Team = team;
+            Role = role;
+            PlayerGuid = guid;
+            GameId = 0;
+            PlayerBoard = board;
+            PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
+
+            _playerCoordinator = new PlayerCoordinator("", team, role);
+        }
+
+        public int GameId { get; private set; }
+        public PlayerBoard PlayerBoard { get; private set; }
+        public Guid PlayerGuid { get; private set; }
+
+        public IClient CommunicationClient { get; }
+        public IPlayerBoard Board => PlayerBoard;
+
+        public void UpdateGameState(IEnumerable<GameInfo> gameInfo)
+        {
+            _playerCoordinator.UpdateGameStateInfo(gameInfo);
+        }
+
+        public void UpdateJoiningInfo(bool info)
+        {
+            _playerCoordinator.UpdateJoinInfo(info);
+        }
+
+        public void NotifyAboutGameEnd()
+        {
+            _hasGameEnded = true;
+            _playerCoordinator.NotifyAboutGameEnd();
+        }
+
+        public void UpdatePlayer(int playerId, Guid playerGuid, PlayerBase playerBase, int gameId)
+        {
+            Id = playerId;
+            PlayerGuid = playerGuid;
+            Team = playerBase.Team;
+            Role = playerBase.Role;
+            GameId = gameId;
+        }
+
+        public void InitializeGameData(Location playerLocation, BoardInfo board, IEnumerable<PlayerBase> players)
+        {
+            PlayerBoard = new PlayerBoard(board.Width, board.TasksHeight, board.GoalsHeight);
+            foreach (var playerBase in players) PlayerBoard.Players.Add(playerBase.Id, new PlayerInfo(playerBase));
+
+            PlayerBoard.Players[Id].Location = playerLocation;
+            _playerCoordinator.CreatePlayerStrategyFactory(new PlayerStrategyFactory(this));
+
+            Debug.WriteLine("Player has updated game data and started playing");
+        }
+
+        public void InitializePlayer(int id, Guid guid, TeamColor team, PlayerType role, PlayerBoard board,
             Location location)
         {
             var factory = new LoggerFactory();
-            _logger = factory.GetPlayerLogger(id);
+            Logger = factory.GetPlayerLogger(id);
 
             Id = id;
             Team = team;
-            Type = type;
+            Role = role;
+            PlayerGuid = guid;
+            GameId = 0;
             PlayerBoard = board;
-            //Location = location;
-            PlayerStrategy = new PlayerStrategy(board, Team, Id);
-            PlayerBoard.Players.Add(id, new PlayerInfo(team, PlayerType.Leader, location));
+            PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
+
+            _playerCoordinator = new PlayerCoordinator("", team, role);
         }
 
-        public Request GetNextRequestMessage()
+        public IMessage GetNextRequestMessage()
         {
-            var currentLocation = PlayerBoard.Players[Id].Location;
-            return PlayerStrategy.NextMove(currentLocation);
+            return _playerCoordinator.NextMove();
         }
 
-        private void HandleResponse()
+        public void HandleExchangeKnowledge(int senderPlayerId)
         {
-            Response response;
-
-            while (!ResponsesQueue.TryDequeue(out response))
-            {
-                Task.Delay(10);
-            }
-            //Log received response
-            response.Update(PlayerBoard);
-            _logger.Info("RESPONSE: " + response.ToLog());
-            //
-            //change board state based on response 
-            //  - update method in Response Message
-            //based on board state change strategy state
-            //  - implement strategy
-            //  - hold current state
-            //  - implement state changing action (stateless in next iteration) which return new message
-            //
-            //var message = new Move()
+            //evaluate
+        }
+        private void HandleResponse(IMessage response)
+        {
+            //if (_hasGameEnded)
             //{
-            //    PlayerId = player.Id,
-            //    Direction = player.Team == TeamColor.Red ? Direction.Down : Direction.Up,
-            //};
+            //    _hasGameEnded = true;
+            //    return;
+            //}
 
-            //log current state
+            response.Process(this);
 
-            try
+            if (_playerCoordinator.StrategyReturnsMessage())
             {
                 var request = GetNextRequestMessage();
-                _logger.Info("REQUEST: " + request.ToLog());
-                RequestsQueue.Enqueue(request);
+                Logger.Info(request);
+                CommunicationClient.Send(request);
             }
-            catch(StrategyException s)
-            {
-                //log exception
-                _logger.Error("Thrown Exception", s);
-                throw;
-            }
-        }
 
-        public void StartListeningToResponses()
-        {
-            ResponsesQueue.ItemEnqueued += (sender, args) => { Task.Run(() => HandleResponse()); };
+            _playerCoordinator.NextState();
         }
     }
 }

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Common;
 using Common.BoardObjects;
-using Common.Interfaces;
 using GameMaster;
 
 namespace GameSimulation
@@ -38,19 +36,11 @@ namespace GameSimulation
                         else if (field is GoalField goalField)
                         {
                             if (goalField.Type == GoalFieldType.Goal)
-                            {
                                 if (board.UncompletedRedGoalsLocations.Contains(goalField) ||
                                     board.UncompletedBlueGoalsLocations.Contains(goalField))
-                                {
                                     symbol.Data = "G ";
-                                }
                                 else
-                                {
                                     symbol = new ColoredString("G ", ConsoleColor.DarkGray);
-                                }
-
-
-                            }
                             else
                                 symbol.Data = "+ ";
                         }

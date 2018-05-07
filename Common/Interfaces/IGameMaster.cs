@@ -1,17 +1,16 @@
-﻿using Common.BoardObjects;
+﻿using System;
 
 namespace Common.Interfaces
 {
     public interface IGameMaster
     {
-        IGameMasterBoard Board { get; set; }
+        (DataFieldSet data, bool isGameFinished) EvaluateAction(ActionInfo.ActionInfo actionInfo);
 
-        bool IsDiscoverPossible(string playerGuid);
-        bool IsMovePossible(string playerGuid, Direction direction);
-        bool IsPickUpPiecePossible(string playerGuid);
-        bool IsPlacePiecePossible(string playerGuid);
-        bool IsTestPiecePossible(string playerGuid);
+        void SetGameId(int gameId);
 
-        Location GetPlayerLocation(string playerGuid);
+        bool IsSlotAvailable();
+
+        (int gameId, Guid playerGuid, PlayerBase playerInfo) AssignPlayerToAvailableSlotWithPrefered(int playerId,
+            TeamColor preferedTeam, PlayerType preferedRole);
     }
 }

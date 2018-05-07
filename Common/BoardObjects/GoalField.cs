@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml.Serialization;
+using System.Diagnostics;
+using System.Xml;
 
 namespace Common.BoardObjects
 {
-    [Serializable]
+    [DebuggerDisplay("[X = {X}, Y = {Y}], {Type}, {Team}")]
     public class GoalField : Field, IEquatable<GoalField>
     {
-        private GoalField()
+        protected GoalField()
+        {
+        }
+
+        protected GoalField(GoalField goalField) : this(new Location(goalField.X, goalField.Y), goalField.Team,
+            goalField.Type, goalField.PlayerId, DateTime.Now)
         {
         }
 
@@ -16,17 +22,15 @@ namespace Common.BoardObjects
         {
         }
 
-        public GoalField(Location location, TeamColor team, GoalFieldType type, int? playerId, DateTime timestamp) :
+        protected GoalField(Location location, TeamColor team, GoalFieldType type, int? playerId, DateTime timestamp) :
             base(location, playerId, timestamp)
         {
             Team = team;
             Type = type;
         }
 
-        [XmlAttribute("type")]
         public GoalFieldType Type { get; set; }
 
-        [XmlAttribute("team")]
         public TeamColor Team { get; set; }
 
         public bool Equals(GoalField other)
@@ -44,11 +48,7 @@ namespace Common.BoardObjects
 
         public override int GetHashCode()
         {
-            var hashCode = -1655874655;
-            hashCode = hashCode * -1521134295 + base.GetHashCode();
-            hashCode = hashCode * -1521134295 + Type.GetHashCode();
-            hashCode = hashCode * -1521134295 + Team.GetHashCode();
-            return hashCode;
+            return base.GetHashCode();
         }
 
         public static bool operator ==(GoalField field1, GoalField field2)
@@ -59,6 +59,32 @@ namespace Common.BoardObjects
         public static bool operator !=(GoalField field1, GoalField field2)
         {
             return !(field1 == field2);
+        }
+
+        public override void ReadXml(XmlReader reader)
+        {
+            Type = reader.GetAttribute("type").GetEnumValueFor<GoalFieldType>();
+            Team = reader.GetAttribute("team").GetEnumValueFor<TeamColor>();
+
+            base.ReadXml(reader);
+        }
+
+        public override void WriteXml(XmlWriter writer)
+        {
+            base.WriteXml(writer);
+
+            writer.WriteAttributeString("type", Type.GetXmlAttributeName());
+            writer.WriteAttributeString("team", Team.GetXmlAttributeName());
+        }
+
+        public override string ToString()
+        {
+            return $"[{base.ToString()}, {Team}, {Type}";
+        }
+
+        public GoalField Clone()
+        {
+            return new GoalField(this);
         }
     }
 }

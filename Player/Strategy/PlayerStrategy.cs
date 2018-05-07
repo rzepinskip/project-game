@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Common;
 using Common.BoardObjects;
-using Messaging.Requests;
+using Common.Interfaces;
+using Player.Strategy.StateInfo;
 using Player.Strategy.States;
+using Player.Strategy.States.StrategyStates;
 
 namespace Player.Strategy
 {
@@ -11,11 +14,10 @@ namespace Player.Strategy
         private readonly StrategyInfo strategyInfo;
         private readonly List<GoalField> undiscoveredGoalFields = new List<GoalField>();
 
-        public State CurrentState { get; set; }
 
-        public PlayerStrategy(PlayerBoard board, TeamColor team, int playerId)
+        public PlayerStrategy(PlayerBoard board, PlayerBase player, Guid playerGuid, int gameId)
         {
-            var teamCoefficient = team == TeamColor.Blue ? 0 : 1;
+            var teamCoefficient = player.Team == TeamColor.Blue ? 0 : 1;
             var offset = teamCoefficient * (board.TaskAreaSize + board.GoalAreaSize);
 
             for (var i = 0; i < board.Width; ++i)
@@ -24,20 +26,26 @@ namespace Player.Strategy
 
             undiscoveredGoalFields.Shuffle();
 
-            strategyInfo = new StrategyInfo(null, board, playerId, team, undiscoveredGoalFields);
-            CurrentState = new InitState(strategyInfo);
+            strategyInfo = new StrategyInfo(null, board, playerGuid, gameId, player, undiscoveredGoalFields);
+            CurrentStrategyState = new InitStrategyState(strategyInfo);
         }
 
+        public BaseState CurrentStrategyState { get; set; }
 
-        public Request NextMove(Location location)
+
+        public IMessage NextMove()
         {
-            strategyInfo.FromLocation = location;
+            var nextState = CurrentStrategyState.GetNextState();
+            var gameMessage = CurrentStrategyState.GetNextMessage();
 
-            var nextState = CurrentState.GetNextState();
-            var gameMessage = CurrentState.GetNextMessage();
-
-            CurrentState = nextState;
+            CurrentStrategyState = nextState;
             return gameMessage;
+        }
+
+        public bool StrategyReturnsMessage()
+        {
+            strategyInfo.FromLocation = strategyInfo.Board.Players[strategyInfo.PlayerId].Location;
+            return CurrentStrategyState.StateReturnsMessage();
         }
     }
 }

@@ -1,8 +1,9 @@
-﻿using Common.ActionAvailability.AvailabilityChain;
+﻿using ClientsCommon.ActionAvailability.AvailabilityChain;
+using Common;
 using Common.BoardObjects;
 using Xunit;
 
-namespace Common.Tests.ActionAvailability
+namespace ClientsCommon.Tests.ActionAvailability
 {
     public class MoveAvailabilityChainTests
     {

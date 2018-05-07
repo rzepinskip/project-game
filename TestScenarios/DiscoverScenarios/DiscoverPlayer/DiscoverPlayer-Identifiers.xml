@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<SerializableDictionaryOfGuidInt32>
+  <item>
+    <key>
+      <guid>07b3a1a2-326f-4834-bcfe-18b1cea98cab</guid>
+    </key>
+    <value>
+      <int>0</int>
+    </value>
+  </item>
+  <item>
+    <key>
+      <guid>5c6b5263-c614-4608-9136-fcaff688c6ba</guid>
+    </key>
+    <value>
+      <int>1</int>
+    </value>
+  </item>
+</SerializableDictionaryOfGuidInt32>

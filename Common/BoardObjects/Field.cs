@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml;
 
 namespace Common.BoardObjects
 {
-    [Serializable]
     public abstract class Field : Location, IEquatable<Field>
     {
         protected Field()
@@ -14,7 +14,7 @@ namespace Common.BoardObjects
         {
         }
 
-        public Field(Location location, int? playerId, DateTime timestamp) : base(location.X, location.Y)
+        protected Field(Location location, int? playerId, DateTime timestamp) : base(location.X, location.Y)
         {
             PlayerId = playerId;
             Timestamp = timestamp;
@@ -27,8 +27,7 @@ namespace Common.BoardObjects
         {
             return other != null &&
                    base.Equals(other) &&
-                   EqualityComparer<int?>.Default.Equals(PlayerId, other.PlayerId) &&
-                   Timestamp == other.Timestamp;
+                   EqualityComparer<int?>.Default.Equals(PlayerId, other.PlayerId);
         }
 
         public override bool Equals(object obj)
@@ -38,11 +37,7 @@ namespace Common.BoardObjects
 
         public override int GetHashCode()
         {
-            var hashCode = 1655836488;
-            hashCode = hashCode * -1521134295 + base.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<int?>.Default.GetHashCode(PlayerId);
-            hashCode = hashCode * -1521134295 + Timestamp.GetHashCode();
-            return hashCode;
+            return base.GetHashCode();
         }
 
         public static bool operator ==(Field field1, Field field2)
@@ -53,6 +48,32 @@ namespace Common.BoardObjects
         public static bool operator !=(Field field1, Field field2)
         {
             return !(field1 == field2);
+        }
+
+        public override void ReadXml(XmlReader reader)
+        {
+            if (!string.IsNullOrWhiteSpace(reader.GetAttribute("timestamp")))
+                Timestamp = DateTime.Parse(reader.GetAttribute("timestamp"));
+
+            if (!string.IsNullOrWhiteSpace(reader.GetAttribute("playerId")))
+                PlayerId = int.Parse(reader.GetAttribute("playerId"));
+
+            base.ReadXml(reader);
+        }
+
+        public override void WriteXml(XmlWriter writer)
+        {
+            base.WriteXml(writer);
+
+            writer.WriteAttributeString("timestamp", Timestamp.ToString("s"));
+
+            if (PlayerId.HasValue)
+                writer.WriteAttributeString("playerId", PlayerId.ToString());
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + $", PlayerId={PlayerId}";
         }
     }
 }

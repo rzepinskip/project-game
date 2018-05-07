@@ -1,66 +1,37 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using Common;
-using Common.ActionAvailability.AvailabilityChain;
-using Common.ActionAvailability.AvailabilityLink;
-using Common.BoardObjects;
-using Common.Interfaces;
-using Messaging.ActionHelpers;
-using Messaging.Responses;
+using Common.ActionInfo;
 
 namespace Messaging.Requests
 {
-    [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
-    public class MoveRequest : Request
+    [XmlType(XmlRootName)]
+    public class MoveRequest : Request, IEquatable<MoveRequest>
     {
-        public MoveRequest(int playerId, Direction direction) : base(playerId)
+        public const string XmlRootName = "Move";
+
+        protected MoveRequest()
+        {
+        }
+
+        public MoveRequest(Guid playerGuid, int gameId, Direction direction) : base(playerGuid, gameId)
         {
             Direction = direction;
         }
 
-        [XmlAttribute]
-        public Direction Direction { get; }
+        [XmlAttribute("direction")] public Direction Direction { get; set; }
 
-        public override Response Execute(IGameMasterBoard board)
+        public bool Equals(MoveRequest other)
         {
-            var player = board.Players[PlayerId];
+            return other != null &&
+                   base.Equals(other) &&
+                   Direction == other.Direction;
+        }
 
-            var taskFields = new List<TaskField>();
-            var pieces = new List<Piece>();
-            var newLocation = player.Location.GetNewLocation(Direction);
-
-            var actionAvailability = new MoveAvailabilityChain(player.Location, Direction, player.Team, board);
-            if (actionAvailability.ActionAvailable())
-            {
-                board[player.Location].PlayerId = null;
-                var field = board[newLocation];
-                field.PlayerId = PlayerId;
-                player.Location = newLocation;
-
-                if (field is TaskField taskField)
-                {
-                    taskField.DistanceToPiece = board.DistanceToPieceFrom(taskField);
-                    taskFields.Add(taskField);
-
-                    if (taskField.PieceId.HasValue)
-                    {
-                        var piece = board.Pieces[taskField.PieceId.Value];
-                        pieces.Add(new Piece(piece.Id, PieceType.Unknown, piece.PlayerId));
-                    }
-                }
-            }
-            else
-            {
-                var stepActionAvailability = new StepOnPlayerAvailabilityChain(player.Location, Direction, player.Team, board);
-                if (stepActionAvailability.ActionAvailable() && board[newLocation] is TaskField taskField)
-                    taskFields.Add(taskField);
-
-                newLocation = player.Location;
-            }
-
-            var response = new MoveResponse(PlayerId, newLocation, taskFields, pieces);
-
-            return response;
+        public override ActionInfo GetActionInfo()
+        {
+            return new MoveActionInfo(PlayerGuid, Direction);
         }
 
         public override string ToLog()
@@ -68,9 +39,27 @@ namespace Messaging.Requests
             return string.Join(',', ActionType.Move, base.ToLog());
         }
 
-        public override double GetDelay(ActionCosts actionCosts)
+        public override bool Equals(object obj)
         {
-            return actionCosts.MoveDelay;
+            return Equals(obj as MoveRequest);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 1644100618;
+            hashCode = hashCode * -1521134295 + base.GetHashCode();
+            hashCode = hashCode * -1521134295 + Direction.GetHashCode();
+            return hashCode;
+        }
+
+        public static bool operator ==(MoveRequest request1, MoveRequest request2)
+        {
+            return EqualityComparer<MoveRequest>.Default.Equals(request1, request2);
+        }
+
+        public static bool operator !=(MoveRequest request1, MoveRequest request2)
+        {
+            return !(request1 == request2);
         }
     }
 }

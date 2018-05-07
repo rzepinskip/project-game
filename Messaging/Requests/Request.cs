@@ -1,36 +1,79 @@
-﻿using System.Xml.Serialization;
-using Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Xml.Serialization;
+using Common.ActionInfo;
 using Common.Interfaces;
-using Messaging.ActionHelpers;
 using Messaging.Responses;
 
 namespace Messaging.Requests
 {
-    [XmlRoot(Namespace = "https://se2.mini.pw.edu.pl/17-results/")]
-    public abstract class Request : ILoggable, IDelayed
+    public abstract class Request : Message, IRequest, IEquatable<Request>
     {
-        // TODO Guid and GameId handling
-        protected Request(int playerId)
+        protected Request()
         {
-            PlayerId = playerId;
         }
 
-        [XmlAttribute]
-        public int PlayerId { get; }
+        protected Request(Guid playerGuid, int gameId)
+        {
+            PlayerGuid = playerGuid;
+            GameId = gameId;
+        }
 
-        public string PlayerGuid { get; }
+        [XmlAttribute("gameId")] public int GameId { get; set; }
 
-        [XmlAttribute]
-        public int GameId { get; }
+        public bool Equals(Request other)
+        {
+            return other != null &&
+                   GameId == other.GameId &&
+                   PlayerGuid == other.PlayerGuid;
+        }
 
-        public abstract double GetDelay(ActionCosts actionCosts);
+        [XmlAttribute("playerGuid")] public Guid PlayerGuid { get; set; }
 
+        public override IMessage Process(IGameMaster gameMaster)
+        {
+            var result = gameMaster.EvaluateAction(GetActionInfo());
+            return ResponseWithData.ConvertToData(result.data, result.isGameFinished);
+        }
 
-        public abstract Response Execute(IGameMasterBoard board);
+        public override void Process(IPlayer player)
+        {
+            throw new InvalidOperationException();
+        }
+
+        public override void Process(ICommunicationServer cs, int id)
+        {
+            cs.Send(this, GameId);
+        }
+
+        public abstract ActionInfo GetActionInfo();
 
         public virtual string ToLog()
         {
-            return string.Join(',', PlayerId, PlayerGuid, GameId);
+            return string.Join(',', PlayerGuid, GameId);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Request);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -497176057;
+            hashCode = hashCode * -1521134295 + GameId.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<Guid>.Default.GetHashCode(PlayerGuid);
+            return hashCode;
+        }
+
+        public static bool operator ==(Request request1, Request request2)
+        {
+            return EqualityComparer<Request>.Default.Equals(request1, request2);
+        }
+
+        public static bool operator !=(Request request1, Request request2)
+        {
+            return !(request1 == request2);
         }
     }
 }

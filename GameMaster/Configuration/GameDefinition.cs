@@ -1,30 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml.Serialization;
+using BoardGenerators.Loaders;
 using Common.BoardObjects;
 
 namespace GameMaster.Configuration
 {
-    public class GameDefinition : IEquatable<GameDefinition>
+    public class GameDefinition : GameDefinitionBase, IEquatable<GameDefinition>
     {
-        [XmlElement]
-        public List<GoalField> Goals { get; set; }
+        private const double Tolerance = 0.01;
 
         public double ShamProbability { get; set; }
 
         public double PlacingNewPiecesFrequency { get; set; }
 
+        public string GameName { get; set; }
+
         public int InitialNumberOfPieces { get; set; }
 
-        public int BoardWidth { get; set; }
-
-        public int TaskAreaLength { get; set; }
-
-        public int GoalAreaLength { get; set; }
-
         public int NumberOfPlayersPerTeam { get; set; }
-
-        public string GameName { get; set; }
 
         public bool Equals(GameDefinition other)
         {
@@ -36,8 +29,8 @@ namespace GameMaster.Configuration
                     return false;
 
             return other != null &&
-                   ShamProbability == other.ShamProbability &&
-                   PlacingNewPiecesFrequency == other.PlacingNewPiecesFrequency &&
+                   Math.Abs(ShamProbability - other.ShamProbability) < Tolerance &&
+                   Math.Abs(PlacingNewPiecesFrequency - other.PlacingNewPiecesFrequency) < Tolerance &&
                    InitialNumberOfPieces == other.InitialNumberOfPieces &&
                    BoardWidth == other.BoardWidth &&
                    TaskAreaLength == other.TaskAreaLength &&

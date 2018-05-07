@@ -1,12 +1,12 @@
-﻿using Common.BoardObjects;
-using Messaging.Requests;
+﻿using Common.Interfaces;
 using Player.Strategy.States;
 
 namespace Player.Strategy
 {
     public interface IStrategy
     {
-        Request NextMove(Location location);
-        State CurrentState { get; set; }
+        BaseState CurrentStrategyState { get; set; }
+        IMessage NextMove();
+        bool StrategyReturnsMessage();
     }
 }

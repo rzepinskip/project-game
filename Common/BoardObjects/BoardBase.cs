@@ -1,54 +1,62 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 using Common.Interfaces;
 
 namespace Common.BoardObjects
 {
-    public abstract class BoardBase : IBoard
+    public abstract class BoardBase : IBoard, IXmlSerializable, IEquatable<BoardBase>
     {
-        protected BoardBase(int boardWidth, int taskAreaSize, int goalAreaSize)
+        protected BoardBase()
+        {
+        }
+
+        protected BoardBase(int boardWidth, int taskAreaSize, int goalAreaSize, GoalFieldType defaultGoalFieldType=GoalFieldType.Unknown)
         {
             GoalAreaSize = goalAreaSize;
             TaskAreaSize = taskAreaSize;
             Width = boardWidth;
             Content = new Field[boardWidth, Height];
-            Players = new Dictionary<int, PlayerInfo>();
-            Pieces = new Dictionary<int, Piece>();
 
             for (var i = 0; i < boardWidth; ++i)
             {
                 for (var j = 0; j < goalAreaSize; ++j)
-                    Content[i, j] = new GoalField(new Location(i, j), TeamColor.Blue);
+                    Content[i, j] = new GoalField(new Location(i, j), TeamColor.Blue, defaultGoalFieldType);
 
                 for (var j = goalAreaSize; j < taskAreaSize + goalAreaSize; ++j)
                     Content[i, j] = new TaskField(new Location(i, j));
 
                 for (var j = taskAreaSize + goalAreaSize; j < Height; ++j)
-                    Content[i, j] = new GoalField(new Location(i, j), TeamColor.Red);
+                    Content[i, j] = new GoalField(new Location(i, j), TeamColor.Red, defaultGoalFieldType);
             }
         }
 
-        protected Field[,] Content { get; }
+        protected Field[,] Content { get; set; }
+
+        public object Lock { get; protected set; } = new object();
+
         public Field this[Location location]
         {
             get => Content[location.X, location.Y];
             set => Content[location.X, location.Y] = value;
         }
 
-        public int TaskAreaSize { get; }
-        public int GoalAreaSize { get; }
-        public int Width { get; }
+        public int TaskAreaSize { get; private set; }
+
+        public int GoalAreaSize { get; private set; }
+
+        public int Width { get; private set; }
+
         public int Height => 2 * GoalAreaSize + TaskAreaSize;
 
-        public Dictionary<int, PlayerInfo> Players { get; }
-        public Dictionary<int, Piece> Pieces { get; }
-        public object Lock { get; set; } = new object();
+        public SerializableDictionary<int, PlayerInfo> Players { get; } =
+            new SerializableDictionary<int, PlayerInfo>();
 
-        public IEnumerator GetEnumerator()
-        {
-            return Content.GetEnumerator();
-        }
+        public SerializableDictionary<int, Piece> Pieces { get; } = new SerializableDictionary<int, Piece>();
 
         public int? GetPieceIdAt(Location location)
         {
@@ -60,14 +68,13 @@ namespace Common.BoardObjects
             return pieceId;
         }
 
-
         public int DistanceToPieceFrom(Location location)
         {
             var min = int.MaxValue;
             for (var i = 0; i < Width; ++i)
             for (var j = GoalAreaSize; j < TaskAreaSize + GoalAreaSize; ++j)
             {
-                var field = Content[i, j] as TaskField;
+                var field = this[new Location(i, j)] as TaskField;
                 if (field.PieceId != null)
                 {
                     var distance = field.ManhattanDistanceTo(location);
@@ -84,10 +91,146 @@ namespace Common.BoardObjects
 
         public bool IsLocationInTaskArea(Location location)
         {
-            if (location.Y <= TaskAreaSize + GoalAreaSize - 1 && location.Y >= GoalAreaSize)
-                return true;
+            return location.Y <= TaskAreaSize + GoalAreaSize - 1 && location.Y >= GoalAreaSize;
+        }
 
-            return false;
+        public bool Equals(BoardBase other)
+        {
+            return other != null &&
+                   IsContentEqual(other.Content) &&
+                   TaskAreaSize == other.TaskAreaSize &&
+                   GoalAreaSize == other.GoalAreaSize &&
+                   Width == other.Width &&
+                   Height == other.Height &&
+                   Players.SequenceEqual(other.Players) &&
+                   Pieces.SequenceEqual(other.Pieces);
+        }
+
+
+        public XmlSchema GetSchema()
+        {
+            return null;
+        }
+
+        public virtual void ReadXml(XmlReader reader)
+        {
+            reader.MoveToContent();
+
+            TaskAreaSize = int.Parse(reader.GetAttribute("taskAreaSize"));
+            GoalAreaSize = int.Parse(reader.GetAttribute("goalAreaSize"));
+            Width = int.Parse(reader.GetAttribute("width"));
+
+            reader.ReadStartElement();
+
+            ReadCollection(reader, Players, nameof(Players));
+            ReadCollection(reader, Pieces, nameof(Pieces));
+
+            Content = new Field[Width, Height];
+            var types = new[] {typeof(GoalField), typeof(TaskField)};
+            var readElements = ReadCollection<Field>(reader, nameof(Content), types);
+            foreach (var element in readElements) this[element] = element;
+
+            reader.ReadEndElement();
+        }
+
+        public virtual void WriteXml(XmlWriter writer)
+        {
+            writer.WriteAttributeString("taskAreaSize", TaskAreaSize.ToString());
+            writer.WriteAttributeString("goalAreaSize", GoalAreaSize.ToString());
+            writer.WriteAttributeString("width", Width.ToString());
+
+            WriteCollection(writer, Players, nameof(Players));
+            WriteCollection(writer, Pieces, nameof(Pieces));
+
+            writer.WriteStartElement(nameof(Content));
+            foreach (var field in Content)
+            {
+                writer.WriteStartElement(field.GetType().Name);
+                field.WriteXml(writer);
+                writer.WriteEndElement();
+            }
+
+            writer.WriteEndElement();
+        }
+
+        public void Add(object value)
+        {
+            throw new NotSupportedException("Add is not supported.");
+        }
+
+        private void ReadCollection<TCollection>(XmlReader reader, TCollection collection, string collectionName)
+            where TCollection : IEnumerable, IXmlSerializable
+        {
+            collection.ReadXml(reader);
+        }
+
+        private void WriteCollection<TCollection>(XmlWriter writer, TCollection collection, string collectionName)
+            where TCollection : IEnumerable, IXmlSerializable
+        {
+            writer.WriteStartElement(collectionName);
+            collection.WriteXml(writer);
+            writer.WriteEndElement();
+        }
+
+        private List<T> ReadCollection<T>(XmlReader reader, string collectionName, IEnumerable<Type> derivedTypes)
+            where T : class
+        {
+            var serializers = new Dictionary<string, XmlSerializer>();
+            foreach (var derivedType in derivedTypes)
+                serializers.Add(derivedType.Name, new XmlSerializer(derivedType));
+
+            reader.ReadStartElement(collectionName);
+
+            var readElements = new List<T>();
+            while (reader.NodeType != XmlNodeType.EndElement)
+            {
+                var element = serializers[reader.LocalName].Deserialize(reader) as T;
+
+                readElements.Add(element);
+            }
+
+            reader.ReadEndElement();
+
+            return readElements;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as BoardBase);
+        }
+
+        private bool IsContentEqual(Field[,] otherContent)
+        {
+            for (var i = 0; i < Content.GetLength(0); i++)
+            for (var j = 0; j < Content.GetLength(1); j++)
+                if (Content[i, j] != otherContent[i, j])
+                    return false;
+
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -190167123;
+            hashCode = hashCode * -1521134295 + EqualityComparer<Field[,]>.Default.GetHashCode(Content);
+            hashCode = hashCode * -1521134295 + TaskAreaSize.GetHashCode();
+            hashCode = hashCode * -1521134295 + GoalAreaSize.GetHashCode();
+            hashCode = hashCode * -1521134295 + Width.GetHashCode();
+            hashCode = hashCode * -1521134295 + Height.GetHashCode();
+            hashCode = hashCode * -1521134295 +
+                       EqualityComparer<Dictionary<int, PlayerInfo>>.Default.GetHashCode(Players);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Dictionary<int, Piece>>.Default.GetHashCode(Pieces);
+            return hashCode;
+        }
+
+        public static bool operator ==(BoardBase base1, BoardBase base2)
+        {
+            return EqualityComparer<BoardBase>.Default.Equals(base1, base2);
+        }
+
+        public static bool operator !=(BoardBase base1, BoardBase base2)
+        {
+            return !(base1 == base2);
         }
     }
 }

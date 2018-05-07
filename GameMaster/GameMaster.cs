@@ -1,113 +1,180 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Common;
+using Common.ActionInfo;
+using Common.Interfaces;
+using GameMaster.ActionHandlers;
 using GameMaster.Configuration;
-using Messaging.ActionHelpers;
-using Messaging.Requests;
-using Messaging.Responses;
+using Messaging.InitialisationMessages;
 using NLog;
 
 namespace GameMaster
 {
-    public class GameMaster
+    public class GameMaster : IGameMaster
     {
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
-        public GameMaster(GameConfiguration gameConfiguration)
-        {
-            GameConfiguration = gameConfiguration;
+        public static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
-            var boardGenerator = new BoardGenerator();
-            Board = boardGenerator.InitializeBoard(GameConfiguration.GameDefinition);
+        private readonly GameConfiguration _gameConfiguration;
+
+        private readonly MessagingHandler _messagingHandler;
+        private readonly Dictionary<Guid, int> _playerGuidToId;
+        private readonly List<(TeamColor team, PlayerType role)> _playersSlots;
+        private int _gameId;
+        private bool _gameInProgress;
+        private PieceGenerator _pieceGenerator;
+        private Timer checkIfFullTeamTimer;
+
+        public GameMaster(GameConfiguration gameConfiguration, IClient communicationClient, string gameName)
+        {
+            _gameConfiguration = gameConfiguration;
+
+            var boardGenerator = new GameMasterBoardGenerator();
+            Board = boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
+            _playersSlots =
+                boardGenerator.GeneratePlayerSlots(_gameConfiguration.GameDefinition.NumberOfPlayersPerTeam);
+
+            _playerGuidToId = new Dictionary<Guid, int>();
+            foreach (var player in Board.Players) _playerGuidToId.Add(Guid.NewGuid(), player.Key);
+
+            checkIfFullTeamTimer = new Timer(CheckIfGameFullCallback, null,
+                (int) Constants.GameFullCheckStartDelay.TotalMilliseconds,
+                (int) Constants.GameFullCheckInterval.TotalMilliseconds);
+
+            _messagingHandler = new MessagingHandler(gameConfiguration, communicationClient);
+            _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
+
+            _messagingHandler.Client.Send(new RegisterGameMessage(new GameInfo(gameName,
+                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam,
+                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam)));
         }
 
-        public Dictionary<int, ObservableConcurrentQueue<Request>> RequestsQueues { get; set; } =
-            new Dictionary<int, ObservableConcurrentQueue<Request>>();
+        public GameMaster(GameMasterBoard board, Dictionary<Guid, int> playerGuidToId)
+        {
+            Board = board;
 
-        public Dictionary<int, ObservableConcurrentQueue<Response>> ResponsesQueues { get; set; } =
-            new Dictionary<int, ObservableConcurrentQueue<Response>>();
+            _playerGuidToId = playerGuidToId;
+        }
 
-        public Dictionary<int, bool> IsPlayerQueueProcessed { get; set; } = new Dictionary<int, bool>();
-        public Dictionary<int, object> IsPlayerQueueProcessedLock { get; set; } = new Dictionary<int, object>();
+        public GameMasterBoard Board { get; private set; }
 
-        public GameConfiguration GameConfiguration { get; }
-        private Dictionary<string, int> PlayerGuidToId { get; }
-        public GameMasterBoard Board { get; set; }
+        public bool IsSlotAvailable()
+        {
+            return _playersSlots.Count > 0;
+        }
+
+        public (int gameId, Guid playerGuid, PlayerBase playerInfo) AssignPlayerToAvailableSlotWithPrefered(
+            int playerId, TeamColor preferedTeam, PlayerType preferedRole)
+        {
+            (TeamColor team, PlayerType role) assignedValue;
+            if (_playersSlots.Contains((preferedTeam, preferedRole)))
+                assignedValue = (preferedTeam, preferedRole);
+            else if (_playersSlots.Contains((preferedTeam, PlayerType.Member)))
+                assignedValue = (preferedTeam, PlayerType.Member);
+            else
+                assignedValue = _playersSlots.First();
+
+            _playersSlots.Remove(assignedValue);
+
+            var playerInfo = new PlayerInfo(playerId, assignedValue.team, assignedValue.role);
+            Board.Players.Add(playerId, playerInfo);
+
+            var playerGuid = Guid.NewGuid();
+            _playerGuidToId.Add(playerGuid, playerId);
+
+            return (_gameId, playerGuid, playerInfo);
+        }
+
+        public void SetGameId(int gameId)
+        {
+            _gameId = gameId;
+        }
+
+        public (DataFieldSet data, bool isGameFinished) EvaluateAction(ActionInfo actionInfo)
+        {
+            var playerId = _playerGuidToId[actionInfo.PlayerGuid];
+            var action = new ActionHandlerDispatcher((dynamic) actionInfo, Board, playerId);
+            return (data: action.Execute(), isGameFinished: Board.IsGameFinished());
+        }
+
+        public void MessageHandler(IMessage message)
+        {
+            // TODO Log all messages
+            if (message is IRequest request)
+                PutActionLog(request);
+
+            IMessage response;
+            lock (Board.Lock)
+            {
+                response = message.Process(this);
+            }
+
+            if (_gameInProgress && Board.IsGameFinished())
+            {
+                GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner()));
+                FinishGame();
+            }
+
+            if (response != null)
+                _messagingHandler.Client.Send(response);
+        }
+
+        private void CheckIfGameFullCallback(object obj)
+        {
+            if (_playersSlots.Count > 0 || _gameInProgress) return;
+
+            _gameInProgress = true;
+            StartNewGame();
+
+            var boardInfo = new BoardInfo(Board.Width, Board.TaskAreaSize, Board.GoalAreaSize);
+
+            _messagingHandler.StartListeningToRequests(_playerGuidToId.Keys);
+            foreach (var i in _playerGuidToId)
+            {
+                var playerLocation = Board.Players.Values.Single(x => x.Id == i.Value).Location;
+                var gameStartMessage = new GameMessage(i.Value, Board.Players.Values, playerLocation, boardInfo);
+                _messagingHandler.Client.Send(gameStartMessage);
+            }
+        }
+
+        private void StartNewGame()
+        {
+            var oldBoard = Board;
+            var boardGenerator = new GameMasterBoardGenerator();
+            Board = boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
+            foreach (var boardPlayer in oldBoard.Players)
+            {
+                var oldPlayerInfo = boardPlayer.Value;
+                var playerInfo = new PlayerInfo(oldPlayerInfo.Id, oldPlayerInfo.Team, oldPlayerInfo.Role);
+                Board.Players.Add(boardPlayer.Key, playerInfo);
+            }
+
+            boardGenerator.SpawnGameObjects(_gameConfiguration.GameDefinition);
+
+            _pieceGenerator = new PieceGenerator(Board, _gameConfiguration.GameDefinition.ShamProbability,
+                _gameConfiguration.GameDefinition.PlacingNewPiecesFrequency);
+        }
+
+        private void FinishGame()
+        {
+            _gameInProgress = false;
+            _pieceGenerator.SpawnTimer.Dispose();
+        }
 
         public virtual event EventHandler<GameFinishedEventArgs> GameFinished;
 
         public void PutLog(ILoggable record)
         {
-            _logger.Info(record.ToLog());
+            Logger.Info(record.ToLog());
         }
 
-        public void PutActionLog(Request record)
+        public void PutActionLog(IRequest record)
         {
-            var playerInfo = Board.Players[record.PlayerId];
+            var playerId = _playerGuidToId[record.PlayerGuid];
+            var playerInfo = Board.Players[playerId];
             var actionLog = new RequestLog(record, playerInfo.Team, playerInfo.Role);
-            _logger.Info(actionLog.ToLog());
-        }
-
-        public PieceGenerator CreatePieceGenerator(GameMasterBoard board)
-        {
-            return new PieceGenerator(board, GameConfiguration.GameDefinition.ShamProbability);
-        }
-
-        private async void HandleMessagesFromPlayer(int playerId)
-        {
-            var requestQueue = RequestsQueues[playerId];
-            while (true)
-            {
-                lock (IsPlayerQueueProcessedLock[playerId])
-                {
-                    if (requestQueue.IsEmpty)
-                    {
-                        IsPlayerQueueProcessed[playerId] = false;
-                        break;
-                    }
-
-                    IsPlayerQueueProcessed[playerId] = true;
-                }
-
-                Request request;
-                while (!requestQueue.TryDequeue(out request))
-                    await Task.Delay(10);
-
-                var timeSpan = Convert.ToInt32(request.GetDelay(GameConfiguration.ActionCosts));
-                PutActionLog(request);
-                await Task.Delay(timeSpan);
-
-                Response response;
-                lock (Board.Lock)
-                {
-                    response = request.Execute(Board);
-
-                    if (Board.IsGameFinished())
-                    {
-                        new Thread(() => GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner())))
-                            .Start();
-                        response.IsGameFinished = true;
-                    }
-                }
-                
-                ResponsesQueues[request.PlayerId].Enqueue(response);
-            }
-        }
-
-        public void StartListeningToRequests()
-        {
-            foreach (var queue in RequestsQueues.Values)
-                queue.ItemEnqueued += (sender, args) =>
-                {
-                    var playerId = args.Item.PlayerId;
-
-                    lock (IsPlayerQueueProcessedLock[playerId])
-                    {
-                        if (!IsPlayerQueueProcessed[playerId])
-                            Task.Run(() => HandleMessagesFromPlayer(playerId));
-                    }
-                };
+            Logger.Info(actionLog.ToLog());
         }
     }
 
