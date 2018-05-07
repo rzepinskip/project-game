@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using System.Xml;
+using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
 
@@ -78,6 +79,13 @@ namespace Player
             // Insert new data
             playerInfo.Location = playerUpdatedLocation;
             this[playerUpdatedLocation].PlayerId = playerId;
+        }
+
+        public override void ReadXml(XmlReader reader)
+        {
+            base.ReadXml(reader);
+
+            reader.ReadEndElement();
         }
     }
 }

@@ -2,6 +2,8 @@
 using System.Threading;
 using Common;
 using NLog;
+using GameMaster;
+using Messaging.Serialization;
 
 namespace GameSimulation
 {
@@ -16,6 +18,7 @@ namespace GameSimulation
 
             _logger = GameMaster.GameMaster.Logger;
             simulation.StartSimulation();
+
             while (true)
             {
                 var boardVisualizer = new BoardVisualizer();
@@ -27,6 +30,7 @@ namespace GameSimulation
                     Thread.Sleep(200);
                     boardVisualizer.VisualizeBoard(simulation.GameMaster.Board);
                     Console.WriteLine(i);
+                   
                 }
 
                 if (simulation.GameFinished)

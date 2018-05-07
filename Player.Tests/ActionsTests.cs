@@ -13,6 +13,7 @@ namespace Player.Tests
             var playerInfo = scenario.InitialPlayerBoard.Players[scenario.PlayerId];
             var player = new Player(scenario.PlayerId, scenario.PlayerGuid, playerInfo.Team, playerInfo.Role,
                 scenario.InitialPlayerBoard, playerInfo.Location);
+            player.PlayerBoard.Players[scenario.PlayerId] = playerInfo;
 
             scenario.Response.Process(player);
 

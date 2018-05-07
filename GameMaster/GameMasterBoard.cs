@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using System.Xml.Serialization;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
+using Messaging.Serialization;
 
 namespace GameMaster
 {
@@ -85,26 +87,59 @@ namespace GameMaster
             return !(board1 == board2);
         }
 
+        public override void WriteXml(XmlWriter writer)
+        {
+            base.WriteXml(writer);
+            WriteUncompletedGoalsLocations(writer, UncompletedBlueGoalsLocations,
+                nameof(UncompletedBlueGoalsLocations));
+            WriteUncompletedGoalsLocations(writer, UncompletedRedGoalsLocations,
+                nameof(UncompletedRedGoalsLocations));
+        }
+
+        private void WriteUncompletedGoalsLocations(XmlWriter writer, List<Location> locations, string name)
+        {
+            writer.WriteStartElement(name);
+            foreach (var location in locations)
+            {
+                writer.WriteStartElement(nameof(Location));
+                location.WriteXml(writer);
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
         public override void ReadXml(XmlReader reader)
         {
             base.ReadXml(reader);
 
-            foreach (var field in Content)
+            if (reader.NodeType != XmlNodeType.EndElement)
             {
-                if (!(field is GoalField goalField) || goalField.Type != GoalFieldType.Goal) continue;
+                var blueGoals = ReadCollection<Location>(reader, nameof(UncompletedBlueGoalsLocations), new[] { typeof(Location) });
+                UncompletedBlueGoalsLocations.AddRange(blueGoals);
 
-                switch (goalField.Team)
+                var readGoals = ReadCollection<Location>(reader, nameof(UncompletedRedGoalsLocations), new[] { typeof(Location) });
+                UncompletedRedGoalsLocations.AddRange(readGoals);
+            }
+            else
+            {
+                foreach (var field in Content)
                 {
-                    case TeamColor.Blue:
-                        UncompletedBlueGoalsLocations.Add(goalField);
-                        break;
-                    case TeamColor.Red:
-                        UncompletedRedGoalsLocations.Add(goalField);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    if (!(field is GoalField goalField) || goalField.Type != GoalFieldType.Goal) continue;
+
+                    switch (goalField.Team)
+                    {
+                        case TeamColor.Blue:
+                            UncompletedBlueGoalsLocations.Add(goalField);
+                            break;
+                        case TeamColor.Red:
+                            UncompletedRedGoalsLocations.Add(goalField);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
             }
+            reader.ReadEndElement();
         }
     }
 }
