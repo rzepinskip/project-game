@@ -6,7 +6,6 @@ using System.Threading;
 using Common;
 using Common.Interfaces;
 using Communication;
-using CommunicationServer.Accepters;
 using NLog;
 
 namespace CommunicationServer
@@ -22,8 +21,8 @@ namespace CommunicationServer
         public CommunicationServer(IMessageDeserializer messageDeserializer, double keepAliveInterval, int port)
         {
             _clientTypes = new Dictionary<int, ClientType>();
-            _listener = new AsynchronousSocketListener(new TcpSocketAccepter(HandleMessage, messageDeserializer,
-                TimeSpan.FromMilliseconds(keepAliveInterval), this, port));
+            _listener = new AsynchronousSocketListener(HandleMessage, messageDeserializer,
+                TimeSpan.FromMilliseconds(keepAliveInterval), this, port);
             _communicationResolver = new CommunicationResolver();
             new Thread(() => _listener.StartListening()).Start();
         }
