@@ -20,7 +20,7 @@ namespace GameMaster.App
         private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            
+
             var gm = CreateGameMasterFrom(args);
             gm.GameFinished += GenerateNewFinishedGameMessage;
             _logger = GameMaster.Logger;
@@ -74,9 +74,7 @@ namespace GameMaster.App
             var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(gameConfigPath);
 
-            var communicationClient = new AsynchronousClient(new TcpSocketConnector(MessageSerializer.Instance, port,
-                address,
-                TimeSpan.FromMilliseconds((int) config.KeepAliveInterval)));
+            var communicationClient = new AsynchronousClient(MessageSerializer.Instance, new IPEndPoint(address, port), TimeSpan.FromMilliseconds((int) config.KeepAliveInterval));
 
             return new GameMaster(config, communicationClient, gameName);
         }
