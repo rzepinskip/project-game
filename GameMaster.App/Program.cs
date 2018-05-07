@@ -47,14 +47,14 @@ namespace GameMaster.App
             var addressFlag = false;
             var port = default(int);
             var gameConfigPath = default(string);
-            var address = default(IPAddress);
+            var ipAddress = default(IPAddress);
             var gameName = default(string);
 
             var options = new OptionSet
             {
                 {"port=", "port number", (int p) => port = p},
                 {"conf=", "configuration filename", c => gameConfigPath = c},
-                {"address=", "server adress or hostname", a => addressFlag = IPAddress.TryParse(a, out address)},
+                {"address=", "server adress or hostname", a => addressFlag = IPAddress.TryParse(a, out ipAddress)},
                 {"game=", "name of the game", g => gameName = g}
             };
 
@@ -74,7 +74,7 @@ namespace GameMaster.App
             var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(gameConfigPath);
 
-            var communicationClient = new AsynchronousClient(MessageSerializer.Instance, new IPEndPoint(address, port), TimeSpan.FromMilliseconds((int) config.KeepAliveInterval));
+            var communicationClient = new AsynchronousClient(MessageSerializer.Instance, new IPEndPoint(ipAddress, port), TimeSpan.FromMilliseconds((int) config.KeepAliveInterval));
 
             return new GameMaster(config, communicationClient, gameName);
         }
