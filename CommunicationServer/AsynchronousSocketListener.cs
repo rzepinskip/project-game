@@ -113,5 +113,16 @@ namespace CommunicationServer
             while (true)
                 tool.Receive();
         }
+
+        public void CloseSocket(int socketId)
+        {
+            Console.WriteLine("Closing socket: " + socketId);
+            var findResult = _agentToCommunicationHandler.TryGetValue(socketId, out var socket);
+            if(!findResult)
+                throw new Exception("Non existent socket id");
+
+            socket.CloseSocket();
+            _agentToCommunicationHandler.Remove(socketId);
+        }
     }
 }

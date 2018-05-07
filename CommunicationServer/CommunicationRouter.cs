@@ -69,5 +69,10 @@ namespace CommunicationServer
             _socketIdToGameId.TryGetValue(socketId, out var gameId);
             return gameId;
         }
+
+        public IEnumerable<int> GetAllPlayersInGame(int gameId)
+        {
+            return _socketIdToGameId.Where(x => x.Value == gameId && x.Key != gameId).Select(x => x.Key);
+        }
     }
 }

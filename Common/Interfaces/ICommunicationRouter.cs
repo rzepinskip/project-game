@@ -11,5 +11,6 @@ namespace Common.Interfaces
         void DeregisterGame(int gameId);
         void AssignGameIdToPlayerId(int gameId, int playerId);
         int GetGameIdFor(int playerId);
+        IEnumerable<int> GetAllPlayersInGame(int gameId);
     }
 }

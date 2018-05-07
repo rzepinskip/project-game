@@ -63,6 +63,11 @@ namespace CommunicationServer
             return _communicationCommunicationRouter.GetGameIdFor(socketId);
         }
 
+        public IEnumerable<int> GetAllPlayersInGame(int gameId)
+        {
+            return _communicationCommunicationRouter.GetAllPlayersInGame(gameId);
+        }
+
         public void MarkClientAsPlayer(int socketId)
         {
             Console.WriteLine($"{socketId} added as {ClientType.Player}");
@@ -110,7 +115,23 @@ namespace CommunicationServer
 
         public void HandleConnectionError(Exception e)
         {
-            throw new NotImplementedException();
+            var socketId = (int)e.Data["socketId"];
+            var clientType = GetClientTypeFrom(socketId);
+
+            if (clientType == ClientType.GameMaster)
+            {
+                var playersInGame = GetAllPlayersInGame(socketId);
+                foreach (var i in playersInGame)
+                {
+                    _socketListener.CloseSocket(i);
+                }
+            }
+
+            if (clientType == ClientType.Player)
+            {
+                _socketListener.CloseSocket(socketId);
+            }
+
         }
     }
 }

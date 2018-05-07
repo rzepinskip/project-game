@@ -6,5 +6,6 @@ namespace Common.Interfaces
     {
         void Send(IMessage message, int socketId);
         void StartListening(Action<Exception> connectionExceptionHandler);
+        void CloseSocket(int socketId);
     }
 }
