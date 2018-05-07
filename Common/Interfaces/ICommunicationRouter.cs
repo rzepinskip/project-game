@@ -2,13 +2,13 @@
 
 namespace Common.Interfaces
 {
-    public interface IResolver
+    public interface ICommunicationRouter
     {
-        IEnumerable<GameInfo> GetGames();
-        int GetGameId(string gameName);
+        IEnumerable<GameInfo> GetAllJoinableGames();
+        int GetGameIdFor(string gameName);
         void RegisterNewGame(GameInfo gameInfo, int socketId);
         void UpdateTeamCount(int gameId, TeamColor team);
-        void UnregisterGame(int gameId);
+        void DeregisterGame(int gameId);
         void AssignGameIdToPlayerId(int gameId, int playerId);
         int GetGameIdFor(int playerId);
     }

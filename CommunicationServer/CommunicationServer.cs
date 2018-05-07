@@ -13,7 +13,7 @@ namespace CommunicationServer
     public class CommunicationServer : ICommunicationServer, IConnectionTimeoutable
     {
         public static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
-        private readonly IResolver _communicationResolver;
+        private readonly ICommunicationRouter _communicationCommunicationRouter;
         private readonly IAsynchronousSocketListener _listener;
 
         private readonly Dictionary<int, ClientType> _clientTypes;
@@ -23,43 +23,43 @@ namespace CommunicationServer
             _clientTypes = new Dictionary<int, ClientType>();
             _listener = new AsynchronousSocketListener(HandleMessage, messageDeserializer,
                 TimeSpan.FromMilliseconds(keepAliveInterval), this, port);
-            _communicationResolver = new CommunicationResolver();
+            _communicationCommunicationRouter = new CommunicationRouter();
             new Thread(() => _listener.StartListening()).Start();
         }
 
-        public IEnumerable<GameInfo> GetGames()
+        public IEnumerable<GameInfo> GetAllJoinableGames()
         {
-            return _communicationResolver.GetGames();
+            return _communicationCommunicationRouter.GetAllJoinableGames();
         }
 
-        public int GetGameId(string gameName)
+        public int GetGameIdFor(string gameName)
         {
-            return _communicationResolver.GetGameId(gameName);
+            return _communicationCommunicationRouter.GetGameIdFor(gameName);
         }
 
         public void RegisterNewGame(GameInfo gameInfo, int socketId)
         {
-            _communicationResolver.RegisterNewGame(gameInfo, socketId);
+            _communicationCommunicationRouter.RegisterNewGame(gameInfo, socketId);
         }
 
         public void UpdateTeamCount(int gameId, TeamColor team)
         {
-            _communicationResolver.UpdateTeamCount(gameId, team);
+            _communicationCommunicationRouter.UpdateTeamCount(gameId, team);
         }
 
-        public void UnregisterGame(int gameId)
+        public void DeregisterGame(int gameId)
         {
-            _communicationResolver.UnregisterGame(gameId);
+            _communicationCommunicationRouter.DeregisterGame(gameId);
         }
 
         public void AssignGameIdToPlayerId(int gameId, int playerId)
         {
-            _communicationResolver.AssignGameIdToPlayerId(gameId, playerId);
+            _communicationCommunicationRouter.AssignGameIdToPlayerId(gameId, playerId);
         }
 
         public int GetGameIdFor(int socketId)
         {
-            return _communicationResolver.GetGameIdFor(socketId);
+            return _communicationCommunicationRouter.GetGameIdFor(socketId);
         }
 
         public void MarkClientAsPlayer(int socketId)

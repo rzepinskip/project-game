@@ -1,6 +1,6 @@
 ﻿namespace Common.Interfaces
 {
-    public interface ICommunicationServer : IResolver, IAsynchronousSocketListener, IClientTypeManager
+    public interface ICommunicationServer : ICommunicationRouter, IAsynchronousSocketListener, IClientTypeManager
     {
     }
 }

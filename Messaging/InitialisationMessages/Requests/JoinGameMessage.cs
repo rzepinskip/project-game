@@ -50,7 +50,7 @@ namespace Messaging.InitialisationMessages
         {
             PlayerId = id;
             cs.MarkClientAsPlayer(id);
-            cs.Send(this, cs.GetGameId(GameName));
+            cs.Send(this, cs.GetGameIdFor(GameName));
         }
     }
 }

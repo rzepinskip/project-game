@@ -7,26 +7,25 @@ using Common.Interfaces;
 
 namespace CommunicationServer
 {
-    internal class CommunicationResolver : IResolver
+    internal class CommunicationRouter : ICommunicationRouter
     {
         private readonly Dictionary<int, GameInfo> _gameIdToGameInfo;
         private readonly Dictionary<int, int> _socketIdToGameId;
 
-        public CommunicationResolver()
+        public CommunicationRouter()
         {
             _socketIdToGameId = new Dictionary<int, int>();
             _gameIdToGameInfo = new Dictionary<int, GameInfo>();
         }
 
-        public IEnumerable<GameInfo> GetGames()
+        public IEnumerable<GameInfo> GetAllJoinableGames()
         {
             return _gameIdToGameInfo.Values;
         }
 
-        public int GetGameId(string gameName)
+        public int GetGameIdFor(string gameName)
         {
-            Debug.WriteLine(gameName);
-            return _gameIdToGameInfo.FirstOrDefault(x => x.Value.GameName == gameName).Key;
+            return _gameIdToGameInfo.Single(x => x.Value.GameName == gameName).Key;
         }
 
         public void RegisterNewGame(GameInfo gameInfo, int socketId)
@@ -55,7 +54,7 @@ namespace CommunicationServer
             _gameIdToGameInfo[gameId] = info;
         }
 
-        public void UnregisterGame(int gameId)
+        public void DeregisterGame(int gameId)
         {
             _gameIdToGameInfo.Remove(gameId);
         }
