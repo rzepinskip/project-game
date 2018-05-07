@@ -38,8 +38,9 @@ namespace CommunicationServer.App
 
             var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(gameConfigPath);
+            var keepAliveInterval = TimeSpan.FromMilliseconds((int) config.KeepAliveInterval);
 
-            return new CommunicationServer(MessageSerializer.Instance, config.KeepAliveInterval, port);
+            return new CommunicationServer(MessageSerializer.Instance, keepAliveInterval, port);
         }
 
         private static void Usage(OptionSet options)

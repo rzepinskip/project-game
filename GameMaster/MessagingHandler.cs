@@ -22,7 +22,7 @@ namespace GameMaster
             _actionCosts = gameConfiguration.ActionCosts;
 
             Client = communicationClient;
-            new Thread(() => Client.Connect(HandleMessagesFromClient)).Start();
+            new Thread(() => Client.Connect(HandleConnectionError, HandleMessagesFromClient)).Start();
         }
 
         private async void HandleMessagesFromPlayer(Guid playerGuid)
@@ -89,7 +89,6 @@ namespace GameMaster
             }
         }
 
-
         public void CreateQueues(IEnumerable<Guid> guids)
         {
             _playerHandles = new Dictionary<Guid, PlayerHandle>();
@@ -109,6 +108,11 @@ namespace GameMaster
             public ObservableConcurrentQueue<IRequest> Queue { get; }
             public bool IsProcessed { get; set; }
             public object Lock { get; }
+        }
+
+        public void HandleConnectionError(Exception e)
+        {
+            throw new NotImplementedException();
         }
     }
 }

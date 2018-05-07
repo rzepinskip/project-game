@@ -25,7 +25,7 @@ namespace Player
             Logger = factory.GetPlayerLogger(0);
 
             _playerCoordinator = new PlayerCoordinator(gameName, color, role);
-            new Thread(() => CommunicationClient.Connect(HandleResponse)).Start();
+            new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
         }
 
         public Player(int id, Guid guid, TeamColor team, PlayerType role,
@@ -129,6 +129,11 @@ namespace Player
             }
 
             _playerCoordinator.NextState();
+        }
+
+        public void HandleConnectionError(Exception e)
+        {
+            throw new NotImplementedException();
         }
     }
 }

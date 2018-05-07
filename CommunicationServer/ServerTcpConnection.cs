@@ -2,24 +2,24 @@
 using System.Net.Sockets;
 using Common.Interfaces;
 using Communication;
-using Communication.Exceptions;
 
 namespace CommunicationServer
 {
     public class ServerTcpConnection : TcpConnection
     {
-        private readonly Action<IMessage, int> _handleMessage;
+        private readonly Action<IMessage, int> _messageHandler;
 
-        public ServerTcpConnection(Socket workSocket, int socketId, IMessageDeserializer messageDeserializer,
-            Action<IMessage, int> handleMessage)
-            : base(workSocket, socketId, messageDeserializer)
+        public ServerTcpConnection(Socket workSocket, int socketId, Action<Exception> connectionFailureHandler,
+            IMessageDeserializer messageDeserializer,
+            Action<IMessage, int> messageHandler)
+            : base(workSocket, socketId, connectionFailureHandler, messageDeserializer)
         {
-            _handleMessage = handleMessage;
+            _messageHandler = messageHandler;
         }
 
         public override void Handle(IMessage message, int socketId = -404)
         {
-            _handleMessage(message, socketId);
+            _messageHandler(message, socketId);
         }
 
         public override void HandleKeepAliveMessage()

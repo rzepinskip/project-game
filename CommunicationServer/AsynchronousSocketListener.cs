@@ -14,26 +14,26 @@ namespace CommunicationServer
     public class AsynchronousSocketListener : IAsynchronousSocketListener
     {
         private readonly Dictionary<int, ITcpConnection> _agentToCommunicationHandler;
+        private readonly TimeSpan _keepAliveInterval;
         private readonly IMessageDeserializer _messageDeserializer;
         private readonly Action<IMessage, int> _messageHandler;
-
         private readonly int _port;
 
         private readonly ManualResetEvent _readyForAccept = new ManualResetEvent(false);
+        private Action<Exception> _connectionExceptionHandler;
         private int _counter;
         private KeepAliveHandler _keepAliveHandler;
 
-        public AsynchronousSocketListener(Action<IMessage, int> messageHandler,
+        public AsynchronousSocketListener(int port, TimeSpan keepAliveInterval,
             IMessageDeserializer messageDeserializer,
-            TimeSpan keepAliveInterval, IConnectionTimeoutable connectionTimeoutHandler, int port)
+            Action<IMessage, int> messageHandler)
         {
             _agentToCommunicationHandler = new Dictionary<int, ITcpConnection>();
             _port = port;
             _counter = 0;
             _messageHandler = messageHandler;
             _messageDeserializer = messageDeserializer;
-            _keepAliveHandler = new ServerKeepAliveHandler(keepAliveInterval,
-                new ServerMaintainedConnections(_agentToCommunicationHandler), connectionTimeoutHandler);
+            _keepAliveInterval = keepAliveInterval;
         }
 
         public void Send(IMessage message, int socketId)
@@ -57,23 +57,26 @@ namespace CommunicationServer
             }
         }
 
-        public void StartListening()
+        public void StartListening(Action<Exception> connectionExceptionHandler)
         {
             var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             var ipAddress = ipHostInfo.AddressList[0];
             var localEndPoint = new IPEndPoint(ipAddress, _port);
+            _connectionExceptionHandler = connectionExceptionHandler;
+            _keepAliveHandler = new ServerKeepAliveHandler(_keepAliveInterval,
+                new ServerMaintainedConnections(_agentToCommunicationHandler), connectionExceptionHandler);
 
-            var listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            var listeningSocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             try
             {
-                listener.Bind(localEndPoint);
-                listener.Listen(100);
+                listeningSocket.Bind(localEndPoint);
+                listeningSocket.Listen(100);
 
                 while (true)
                 {
                     _readyForAccept.Reset();
                     Debug.WriteLine("CS waiting for a connections...");
-                    listener.BeginAccept(AcceptCallback, listener);
+                    listeningSocket.BeginAccept(AcceptCallback, listeningSocket);
 
                     _readyForAccept.WaitOne();
                 }
@@ -87,19 +90,19 @@ namespace CommunicationServer
         private void AcceptCallback(IAsyncResult ar)
         {
             _readyForAccept.Set();
-            Socket handler;
+            Socket socket;
             var listener = ar.AsyncState as Socket;
             try
             {
-                handler = listener.EndAccept(ar);
+                socket = listener.EndAccept(ar);
             }
             catch (Exception e)
             {
                 throw new ConnectionException("Unable to start listening", e);
             }
 
-            Debug.WriteLine("CS accepted connection for " + _counter);
-            var state = new ServerTcpConnection(handler, _counter, _messageDeserializer, _messageHandler);
+            var state = new ServerTcpConnection(socket, _counter, _connectionExceptionHandler, _messageDeserializer,
+                _messageHandler);
             _agentToCommunicationHandler.Add(_counter++, state);
             StartReading(state);
         }

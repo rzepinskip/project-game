@@ -10,21 +10,22 @@ using NLog;
 
 namespace CommunicationServer
 {
-    public class CommunicationServer : ICommunicationServer, IConnectionTimeoutable
+    public class CommunicationServer : ICommunicationServer
     {
         public static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
-        private readonly ICommunicationRouter _communicationCommunicationRouter;
-        private readonly IAsynchronousSocketListener _listener;
 
         private readonly Dictionary<int, ClientType> _clientTypes;
+        private readonly ICommunicationRouter _communicationCommunicationRouter;
+        private readonly IAsynchronousSocketListener _socketListener;
 
-        public CommunicationServer(IMessageDeserializer messageDeserializer, double keepAliveInterval, int port)
+        public CommunicationServer(IMessageDeserializer messageDeserializer, TimeSpan keepAliveInterval, int port)
         {
             _clientTypes = new Dictionary<int, ClientType>();
-            _listener = new AsynchronousSocketListener(HandleMessage, messageDeserializer,
-                TimeSpan.FromMilliseconds(keepAliveInterval), this, port);
+            _socketListener = new AsynchronousSocketListener(port, keepAliveInterval,
+                messageDeserializer, HandleMessage
+            );
             _communicationCommunicationRouter = new CommunicationRouter();
-            new Thread(() => _listener.StartListening()).Start();
+            new Thread(() => _socketListener.StartListening(HandleConnectionError)).Start();
         }
 
         public IEnumerable<GameInfo> GetAllJoinableGames()
@@ -83,12 +84,12 @@ namespace CommunicationServer
         {
             try
             {
-                _listener.Send(message, socketId);
-
+                _socketListener.Send(message, socketId);
             }
             catch (Exception e)
             {
-                if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset || e is ObjectDisposedException)
+                if (e is SocketException socketException &&
+                    socketException.SocketErrorCode == SocketError.ConnectionReset || e is ObjectDisposedException)
                 {
                     var clientType = GetClientTypeFrom(socketId);
 
@@ -101,21 +102,16 @@ namespace CommunicationServer
             }
         }
 
-        public void StartListening()
-        {
-            _listener.StartListening();
-        }
-
-        public void HandleConnectionTimeout(int socketId)
-        {
-            Console.WriteLine($"{GetClientTypeFrom(socketId)} #{socketId} exceeded keep alive timeout");
-        }
-
         public void HandleMessage(IMessage message, int socketId)
         {
             Debug.WriteLine("CS Message received from: " + socketId);
             Logger.Info(message + " from  id: " + socketId);
             message.Process(this, socketId);
+        }
+
+        public void HandleConnectionError(Exception e)
+        {
+            throw new NotImplementedException();
         }
     }
 }

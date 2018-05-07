@@ -10,12 +10,16 @@ namespace Communication
 {
     public abstract class TcpConnection : ITcpConnection
     {
-        private readonly IMessageDeserializer _messageDeserializer;
+        protected readonly Action<Exception> ConnectionFailureHandler;
+        protected readonly IMessageDeserializer MessageDeserializer;
 
-        protected TcpConnection(Socket workSocket, int socketId, IMessageDeserializer messageDeserializer)
+        protected TcpConnection(Socket workSocket, int socketId, Action<Exception> connectionFailureHandler,
+            IMessageDeserializer messageDeserializer
+        )
         {
             WorkSocket = workSocket;
-            _messageDeserializer = messageDeserializer;
+            MessageDeserializer = messageDeserializer;
+            ConnectionFailureHandler = connectionFailureHandler;
             SocketId = socketId;
             MessageProcessed = new ManualResetEvent(true);
             State = new CommunicationState();
@@ -155,7 +159,7 @@ namespace Communication
                 var handledKeepAlive = false;
                 foreach (var message in messages)
                 {
-                    if (!string.IsNullOrEmpty(message)) Handle(_messageDeserializer.Deserialize(message), SocketId);
+                    if (!string.IsNullOrEmpty(message)) Handle(MessageDeserializer.Deserialize(message), SocketId);
                     HandleKeepAliveMessage();
                 }
 

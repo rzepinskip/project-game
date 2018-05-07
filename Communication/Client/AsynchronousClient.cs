@@ -18,13 +18,12 @@ namespace Communication.Client
 
         private ITcpConnection _tcpConnection;
 
-        public AsynchronousClient(IMessageDeserializer messageDeserializer, IPEndPoint endPoint,
-            TimeSpan keepAliveInterval = default(TimeSpan))
+        public AsynchronousClient(IPEndPoint endPoint, TimeSpan keepAliveInterval, IMessageDeserializer messageDeserializer)
+            
         {
             _connectFinalized = new ManualResetEvent(false);
             _connectDone = new ManualResetEvent(false);
             _messageDeserializer = messageDeserializer;
-
             _ipEndPoint = endPoint;
             _keepAliveInterval = keepAliveInterval == default(TimeSpan)
                 ? Constants.DefaultMaxUnresponsivenessDuration
@@ -45,12 +44,13 @@ namespace Communication.Client
             }
         }
 
-        public void Connect(Action<IMessage> messageHandler)
+        public void Connect(Action<Exception> connectionFailureHandler, Action<IMessage> messageHandler)
         {
             try
             {
                 var client = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                var tcpConnection = new ClientTcpConnection(client, -1, _messageDeserializer, messageHandler);
+                var tcpConnection = new ClientTcpConnection(client, -1, connectionFailureHandler, _messageDeserializer,
+                    messageHandler);
                 _tcpConnection = tcpConnection;
 
                 client.BeginConnect(_ipEndPoint, ConnectCallback, client);
