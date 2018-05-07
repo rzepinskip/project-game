@@ -10,11 +10,11 @@ namespace CommunicationServer
     internal class CommunicationResolver : IResolver
     {
         private readonly Dictionary<int, GameInfo> _gameIdToGameInfo;
-        private readonly Dictionary<int, int> _playerIdToGameId;
+        private readonly Dictionary<int, int> _socketIdToGameId;
 
         public CommunicationResolver()
         {
-            _playerIdToGameId = new Dictionary<int, int>();
+            _socketIdToGameId = new Dictionary<int, int>();
             _gameIdToGameInfo = new Dictionary<int, GameInfo>();
         }
 
@@ -29,9 +29,10 @@ namespace CommunicationServer
             return _gameIdToGameInfo.FirstOrDefault(x => x.Value.GameName == gameName).Key;
         }
 
-        public void RegisterNewGame(GameInfo gameInfo, int id)
+        public void RegisterNewGame(GameInfo gameInfo, int socketId)
         {
-            _gameIdToGameInfo.Add(id, gameInfo);
+            var gameId = socketId;
+            _gameIdToGameInfo.Add(gameId, gameInfo);
         }
 
         public void UpdateTeamCount(int gameId, TeamColor team)
@@ -61,12 +62,12 @@ namespace CommunicationServer
 
         public void AssignGameIdToPlayerId(int gameId, int playerId)
         {
-            _playerIdToGameId.Add(playerId, gameId);
+            _socketIdToGameId.Add(playerId, gameId);
         }
 
-        public int GetGameIdForPlayer(int playerId)
+        public int GetGameIdFor(int socketId)
         {
-            _playerIdToGameId.TryGetValue(playerId, out var gameId);
+            _socketIdToGameId.TryGetValue(socketId, out var gameId);
             return gameId;
         }
     }

@@ -6,10 +6,10 @@ namespace Common.Interfaces
     {
         IEnumerable<GameInfo> GetGames();
         int GetGameId(string gameName);
-        void RegisterNewGame(GameInfo gameInfo, int id);
+        void RegisterNewGame(GameInfo gameInfo, int socketId);
         void UpdateTeamCount(int gameId, TeamColor team);
         void UnregisterGame(int gameId);
         void AssignGameIdToPlayerId(int gameId, int playerId);
-        int GetGameIdForPlayer(int playerId);
+        int GetGameIdFor(int playerId);
     }
 }

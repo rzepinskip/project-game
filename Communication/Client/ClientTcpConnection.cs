@@ -10,9 +10,9 @@ namespace Communication.Client
         private readonly Action<IMessage> _handler;
         private ClientKeepAliveHandler _clientKeepAliveHandler;
 
-        public ClientTcpConnection(Socket workSocket, int id, IMessageDeserializer messageDeserializer,
+        public ClientTcpConnection(Socket workSocket, int socketId, IMessageDeserializer messageDeserializer,
             Action<IMessage> handler)
-            : base(workSocket, id, messageDeserializer)
+            : base(workSocket, socketId, messageDeserializer)
         {
             _handler = handler;
         }
@@ -23,7 +23,7 @@ namespace Communication.Client
                 new ClientKeepAliveHandler(keepAliveInterval, new ClientMaintainedConnections(this));
         }
 
-        public override void Handle(IMessage message, int id = -404)
+        public override void Handle(IMessage message, int socketId = -404)
         {
             _handler(message);
         }

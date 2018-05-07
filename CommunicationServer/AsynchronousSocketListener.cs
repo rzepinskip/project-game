@@ -36,10 +36,10 @@ namespace CommunicationServer
                 new ServerMaintainedConnections(_agentToCommunicationHandler), connectionTimeoutHandler);
         }
 
-        public void Send(IMessage message, int id)
+        public void Send(IMessage message, int socketId)
         {
             var byteData = Encoding.ASCII.GetBytes(message.SerializeToXml() + Constants.EtbByte);
-            var findResult = _agentToCommunicationHandler.TryGetValue(id, out var handler);
+            var findResult = _agentToCommunicationHandler.TryGetValue(socketId, out var handler);
             if (!findResult)
                 throw new Exception("Non exsistent socket id");
 

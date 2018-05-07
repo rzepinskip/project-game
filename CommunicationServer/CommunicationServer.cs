@@ -37,9 +37,9 @@ namespace CommunicationServer
             return _communicationResolver.GetGameId(gameName);
         }
 
-        public void RegisterNewGame(GameInfo gameInfo, int id)
+        public void RegisterNewGame(GameInfo gameInfo, int socketId)
         {
-            _communicationResolver.RegisterNewGame(gameInfo, id);
+            _communicationResolver.RegisterNewGame(gameInfo, socketId);
         }
 
         public void UpdateTeamCount(int gameId, TeamColor team)
@@ -57,40 +57,40 @@ namespace CommunicationServer
             _communicationResolver.AssignGameIdToPlayerId(gameId, playerId);
         }
 
-        public int GetGameIdForPlayer(int playerId)
+        public int GetGameIdFor(int socketId)
         {
-            return _communicationResolver.GetGameIdForPlayer(playerId);
+            return _communicationResolver.GetGameIdFor(socketId);
         }
 
-        public void MarkClientAsPlayer(int id)
+        public void MarkClientAsPlayer(int socketId)
         {
-            Console.WriteLine($"{id} added as {ClientType.Player}");
-            _clientTypes.TryAdd(id, ClientType.Player);
+            Console.WriteLine($"{socketId} added as {ClientType.Player}");
+            _clientTypes.TryAdd(socketId, ClientType.Player);
         }
 
-        public void MarkClientAsGameMaster(int id)
+        public void MarkClientAsGameMaster(int socketId)
         {
-            Console.WriteLine($"{id} added as {ClientType.GameMaster}");
-            _clientTypes.TryAdd(id, ClientType.GameMaster);
+            Console.WriteLine($"{socketId} added as {ClientType.GameMaster}");
+            _clientTypes.TryAdd(socketId, ClientType.GameMaster);
         }
 
-        public ClientType GetClientTypeFrom(int id)
+        public ClientType GetClientTypeFrom(int socketId)
         {
-            return !_clientTypes.ContainsKey(id) ? ClientType.NonInitialized : _clientTypes[id];
+            return !_clientTypes.ContainsKey(socketId) ? ClientType.NonInitialized : _clientTypes[socketId];
         }
 
-        public void Send(IMessage message, int id)
+        public void Send(IMessage message, int socketId)
         {
             try
             {
-                _listener.Send(message, id);
+                _listener.Send(message, socketId);
 
             }
             catch (Exception e)
             {
                 if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset || e is ObjectDisposedException)
                 {
-                    var clientType = GetClientTypeFrom(id);
+                    var clientType = GetClientTypeFrom(socketId);
 
                     Console.WriteLine($"{clientType} #{e.Data["socketId"]} disconnected");
 
@@ -111,11 +111,11 @@ namespace CommunicationServer
             Console.WriteLine($"{GetClientTypeFrom(socketId)} #{socketId} exceeded keep alive timeout");
         }
 
-        public void HandleMessage(IMessage message, int i)
+        public void HandleMessage(IMessage message, int socketId)
         {
-            Debug.WriteLine("CS Message received from: " + i);
-            Logger.Info(message + " from  id: " + i);
-            message.Process(this, i);
+            Debug.WriteLine("CS Message received from: " + socketId);
+            Logger.Info(message + " from  id: " + socketId);
+            message.Process(this, socketId);
         }
     }
 }

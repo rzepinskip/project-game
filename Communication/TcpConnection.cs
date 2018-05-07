@@ -12,24 +12,23 @@ namespace Communication
     {
         private readonly IMessageDeserializer _messageDeserializer;
 
-        protected TcpConnection(Socket workSocket, int id, IMessageDeserializer messageDeserializer)
+        protected TcpConnection(Socket workSocket, int socketId, IMessageDeserializer messageDeserializer)
         {
             WorkSocket = workSocket;
-            Id = id;
             _messageDeserializer = messageDeserializer;
+            SocketId = socketId;
             MessageProcessed = new ManualResetEvent(true);
             State = new CommunicationState();
             ClientType = ClientType.NonInitialized;
         }
 
-        private int Id { get; }
         private Socket WorkSocket { get; }
 
         private ManualResetEvent MessageProcessed { get; }
         private CommunicationState State { get; }
         public ClientType ClientType { get; set; }
 
-        public int SocketId => Id;
+        public int SocketId { get; }
 
         public void Receive()
         {
@@ -62,7 +61,8 @@ namespace Communication
             }
             catch (Exception e)
             {
-                if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset || e is ObjectDisposedException)
+                if (e is SocketException socketException &&
+                    socketException.SocketErrorCode == SocketError.ConnectionReset || e is ObjectDisposedException)
                 {
                     Console.WriteLine($"SEND: socket #{SocketId} is disconnected.");
                     e.Data.Add("socketId", SocketId);
@@ -96,7 +96,8 @@ namespace Communication
                     ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                     return;
                 }
-                if(e is ObjectDisposedException)
+
+                if (e is ObjectDisposedException)
                     return;
 
                 throw;
@@ -119,7 +120,7 @@ namespace Communication
             State.UpdateLastMessageTicks();
         }
 
-        public abstract void Handle(IMessage message, int id = -404);
+        public abstract void Handle(IMessage message, int socketId = -404);
         public abstract void HandleKeepAliveMessage();
 
         private void ReadCallback(IAsyncResult ar)
@@ -134,10 +135,11 @@ namespace Communication
             }
             catch (Exception e)
             {
-                if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset || e is ObjectDisposedException)
+                if (e is SocketException socketException &&
+                    socketException.SocketErrorCode == SocketError.ConnectionReset || e is ObjectDisposedException)
                 {
                     Console.WriteLine("READ: Somebody disconnected - bubbling up exception...");
-                        
+
                     HandleConnectionException(e);
                     return;
                 }
@@ -148,12 +150,12 @@ namespace Communication
 
             if (bytesRead > 0)
             {
-                var (messages, hasEtbByte) = state.SplitMessages(bytesRead, Id);
+                var (messages, hasEtbByte) = state.SplitMessages(bytesRead, SocketId);
                 State.UpdateLastMessageTicks();
                 var handledKeepAlive = false;
                 foreach (var message in messages)
                 {
-                    if (!string.IsNullOrEmpty(message)) Handle(_messageDeserializer.Deserialize(message), Id);
+                    if (!string.IsNullOrEmpty(message)) Handle(_messageDeserializer.Deserialize(message), SocketId);
                     HandleKeepAliveMessage();
                 }
 

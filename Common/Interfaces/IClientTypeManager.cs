@@ -2,8 +2,8 @@
 {
     public interface IClientTypeManager
     {
-        void MarkClientAsPlayer(int id);
-        void MarkClientAsGameMaster(int id);
-        ClientType GetClientTypeFrom(int id);
+        void MarkClientAsPlayer(int socketId);
+        void MarkClientAsGameMaster(int socketId);
+        ClientType GetClientTypeFrom(int socketId);
     }
 }

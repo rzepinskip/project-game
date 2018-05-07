@@ -2,7 +2,7 @@
 {
     public interface IAsynchronousSocketListener
     {
-        void Send(IMessage message, int id);
+        void Send(IMessage message, int socketId);
         void StartListening();
     }
 }

@@ -22,7 +22,7 @@ namespace Messaging.ExchangeKnowledgeMessages
 
         public override void Process(ICommunicationServer cs, int id)
         {
-            var gameId = cs.GetGameIdForPlayer(id);
+            var gameId = cs.GetGameIdFor(id);
             cs.Send(this, gameId == id ? PlayerId : gameId);
         }
     }

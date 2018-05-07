@@ -18,11 +18,11 @@ namespace Communication
         private StringBuilder MessageContentBuilder { get; }
         public long LastMessageReceivedTicks { get; set; }
 
-        public (IEnumerable<string> messageList, bool hasEtbByte) SplitMessages(int bytesRead, int id)
+        public (IEnumerable<string> messageList, bool hasEtbByte) SplitMessages(int bytesRead, int socketId)
         {
             MessageContentBuilder.Append(Encoding.ASCII.GetString(Buffer, 0, bytesRead));
             var content = MessageContentBuilder.ToString();
-            Debug.WriteLine($"Socket {id}:\nData : {content}");
+            Debug.WriteLine($"Socket {socketId}:\nData : {content}");
 
             var messages = new string[0];
             var hasEtbByte = content.IndexOf(Constants.EtbByte) > -1;

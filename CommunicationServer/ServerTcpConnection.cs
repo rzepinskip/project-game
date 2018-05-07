@@ -10,16 +10,16 @@ namespace CommunicationServer
     {
         private readonly Action<IMessage, int> _handleMessage;
 
-        public ServerTcpConnection(Socket workSocket, int id, IMessageDeserializer messageDeserializer,
+        public ServerTcpConnection(Socket workSocket, int socketId, IMessageDeserializer messageDeserializer,
             Action<IMessage, int> handleMessage)
-            : base(workSocket, id, messageDeserializer)
+            : base(workSocket, socketId, messageDeserializer)
         {
             _handleMessage = handleMessage;
         }
 
-        public override void Handle(IMessage message, int id = -404)
+        public override void Handle(IMessage message, int socketId = -404)
         {
-            _handleMessage(message, id);
+            _handleMessage(message, socketId);
         }
 
         public override void HandleKeepAliveMessage()
