@@ -75,7 +75,6 @@ namespace CommunicationServer
                 while (true)
                 {
                     _readyForAccept.Reset();
-                    Debug.WriteLine("CS waiting for a connections...");
                     listeningSocket.BeginAccept(AcceptCallback, listeningSocket);
 
                     _readyForAccept.WaitOne();
@@ -83,7 +82,8 @@ namespace CommunicationServer
             }
             catch (Exception e)
             {
-                throw new ConnectionException("Unable to start listening", e);
+                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                throw;
             }
         }
 
@@ -98,7 +98,8 @@ namespace CommunicationServer
             }
             catch (Exception e)
             {
-                throw new ConnectionException("Unable to start listening", e);
+                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                throw;
             }
 
             var state = new ServerTcpConnection(socket, _counter, _connectionExceptionHandler, _messageDeserializer,

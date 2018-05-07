@@ -26,10 +26,5 @@ namespace CommunicationServer
         {
             SendKeepAlive();
         }
-
-        protected override void HandleConnectionException(Exception e)
-        {
-            //Console.WriteLine("Next send will give us better exception so we do nothing");
-        }
     }
 }

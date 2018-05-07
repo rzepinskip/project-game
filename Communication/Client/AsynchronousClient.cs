@@ -40,7 +40,8 @@ namespace Communication.Client
             }
             catch (Exception e)
             {
-                throw new ConnectionException("Unable to send message", e);
+                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                throw;
             }
         }
 
@@ -60,7 +61,8 @@ namespace Communication.Client
             }
             catch (Exception e)
             {
-                throw new ConnectionException("Unable to connect", e);
+                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                throw;
             }
 
             StartReading();
@@ -76,7 +78,8 @@ namespace Communication.Client
             }
             catch (Exception e)
             {
-                throw new ConnectionException("Unable to connect", e);
+                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                throw;
             }
         }
 
@@ -89,7 +92,8 @@ namespace Communication.Client
                 }
                 catch (Exception e)
                 {
-                    throw new ConnectionException("Unable to read", e);
+                    ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                    throw;
                 }
         }
     }

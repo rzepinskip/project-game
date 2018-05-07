@@ -45,12 +45,7 @@ namespace Communication
             }
             catch (Exception e)
             {
-                if (e is SocketException || e is ObjectDisposedException)
-                {
-                    ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
-                    return;
-                }
-
+                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
 
@@ -66,11 +61,11 @@ namespace Communication
             catch (Exception e)
             {
                 if (e is SocketException socketException &&
-                    socketException.SocketErrorCode == SocketError.ConnectionReset || e is ObjectDisposedException)
+                    socketException.SocketErrorCode == SocketError.ConnectionReset)
                 {
                     Console.WriteLine($"SEND: socket #{SocketId} is disconnected.");
-                    e.Data.Add("socketId", SocketId);
-                    throw;
+                    HandleExpectedConnectionError(e);
+                    return;
                 }
 
                 ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
@@ -95,15 +90,7 @@ namespace Communication
             }
             catch (Exception e)
             {
-                if (e is SocketException)
-                {
-                    ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
-                    return;
-                }
-
-                if (e is ObjectDisposedException)
-                    return;
-
+                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
         }
@@ -111,7 +98,6 @@ namespace Communication
         public void FinalizeConnect(IAsyncResult ar)
         {
             WorkSocket.EndConnect(ar);
-            Debug.WriteLine($"Socket connected to {WorkSocket.RemoteEndPoint}");
         }
 
         public long GetLastMessageReceivedTicks()
@@ -140,11 +126,10 @@ namespace Communication
             catch (Exception e)
             {
                 if (e is SocketException socketException &&
-                    socketException.SocketErrorCode == SocketError.ConnectionReset || e is ObjectDisposedException)
+                    socketException.SocketErrorCode == SocketError.ConnectionReset)
                 {
                     Console.WriteLine("READ: Somebody disconnected - bubbling up exception...");
-
-                    HandleConnectionException(e);
+                    HandleExpectedConnectionError(e);
                     return;
                 }
 
@@ -173,12 +158,7 @@ namespace Communication
                     }
                     catch (Exception e)
                     {
-                        if (e is SocketException || e is ObjectDisposedException)
-                        {
-                            ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
-                            return;
-                        }
-
+                        ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                         throw;
                     }
                 else
@@ -197,20 +177,18 @@ namespace Communication
             {
                 var handler = (Socket) ar.AsyncState;
                 var bytesSent = handler.EndSend(ar);
-                Debug.WriteLine($"Sent {bytesSent} bytes to client.");
             }
             catch (Exception e)
             {
-                if (e is SocketException || e is ObjectDisposedException)
-                {
-                    ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
-                    return;
-                }
-
+                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
         }
 
-        protected abstract void HandleConnectionException(Exception e);
+        protected void HandleExpectedConnectionError(Exception e)
+        {
+            e.Data.Add("socketId", SocketId);
+            ConnectionFailureHandler(e);
+        }
     }
 }

@@ -104,7 +104,6 @@ namespace CommunicationServer
 
         public void HandleMessage(IMessage message, int socketId)
         {
-            Debug.WriteLine("CS Message received from: " + socketId);
             Logger.Info(message + " from  id: " + socketId);
             message.Process(this, socketId);
         }
