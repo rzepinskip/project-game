@@ -41,13 +41,19 @@ namespace Player
 
         public void HandleGoalField(int playerId, GoalField goalField)
         {
-            // Remove old data
-            foreach (var piecesValue in Pieces.Values)
-                if (piecesValue.PlayerId == playerId)
-                {
-                    piecesValue.PlayerId = null;
-                    break;
-                }
+            //// Remove old data
+            //foreach (var piecesValue in Pieces.Values)
+            //    if (piecesValue.PlayerId == playerId)
+            //    {
+            //        piecesValue.PlayerId = null;
+            //        break;
+            //    }
+
+            var playerInfo = Players[playerId];
+            var pieceId = playerInfo.Piece.Id;
+
+            playerInfo.Piece = null;
+            Pieces.Remove(pieceId);
 
             // Insert new data
             this[goalField] = goalField;
