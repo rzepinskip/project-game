@@ -47,6 +47,13 @@ namespace Player.App
 
             options.Parse(parameters);
 
+            if (!addressFlag)
+            {
+                addressFlag = true;
+                var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
+                address = ipHostInfo.AddressList[0];
+            }
+
             if (port == default(int) || gameConfigPath == default(string) || gameName == default(string) ||
                 !addressFlag || !teamFlag || !roleFlag)
                 Usage(options);
