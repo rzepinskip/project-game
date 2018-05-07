@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CommunicationServer.App": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 11000 --conf ..\\resources\\"
+    }
+  }
+}
