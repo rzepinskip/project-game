@@ -15,12 +15,14 @@ namespace GameMaster.App
     internal class Program
     {
         private static ILogger _logger;
+        private static string _finishedGameMessage = "";
 
         private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-
+            
             var gm = CreateGameMasterFrom(args);
+            gm.GameFinished += GenerateNewFinishedGameMessage;
             _logger = GameMaster.Logger;
             while (true)
             {
@@ -30,8 +32,14 @@ namespace GameMaster.App
                     Thread.Sleep(200);
                     boardVisualizer.VisualizeBoard(gm.Board);
                     Console.WriteLine(i);
+                    Console.WriteLine(_finishedGameMessage);
                 }
             }
+        }
+
+        private static void GenerateNewFinishedGameMessage(object sender, GameFinishedEventArgs e)
+        {
+            _finishedGameMessage = "Last game winners: " + (e.Winners == TeamColor.Red ? "Red " : "Blue");
         }
 
         private static GameMaster CreateGameMasterFrom(IEnumerable<string> parameters)
