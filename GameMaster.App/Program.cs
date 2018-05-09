@@ -74,7 +74,7 @@ namespace GameMaster.App
             var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(gameConfigPath);
 
-            var communicationClient = new AsynchronousClient(new IPEndPoint(ipAddress, port), TimeSpan.FromMilliseconds((int) config.KeepAliveInterval), MessageSerializer.Instance);
+            var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), TimeSpan.FromMilliseconds((int) config.KeepAliveInterval), MessageSerializer.Instance);
 
             return new GameMaster(config, communicationClient, gameName);
         }

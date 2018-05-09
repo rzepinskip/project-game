@@ -23,7 +23,7 @@ namespace GameSimulation
             var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(configFilePath);
             var keepAliveInterval = TimeSpan.FromMilliseconds((int) config.KeepAliveInterval);
-            var communicationClient = new AsynchronousClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
+            var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
                 MessageSerializer.Instance);
 
 
@@ -33,7 +33,7 @@ namespace GameSimulation
             Players = new List<Player.Player>();
             for (var i = 0; i < 2 * config.GameDefinition.NumberOfPlayersPerTeam; i++)
             {
-                communicationClient = new AsynchronousClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
+                communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
                     MessageSerializer.Instance);
                 var player = new Player.Player(communicationClient, "game", TeamColor.Blue, PlayerType.Leader);
                 Players.Add(player);
@@ -56,7 +56,7 @@ namespace GameSimulation
 
         public void StartSimulation()
         {
-            foreach (var player in Players) player.CommunicationClient.Send(player.GetNextRequestMessage());
+            foreach (var player in Players) player.CommunicationCommunicationClient.Send(player.GetNextRequestMessage());
         }
     }
 }

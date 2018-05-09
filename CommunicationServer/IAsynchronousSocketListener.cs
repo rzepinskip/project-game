@@ -1,6 +1,7 @@
 ﻿using System;
+using Common.Interfaces;
 
-namespace Common.Interfaces
+namespace CommunicationServer
 {
     public interface IAsynchronousSocketListener
     {

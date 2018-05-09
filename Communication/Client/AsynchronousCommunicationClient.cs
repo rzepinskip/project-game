@@ -8,7 +8,7 @@ using Communication.Exceptions;
 
 namespace Communication.Client
 {
-    public class AsynchronousClient : IClient
+    public class AsynchronousCommunicationClient : ICommunicationClient
     {
         private readonly ManualResetEvent _connectDone;
         private readonly ManualResetEvent _connectFinalized;
@@ -18,7 +18,7 @@ namespace Communication.Client
 
         private ITcpConnection _tcpConnection;
 
-        public AsynchronousClient(IPEndPoint endPoint, TimeSpan keepAliveInterval, IMessageDeserializer messageDeserializer)
+        public AsynchronousCommunicationClient(IPEndPoint endPoint, TimeSpan keepAliveInterval, IMessageDeserializer messageDeserializer)
             
         {
             _connectFinalized = new ManualResetEvent(false);

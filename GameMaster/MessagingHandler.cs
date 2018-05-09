@@ -13,16 +13,16 @@ namespace GameMaster
     public class MessagingHandler
     {
         private readonly ActionCosts _actionCosts;
-        public readonly IClient Client;
+        public readonly ICommunicationClient CommunicationClient;
 
         private Dictionary<Guid, PlayerHandle> _playerHandles;
 
-        public MessagingHandler(GameConfiguration gameConfiguration, IClient communicationClient)
+        public MessagingHandler(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient)
         {
             _actionCosts = gameConfiguration.ActionCosts;
 
-            Client = communicationClient;
-            new Thread(() => Client.Connect(HandleConnectionError, HandleMessagesFromClient)).Start();
+            CommunicationClient = communicationCommunicationClient;
+            new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleMessagesFromClient)).Start();
         }
 
         private async void HandleMessagesFromPlayer(Guid playerGuid)

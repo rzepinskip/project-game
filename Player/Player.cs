@@ -17,15 +17,15 @@ namespace Player
         private PlayerCoordinator _playerCoordinator;
         public ILogger Logger;
 
-        public Player(IClient communicationClient, string gameName, TeamColor color, PlayerType role)
+        public Player(ICommunicationClient communicationCommunicationClient, string gameName, TeamColor color, PlayerType role)
         {
-            CommunicationClient = communicationClient;
+            CommunicationCommunicationClient = communicationCommunicationClient;
 
             var factory = new LoggerFactory();
             Logger = factory.GetPlayerLogger(0);
 
             _playerCoordinator = new PlayerCoordinator(gameName, color, role);
-            new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
+            new Thread(() => CommunicationCommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
         }
 
         public Player(int id, Guid guid, TeamColor team, PlayerType role,
@@ -46,7 +46,7 @@ namespace Player
         public PlayerBoard PlayerBoard { get; private set; }
         public Guid PlayerGuid { get; private set; }
 
-        public IClient CommunicationClient { get; }
+        public ICommunicationClient CommunicationCommunicationClient { get; }
         public IPlayerBoard Board => PlayerBoard;
 
         public void UpdateGameState(IEnumerable<GameInfo> gameInfo)
@@ -125,7 +125,7 @@ namespace Player
             {
                 var request = GetNextRequestMessage();
                 Logger.Info(request);
-                CommunicationClient.Send(request);
+                CommunicationCommunicationClient.Send(request);
             }
 
             _playerCoordinator.NextState();

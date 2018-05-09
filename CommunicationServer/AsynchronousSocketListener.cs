@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -13,22 +12,21 @@ namespace CommunicationServer
 {
     public class AsynchronousSocketListener : IAsynchronousSocketListener
     {
-        private readonly Dictionary<int, ITcpConnection> _agentToCommunicationHandler;
         private readonly TimeSpan _keepAliveInterval;
         private readonly IMessageDeserializer _messageDeserializer;
         private readonly Action<IMessage, int> _messageHandler;
         private readonly int _port;
 
         private readonly ManualResetEvent _readyForAccept = new ManualResetEvent(false);
+        private readonly Dictionary<int, ITcpConnection> _socketIdToTcpConnection;
         private Action<Exception> _connectionExceptionHandler;
         private int _counter;
         private KeepAliveHandler _keepAliveHandler;
 
         public AsynchronousSocketListener(int port, TimeSpan keepAliveInterval,
-            IMessageDeserializer messageDeserializer,
-            Action<IMessage, int> messageHandler)
+            IMessageDeserializer messageDeserializer, Action<IMessage, int> messageHandler)
         {
-            _agentToCommunicationHandler = new Dictionary<int, ITcpConnection>();
+            _socketIdToTcpConnection = new Dictionary<int, ITcpConnection>();
             _port = port;
             _counter = 0;
             _messageHandler = messageHandler;
@@ -39,7 +37,7 @@ namespace CommunicationServer
         public void Send(IMessage message, int socketId)
         {
             var byteData = Encoding.ASCII.GetBytes(message.SerializeToXml() + Constants.EtbByte);
-            var findResult = _agentToCommunicationHandler.TryGetValue(socketId, out var handler);
+            var findResult = _socketIdToTcpConnection.TryGetValue(socketId, out var handler);
             if (!findResult)
                 throw new Exception("Non exsistent socket id");
 
@@ -64,7 +62,7 @@ namespace CommunicationServer
             var localEndPoint = new IPEndPoint(ipAddress, _port);
             _connectionExceptionHandler = connectionExceptionHandler;
             _keepAliveHandler = new ServerKeepAliveHandler(_keepAliveInterval,
-                new ServerMaintainedConnections(_agentToCommunicationHandler), connectionExceptionHandler);
+                new ServerMaintainedConnections(_socketIdToTcpConnection), connectionExceptionHandler);
 
             var listeningSocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             try
@@ -87,6 +85,17 @@ namespace CommunicationServer
             }
         }
 
+        public void CloseSocket(int socketId)
+        {
+            Console.WriteLine("Closing socket: " + socketId);
+            var findResult = _socketIdToTcpConnection.TryGetValue(socketId, out var socket);
+            if (!findResult)
+                throw new Exception("Non existent socket id");
+
+            socket.CloseSocket();
+            _socketIdToTcpConnection.Remove(socketId);
+        }
+
         private void AcceptCallback(IAsyncResult ar)
         {
             _readyForAccept.Set();
@@ -104,7 +113,7 @@ namespace CommunicationServer
 
             var state = new ServerTcpConnection(socket, _counter, _connectionExceptionHandler, _messageDeserializer,
                 _messageHandler);
-            _agentToCommunicationHandler.Add(_counter++, state);
+            _socketIdToTcpConnection.Add(_counter++, state);
             StartReading(state);
         }
 
@@ -112,17 +121,6 @@ namespace CommunicationServer
         {
             while (true)
                 tool.Receive();
-        }
-
-        public void CloseSocket(int socketId)
-        {
-            Console.WriteLine("Closing socket: " + socketId);
-            var findResult = _agentToCommunicationHandler.TryGetValue(socketId, out var socket);
-            if(!findResult)
-                throw new Exception("Non existent socket id");
-
-            socket.CloseSocket();
-            _agentToCommunicationHandler.Remove(socketId);
         }
     }
 }

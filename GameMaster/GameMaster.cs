@@ -26,7 +26,7 @@ namespace GameMaster
         private PieceGenerator _pieceGenerator;
         private Timer checkIfFullTeamTimer;
 
-        public GameMaster(GameConfiguration gameConfiguration, IClient communicationClient, string gameName)
+        public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, string gameName)
         {
             _gameConfiguration = gameConfiguration;
 
@@ -42,10 +42,10 @@ namespace GameMaster
                 (int) Constants.GameFullCheckStartDelay.TotalMilliseconds,
                 (int) Constants.GameFullCheckInterval.TotalMilliseconds);
 
-            _messagingHandler = new MessagingHandler(gameConfiguration, communicationClient);
+            _messagingHandler = new MessagingHandler(gameConfiguration, communicationCommunicationClient);
             _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
 
-            _messagingHandler.Client.Send(new RegisterGameMessage(new GameInfo(gameName,
+            _messagingHandler.CommunicationClient.Send(new RegisterGameMessage(new GameInfo(gameName,
                 _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam,
                 _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam)));
         }
@@ -117,7 +117,7 @@ namespace GameMaster
             }
 
             if (response != null)
-                _messagingHandler.Client.Send(response);
+                _messagingHandler.CommunicationClient.Send(response);
         }
 
         private void CheckIfGameFullCallback(object obj)
@@ -134,7 +134,7 @@ namespace GameMaster
             {
                 var playerLocation = Board.Players.Values.Single(x => x.Id == i.Value).Location;
                 var gameStartMessage = new GameMessage(i.Value, Board.Players.Values, playerLocation, boardInfo);
-                _messagingHandler.Client.Send(gameStartMessage);
+                _messagingHandler.CommunicationClient.Send(gameStartMessage);
             }
         }
 

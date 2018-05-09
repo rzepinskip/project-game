@@ -22,7 +22,7 @@ namespace Player.App
             var player = CreatePlayerFrom(args);
 
             _logger = player.Logger;
-            player.CommunicationClient.Send(player.GetNextRequestMessage());
+            player.CommunicationCommunicationClient.Send(player.GetNextRequestMessage());
         }
 
         private static Player CreatePlayerFrom(IEnumerable<string> parameters)
@@ -63,7 +63,7 @@ namespace Player.App
             var config = configLoader.LoadConfigurationFromFile(gameConfigPath);
 
             var keepAliveInterval = TimeSpan.FromMilliseconds((int) config.KeepAliveInterval);
-            var communicationClient = new AsynchronousClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
+            var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
                 MessageSerializer.Instance);
 
             var player = new Player(communicationClient, gameName, team, role);
