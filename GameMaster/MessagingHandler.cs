@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ClientsCommon;
+using Common;
 using Common.Interfaces;
 using GameMaster.Configuration;
 using GameMaster.Delays;
@@ -110,9 +111,16 @@ namespace GameMaster
             public object Lock { get; }
         }
 
-        public void HandleConnectionError(Exception e)
+        public void HandleConnectionError(CommunicationException e)
         {
-            throw new NotImplementedException();
+            if (e.Severity == CommunicationException.ErrorSeverity.Temporary)
+            {
+                Console.WriteLine("\tNon-fatal error during communication:\n" + e);
+                return;
+            }
+
+            Console.WriteLine("\tFatal error during communication - attempting to reconnect to CS:\n" + e);
+            new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleMessagesFromClient)).Start();
         }
     }
 }

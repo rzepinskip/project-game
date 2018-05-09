@@ -17,15 +17,15 @@ namespace Player
         private PlayerCoordinator _playerCoordinator;
         public ILogger Logger;
 
-        public Player(ICommunicationClient communicationCommunicationClient, string gameName, TeamColor color, PlayerType role)
+        public Player(ICommunicationClient communicationClient, string gameName, TeamColor color, PlayerType role)
         {
-            CommunicationCommunicationClient = communicationCommunicationClient;
+            CommunicationClient = communicationClient;
 
             var factory = new LoggerFactory();
             Logger = factory.GetPlayerLogger(0);
 
             _playerCoordinator = new PlayerCoordinator(gameName, color, role);
-            new Thread(() => CommunicationCommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
+            new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
         }
 
         public Player(int id, Guid guid, TeamColor team, PlayerType role,
@@ -46,7 +46,7 @@ namespace Player
         public PlayerBoard PlayerBoard { get; private set; }
         public Guid PlayerGuid { get; private set; }
 
-        public ICommunicationClient CommunicationCommunicationClient { get; }
+        public ICommunicationClient CommunicationClient { get; }
         public IPlayerBoard Board => PlayerBoard;
 
         public void UpdateGameState(IEnumerable<GameInfo> gameInfo)
@@ -125,15 +125,22 @@ namespace Player
             {
                 var request = GetNextRequestMessage();
                 Logger.Info(request);
-                CommunicationCommunicationClient.Send(request);
+                CommunicationClient.Send(request);
             }
 
             _playerCoordinator.NextState();
         }
 
-        public void HandleConnectionError(Exception e)
+        public void HandleConnectionError(CommunicationException e)
         {
-            throw new NotImplementedException();
+            if (e.Severity == CommunicationException.ErrorSeverity.Temporary)
+            {
+                Console.WriteLine("\tNon-fatal error during communication:\n" + e);
+                return;
+            }
+
+            Console.WriteLine("\tFatal error during communication - attempting to reconnect to CS:\n" + e);
+            new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
         }
     }
 }

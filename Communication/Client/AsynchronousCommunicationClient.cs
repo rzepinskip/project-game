@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Common;
 using Common.Interfaces;
 using Communication.Exceptions;
 
@@ -18,8 +19,9 @@ namespace Communication.Client
 
         private ITcpConnection _tcpConnection;
 
-        public AsynchronousCommunicationClient(IPEndPoint endPoint, TimeSpan keepAliveInterval, IMessageDeserializer messageDeserializer)
-            
+        public AsynchronousCommunicationClient(IPEndPoint endPoint, TimeSpan keepAliveInterval,
+            IMessageDeserializer messageDeserializer)
+
         {
             _connectFinalized = new ManualResetEvent(false);
             _connectDone = new ManualResetEvent(false);
@@ -45,19 +47,16 @@ namespace Communication.Client
             }
         }
 
-        public void Connect(Action<Exception> connectionFailureHandler, Action<IMessage> messageHandler)
+        public void Connect(Action<CommunicationException> connectionFailureHandler, Action<IMessage> messageHandler)
         {
             try
             {
                 var client = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                var tcpConnection = new ClientTcpConnection(client, -1, connectionFailureHandler, _messageDeserializer,
+                _tcpConnection = new ClientTcpConnection(client, -1, connectionFailureHandler, _messageDeserializer,
                     messageHandler);
-                _tcpConnection = tcpConnection;
 
                 client.BeginConnect(_ipEndPoint, ConnectCallback, client);
                 _connectDone.WaitOne();
-                tcpConnection.UpdateLastMessageTicks();
-                tcpConnection.StartKeepAliveTimer(_keepAliveInterval);
             }
             catch (Exception e)
             {

@@ -7,7 +7,6 @@
   <ItemGroup>
     <ProjectReference Include="..\BoardGenerators\BoardGenerators.csproj" />
     <ProjectReference Include="..\ClientsCommon\ClientsCommon.csproj" />
-    <ProjectReference Include="..\Communication\Communication.csproj" />
     <ProjectReference Include="..\Messaging\Messaging.csproj" />
   </ItemGroup>
 

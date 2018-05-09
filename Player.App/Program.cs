@@ -22,7 +22,7 @@ namespace Player.App
             var player = CreatePlayerFrom(args);
 
             _logger = player.Logger;
-            player.CommunicationCommunicationClient.Send(player.GetNextRequestMessage());
+            player.CommunicationClient.Send(player.GetNextRequestMessage());
         }
 
         private static Player CreatePlayerFrom(IEnumerable<string> parameters)

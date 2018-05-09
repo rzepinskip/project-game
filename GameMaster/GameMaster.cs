@@ -176,11 +176,6 @@ namespace GameMaster
             var actionLog = new RequestLog(record, playerInfo.Team, playerInfo.Role);
             Logger.Info(actionLog.ToLog());
         }
-
-        public void HandleConnectionError(Exception e)
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public class GameFinishedEventArgs : EventArgs

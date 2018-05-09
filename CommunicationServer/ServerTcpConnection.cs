@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Sockets;
+using Common;
 using Common.Interfaces;
 using Communication;
 
@@ -9,7 +10,7 @@ namespace CommunicationServer
     {
         private readonly Action<IMessage, int> _messageHandler;
 
-        public ServerTcpConnection(Socket workSocket, int socketId, Action<Exception> connectionFailureHandler,
+        public ServerTcpConnection(Socket workSocket, int socketId, Action<CommunicationException> connectionFailureHandler,
             IMessageDeserializer messageDeserializer,
             Action<IMessage, int> messageHandler)
             : base(workSocket, socketId, connectionFailureHandler, messageDeserializer)

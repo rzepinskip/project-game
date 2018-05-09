@@ -56,7 +56,7 @@ namespace GameSimulation
 
         public void StartSimulation()
         {
-            foreach (var player in Players) player.CommunicationCommunicationClient.Send(player.GetNextRequestMessage());
+            foreach (var player in Players) player.CommunicationClient.Send(player.GetNextRequestMessage());
         }
     }
 }

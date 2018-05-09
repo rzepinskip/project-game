@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net.Sockets;
 using System.Threading;
 using Common;
@@ -10,10 +9,11 @@ namespace Communication
 {
     public abstract class TcpConnection : ITcpConnection
     {
-        protected readonly Action<Exception> ConnectionFailureHandler;
+        protected readonly Action<CommunicationException> ConnectionFailureHandler;
         protected readonly IMessageDeserializer MessageDeserializer;
 
-        protected TcpConnection(Socket workSocket, int socketId, Action<Exception> connectionFailureHandler,
+        protected TcpConnection(Socket workSocket, int socketId,
+            Action<CommunicationException> connectionFailureHandler,
             IMessageDeserializer messageDeserializer
         )
         {
@@ -64,7 +64,8 @@ namespace Communication
                     socketException.SocketErrorCode == SocketError.ConnectionReset)
                 {
                     Console.WriteLine($"SEND: socket #{SocketId} is disconnected.");
-                    HandleExpectedConnectionError(e);
+                    HandleExpectedConnectionError(new CommunicationException("Send error - socket closed", e,
+                        CommunicationException.ErrorSeverity.Fatal));
                     return;
                 }
 
@@ -129,7 +130,8 @@ namespace Communication
                     socketException.SocketErrorCode == SocketError.ConnectionReset)
                 {
                     Console.WriteLine("READ: Somebody disconnected - bubbling up exception...");
-                    HandleExpectedConnectionError(e);
+                    HandleExpectedConnectionError(new CommunicationException("Read error - socket closed", e,
+                        CommunicationException.ErrorSeverity.Fatal));
                     return;
                 }
 

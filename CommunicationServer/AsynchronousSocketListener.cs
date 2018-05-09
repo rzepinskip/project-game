@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Common;
 using Common.Interfaces;
 using Communication;
 using Communication.Exceptions;
@@ -19,7 +20,7 @@ namespace CommunicationServer
 
         private readonly ManualResetEvent _readyForAccept = new ManualResetEvent(false);
         private readonly Dictionary<int, ITcpConnection> _socketIdToTcpConnection;
-        private Action<Exception> _connectionExceptionHandler;
+        private Action<CommunicationException> _connectionExceptionHandler;
         private int _counter;
         private KeepAliveHandler _keepAliveHandler;
 
@@ -55,7 +56,7 @@ namespace CommunicationServer
             }
         }
 
-        public void StartListening(Action<Exception> connectionExceptionHandler)
+        public void StartListening(Action<CommunicationException> connectionExceptionHandler)
         {
             var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             var ipAddress = ipHostInfo.AddressList[0];
