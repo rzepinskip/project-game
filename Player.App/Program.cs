@@ -51,7 +51,7 @@ namespace Player.App
             {
                 addressFlag = true;
                 var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-                address = ipHostInfo.AddressList[0];
+                ipAddress = ipHostInfo.AddressList[0];
             }
 
             if (port == default(int) || gameConfigPath == default(string) || gameName == default(string) ||
