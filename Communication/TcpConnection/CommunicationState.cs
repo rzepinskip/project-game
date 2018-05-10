@@ -12,11 +12,11 @@ namespace Communication.TcpConnection
 
         public CommunicationState()
         {
-            LastMessageReceivedTicks = DateTime.Now.Ticks;
+            LastReceivedMessageTicks = DateTime.Now.Ticks;
             _messageContentBuilder = new StringBuilder();
         }
 
-        public long LastMessageReceivedTicks { get; private set; }
+        public long LastReceivedMessageTicks { get; private set; }
         public byte[] Buffer { get; } = new byte[Constants.BufferSize];
 
         public (IEnumerable<string> messageList, bool hasEtbByte) SplitMessages(int bytesRead, int socketId)
@@ -43,9 +43,9 @@ namespace Communication.TcpConnection
             return (messages.Take(messages.Length - 1), hasEtbByte);
         }
 
-        public void UpdateLastMessageTicks()
+        public void UpdateLastReceivedMessageTicks()
         {
-            LastMessageReceivedTicks = DateTime.Now.Ticks;
+            LastReceivedMessageTicks = DateTime.Now.Ticks;
         }
     }
 }

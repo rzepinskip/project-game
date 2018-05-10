@@ -33,7 +33,7 @@ namespace Communication.Client
         public override void FinalizeConnect(IAsyncResult ar)
         {
             base.FinalizeConnect(ar);
-            UpdateLastMessageTicks();
+            UpdateLastReceivedMessageTicks();
             StartSendKeepAliveTimer();
         }
 

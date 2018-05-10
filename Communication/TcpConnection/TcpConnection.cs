@@ -25,14 +25,14 @@ namespace Communication.TcpConnection
             StartCheckReceivedKeepAlivesTimer();
         }
 
-        public long GetLastMessageReceivedTicks()
+        public long GetLastReceivedMessageTicks()
         {
-            return State.LastMessageReceivedTicks;
+            return State.LastReceivedMessageTicks;
         }
 
-        public void UpdateLastMessageTicks()
+        public void UpdateLastReceivedMessageTicks()
         {
-            State.UpdateLastMessageTicks();
+            State.UpdateLastReceivedMessageTicks();
         }
 
         public void SendKeepAlive()
@@ -54,7 +54,7 @@ namespace Communication.TcpConnection
         {
             var currentTime = DateTime.Now.Ticks;
 
-            var elapsedTicks = currentTime - GetLastMessageReceivedTicks();
+            var elapsedTicks = currentTime - GetLastReceivedMessageTicks();
             var elapsedSpan = new TimeSpan(elapsedTicks);
             if (elapsedSpan > MaxUnresponsivenessDuration)
                 throw new CommunicationException("Keep alive max interval exceeded", null,

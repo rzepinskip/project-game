@@ -136,7 +136,7 @@ namespace Communication.TcpConnection
             if (bytesRead > 0)
             {
                 var (messages, hasEtbByte) = state.SplitMessages(bytesRead, Id);
-                State.UpdateLastMessageTicks();
+                State.UpdateLastReceivedMessageTicks();
 
                 foreach (var message in messages)
                     if (!string.IsNullOrEmpty(message))
