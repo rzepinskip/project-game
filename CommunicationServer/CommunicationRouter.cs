@@ -8,12 +8,14 @@ namespace CommunicationServer
     internal class CommunicationRouter : ICommunicationRouter
     {
         private readonly Dictionary<int, GameInfo> _gameIdToGameInfo;
+        private readonly Dictionary<int, ClientType> _socketIdToClientType;
         private readonly Dictionary<int, int> _socketIdToGameId;
 
         public CommunicationRouter()
         {
             _socketIdToGameId = new Dictionary<int, int>();
             _gameIdToGameInfo = new Dictionary<int, GameInfo>();
+            _socketIdToClientType = new Dictionary<int, ClientType>();
         }
 
         public IEnumerable<GameInfo> GetAllJoinableGames()
@@ -71,6 +73,25 @@ namespace CommunicationServer
         public IEnumerable<int> GetAllPlayersInGame(int gameId)
         {
             return _socketIdToGameId.Where(x => x.Value == gameId && x.Key != gameId).Select(x => x.Key);
+        }
+
+        public void MarkClientAsPlayer(int socketId)
+        {
+            Console.WriteLine($"{socketId} added as {ClientType.Player}");
+            _socketIdToClientType.TryAdd(socketId, ClientType.Player);
+        }
+
+        public void MarkClientAsGameMaster(int socketId)
+        {
+            Console.WriteLine($"{socketId} added as {ClientType.GameMaster}");
+            _socketIdToClientType.TryAdd(socketId, ClientType.GameMaster);
+        }
+
+        public ClientType GetClientTypeFrom(int socketId)
+        {
+            return !_socketIdToClientType.ContainsKey(socketId)
+                ? ClientType.NonInitialized
+                : _socketIdToClientType[socketId];
         }
     }
 }
