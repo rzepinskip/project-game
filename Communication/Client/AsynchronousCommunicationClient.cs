@@ -6,6 +6,7 @@ using System.Threading;
 using Common;
 using Common.Interfaces;
 using Communication.Exceptions;
+using Communication.TcpConnection;
 
 namespace Communication.Client
 {
@@ -14,12 +15,12 @@ namespace Communication.Client
         private readonly ManualResetEvent _connectDone;
         private readonly ManualResetEvent _connectFinalized;
         private readonly IPEndPoint _ipEndPoint;
-        private readonly TimeSpan _keepAliveInterval;
+        private readonly TimeSpan _keepAliveTimeout;
         private readonly IMessageDeserializer _messageDeserializer;
 
         private ITcpConnection _tcpConnection;
 
-        public AsynchronousCommunicationClient(IPEndPoint endPoint, TimeSpan keepAliveInterval,
+        public AsynchronousCommunicationClient(IPEndPoint endPoint, TimeSpan keepAliveTimeout,
             IMessageDeserializer messageDeserializer)
 
         {
@@ -27,9 +28,9 @@ namespace Communication.Client
             _connectDone = new ManualResetEvent(false);
             _messageDeserializer = messageDeserializer;
             _ipEndPoint = endPoint;
-            _keepAliveInterval = keepAliveInterval == default(TimeSpan)
+            _keepAliveTimeout = keepAliveTimeout == default(TimeSpan)
                 ? Constants.DefaultMaxUnresponsivenessDuration
-                : keepAliveInterval;
+                : keepAliveTimeout;
         }
 
         public void Send(IMessage message)
@@ -51,11 +52,11 @@ namespace Communication.Client
         {
             try
             {
-                var client = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                _tcpConnection = new ClientTcpConnection(client, -1, connectionFailureHandler, _messageDeserializer,
-                    messageHandler);
+                var socket = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                _tcpConnection = new ClientTcpConnection(-1, socket, connectionFailureHandler, _keepAliveTimeout,
+                    _messageDeserializer, messageHandler);
 
-                client.BeginConnect(_ipEndPoint, ConnectCallback, client);
+                socket.BeginConnect(_ipEndPoint, ConnectCallback, socket);
                 _connectDone.WaitOne();
             }
             catch (Exception e)

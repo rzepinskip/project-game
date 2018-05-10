@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net.Sockets;
 using System.Threading;
 using Common;
@@ -18,10 +17,10 @@ namespace CommunicationServer
         private readonly ICommunicationRouter _communicationCommunicationRouter;
         private readonly IAsynchronousSocketListener _socketListener;
 
-        public CommunicationServer(IMessageDeserializer messageDeserializer, TimeSpan keepAliveInterval, int port)
+        public CommunicationServer(IMessageDeserializer messageDeserializer, TimeSpan keepAliveTimeout, int port)
         {
             _clientTypes = new Dictionary<int, ClientType>();
-            _socketListener = new AsynchronousSocketListener(port, keepAliveInterval,
+            _socketListener = new AsynchronousSocketListener(port, keepAliveTimeout,
                 messageDeserializer, HandleMessage
             );
             _communicationCommunicationRouter = new CommunicationRouter();

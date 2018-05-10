@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Communication;
+using Communication.TcpConnection;
 
 namespace CommunicationServer
 {

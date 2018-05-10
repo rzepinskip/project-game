@@ -1,11 +1,11 @@
 ﻿using System;
 using Common;
 
-namespace Communication
+namespace Communication.TcpConnection
 {
     public interface ITcpConnection
     {
-        int SocketId { get; }
+        int Id { get; }
         ClientType ClientType { get; }
 
         void Receive();

@@ -8,12 +8,13 @@ using Common;
 using Common.Interfaces;
 using Communication;
 using Communication.Exceptions;
+using Communication.TcpConnection;
 
 namespace CommunicationServer
 {
     public class AsynchronousSocketListener : IAsynchronousSocketListener
     {
-        private readonly TimeSpan _keepAliveInterval;
+        private readonly TimeSpan _keepAliveTimeout;
         private readonly IMessageDeserializer _messageDeserializer;
         private readonly Action<IMessage, int> _messageHandler;
         private readonly int _port;
@@ -22,9 +23,8 @@ namespace CommunicationServer
         private readonly Dictionary<int, ITcpConnection> _socketIdToTcpConnection;
         private Action<CommunicationException> _connectionExceptionHandler;
         private int _counter;
-        private KeepAliveHandler _keepAliveHandler;
 
-        public AsynchronousSocketListener(int port, TimeSpan keepAliveInterval,
+        public AsynchronousSocketListener(int port, TimeSpan keepAliveTimeout,
             IMessageDeserializer messageDeserializer, Action<IMessage, int> messageHandler)
         {
             _socketIdToTcpConnection = new Dictionary<int, ITcpConnection>();
@@ -32,7 +32,7 @@ namespace CommunicationServer
             _counter = 0;
             _messageHandler = messageHandler;
             _messageDeserializer = messageDeserializer;
-            _keepAliveInterval = keepAliveInterval;
+            _keepAliveTimeout = keepAliveTimeout;
         }
 
         public void Send(IMessage message, int socketId)
@@ -62,8 +62,6 @@ namespace CommunicationServer
             var ipAddress = ipHostInfo.AddressList[0];
             var localEndPoint = new IPEndPoint(ipAddress, _port);
             _connectionExceptionHandler = connectionExceptionHandler;
-            _keepAliveHandler = new ServerKeepAliveHandler(_keepAliveInterval,
-                new ServerMaintainedConnections(_socketIdToTcpConnection), connectionExceptionHandler);
 
             var listeningSocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             try
@@ -110,9 +108,9 @@ namespace CommunicationServer
             {
                 ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
-            }
+            }            
 
-            var state = new ServerTcpConnection(socket, _counter, _connectionExceptionHandler, _messageDeserializer,
+            var state = new ServerTcpConnection(_counter, socket, _connectionExceptionHandler, _keepAliveTimeout, _messageDeserializer,
                 _messageHandler);
             _socketIdToTcpConnection.Add(_counter++, state);
             StartReading(state);

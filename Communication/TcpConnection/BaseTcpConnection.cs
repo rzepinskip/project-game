@@ -5,34 +5,33 @@ using Common;
 using Common.Interfaces;
 using Communication.Exceptions;
 
-namespace Communication
+namespace Communication.TcpConnection
 {
-    public abstract class TcpConnection : ITcpConnection
+    public abstract class BaseTcpConnection : ITcpConnection
     {
         protected readonly Action<CommunicationException> ConnectionFailureHandler;
         protected readonly IMessageDeserializer MessageDeserializer;
 
-        protected TcpConnection(Socket workSocket, int socketId,
+        protected BaseTcpConnection(int id, Socket socket,
             Action<CommunicationException> connectionFailureHandler,
-            IMessageDeserializer messageDeserializer
-        )
+            IMessageDeserializer messageDeserializer)
         {
-            WorkSocket = workSocket;
+            Id = id;
+            Socket = socket;
             MessageDeserializer = messageDeserializer;
             ConnectionFailureHandler = connectionFailureHandler;
-            SocketId = socketId;
             MessageProcessed = new ManualResetEvent(true);
             State = new CommunicationState();
             ClientType = ClientType.NonInitialized;
         }
 
-        private Socket WorkSocket { get; }
+        private Socket Socket { get; }
 
         private ManualResetEvent MessageProcessed { get; }
         private CommunicationState State { get; }
         public ClientType ClientType { get; set; }
 
-        public int SocketId { get; }
+        public int Id { get; }
 
         public void Receive()
         {
@@ -40,7 +39,7 @@ namespace Communication
 
             try
             {
-                WorkSocket.BeginReceive(State.Buffer, 0, Constants.BufferSize, 0,
+                Socket.BeginReceive(State.Buffer, 0, Constants.BufferSize, 0,
                     ReadCallback, State);
             }
             catch (Exception e)
@@ -56,14 +55,14 @@ namespace Communication
         {
             try
             {
-                WorkSocket.BeginSend(byteData, 0, byteData.Length, 0, SendCallback, WorkSocket);
+                Socket.BeginSend(byteData, 0, byteData.Length, 0, SendCallback, Socket);
             }
             catch (Exception e)
             {
                 if (e is SocketException socketException &&
                     socketException.SocketErrorCode == SocketError.ConnectionReset)
                 {
-                    Console.WriteLine($"SEND: socket #{SocketId} is disconnected.");
+                    Console.WriteLine($"SEND: socket #{Id} is disconnected.");
                     HandleExpectedConnectionError(new CommunicationException("Send error - socket closed", e,
                         CommunicationException.ErrorSeverity.Fatal));
                     return;
@@ -81,13 +80,13 @@ namespace Communication
 
         public void CloseSocket()
         {
-            if (WorkSocket == null)
+            if (Socket == null)
                 return;
 
             try
             {
-                WorkSocket.Shutdown(SocketShutdown.Both);
-                WorkSocket.Close();
+                Socket.Shutdown(SocketShutdown.Both);
+                Socket.Close();
             }
             catch (Exception e)
             {
@@ -96,9 +95,9 @@ namespace Communication
             }
         }
 
-        public void FinalizeConnect(IAsyncResult ar)
+        public virtual void FinalizeConnect(IAsyncResult ar)
         {
-            WorkSocket.EndConnect(ar);
+            Socket.EndConnect(ar);
         }
 
         public long GetLastMessageReceivedTicks()
@@ -117,7 +116,7 @@ namespace Communication
         private void ReadCallback(IAsyncResult ar)
         {
             var state = ar.AsyncState as CommunicationState;
-            var handler = WorkSocket;
+            var handler = Socket;
             var bytesRead = 0;
 
             try
@@ -141,12 +140,12 @@ namespace Communication
 
             if (bytesRead > 0)
             {
-                var (messages, hasEtbByte) = state.SplitMessages(bytesRead, SocketId);
+                var (messages, hasEtbByte) = state.SplitMessages(bytesRead, Id);
                 State.UpdateLastMessageTicks();
                 var handledKeepAlive = false;
                 foreach (var message in messages)
                 {
-                    if (!string.IsNullOrEmpty(message)) Handle(MessageDeserializer.Deserialize(message), SocketId);
+                    if (!string.IsNullOrEmpty(message)) Handle(MessageDeserializer.Deserialize(message), Id);
                     HandleKeepAliveMessage();
                 }
 
@@ -187,9 +186,9 @@ namespace Communication
             }
         }
 
-        protected void HandleExpectedConnectionError(Exception e)
+        protected virtual void HandleExpectedConnectionError(CommunicationException e)
         {
-            e.Data.Add("socketId", SocketId);
+            e.Data.Add("socketId", Id);
             ConnectionFailureHandler(e);
         }
     }
