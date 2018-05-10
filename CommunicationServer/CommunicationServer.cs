@@ -130,7 +130,6 @@ namespace CommunicationServer
             {
                 _socketListener.CloseSocket(socketId);
             }
-
         }
     }
 }

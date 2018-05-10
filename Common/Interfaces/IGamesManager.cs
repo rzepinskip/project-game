@@ -2,7 +2,7 @@
 
 namespace Common.Interfaces
 {
-    public interface ICommunicationRouter
+    public interface IGamesManager
     {
         IEnumerable<GameInfo> GetAllJoinableGames();
         int GetGameIdFor(string gameName);
@@ -11,6 +11,5 @@ namespace Common.Interfaces
         void DeregisterGame(int gameId);
         void AssignGameIdToPlayerId(int gameId, int playerId);
         int GetGameIdFor(int playerId);
-        IEnumerable<int> GetAllPlayersInGame(int gameId);
     }
 }
