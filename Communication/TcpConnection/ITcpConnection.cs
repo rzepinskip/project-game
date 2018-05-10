@@ -8,12 +8,9 @@ namespace Communication.TcpConnection
         int Id { get; }
         ClientType ClientType { get; }
 
-        void Receive();
-        void Send(byte[] byteData);
-        void SendKeepAlive();
-        void CloseSocket();
         void FinalizeConnect(IAsyncResult ar);
-        long GetLastMessageReceivedTicks();
-        void UpdateLastMessageTicks();
+        void Send(byte[] byteData);
+        void Receive();
+        void CloseSocket();
     }
 }

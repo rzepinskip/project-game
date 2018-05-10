@@ -24,21 +24,10 @@ namespace Communication.Client
             _messageHandler(message);
         }
 
-        public override void Send(byte[] data)
+        protected override void FinalizeSend(IAsyncResult ar)
         {
             ResetSendKeepAliveTimer();
-            base.Send(data);
-        }
-
-        public override void HandleKeepAliveMessage()
-        {
-        }
-
-        protected override void HandleExpectedConnectionError(CommunicationException e)
-        {
-            StopSendKeepAliveTimer();
-            e.Data.Add("socketId", Id);
-            ConnectionFailureHandler(e);
+            base.FinalizeSend(ar);
         }
 
         public override void FinalizeConnect(IAsyncResult ar)
@@ -69,6 +58,13 @@ namespace Communication.Client
         {
             StopSendKeepAliveTimer();
             StartSendKeepAliveTimer();
+        }
+
+        protected override void HandleExpectedConnectionError(CommunicationException e)
+        {
+            StopSendKeepAliveTimer();
+            e.Data.Add("socketId", Id);
+            ConnectionFailureHandler(e);
         }
     }
 }

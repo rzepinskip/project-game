@@ -24,8 +24,9 @@ namespace CommunicationServer
             _messageHandler(message, socketId);
         }
 
-        public override void HandleKeepAliveMessage()
+        protected override void FinalizeReceive(IAsyncResult ar)
         {
+            base.FinalizeReceive(ar);
             SendKeepAlive();
         }
     }

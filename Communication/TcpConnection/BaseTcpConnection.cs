@@ -11,6 +11,7 @@ namespace Communication.TcpConnection
     {
         protected readonly Action<CommunicationException> ConnectionFailureHandler;
         protected readonly IMessageDeserializer MessageDeserializer;
+        protected readonly CommunicationState State;
 
         protected BaseTcpConnection(int id, Socket socket,
             Action<CommunicationException> connectionFailureHandler,
@@ -26,43 +27,27 @@ namespace Communication.TcpConnection
         }
 
         private Socket Socket { get; }
-
         private ManualResetEvent MessageProcessed { get; }
-        private CommunicationState State { get; }
-        public ClientType ClientType { get; set; }
 
+        public ClientType ClientType { get; set; }
         public int Id { get; }
 
-        public void Receive()
+        public virtual void FinalizeConnect(IAsyncResult ar)
         {
-            MessageProcessed.Reset();
-
-            try
-            {
-                Socket.BeginReceive(State.Buffer, 0, Constants.BufferSize, 0,
-                    ReadCallback, State);
-            }
-            catch (Exception e)
-            {
-                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
-                throw;
-            }
-
-            MessageProcessed.WaitOne();
+            Socket.EndConnect(ar);
         }
 
-        public virtual void Send(byte[] byteData)
+        public void Send(byte[] byteData)
         {
             try
             {
-                Socket.BeginSend(byteData, 0, byteData.Length, 0, SendCallback, Socket);
+                Socket.BeginSend(byteData, 0, byteData.Length, 0, FinalizeSend, Socket);
             }
             catch (Exception e)
             {
                 if (e is SocketException socketException &&
                     socketException.SocketErrorCode == SocketError.ConnectionReset)
                 {
-                    Console.WriteLine($"SEND: socket #{Id} is disconnected.");
                     HandleExpectedConnectionError(new CommunicationException("Send error - socket closed", e,
                         CommunicationException.ErrorSeverity.Fatal));
                     return;
@@ -71,11 +56,6 @@ namespace Communication.TcpConnection
                 ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
-        }
-
-        public void SendKeepAlive()
-        {
-            Send(new[] {Convert.ToByte(Constants.EtbByte)});
         }
 
         public void CloseSocket()
@@ -95,25 +75,41 @@ namespace Communication.TcpConnection
             }
         }
 
-        public virtual void FinalizeConnect(IAsyncResult ar)
+        public void Receive()
         {
-            Socket.EndConnect(ar);
+            MessageProcessed.Reset();
+
+            try
+            {
+                Socket.BeginReceive(State.Buffer, 0, Constants.BufferSize, 0,
+                    FinalizeReceive, State);
+            }
+            catch (Exception e)
+            {
+                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                throw;
+            }
+
+            MessageProcessed.WaitOne();
         }
 
-        public long GetLastMessageReceivedTicks()
+        protected virtual void FinalizeSend(IAsyncResult ar)
         {
-            return State.LastMessageReceivedTicks;
-        }
-
-        public void UpdateLastMessageTicks()
-        {
-            State.UpdateLastMessageTicks();
+            try
+            {
+                var handler = (Socket) ar.AsyncState;
+                var bytesSent = handler.EndSend(ar);
+            }
+            catch (Exception e)
+            {
+                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                throw;
+            }
         }
 
         public abstract void Handle(IMessage message, int socketId = -404);
-        public abstract void HandleKeepAliveMessage();
 
-        private void ReadCallback(IAsyncResult ar)
+        protected virtual void FinalizeReceive(IAsyncResult ar)
         {
             var state = ar.AsyncState as CommunicationState;
             var handler = Socket;
@@ -128,7 +124,6 @@ namespace Communication.TcpConnection
                 if (e is SocketException socketException &&
                     socketException.SocketErrorCode == SocketError.ConnectionReset)
                 {
-                    Console.WriteLine("READ: Somebody disconnected - bubbling up exception...");
                     HandleExpectedConnectionError(new CommunicationException("Read error - socket closed", e,
                         CommunicationException.ErrorSeverity.Fatal));
                     return;
@@ -142,12 +137,10 @@ namespace Communication.TcpConnection
             {
                 var (messages, hasEtbByte) = state.SplitMessages(bytesRead, Id);
                 State.UpdateLastMessageTicks();
-                var handledKeepAlive = false;
+
                 foreach (var message in messages)
-                {
-                    if (!string.IsNullOrEmpty(message)) Handle(MessageDeserializer.Deserialize(message), Id);
-                    HandleKeepAliveMessage();
-                }
+                    if (!string.IsNullOrEmpty(message))
+                        Handle(MessageDeserializer.Deserialize(message), Id);
 
                 //DONT TOUCH THAT 
                 //DANGER ZONE ************
@@ -155,7 +148,7 @@ namespace Communication.TcpConnection
                     try
                     {
                         handler.BeginReceive(state.Buffer, 0, Constants.BufferSize, 0,
-                            ReadCallback, state);
+                            FinalizeReceive, state);
                     }
                     catch (Exception e)
                     {
@@ -166,23 +159,9 @@ namespace Communication.TcpConnection
                     MessageProcessed.Set();
 
                 // ManualResetEvent (Semaphore) is signaled only when whole message was received,
-                // allowing another thread to start evaluating ReadCallback. Otherwise the same thread 
+                // allowing another thread to start evaluating FinalizeReceive. Otherwise the same thread 
                 // continues to read the rest of the message
                 //DANGER ZONE ****************
-            }
-        }
-
-        private static void SendCallback(IAsyncResult ar)
-        {
-            try
-            {
-                var handler = (Socket) ar.AsyncState;
-                var bytesSent = handler.EndSend(ar);
-            }
-            catch (Exception e)
-            {
-                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
-                throw;
             }
         }
 

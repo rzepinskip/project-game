@@ -25,6 +25,21 @@ namespace Communication.TcpConnection
             StartCheckReceivedKeepAlivesTimer();
         }
 
+        public long GetLastMessageReceivedTicks()
+        {
+            return State.LastMessageReceivedTicks;
+        }
+
+        public void UpdateLastMessageTicks()
+        {
+            State.UpdateLastMessageTicks();
+        }
+
+        public void SendKeepAlive()
+        {
+            Send(new[] {Convert.ToByte(Constants.EtbByte)});
+        }
+
         public void StartCheckReceivedKeepAlivesTimer()
         {
             CheckReceivedKeepAlivesTimer.Start();
