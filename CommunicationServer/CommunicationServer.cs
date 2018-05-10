@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using Common;
@@ -13,11 +14,14 @@ namespace CommunicationServer
     {
         public static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
+        private readonly IErrorsMessagesFactory _errorsMessagesFactory;
         private readonly ICommunicationRouter _communicationRouter;
         private readonly IAsynchronousSocketListener _socketListener;
 
-        public CommunicationServer(IMessageDeserializer messageDeserializer, TimeSpan keepAliveTimeout, int port)
+        public CommunicationServer(IMessageDeserializer messageDeserializer, TimeSpan keepAliveTimeout, int port, IErrorsMessagesFactory
+            errorsMessagesFactory)
         {
+            _errorsMessagesFactory = errorsMessagesFactory;
             _socketListener = new AsynchronousSocketListener(port, keepAliveTimeout,
                 messageDeserializer, HandleMessage
             );
@@ -107,14 +111,35 @@ namespace CommunicationServer
         {
             var socketId = (int) e.Data["socketId"];
             var clientType = _communicationRouter.GetClientTypeFrom(socketId);
+            IMessage disconnectedMessage;
 
             if (clientType == ClientType.GameMaster)
             {
-                var playersInGame = GetAllPlayersInGame(socketId);
-                foreach (var i in playersInGame) _socketListener.CloseSocket(i);
+                var gameId = socketId;
+                var playersInGame = GetAllPlayersInGame(socketId).ToArray();
+                {
+                    foreach (var playerId in playersInGame)
+                    {
+                        disconnectedMessage = _errorsMessagesFactory.CreateGameMasterDisconnectedMessage(gameId);
+                        Send(disconnectedMessage, playerId);
+                    }
+                }
+
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+
+                foreach (var playerId in playersInGame)
+                {
+                    _socketListener.CloseSocket(playerId);
+                }
             }
 
-            if (clientType == ClientType.Player) _socketListener.CloseSocket(socketId);
+            if (clientType == ClientType.Player)
+            {
+                disconnectedMessage = _errorsMessagesFactory.CreatePlayerDisconnectedMessage(socketId);
+                Send(disconnectedMessage, GetGameIdFor(socketId));
+
+                _socketListener.CloseSocket(socketId);
+            }
         }
     }
 }

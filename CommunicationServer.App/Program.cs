@@ -2,6 +2,7 @@
 using BoardGenerators.Loaders;
 using Common;
 using GameMaster.Configuration;
+using Messaging.ErrorsMessages;
 using Messaging.Serialization;
 using Mono.Options;
 using NLog;
@@ -40,7 +41,7 @@ namespace CommunicationServer.App
             var config = configLoader.LoadConfigurationFromFile(gameConfigPath);
             var keepAliveInterval = TimeSpan.FromMilliseconds((int) config.KeepAliveInterval);
 
-            return new CommunicationServer(MessageSerializer.Instance, keepAliveInterval, port);
+            return new CommunicationServer(MessageSerializer.Instance, keepAliveInterval, port, new ErrorsMessagesFactory());
         }
 
         private static void Usage(OptionSet options)
