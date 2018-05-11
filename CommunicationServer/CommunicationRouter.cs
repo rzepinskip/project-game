@@ -8,14 +8,14 @@ namespace CommunicationServer
     internal class CommunicationRouter : ICommunicationRouter
     {
         private readonly Dictionary<int, GameInfo> _gameIdToGameInfo;
-        private readonly Dictionary<int, ClientType> _socketIdToClientType;
-        private readonly Dictionary<int, int> _socketIdToGameId;
+        private readonly Dictionary<int, ClientType> _connectionIdToClientType;
+        private readonly Dictionary<int, int> _connectionIdToGameId;
 
         public CommunicationRouter()
         {
-            _socketIdToGameId = new Dictionary<int, int>();
+            _connectionIdToGameId = new Dictionary<int, int>();
             _gameIdToGameInfo = new Dictionary<int, GameInfo>();
-            _socketIdToClientType = new Dictionary<int, ClientType>();
+            _connectionIdToClientType = new Dictionary<int, ClientType>();
         }
 
         public IEnumerable<GameInfo> GetAllJoinableGames()
@@ -28,9 +28,9 @@ namespace CommunicationServer
             return _gameIdToGameInfo.Single(x => x.Value.GameName == gameName).Key;
         }
 
-        public void RegisterNewGame(GameInfo gameInfo, int socketId)
+        public void RegisterNewGame(GameInfo gameInfo, int connectionId)
         {
-            var gameId = socketId;
+            var gameId = connectionId;
             _gameIdToGameInfo.Add(gameId, gameInfo);
         }
 
@@ -61,37 +61,37 @@ namespace CommunicationServer
 
         public void AssignGameIdToPlayerId(int gameId, int playerId)
         {
-            _socketIdToGameId.Add(playerId, gameId);
+            _connectionIdToGameId.Add(playerId, gameId);
         }
 
-        public int GetGameIdFor(int socketId)
+        public int GetGameIdFor(int connectionId)
         {
-            _socketIdToGameId.TryGetValue(socketId, out var gameId);
+            _connectionIdToGameId.TryGetValue(connectionId, out var gameId);
             return gameId;
         }
 
         public IEnumerable<int> GetAllClientsConnectedWithGame(int gameId)
         {
-            return _socketIdToGameId.Where(x => x.Value == gameId && x.Key != gameId).Select(x => x.Key);
+            return _connectionIdToGameId.Where(x => x.Value == gameId && x.Key != gameId).Select(x => x.Key);
         }
 
-        public void MarkClientAsPlayer(int socketId)
+        public void MarkClientAsPlayer(int connectionId)
         {
-            Console.WriteLine($"{socketId} added as {ClientType.Player}");
-            _socketIdToClientType.TryAdd(socketId, ClientType.Player);
+            Console.WriteLine($"{connectionId} added as {ClientType.Player}");
+            _connectionIdToClientType.TryAdd(connectionId, ClientType.Player);
         }
 
-        public void MarkClientAsGameMaster(int socketId)
+        public void MarkClientAsGameMaster(int connectionId)
         {
-            Console.WriteLine($"{socketId} added as {ClientType.GameMaster}");
-            _socketIdToClientType.TryAdd(socketId, ClientType.GameMaster);
+            Console.WriteLine($"{connectionId} added as {ClientType.GameMaster}");
+            _connectionIdToClientType.TryAdd(connectionId, ClientType.GameMaster);
         }
 
-        public ClientType GetClientTypeFrom(int socketId)
+        public ClientType GetClientTypeFrom(int connectionId)
         {
-            return !_socketIdToClientType.ContainsKey(socketId)
+            return !_connectionIdToClientType.ContainsKey(connectionId)
                 ? ClientType.NonInitialized
-                : _socketIdToClientType[socketId];
+                : _connectionIdToClientType[connectionId];
         }
     }
 }

@@ -19,9 +19,9 @@ namespace CommunicationServer
             _messageHandler = messageHandler;
         }
 
-        public override void Handle(IMessage message, int socketId = -404)
+        public override void Handle(IMessage message, int connectionId = -404)
         {
-            _messageHandler(message, socketId);
+            _messageHandler(message, connectionId);
         }
 
         protected override void FinalizeReceive(IAsyncResult ar)

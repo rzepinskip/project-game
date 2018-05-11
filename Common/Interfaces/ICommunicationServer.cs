@@ -2,6 +2,6 @@
 {
     public interface ICommunicationServer : IGamesManager, IClientTypeManager
     {
-        void Send(IMessage message, int socketId);
+        void Send(IMessage message, int connectionId);
     }
 }

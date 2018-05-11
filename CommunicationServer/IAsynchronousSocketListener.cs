@@ -6,8 +6,8 @@ namespace CommunicationServer
 {
     public interface IAsynchronousSocketListener
     {
-        void Send(IMessage message, int socketId);
+        void Send(IMessage message, int connectionId);
         void StartListening(Action<CommunicationException> connectionExceptionHandler);
-        void CloseSocket(int socketId);
+        void CloseSocket(int connectionId);
     }
 }

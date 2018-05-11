@@ -115,7 +115,7 @@ namespace Communication.TcpConnection
             }
         }
 
-        public abstract void Handle(IMessage message, int socketId = -404);
+        public abstract void Handle(IMessage message, int connectionId = -404);
 
         protected virtual void FinalizeReceive(IAsyncResult ar)
         {
@@ -175,7 +175,7 @@ namespace Communication.TcpConnection
 
         protected virtual void HandleExpectedConnectionError(CommunicationException e)
         {
-            e.Data.Add("socketId", Id);
+            e.Data.Add("connectionId", Id);
             ConnectionFailureHandler(e);
         }
     }

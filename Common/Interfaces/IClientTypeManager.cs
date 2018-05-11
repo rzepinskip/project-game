@@ -2,7 +2,7 @@
 {
     public interface IClientTypeManager
     {
-        void MarkClientAsPlayer(int socketId);
-        void MarkClientAsGameMaster(int socketId);
+        void MarkClientAsPlayer(int connectionId);
+        void MarkClientAsGameMaster(int connectionId);
     }
 }
