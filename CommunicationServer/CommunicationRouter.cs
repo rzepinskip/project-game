@@ -70,7 +70,7 @@ namespace CommunicationServer
             return gameId;
         }
 
-        public IEnumerable<int> GetAllPlayersInGame(int gameId)
+        public IEnumerable<int> GetAllClientsConnectedWithGame(int gameId)
         {
             return _socketIdToGameId.Where(x => x.Value == gameId && x.Key != gameId).Select(x => x.Key);
         }

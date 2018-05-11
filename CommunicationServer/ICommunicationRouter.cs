@@ -6,7 +6,7 @@ namespace CommunicationServer
 {
     public interface ICommunicationRouter : IGamesManager, IClientTypeManager
     {
-        IEnumerable<int> GetAllPlayersInGame(int gameId);
+        IEnumerable<int> GetAllClientsConnectedWithGame(int gameId);
         ClientType GetClientTypeFrom(int socketId);
     }
 }

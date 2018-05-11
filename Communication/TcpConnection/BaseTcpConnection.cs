@@ -86,6 +86,14 @@ namespace Communication.TcpConnection
             }
             catch (Exception e)
             {
+                if (e is SocketException socketException &&
+                    socketException.SocketErrorCode == SocketError.ConnectionReset)
+                {
+                    HandleExpectedConnectionError(new CommunicationException("Receive error - socket closed", e,
+                        CommunicationException.ErrorSeverity.Fatal));
+                    return;
+                }
+
                 ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }

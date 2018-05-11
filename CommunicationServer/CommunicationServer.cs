@@ -96,11 +96,6 @@ namespace CommunicationServer
             _communicationRouter.MarkClientAsGameMaster(socketId);
         }
 
-        public IEnumerable<int> GetAllPlayersInGame(int gameId)
-        {
-            return _communicationRouter.GetAllPlayersInGame(gameId);
-        }
-
         public void HandleMessage(IMessage message, int socketId)
         {
             Logger.Info(message + " from  id: " + socketId);
@@ -116,9 +111,10 @@ namespace CommunicationServer
             if (clientType == ClientType.GameMaster)
             {
                 var gameId = socketId;
-                var playersInGame = GetAllPlayersInGame(socketId).ToArray();
+                var clients = _communicationRouter.GetAllClientsConnectedWithGame(socketId).ToList();
+                clients.Remove(gameId);
                 {
-                    foreach (var playerId in playersInGame)
+                    foreach (var playerId in clients)
                     {
                         disconnectedMessage = _errorsMessagesFactory.CreateGameMasterDisconnectedMessage(gameId);
                         Send(disconnectedMessage, playerId);
@@ -127,7 +123,7 @@ namespace CommunicationServer
 
                 Thread.Sleep(Constants.DefaultDelayDuration);
 
-                foreach (var playerId in playersInGame)
+                foreach (var playerId in clients)
                 {
                     _socketListener.CloseSocket(playerId);
                 }
