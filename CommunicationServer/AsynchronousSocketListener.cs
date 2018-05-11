@@ -38,6 +38,9 @@ namespace CommunicationServer
         public void Send(IMessage message, int connectionId)
         {
             var byteData = Encoding.ASCII.GetBytes(message.SerializeToXml() + Communication.Constants.EtbByte);
+            
+            if (!IsConnectionExistent(connectionId))
+                throw new IdentifiableCommunicationException(connectionId, "Non existent connection during Send", null, CommunicationException.ErrorSeverity.Temporary);
             var connection = _connectionIdToTcpConnection[connectionId];
 
             try
@@ -79,15 +82,19 @@ namespace CommunicationServer
             }
         }
 
-        public void CloseSocket(int connectionId)
+        public void CloseConnection(int connectionId)
         {
-            Console.WriteLine("Closing socket: " + connectionId);
-            var findResult = _connectionIdToTcpConnection.TryGetValue(connectionId, out var socket);
-            if (!findResult)
-                throw new Exception("Non existent socket id");
+            if(!IsConnectionExistent(connectionId))
+                throw new IdentifiableCommunicationException(connectionId, "Non existent connection during CloseConnection", null, CommunicationException.ErrorSeverity.Temporary);
+            var tcpConnection = _connectionIdToTcpConnection[connectionId];
 
-            socket.CloseSocket();
+            tcpConnection.CloseConnection();
             _connectionIdToTcpConnection.Remove(connectionId);
+        }
+
+        public bool IsConnectionExistent(int connectionId)
+        {
+            return _connectionIdToTcpConnection.ContainsKey(connectionId);
         }
 
         private void AcceptCallback(IAsyncResult ar)

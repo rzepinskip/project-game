@@ -6,6 +6,7 @@ using System.Threading;
 using Common;
 using Common.Interfaces;
 using Communication;
+using Communication.Errors;
 using NLog;
 
 namespace CommunicationServer
@@ -110,7 +111,18 @@ namespace CommunicationServer
 
         public void HandleConnectionError(Exception e)
         {
-            var connectionId = (int) e.Data["connectionId"];
+            var connectionId = default(int);
+            if (e is IdentifiableCommunicationException ice)
+                connectionId = (int) ice.ConnectionId;
+            else
+                throw e;
+
+            if (!_socketListener.IsConnectionExistent(connectionId))
+            {
+                Console.WriteLine("Non existent connenctionId in HandleConnectionError");
+                return;
+            }
+
             var clientType = _communicationRouter.GetClientTypeFrom(connectionId);
             IMessage disconnectedMessage;
 
@@ -133,8 +145,8 @@ namespace CommunicationServer
             {
                 disconnectedMessage = _errorsMessagesFactory.CreatePlayerDisconnectedMessage(connectionId);
                 Send(disconnectedMessage, GetGameIdFor(connectionId));
-
-                _socketListener.CloseSocket(connectionId);
+                _socketListener.CloseConnection(connectionId);
+                DeregisterPlayerFromGame(connectionId);
             }
         }
     }

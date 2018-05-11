@@ -60,5 +60,13 @@ namespace Communication.TcpConnection
                 throw new CommunicationException("Keep alive max interval exceeded", null,
                     CommunicationException.ErrorSeverity.Fatal);
         }
+
+
+        public override void CloseConnection()
+        {
+            base.CloseConnection();
+
+            CheckReceivedKeepAlivesTimer.Dispose();
+        }
     }
 }

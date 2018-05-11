@@ -53,12 +53,17 @@ namespace Communication.TcpConnection
                     return;
                 }
 
+                if (e is ObjectDisposedException)
+                {
+                    throw new IdentifiableCommunicationException(Id, "Disposed during Send", e, CommunicationException.ErrorSeverity.Temporary);
+                }
+
                 ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
         }
 
-        public void CloseSocket()
+        public virtual void CloseConnection()
         {
             if (Socket == null)
                 return;
@@ -66,12 +71,15 @@ namespace Communication.TcpConnection
             try
             {
                 Socket.Shutdown(SocketShutdown.Both);
-                Socket.Close();
             }
             catch (Exception e)
             {
                 ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
+            }
+            finally
+            {
+                Socket.Close();
             }
         }
 
@@ -92,6 +100,10 @@ namespace Communication.TcpConnection
                     HandleExpectedConnectionError(new IdentifiableCommunicationException(Id, "Receive error - socket closed", e,
                         CommunicationException.ErrorSeverity.Fatal));
                     return;
+                }
+                if (e is ObjectDisposedException)
+                {
+                    throw new IdentifiableCommunicationException(Id, "Disposed during Receive", e, CommunicationException.ErrorSeverity.Temporary);
                 }
 
                 ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
@@ -135,6 +147,11 @@ namespace Communication.TcpConnection
                     HandleExpectedConnectionError(new IdentifiableCommunicationException(Id, "Read error - socket closed", e,
                         CommunicationException.ErrorSeverity.Fatal));
                     return;
+                }
+
+                if (e is ObjectDisposedException)
+                {
+                    throw new IdentifiableCommunicationException(Id, "Disposed during FinalizeReceive", e, CommunicationException.ErrorSeverity.Temporary);
                 }
 
                 ConnectionError.PrintUnexpectedConnectionErrorDetails(e);

@@ -22,7 +22,8 @@ namespace Messaging.ErrorsMessages
 
         public override IMessage Process(IGameMaster gameMaster)
         {
-            throw new NotImplementedException();
+            Console.WriteLine($"Player {PlayerId} disconnected from game");
+            return null;
         }
 
         public override void Process(IPlayer player)

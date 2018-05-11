@@ -63,8 +63,14 @@ namespace Communication.Client
         protected override void HandleExpectedConnectionError(CommunicationException e)
         {
             StopSendKeepAliveTimer();
-            e.Data.Add("connectionId", Id);
             ConnectionFailureHandler(e);
+        }
+
+        public override void CloseConnection()
+        {
+            base.CloseConnection();
+
+            SendKeepAliveTimer.Dispose();
         }
     }
 }
