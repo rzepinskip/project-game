@@ -31,24 +31,15 @@ namespace GameMaster
         {
             _gameConfiguration = gameConfiguration;
             _gameName = gameName;
-            var boardGenerator = new GameMasterBoardGenerator();
-            Board = boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
-            _playersSlots =
-                boardGenerator.GeneratePlayerSlots(_gameConfiguration.GameDefinition.NumberOfPlayersPerTeam);
-
-            _playerGuidToId = new Dictionary<Guid, int>();
-            foreach (var player in Board.Players) _playerGuidToId.Add(Guid.NewGuid(), player.Key);
 
             checkIfFullTeamTimer = new Timer(CheckIfGameFullCallback, null,
                 (int) Constants.GameFullCheckStartDelay.TotalMilliseconds,
                 (int) Constants.GameFullCheckInterval.TotalMilliseconds);
 
-            _messagingHandler = new MessagingHandler(gameConfiguration, communicationCommunicationClient, RestartGM);
+            _messagingHandler = new MessagingHandler(gameConfiguration, communicationCommunicationClient, StartGameHosting);
             _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
 
-            _messagingHandler.CommunicationClient.Send(new RegisterGameMessage(new GameInfo(gameName,
-                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam,
-                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam)));
+            StartGameHosting();
         }
 
         public GameMaster(GameMasterBoard board, Dictionary<Guid, int> playerGuidToId)
@@ -189,7 +180,7 @@ namespace GameMaster
             Logger.Info(actionLog.ToLog());
         }
 
-        private void RestartGM()
+        private void StartGameHosting()
         {
             FinishGame();
             var boardGenerator = new GameMasterBoardGenerator();
