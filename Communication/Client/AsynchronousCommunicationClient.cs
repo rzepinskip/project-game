@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using Common;
 using Common.Interfaces;
-using Communication.Exceptions;
+using Communication.Errors;
 using Communication.TcpConnection;
 
 namespace Communication.Client
@@ -43,7 +43,7 @@ namespace Communication.Client
             }
             catch (Exception e)
             {
-                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
         }
@@ -61,7 +61,7 @@ namespace Communication.Client
             }
             catch (Exception e)
             {
-                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
 
@@ -78,7 +78,7 @@ namespace Communication.Client
             }
             catch (Exception e)
             {
-                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
         }
@@ -92,7 +92,7 @@ namespace Communication.Client
                 }
                 catch (Exception e)
                 {
-                    ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                    ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
                     throw;
                 }
         }
