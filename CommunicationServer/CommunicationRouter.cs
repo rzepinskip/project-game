@@ -7,9 +7,11 @@ namespace CommunicationServer
 {
     internal class CommunicationRouter : ICommunicationRouter
     {
-        private readonly Dictionary<int, GameInfo> _gameIdToGameInfo;
         private readonly Dictionary<int, ClientType> _connectionIdToClientType;
+
         private readonly Dictionary<int, int> _connectionIdToGameId;
+
+        private readonly Dictionary<int, GameInfo> _gameIdToGameInfo;
 
         public CommunicationRouter()
         {
@@ -26,6 +28,11 @@ namespace CommunicationServer
         public int GetGameIdFor(string gameName)
         {
             return _gameIdToGameInfo.Single(x => x.Value.GameName == gameName).Key;
+        }
+
+        public int GetGameIdFor(int connectionId)
+        {
+            return _connectionIdToGameId[connectionId];
         }
 
         public void RegisterNewGame(GameInfo gameInfo, int connectionId)
@@ -64,12 +71,6 @@ namespace CommunicationServer
             _connectionIdToGameId.Add(playerId, gameId);
         }
 
-        public int GetGameIdFor(int connectionId)
-        {
-            _connectionIdToGameId.TryGetValue(connectionId, out var gameId);
-            return gameId;
-        }
-
         public IEnumerable<int> GetAllClientsConnectedWithGame(int gameId)
         {
             return _connectionIdToGameId.Where(x => x.Value == gameId && x.Key != gameId).Select(x => x.Key);
@@ -78,13 +79,13 @@ namespace CommunicationServer
         public void MarkClientAsPlayer(int connectionId)
         {
             Console.WriteLine($"{connectionId} added as {ClientType.Player}");
-            _connectionIdToClientType.TryAdd(connectionId, ClientType.Player);
+            _connectionIdToClientType.Add(connectionId, ClientType.Player);
         }
 
         public void MarkClientAsGameMaster(int connectionId)
         {
             Console.WriteLine($"{connectionId} added as {ClientType.GameMaster}");
-            _connectionIdToClientType.TryAdd(connectionId, ClientType.GameMaster);
+            _connectionIdToClientType.Add(connectionId, ClientType.GameMaster);
         }
 
         public ClientType GetClientTypeFrom(int connectionId)

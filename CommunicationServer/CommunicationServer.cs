@@ -13,13 +13,14 @@ namespace CommunicationServer
     public class CommunicationServer : ICommunicationServer
     {
         public static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ICommunicationRouter _communicationRouter;
 
         private readonly IErrorsMessagesFactory _errorsMessagesFactory;
-        private readonly ICommunicationRouter _communicationRouter;
         private readonly IAsynchronousSocketListener _socketListener;
 
-        public CommunicationServer(IMessageDeserializer messageDeserializer, TimeSpan keepAliveTimeout, int port, IErrorsMessagesFactory
-            errorsMessagesFactory)
+        public CommunicationServer(IMessageDeserializer messageDeserializer, TimeSpan keepAliveTimeout, int port,
+            IErrorsMessagesFactory
+                errorsMessagesFactory)
         {
             _errorsMessagesFactory = errorsMessagesFactory;
             _socketListener = new AsynchronousSocketListener(port, keepAliveTimeout,
@@ -37,6 +38,11 @@ namespace CommunicationServer
         public int GetGameIdFor(string gameName)
         {
             return _communicationRouter.GetGameIdFor(gameName);
+        }
+
+        public int GetGameIdFor(int connectionId)
+        {
+            return _communicationRouter.GetGameIdFor(connectionId);
         }
 
         public void RegisterNewGame(GameInfo gameInfo, int connectionId)
@@ -57,11 +63,6 @@ namespace CommunicationServer
         public void AssignGameIdToPlayerId(int gameId, int playerId)
         {
             _communicationRouter.AssignGameIdToPlayerId(gameId, playerId);
-        }
-
-        public int GetGameIdFor(int connectionId)
-        {
-            return _communicationRouter.GetGameIdFor(connectionId);
         }
 
         public void Send(IMessage message, int connectionId)
@@ -110,7 +111,7 @@ namespace CommunicationServer
 
             if (clientType == ClientType.GameMaster)
             {
-                var gameId = connectionId;
+                var gameId = GetGameIdFor(connectionId);
                 var clients = _communicationRouter.GetAllClientsConnectedWithGame(connectionId).ToList();
                 clients.Remove(gameId);
                 {
@@ -123,10 +124,7 @@ namespace CommunicationServer
 
                 Thread.Sleep(Constants.DefaultDelayDuration);
 
-                foreach (var playerId in clients)
-                {
-                    _socketListener.CloseSocket(playerId);
-                }
+                foreach (var playerId in clients) _socketListener.CloseSocket(playerId);
             }
 
             if (clientType == ClientType.Player)
