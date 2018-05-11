@@ -49,13 +49,14 @@ namespace Communication.TcpConnection
                     socketException.SocketErrorCode == SocketError.ConnectionReset)
                 {
                     HandleExpectedConnectionError(new IdentifiableCommunicationException(Id, "Send error - socket closed", e,
-                        CommunicationException.ErrorSeverity.Fatal));
+                        CommunicationException.ErrorSeverity.Temporary));
                     return;
                 }
 
                 if (e is ObjectDisposedException)
                 {
-                    throw new IdentifiableCommunicationException(Id, "Disposed during Send", e, CommunicationException.ErrorSeverity.Temporary);
+                    HandleExpectedConnectionError(new IdentifiableCommunicationException(Id, "Disposed during Send", e, CommunicationException.ErrorSeverity.Temporary));
+                    return;
                 }
 
                 ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
@@ -98,12 +99,13 @@ namespace Communication.TcpConnection
                     socketException.SocketErrorCode == SocketError.ConnectionReset)
                 {
                     HandleExpectedConnectionError(new IdentifiableCommunicationException(Id, "Receive error - socket closed", e,
-                        CommunicationException.ErrorSeverity.Fatal));
+                        CommunicationException.ErrorSeverity.Temporary));
                     return;
                 }
                 if (e is ObjectDisposedException)
                 {
-                    throw new IdentifiableCommunicationException(Id, "Disposed during Receive", e, CommunicationException.ErrorSeverity.Temporary);
+                    HandleExpectedConnectionError(new IdentifiableCommunicationException(Id, "Disposed during Send", e, CommunicationException.ErrorSeverity.Temporary));
+                    return;
                 }
 
                 ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
@@ -145,7 +147,7 @@ namespace Communication.TcpConnection
                     socketException.SocketErrorCode == SocketError.ConnectionReset)
                 {
                     HandleExpectedConnectionError(new IdentifiableCommunicationException(Id, "Read error - socket closed", e,
-                        CommunicationException.ErrorSeverity.Fatal));
+                        CommunicationException.ErrorSeverity.Temporary));
                     return;
                 }
 

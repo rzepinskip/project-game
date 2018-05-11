@@ -79,13 +79,9 @@ namespace CommunicationServer
             }
             catch (Exception e)
             {
-                if (e is SocketException socketException &&
-                    socketException.SocketErrorCode == SocketError.ConnectionReset)
+                if (e is CommunicationException ce)
                 {
-                    var clientType = _communicationRouter.GetClientTypeFrom(connectionId);
-
-                    Console.WriteLine($"{clientType} #{e.Data["connectionId"]} disconnected");
-
+                    HandleConnectionError(ce);
                     return;
                 }
 
@@ -109,19 +105,27 @@ namespace CommunicationServer
             message.Process(this, connectionId);
         }
 
-        public void HandleConnectionError(Exception e)
+        public void HandleConnectionError(CommunicationException e)
         {
-            var connectionId = default(int);
-            if (e is IdentifiableCommunicationException ice)
-                connectionId = (int) ice.ConnectionId;
-            else
+            if (!(e is IdentifiableCommunicationException))
                 throw e;
+
+            var ice = (IdentifiableCommunicationException) e;
+            var connectionId = ice.ConnectionId;
+
+            if (ice.Severity == CommunicationException.ErrorSeverity.Temporary)
+            {
+                Console.WriteLine($"Encountered temporary problem with connection {connectionId}: {ice.Message}");
+                return;
+            }
 
             if (!_socketListener.IsConnectionExistent(connectionId))
             {
                 Console.WriteLine("Non existent connenctionId in HandleConnectionError");
                 return;
             }
+
+            Console.WriteLine($"Handling disconnection event for connection #{connectionId} because {e.Message}");
 
             var clientType = _communicationRouter.GetClientTypeFrom(connectionId);
             IMessage disconnectedMessage;
