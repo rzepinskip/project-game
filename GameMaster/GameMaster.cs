@@ -19,17 +19,18 @@ namespace GameMaster
         private readonly GameConfiguration _gameConfiguration;
 
         private readonly MessagingHandler _messagingHandler;
-        private readonly Dictionary<Guid, int> _playerGuidToId;
-        private readonly List<(TeamColor team, PlayerType role)> _playersSlots;
+        private Dictionary<Guid, int> _playerGuidToId;
+        private List<(TeamColor team, PlayerType role)> _playersSlots;
         private int _gameId;
         private bool _gameInProgress;
         private PieceGenerator _pieceGenerator;
         private Timer checkIfFullTeamTimer;
+        private string _gameName;
 
         public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, string gameName)
         {
             _gameConfiguration = gameConfiguration;
-
+            _gameName = gameName;
             var boardGenerator = new GameMasterBoardGenerator();
             Board = boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
             _playersSlots =
@@ -42,7 +43,7 @@ namespace GameMaster
                 (int) Constants.GameFullCheckStartDelay.TotalMilliseconds,
                 (int) Constants.GameFullCheckInterval.TotalMilliseconds);
 
-            _messagingHandler = new MessagingHandler(gameConfiguration, communicationCommunicationClient);
+            _messagingHandler = new MessagingHandler(gameConfiguration, communicationCommunicationClient, RestartGM);
             _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
 
             _messagingHandler.CommunicationClient.Send(new RegisterGameMessage(new GameInfo(gameName,
@@ -166,8 +167,11 @@ namespace GameMaster
 
         private void FinishGame()
         {
-            _gameInProgress = false;
-            _pieceGenerator.SpawnTimer.Dispose();
+            if (_gameInProgress)
+            {
+                _gameInProgress = false;
+                _pieceGenerator.SpawnTimer.Dispose();
+            }
         }
 
         public virtual event EventHandler<GameFinishedEventArgs> GameFinished;
@@ -183,6 +187,22 @@ namespace GameMaster
             var playerInfo = Board.Players[playerId];
             var actionLog = new RequestLog(record, playerInfo.Team, playerInfo.Role);
             Logger.Info(actionLog.ToLog());
+        }
+
+        private void RestartGM()
+        {
+            FinishGame();
+            var boardGenerator = new GameMasterBoardGenerator();
+            Board = boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
+            _playersSlots =
+                boardGenerator.GeneratePlayerSlots(_gameConfiguration.GameDefinition.NumberOfPlayersPerTeam);
+
+            _playerGuidToId = new Dictionary<Guid, int>();
+            foreach (var player in Board.Players) _playerGuidToId.Add(Guid.NewGuid(), player.Key);
+
+            _messagingHandler.CommunicationClient.Send(new RegisterGameMessage(new GameInfo(_gameName,
+                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam,
+                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam)));
         }
     }
 
