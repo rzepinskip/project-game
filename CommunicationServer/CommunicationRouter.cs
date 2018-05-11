@@ -39,6 +39,7 @@ namespace CommunicationServer
         {
             var gameId = connectionId;
             _gameIdToGameInfo.Add(gameId, gameInfo);
+            _connectionIdToGameId.Add(connectionId, gameId);
         }
 
         public void UpdateTeamCount(int gameId, TeamColor team)
@@ -78,12 +79,16 @@ namespace CommunicationServer
 
         public void MarkClientAsPlayer(int connectionId)
         {
+            if (_connectionIdToClientType.ContainsKey(connectionId)) return;
+
             Console.WriteLine($"{connectionId} added as {ClientType.Player}");
             _connectionIdToClientType.Add(connectionId, ClientType.Player);
         }
 
         public void MarkClientAsGameMaster(int connectionId)
         {
+            if (_connectionIdToClientType.ContainsKey(connectionId)) return;
+
             Console.WriteLine($"{connectionId} added as {ClientType.GameMaster}");
             _connectionIdToClientType.Add(connectionId, ClientType.GameMaster);
         }
@@ -93,6 +98,11 @@ namespace CommunicationServer
             return !_connectionIdToClientType.ContainsKey(connectionId)
                 ? ClientType.NonInitialized
                 : _connectionIdToClientType[connectionId];
+        }
+
+        public void DeregisterPlayerFromGame(int playerId)
+        {
+            _connectionIdToGameId.Remove(playerId);
         }
     }
 }

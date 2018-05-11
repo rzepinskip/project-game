@@ -45,6 +45,11 @@ namespace CommunicationServer
             return _communicationRouter.GetGameIdFor(connectionId);
         }
 
+        public void DeregisterPlayerFromGame(int playerId)
+        {
+            _communicationRouter.DeregisterPlayerFromGame(playerId);
+        }
+
         public void RegisterNewGame(GameInfo gameInfo, int connectionId)
         {
             _communicationRouter.RegisterNewGame(gameInfo, connectionId);
@@ -119,12 +124,9 @@ namespace CommunicationServer
                     {
                         disconnectedMessage = _errorsMessagesFactory.CreateGameMasterDisconnectedMessage(gameId);
                         Send(disconnectedMessage, playerId);
+                        DeregisterPlayerFromGame(playerId);
                     }
                 }
-
-                Thread.Sleep(Constants.DefaultDelayDuration);
-
-                foreach (var playerId in clients) _socketListener.CloseSocket(playerId);
             }
 
             if (clientType == ClientType.Player)

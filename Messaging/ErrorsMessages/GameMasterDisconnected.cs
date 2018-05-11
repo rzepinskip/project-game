@@ -27,7 +27,7 @@ namespace Messaging.ErrorsMessages
 
         public override void Process(IPlayer player)
         {
-            throw new NotImplementedException();
+            player.HandleGameMasterDisconnection();
         }
 
         public override void Process(ICommunicationServer cs, int id)
