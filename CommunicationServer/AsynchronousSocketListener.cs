@@ -40,7 +40,8 @@ namespace CommunicationServer
             var byteData = Encoding.ASCII.GetBytes(message.SerializeToXml() + Communication.Constants.EtbByte);
             
             if (!IsConnectionExistent(connectionId))
-                throw new IdentifiableCommunicationException(connectionId, "Non existent connection during Send", null, CommunicationException.ErrorSeverity.Temporary);
+                throw new IdentifiableCommunicationException(connectionId, $"Non existent connection during Send\n{message}", null, CommunicationException.ErrorSeverity.Temporary);
+
             var connection = _connectionIdToTcpConnection[connectionId];
 
             try
@@ -86,6 +87,7 @@ namespace CommunicationServer
         {
             if(!IsConnectionExistent(connectionId))
                 throw new IdentifiableCommunicationException(connectionId, "Non existent connection during CloseConnection", null, CommunicationException.ErrorSeverity.Temporary);
+
             var tcpConnection = _connectionIdToTcpConnection[connectionId];
 
             tcpConnection.CloseConnection();
