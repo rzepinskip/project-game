@@ -125,7 +125,7 @@ namespace CommunicationServer
                     }
                 }
 
-                Thread.Sleep(TimeSpan.FromSeconds(1));
+                Thread.Sleep(Constants.DefaultDelayDuration);
 
                 foreach (var playerId in playersInGame)
                 {
