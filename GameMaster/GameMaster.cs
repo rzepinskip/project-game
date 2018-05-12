@@ -174,9 +174,7 @@ namespace GameMaster
             _playerGuidToId = new Dictionary<Guid, int>();
             foreach (var player in Board.Players) _playerGuidToId.Add(Guid.NewGuid(), player.Key);
 
-            _messagingHandler.CommunicationClient.Send(new RegisterGameMessage(new GameInfo(_gameName,
-                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam,
-                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam)));
+            RegisterGame();
         }
 
         private void FinishGame()
@@ -202,7 +200,6 @@ namespace GameMaster
             var actionLog = new RequestLog(record, playerInfo.Team, playerInfo.Role);
             Logger.Info(actionLog.ToLog());
         }
-            RegisterGame();
     }
 
     public class GameFinishedEventArgs : EventArgs

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml.Serialization;
+using Common;
 using Common.Interfaces;
 using Messaging.Responses;
 
@@ -24,8 +25,7 @@ namespace Messaging.InitialisationMessages
 
         public override IMessage Process(IGameMaster gameMaster)
         {
-            gameMaster.RegisterGame();
-            return null;
+            throw new ApplicationFatalException("Failed to register game");
         }
 
         public override void Process(IPlayer player)
