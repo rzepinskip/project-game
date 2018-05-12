@@ -98,6 +98,10 @@ namespace Messaging.Serialization
                     GameMasterDisconnected.XmlRootName,
                     GetDefaultXmlSerializer(typeof(GameMasterDisconnected))
                 },
+                {
+                    RejectGameRegistrationMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(RejectGameRegistrationMessage))
+                },
             };
         }
 

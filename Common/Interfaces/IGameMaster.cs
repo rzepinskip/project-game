@@ -14,5 +14,6 @@ namespace Common.Interfaces
             TeamColor preferedTeam, PlayerType preferedRole);
 
         void HandlePlayerDisconnection(int playerId);
+        void RegisterGame();
     }
 }

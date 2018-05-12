@@ -25,7 +25,7 @@ namespace GameMaster
         private bool _gameInProgress;
         private PieceGenerator _pieceGenerator;
         private Timer checkIfFullTeamTimer;
-        private string _gameName;
+        private readonly string _gameName;
 
         public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, string gameName)
         {
@@ -84,6 +84,13 @@ namespace GameMaster
                 return;
             var disconnectedPlayerPair = _playerGuidToId.Single(x => x.Value == playerId);
             _playerGuidToId.Remove(disconnectedPlayerPair.Key);
+        }
+
+        public void RegisterGame()
+        {
+            _messagingHandler.CommunicationClient.Send(new RegisterGameMessage(new GameInfo(_gameName,
+                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam,
+                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam)));
         }
 
         public void SetGameId(int gameId)
@@ -195,6 +202,7 @@ namespace GameMaster
             var actionLog = new RequestLog(record, playerInfo.Team, playerInfo.Role);
             Logger.Info(actionLog.ToLog());
         }
+            RegisterGame();
     }
 
     public class GameFinishedEventArgs : EventArgs

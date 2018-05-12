@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using Common;
 using Common.Interfaces;
@@ -50,7 +51,21 @@ namespace Messaging.InitialisationMessages
         {
             PlayerId = id;
             cs.MarkClientAsPlayer(id);
-            cs.Send(this, cs.GetGameIdFor(GameName));
+            try
+            {
+                var gameId = cs.GetGameIdFor(GameName);
+                cs.Send(this, gameId);
+            }
+            catch (Exception e)
+            {
+                if (e is KeyNotFoundException)
+                {
+                    Console.WriteLine($"{PlayerId} tried to join non-existent game");
+                    cs.Send(new RejectJoiningGame(GameName, PlayerId), id);
+                }
+
+                throw;
+            }
         }
     }
 }
