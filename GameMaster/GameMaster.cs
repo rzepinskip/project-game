@@ -86,6 +86,13 @@ namespace GameMaster
             _playerGuidToId.Remove(disconnectedPlayerPair.Key);
         }
 
+        public void RegisterGame()
+        {
+            _messagingHandler.CommunicationClient.Send(new RegisterGameMessage(new GameInfo(_gameName,
+                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam,
+                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam)));
+        }
+
         public void SetGameId(int gameId)
         {
             _gameId = gameId;
@@ -195,6 +202,7 @@ namespace GameMaster
             var actionLog = new RequestLog(record, playerInfo.Team, playerInfo.Role);
             Logger.Info(actionLog.ToLog());
         }
+            RegisterGame();
     }
 
     public class GameFinishedEventArgs : EventArgs

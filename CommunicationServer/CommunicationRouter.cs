@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using Common;
 
 namespace CommunicationServer
@@ -35,11 +36,14 @@ namespace CommunicationServer
             return _connectionIdToGameId[connectionId];
         }
 
-        public void RegisterNewGame(GameInfo gameInfo, int connectionId)
+        public bool RegisterNewGame(GameInfo gameInfo, int connectionId)
         {
+            if (_gameIdToGameInfo.Values.Count(x => x.GameName == gameInfo.GameName) > 0)
+                return false;
             var gameId = connectionId;
             _gameIdToGameInfo.Add(gameId, gameInfo);
             _connectionIdToGameId.Add(connectionId, gameId);
+            return true;
         }
 
         public void UpdateTeamCount(int gameId, TeamColor team)
