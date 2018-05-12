@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using Common;
 using Common.Interfaces;
 using Communication;
+using Communication.Errors;
 using NLog;
 
 namespace CommunicationServer
@@ -12,12 +14,16 @@ namespace CommunicationServer
     public class CommunicationServer : ICommunicationServer
     {
         public static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
-
         private readonly ICommunicationRouter _communicationRouter;
+
+        private readonly IErrorsMessagesFactory _errorsMessagesFactory;
         private readonly IAsynchronousSocketListener _socketListener;
 
-        public CommunicationServer(IMessageDeserializer messageDeserializer, TimeSpan keepAliveTimeout, int port)
+        public CommunicationServer(IMessageDeserializer messageDeserializer, TimeSpan keepAliveTimeout, int port,
+            IErrorsMessagesFactory
+                errorsMessagesFactory)
         {
+            _errorsMessagesFactory = errorsMessagesFactory;
             _socketListener = new AsynchronousSocketListener(port, keepAliveTimeout,
                 messageDeserializer, HandleMessage
             );
@@ -35,9 +41,19 @@ namespace CommunicationServer
             return _communicationRouter.GetGameIdFor(gameName);
         }
 
-        public void RegisterNewGame(GameInfo gameInfo, int socketId)
+        public int GetGameIdFor(int connectionId)
         {
-            _communicationRouter.RegisterNewGame(gameInfo, socketId);
+            return _communicationRouter.GetGameIdFor(connectionId);
+        }
+
+        public void DeregisterPlayerFromGame(int playerId)
+        {
+            _communicationRouter.DeregisterPlayerFromGame(playerId);
+        }
+
+        public void RegisterNewGame(GameInfo gameInfo, int connectionId)
+        {
+            _communicationRouter.RegisterNewGame(gameInfo, connectionId);
         }
 
         public void UpdateTeamCount(int gameId, TeamColor team)
@@ -55,26 +71,17 @@ namespace CommunicationServer
             _communicationRouter.AssignGameIdToPlayerId(gameId, playerId);
         }
 
-        public int GetGameIdFor(int socketId)
-        {
-            return _communicationRouter.GetGameIdFor(socketId);
-        }
-
-        public void Send(IMessage message, int socketId)
+        public void Send(IMessage message, int connectionId)
         {
             try
             {
-                _socketListener.Send(message, socketId);
+                _socketListener.Send(message, connectionId);
             }
             catch (Exception e)
             {
-                if (e is SocketException socketException &&
-                    socketException.SocketErrorCode == SocketError.ConnectionReset)
+                if (e is CommunicationException ce)
                 {
-                    var clientType = _communicationRouter.GetClientTypeFrom(socketId);
-
-                    Console.WriteLine($"{clientType} #{e.Data["socketId"]} disconnected");
-
+                    HandleConnectionError(ce);
                     return;
                 }
 
@@ -82,39 +89,69 @@ namespace CommunicationServer
             }
         }
 
-        public void MarkClientAsPlayer(int socketId)
+        public void MarkClientAsPlayer(int connectionId)
         {
-            _communicationRouter.MarkClientAsPlayer(socketId);
+            _communicationRouter.MarkClientAsPlayer(connectionId);
         }
 
-        public void MarkClientAsGameMaster(int socketId)
+        public void MarkClientAsGameMaster(int connectionId)
         {
-            _communicationRouter.MarkClientAsGameMaster(socketId);
+            _communicationRouter.MarkClientAsGameMaster(connectionId);
         }
 
-        public IEnumerable<int> GetAllPlayersInGame(int gameId)
+        public void HandleMessage(IMessage message, int connectionId)
         {
-            return _communicationRouter.GetAllPlayersInGame(gameId);
+            Logger.Info(message + " from  id: " + connectionId);
+            message.Process(this, connectionId);
         }
 
-        public void HandleMessage(IMessage message, int socketId)
+        public void HandleConnectionError(CommunicationException e)
         {
-            Logger.Info(message + " from  id: " + socketId);
-            message.Process(this, socketId);
-        }
+            if (!(e is IdentifiableCommunicationException))
+                throw e;
 
-        public void HandleConnectionError(Exception e)
-        {
-            var socketId = (int) e.Data["socketId"];
-            var clientType = _communicationRouter.GetClientTypeFrom(socketId);
+            var ice = (IdentifiableCommunicationException) e;
+            var connectionId = ice.ConnectionId;
+
+            if (ice.Severity == CommunicationException.ErrorSeverity.Temporary)
+            {
+                Console.WriteLine($"Encountered temporary problem with connection {connectionId}: {ice.Message}");
+                return;
+            }
+
+            if (!_socketListener.IsConnectionExistent(connectionId))
+            {
+                Console.WriteLine("Non existent connenctionId in HandleConnectionError");
+                return;
+            }
+
+            Console.WriteLine($"Handling disconnection event for connection #{connectionId} because {e.Message}");
+
+            var clientType = _communicationRouter.GetClientTypeFrom(connectionId);
+            IMessage disconnectedMessage;
 
             if (clientType == ClientType.GameMaster)
             {
-                var playersInGame = GetAllPlayersInGame(socketId);
-                foreach (var i in playersInGame) _socketListener.CloseSocket(i);
+                var gameId = GetGameIdFor(connectionId);
+                var clients = _communicationRouter.GetAllClientsConnectedWithGame(connectionId).ToList();
+                clients.Remove(gameId);
+                {
+                    foreach (var playerId in clients)
+                    {
+                        disconnectedMessage = _errorsMessagesFactory.CreateGameMasterDisconnectedMessage(gameId);
+                        Send(disconnectedMessage, playerId);
+                        DeregisterPlayerFromGame(playerId);
+                    }
+                }
             }
 
-            if (clientType == ClientType.Player) _socketListener.CloseSocket(socketId);
+            if (clientType == ClientType.Player)
+            {
+                disconnectedMessage = _errorsMessagesFactory.CreatePlayerDisconnectedMessage(connectionId);
+                Send(disconnectedMessage, GetGameIdFor(connectionId));
+                _socketListener.CloseConnection(connectionId);
+                DeregisterPlayerFromGame(connectionId);
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using System.Timers;
 using Common;
+using Communication.Errors;
 
 namespace Communication.TcpConnection
 {
@@ -57,8 +58,18 @@ namespace Communication.TcpConnection
             var elapsedTicks = currentTime - GetLastReceivedMessageTicks();
             var elapsedSpan = new TimeSpan(elapsedTicks);
             if (elapsedSpan > MaxUnresponsivenessDuration)
-                throw new CommunicationException("Keep alive max interval exceeded", null,
-                    CommunicationException.ErrorSeverity.Fatal);
+            {
+                HandleExpectedConnectionError(new IdentifiableCommunicationException(Id, "Keep alive timeout", null,
+                    CommunicationException.ErrorSeverity.Fatal));
+            }
+        }
+
+
+        public override void CloseConnection()
+        {
+            base.CloseConnection();
+
+            CheckReceivedKeepAlivesTimer.Dispose();
         }
     }
 }

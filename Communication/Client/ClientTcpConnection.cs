@@ -19,7 +19,7 @@ namespace Communication.Client
             _messageHandler = messageHandler;
         }
 
-        public override void Handle(IMessage message, int socketId = -404)
+        public override void Handle(IMessage message, int connectionId = -404)
         {
             _messageHandler(message);
         }
@@ -63,8 +63,14 @@ namespace Communication.Client
         protected override void HandleExpectedConnectionError(CommunicationException e)
         {
             StopSendKeepAliveTimer();
-            e.Data.Add("socketId", Id);
             ConnectionFailureHandler(e);
+        }
+
+        public override void CloseConnection()
+        {
+            base.CloseConnection();
+
+            SendKeepAliveTimer.Dispose();
         }
     }
 }

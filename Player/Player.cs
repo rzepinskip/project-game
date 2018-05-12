@@ -16,10 +16,15 @@ namespace Player
         private bool _hasGameEnded;
         private PlayerCoordinator _playerCoordinator;
         public ILogger Logger;
-
+        private readonly string _gameName;
+        private readonly TeamColor _color;
+        private readonly PlayerType _role;
         public Player(ICommunicationClient communicationClient, string gameName, TeamColor color, PlayerType role)
         {
             CommunicationClient = communicationClient;
+            _gameName = gameName;
+            _color = color;
+            _role = role;
 
             var factory = new LoggerFactory();
             Logger = factory.GetPlayerLogger(0);
@@ -111,6 +116,13 @@ namespace Player
         {
             //evaluate
         }
+
+        public void HandleGameMasterDisconnection()
+        {
+            Console.WriteLine("GM disconnected");
+            _playerCoordinator = new PlayerCoordinator(_gameName, _color, _role);
+        }
+
         private void HandleResponse(IMessage response)
         {
             //if (_hasGameEnded)

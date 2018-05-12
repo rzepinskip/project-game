@@ -19,11 +19,11 @@ namespace Communication.TcpConnection
         public long LastReceivedMessageTicks { get; private set; }
         public byte[] Buffer { get; } = new byte[Constants.BufferSize];
 
-        public (IEnumerable<string> messageList, bool hasEtbByte) SplitMessages(int bytesRead, int socketId)
+        public (IEnumerable<string> messageList, bool hasEtbByte) SplitMessages(int bytesRead, int connectionId)
         {
             _messageContentBuilder.Append(Encoding.ASCII.GetString(Buffer, 0, bytesRead));
             var content = _messageContentBuilder.ToString();
-            Debug.WriteLine($"Socket {socketId}:\nData : {content}");
+            Debug.WriteLine($"Socket {connectionId}:\nData : {content}");
 
             var messages = new string[0];
             var hasEtbByte = content.IndexOf(Constants.EtbByte) > -1;

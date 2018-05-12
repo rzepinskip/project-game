@@ -6,6 +6,7 @@ using Common;
 using Communication.Client;
 using GameMaster;
 using GameMaster.Configuration;
+using Messaging.ErrorsMessages;
 using Messaging.Serialization;
 
 namespace GameSimulation
@@ -28,7 +29,7 @@ namespace GameSimulation
 
 
             CommunicationServer =
-                new CommunicationServer.CommunicationServer(MessageSerializer.Instance, keepAliveInterval, port);
+                new CommunicationServer.CommunicationServer(MessageSerializer.Instance, keepAliveInterval, port, new ErrorsMessagesFactory());
             GameMaster = new GameMaster.GameMaster(config, communicationClient, "game");
             Players = new List<Player.Player>();
             for (var i = 0; i < 2 * config.GameDefinition.NumberOfPlayersPerTeam; i++)

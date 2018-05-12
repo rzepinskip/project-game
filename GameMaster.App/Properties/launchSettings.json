@@ -2,7 +2,7 @@
   "profiles": {
     "GameMaster.App": {
       "commandName": "Project",
-      "commandLineArgs": "--port 11000 --conf  ..\\Resources\\GameConfigs\\ExampleConfig.xml --game game"
+      "commandLineArgs": "--port 11000 --conf  $(SolutionDir)\\Resources\\GameConfigs\\ExampleConfig.xml --game game"
     }
   }
 }

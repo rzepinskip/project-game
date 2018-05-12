@@ -7,7 +7,7 @@ using System.Threading;
 using Common;
 using Common.Interfaces;
 using Communication;
-using Communication.Exceptions;
+using Communication.Errors;
 using Communication.TcpConnection;
 
 namespace CommunicationServer
@@ -20,38 +20,37 @@ namespace CommunicationServer
         private readonly int _port;
 
         private readonly ManualResetEvent _readyForAccept = new ManualResetEvent(false);
-        private readonly Dictionary<int, ITcpConnection> _socketIdToTcpConnection;
+        private readonly Dictionary<int, ITcpConnection> _connectionIdToTcpConnection;
         private Action<CommunicationException> _connectionExceptionHandler;
-        private int _counter;
+        private int _nextConnectionId;
 
         public AsynchronousSocketListener(int port, TimeSpan keepAliveTimeout,
             IMessageDeserializer messageDeserializer, Action<IMessage, int> messageHandler)
         {
-            _socketIdToTcpConnection = new Dictionary<int, ITcpConnection>();
+            _connectionIdToTcpConnection = new Dictionary<int, ITcpConnection>();
             _port = port;
-            _counter = 0;
+            _nextConnectionId = 0;
             _messageHandler = messageHandler;
             _messageDeserializer = messageDeserializer;
             _keepAliveTimeout = keepAliveTimeout;
         }
 
-        public void Send(IMessage message, int socketId)
+        public void Send(IMessage message, int connectionId)
         {
-            var byteData = Encoding.ASCII.GetBytes(message.SerializeToXml() + Constants.EtbByte);
-            var findResult = _socketIdToTcpConnection.TryGetValue(socketId, out var handler);
-            if (!findResult)
-                throw new Exception("Non exsistent socket id");
+            var byteData = Encoding.ASCII.GetBytes(message.SerializeToXml() + Communication.Constants.EtbByte);
+            
+            if (!IsConnectionExistent(connectionId))
+                throw new IdentifiableCommunicationException(connectionId, $"Non existent connection during Send\n{message}", null, CommunicationException.ErrorSeverity.Temporary);
+
+            var connection = _connectionIdToTcpConnection[connectionId];
 
             try
             {
-                handler.Send(byteData);
+                connection.Send(byteData);
             }
             catch (Exception e)
             {
-                if (e is SocketException socketException &&
-                    socketException.SocketErrorCode == SocketError.ConnectionReset) throw;
-
-                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                ConnectionError.PrintUnexpectedConnectionErrorDetails(e, connection.Id);
                 throw;
             }
         }
@@ -79,20 +78,25 @@ namespace CommunicationServer
             }
             catch (Exception e)
             {
-                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
         }
 
-        public void CloseSocket(int socketId)
+        public void CloseConnection(int connectionId)
         {
-            Console.WriteLine("Closing socket: " + socketId);
-            var findResult = _socketIdToTcpConnection.TryGetValue(socketId, out var socket);
-            if (!findResult)
-                throw new Exception("Non existent socket id");
+            if(!IsConnectionExistent(connectionId))
+                throw new IdentifiableCommunicationException(connectionId, "Non existent connection during CloseConnection", null, CommunicationException.ErrorSeverity.Temporary);
 
-            socket.CloseSocket();
-            _socketIdToTcpConnection.Remove(socketId);
+            var tcpConnection = _connectionIdToTcpConnection[connectionId];
+
+            tcpConnection.CloseConnection();
+            _connectionIdToTcpConnection.Remove(connectionId);
+        }
+
+        public bool IsConnectionExistent(int connectionId)
+        {
+            return _connectionIdToTcpConnection.ContainsKey(connectionId);
         }
 
         private void AcceptCallback(IAsyncResult ar)
@@ -106,13 +110,13 @@ namespace CommunicationServer
             }
             catch (Exception e)
             {
-                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                ConnectionError.PrintUnexpectedConnectionErrorDetails(e, _nextConnectionId);
                 throw;
             }            
 
-            var state = new ServerTcpConnection(_counter, socket, _connectionExceptionHandler, _keepAliveTimeout, _messageDeserializer,
+            var state = new ServerTcpConnection(_nextConnectionId, socket, _connectionExceptionHandler, _keepAliveTimeout, _messageDeserializer,
                 _messageHandler);
-            _socketIdToTcpConnection.Add(_counter++, state);
+            _connectionIdToTcpConnection.Add(_nextConnectionId++, state);
             StartReading(state);
         }
 

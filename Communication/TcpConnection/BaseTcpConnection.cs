@@ -3,7 +3,7 @@ using System.Net.Sockets;
 using System.Threading;
 using Common;
 using Common.Interfaces;
-using Communication.Exceptions;
+using Communication.Errors;
 
 namespace Communication.TcpConnection
 {
@@ -48,17 +48,23 @@ namespace Communication.TcpConnection
                 if (e is SocketException socketException &&
                     socketException.SocketErrorCode == SocketError.ConnectionReset)
                 {
-                    HandleExpectedConnectionError(new CommunicationException("Send error - socket closed", e,
-                        CommunicationException.ErrorSeverity.Fatal));
+                    HandleExpectedConnectionError(new IdentifiableCommunicationException(Id, "Send error - socket closed", e,
+                        CommunicationException.ErrorSeverity.Temporary));
                     return;
                 }
 
-                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                if (e is ObjectDisposedException)
+                {
+                    HandleExpectedConnectionError(new IdentifiableCommunicationException(Id, "Disposed during Send", e, CommunicationException.ErrorSeverity.Temporary));
+                    return;
+                }
+
+                ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
         }
 
-        public void CloseSocket()
+        public virtual void CloseConnection()
         {
             if (Socket == null)
                 return;
@@ -66,12 +72,15 @@ namespace Communication.TcpConnection
             try
             {
                 Socket.Shutdown(SocketShutdown.Both);
-                Socket.Close();
             }
             catch (Exception e)
             {
-                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
+            }
+            finally
+            {
+                Socket.Close();
             }
         }
 
@@ -86,7 +95,20 @@ namespace Communication.TcpConnection
             }
             catch (Exception e)
             {
-                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                if (e is SocketException socketException &&
+                    socketException.SocketErrorCode == SocketError.ConnectionReset)
+                {
+                    HandleExpectedConnectionError(new IdentifiableCommunicationException(Id, "Receive error - socket closed", e,
+                        CommunicationException.ErrorSeverity.Temporary));
+                    return;
+                }
+                if (e is ObjectDisposedException)
+                {
+                    HandleExpectedConnectionError(new IdentifiableCommunicationException(Id, "Disposed during Send", e, CommunicationException.ErrorSeverity.Temporary));
+                    return;
+                }
+
+                ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
 
@@ -102,12 +124,12 @@ namespace Communication.TcpConnection
             }
             catch (Exception e)
             {
-                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
         }
 
-        public abstract void Handle(IMessage message, int socketId = -404);
+        public abstract void Handle(IMessage message, int connectionId = -404);
 
         protected virtual void FinalizeReceive(IAsyncResult ar)
         {
@@ -124,12 +146,17 @@ namespace Communication.TcpConnection
                 if (e is SocketException socketException &&
                     socketException.SocketErrorCode == SocketError.ConnectionReset)
                 {
-                    HandleExpectedConnectionError(new CommunicationException("Read error - socket closed", e,
-                        CommunicationException.ErrorSeverity.Fatal));
+                    HandleExpectedConnectionError(new IdentifiableCommunicationException(Id, "Read error - socket closed", e,
+                        CommunicationException.ErrorSeverity.Temporary));
                     return;
                 }
 
-                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                if (e is ObjectDisposedException)
+                {
+                    throw new IdentifiableCommunicationException(Id, "Disposed during FinalizeReceive", e, CommunicationException.ErrorSeverity.Temporary);
+                }
+
+                ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
 
@@ -152,7 +179,7 @@ namespace Communication.TcpConnection
                     }
                     catch (Exception e)
                     {
-                        ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                        ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
                         throw;
                     }
                 else
@@ -167,7 +194,6 @@ namespace Communication.TcpConnection
 
         protected virtual void HandleExpectedConnectionError(CommunicationException e)
         {
-            e.Data.Add("socketId", Id);
             ConnectionFailureHandler(e);
         }
     }

@@ -7,15 +7,17 @@ namespace CommunicationServer
 {
     internal class CommunicationRouter : ICommunicationRouter
     {
+        private readonly Dictionary<int, ClientType> _connectionIdToClientType;
+
+        private readonly Dictionary<int, int> _connectionIdToGameId;
+
         private readonly Dictionary<int, GameInfo> _gameIdToGameInfo;
-        private readonly Dictionary<int, ClientType> _socketIdToClientType;
-        private readonly Dictionary<int, int> _socketIdToGameId;
 
         public CommunicationRouter()
         {
-            _socketIdToGameId = new Dictionary<int, int>();
+            _connectionIdToGameId = new Dictionary<int, int>();
             _gameIdToGameInfo = new Dictionary<int, GameInfo>();
-            _socketIdToClientType = new Dictionary<int, ClientType>();
+            _connectionIdToClientType = new Dictionary<int, ClientType>();
         }
 
         public IEnumerable<GameInfo> GetAllJoinableGames()
@@ -28,10 +30,16 @@ namespace CommunicationServer
             return _gameIdToGameInfo.Single(x => x.Value.GameName == gameName).Key;
         }
 
-        public void RegisterNewGame(GameInfo gameInfo, int socketId)
+        public int GetGameIdFor(int connectionId)
         {
-            var gameId = socketId;
+            return _connectionIdToGameId[connectionId];
+        }
+
+        public void RegisterNewGame(GameInfo gameInfo, int connectionId)
+        {
+            var gameId = connectionId;
             _gameIdToGameInfo.Add(gameId, gameInfo);
+            _connectionIdToGameId.Add(connectionId, gameId);
         }
 
         public void UpdateTeamCount(int gameId, TeamColor team)
@@ -61,37 +69,40 @@ namespace CommunicationServer
 
         public void AssignGameIdToPlayerId(int gameId, int playerId)
         {
-            _socketIdToGameId.Add(playerId, gameId);
+            _connectionIdToGameId.Add(playerId, gameId);
         }
 
-        public int GetGameIdFor(int socketId)
+        public IEnumerable<int> GetAllClientsConnectedWithGame(int gameId)
         {
-            _socketIdToGameId.TryGetValue(socketId, out var gameId);
-            return gameId;
+            return _connectionIdToGameId.Where(x => x.Value == gameId && x.Key != gameId).Select(x => x.Key);
         }
 
-        public IEnumerable<int> GetAllPlayersInGame(int gameId)
+        public void MarkClientAsPlayer(int connectionId)
         {
-            return _socketIdToGameId.Where(x => x.Value == gameId && x.Key != gameId).Select(x => x.Key);
+            if (_connectionIdToClientType.ContainsKey(connectionId)) return;
+
+            Console.WriteLine($"{connectionId} added as {ClientType.Player}");
+            _connectionIdToClientType.Add(connectionId, ClientType.Player);
         }
 
-        public void MarkClientAsPlayer(int socketId)
+        public void MarkClientAsGameMaster(int connectionId)
         {
-            Console.WriteLine($"{socketId} added as {ClientType.Player}");
-            _socketIdToClientType.TryAdd(socketId, ClientType.Player);
+            if (_connectionIdToClientType.ContainsKey(connectionId)) return;
+
+            Console.WriteLine($"{connectionId} added as {ClientType.GameMaster}");
+            _connectionIdToClientType.Add(connectionId, ClientType.GameMaster);
         }
 
-        public void MarkClientAsGameMaster(int socketId)
+        public ClientType GetClientTypeFrom(int connectionId)
         {
-            Console.WriteLine($"{socketId} added as {ClientType.GameMaster}");
-            _socketIdToClientType.TryAdd(socketId, ClientType.GameMaster);
-        }
-
-        public ClientType GetClientTypeFrom(int socketId)
-        {
-            return !_socketIdToClientType.ContainsKey(socketId)
+            return !_connectionIdToClientType.ContainsKey(connectionId)
                 ? ClientType.NonInitialized
-                : _socketIdToClientType[socketId];
+                : _connectionIdToClientType[connectionId];
+        }
+
+        public void DeregisterPlayerFromGame(int playerId)
+        {
+            _connectionIdToGameId.Remove(playerId);
         }
     }
 }

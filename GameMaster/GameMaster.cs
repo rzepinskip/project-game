@@ -86,6 +86,14 @@ namespace GameMaster
             return (_gameId, playerGuid, playerInfo);
         }
 
+        public void HandlePlayerDisconnection(int playerId)
+        {
+            if (!_playerGuidToId.ContainsValue(playerId))
+                return;
+            var disconnectedPlayerPair = _playerGuidToId.Single(x => x.Value == playerId);
+            _playerGuidToId.Remove(disconnectedPlayerPair.Key);
+        }
+
         public void SetGameId(int gameId)
         {
             _gameId = gameId;

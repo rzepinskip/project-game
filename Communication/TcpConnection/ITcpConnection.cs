@@ -11,6 +11,6 @@ namespace Communication.TcpConnection
         void FinalizeConnect(IAsyncResult ar);
         void Send(byte[] byteData);
         void Receive();
-        void CloseSocket();
+        void CloseConnection();
     }
 }
