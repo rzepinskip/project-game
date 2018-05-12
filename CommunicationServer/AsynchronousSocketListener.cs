@@ -101,7 +101,6 @@ namespace CommunicationServer
 
         private void AcceptCallback(IAsyncResult ar)
         {
-            _readyForAccept.Set();
             Socket socket;
             var listener = ar.AsyncState as Socket;
             try
@@ -117,6 +116,7 @@ namespace CommunicationServer
             var state = new ServerTcpConnection(_nextConnectionId, socket, _connectionExceptionHandler, _keepAliveTimeout, _messageDeserializer,
                 _messageHandler);
             _connectionIdToTcpConnection.Add(_nextConnectionId++, state);
+            _readyForAccept.Set();
             StartReading(state);
         }
 

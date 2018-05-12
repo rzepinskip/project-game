@@ -17,7 +17,7 @@ namespace Communication.Client
         private readonly IPEndPoint _ipEndPoint;
         private readonly TimeSpan _keepAliveTimeout;
         private readonly IMessageDeserializer _messageDeserializer;
-
+        private bool _connectedToServer;
         private ITcpConnection _tcpConnection;
 
         public AsynchronousCommunicationClient(IPEndPoint endPoint, TimeSpan keepAliveTimeout,
@@ -31,6 +31,7 @@ namespace Communication.Client
             _keepAliveTimeout = keepAliveTimeout == default(TimeSpan)
                 ? Constants.DefaultMaxUnresponsivenessDuration
                 : keepAliveTimeout;
+            _connectedToServer = false;
         }
 
         public void Send(IMessage message)
@@ -48,23 +49,33 @@ namespace Communication.Client
             }
         }
 
+        public void CloseConnection()
+        {
+            _tcpConnection.CloseConnection();
+            _connectFinalized.Reset();
+            _connectedToServer = false;
+        }
+
         public void Connect(Action<CommunicationException> connectionFailureHandler, Action<IMessage> messageHandler)
         {
-            try
+            while (!_connectedToServer)
             {
-                var socket = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                _tcpConnection = new ClientTcpConnection(-1, socket, connectionFailureHandler, _keepAliveTimeout,
-                    _messageDeserializer, messageHandler);
-
-                socket.BeginConnect(_ipEndPoint, ConnectCallback, socket);
-                _connectDone.WaitOne();
+                try
+                {
+                    _connectDone.Reset();
+                    var socket = new Socket(_ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                    _tcpConnection = new ClientTcpConnection(-1, socket, connectionFailureHandler, _keepAliveTimeout,
+                        _messageDeserializer, messageHandler);
+                    socket.BeginConnect(_ipEndPoint, ConnectCallback, socket);
+                    _connectDone.WaitOne();
+                }
+                catch (Exception e)
+                {
+                    ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
+                    throw;
+                }
             }
-            catch (Exception e)
-            {
-                ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
-                throw;
-            }
-
+            Console.WriteLine("Connected to CS");
             StartReading();
         }
 
@@ -73,11 +84,18 @@ namespace Communication.Client
             try
             {
                 _tcpConnection.FinalizeConnect(ar);
+                _connectedToServer = true;
                 _connectDone.Set();
                 _connectFinalized.Set();
             }
             catch (Exception e)
             {
+                if (e is SocketException se && se.SocketErrorCode == SocketError.ConnectionRefused)
+                {
+                    _connectDone.Set();
+                    return;
+                }
+
                 ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }

@@ -152,7 +152,11 @@ namespace Player
             }
 
             Console.WriteLine("\tFatal error during communication - attempting to reconnect to CS:\n" + e);
+            CommunicationClient.CloseConnection();
+            _playerCoordinator = new PlayerCoordinator(_gameName, _color, _role);
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
+            CommunicationClient.Send(_playerCoordinator.NextMove());
+            
         }
     }
 }

@@ -15,13 +15,13 @@ namespace GameMaster
     {
         private readonly ActionCosts _actionCosts;
         public readonly ICommunicationClient CommunicationClient;
-
+        private readonly Action _restartGM;
         private Dictionary<Guid, PlayerHandle> _playerHandles;
 
-        public MessagingHandler(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient)
+        public MessagingHandler(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, Action restartGM)
         {
             _actionCosts = gameConfiguration.ActionCosts;
-
+            _restartGM = restartGM;
             CommunicationClient = communicationCommunicationClient;
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleMessagesFromClient)).Start();
         }
@@ -118,9 +118,12 @@ namespace GameMaster
                 Console.WriteLine("\tNon-fatal error during communication:\n" + e);
                 return;
             }
-
+            
             Console.WriteLine("\tFatal error during communication - attempting to reconnect to CS:\n" + e);
+            CommunicationClient.CloseConnection();
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleMessagesFromClient)).Start();
+            _restartGM();
+
         }
     }
 }
