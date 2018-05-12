@@ -75,7 +75,7 @@ namespace Communication.Client
                     throw;
                 }
             }
-
+            Console.WriteLine("Connected to CS");
             StartReading();
         }
 
@@ -90,13 +90,13 @@ namespace Communication.Client
             }
             catch (Exception e)
             {
-                ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
                 if (e is SocketException se && se.SocketErrorCode == SocketError.ConnectionRefused)
                 {
                     _connectDone.Set();
                     return;
                 }
 
+                ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
                 throw;
             }
         }

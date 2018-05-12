@@ -36,10 +36,10 @@ namespace GameMaster
                 (int) Constants.GameFullCheckStartDelay.TotalMilliseconds,
                 (int) Constants.GameFullCheckInterval.TotalMilliseconds);
 
-            _messagingHandler = new MessagingHandler(gameConfiguration, communicationCommunicationClient, StartGameHosting);
+            _messagingHandler = new MessagingHandler(gameConfiguration, communicationCommunicationClient, HostNewGame);
             _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
 
-            StartGameHosting();
+            HostNewGame();
         }
 
         public GameMaster(GameMasterBoard board, Dictionary<Guid, int> playerGuidToId)
@@ -156,6 +156,22 @@ namespace GameMaster
                 _gameConfiguration.GameDefinition.PlacingNewPiecesFrequency);
         }
 
+        private void HostNewGame()
+        {
+            FinishGame();
+            var boardGenerator = new GameMasterBoardGenerator();
+            Board = boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
+            _playersSlots =
+                boardGenerator.GeneratePlayerSlots(_gameConfiguration.GameDefinition.NumberOfPlayersPerTeam);
+
+            _playerGuidToId = new Dictionary<Guid, int>();
+            foreach (var player in Board.Players) _playerGuidToId.Add(Guid.NewGuid(), player.Key);
+
+            _messagingHandler.CommunicationClient.Send(new RegisterGameMessage(new GameInfo(_gameName,
+                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam,
+                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam)));
+        }
+
         private void FinishGame()
         {
             if (_gameInProgress)
@@ -178,22 +194,6 @@ namespace GameMaster
             var playerInfo = Board.Players[playerId];
             var actionLog = new RequestLog(record, playerInfo.Team, playerInfo.Role);
             Logger.Info(actionLog.ToLog());
-        }
-
-        private void StartGameHosting()
-        {
-            FinishGame();
-            var boardGenerator = new GameMasterBoardGenerator();
-            Board = boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
-            _playersSlots =
-                boardGenerator.GeneratePlayerSlots(_gameConfiguration.GameDefinition.NumberOfPlayersPerTeam);
-
-            _playerGuidToId = new Dictionary<Guid, int>();
-            foreach (var player in Board.Players) _playerGuidToId.Add(Guid.NewGuid(), player.Key);
-
-            _messagingHandler.CommunicationClient.Send(new RegisterGameMessage(new GameInfo(_gameName,
-                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam,
-                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam)));
         }
     }
 
