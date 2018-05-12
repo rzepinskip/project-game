@@ -25,7 +25,7 @@ namespace GameMaster
         private bool _gameInProgress;
         private PieceGenerator _pieceGenerator;
         private Timer checkIfFullTeamTimer;
-        private string _gameName;
+        private readonly string _gameName;
 
         public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, string gameName)
         {
