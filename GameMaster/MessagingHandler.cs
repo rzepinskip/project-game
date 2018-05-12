@@ -113,14 +113,11 @@ namespace GameMaster
 
         public void HandleConnectionError(CommunicationException e)
         {
+            CommunicationClient.HandleCommunicationError(e);
+
             if (e.Severity == CommunicationException.ErrorSeverity.Temporary)
-            {
-                Console.WriteLine("\tNon-fatal error during communication:\n" + e);
                 return;
-            }
-            
-            Console.WriteLine("\tFatal error during communication - attempting to reconnect to CS:\n" + e);
-            CommunicationClient.CloseConnection();
+
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleMessagesFromClient)).Start();
             _restartGM();
 

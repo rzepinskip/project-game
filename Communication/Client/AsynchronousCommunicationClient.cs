@@ -56,6 +56,18 @@ namespace Communication.Client
             _connectedToServer = false;
         }
 
+        public void HandleCommunicationError(CommunicationException communicationException)
+        {
+            if (communicationException.Severity == CommunicationException.ErrorSeverity.Temporary)
+            {
+                Console.WriteLine("Temporary error during communication: " + communicationException.Message);
+                return;
+            }
+
+            Console.WriteLine("Fatal error during communication: " + communicationException.Message);
+            CloseConnection();
+        }
+
         public void Connect(Action<CommunicationException> connectionFailureHandler, Action<IMessage> messageHandler)
         {
             while (!_connectedToServer)

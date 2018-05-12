@@ -115,7 +115,7 @@ namespace CommunicationServer
 
             if (ice.Severity == CommunicationException.ErrorSeverity.Temporary)
             {
-                Console.WriteLine($"Encountered temporary problem with connection {connectionId}: {ice.Message}");
+                Console.WriteLine($"Encountered temporary problem with connection #{connectionId}: {ice.Message}");
                 return;
             }
 
@@ -125,7 +125,7 @@ namespace CommunicationServer
                 return;
             }
 
-            Console.WriteLine($"Handling disconnection event for connection #{connectionId} because {e.Message}");
+            Console.WriteLine($"Handling disconnection event for connection #{connectionId}: {e.Message}");
 
             var clientType = _communicationRouter.GetClientTypeFrom(connectionId);
             IMessage disconnectedMessage;
@@ -149,9 +149,10 @@ namespace CommunicationServer
             {
                 disconnectedMessage = _errorsMessagesFactory.CreatePlayerDisconnectedMessage(connectionId);
                 Send(disconnectedMessage, GetGameIdFor(connectionId));
-                _socketListener.CloseConnection(connectionId);
                 DeregisterPlayerFromGame(connectionId);
             }
+
+            _socketListener.CloseConnection(connectionId);
         }
     }
 }

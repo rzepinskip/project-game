@@ -27,6 +27,7 @@ namespace Messaging.ErrorsMessages
 
         public override void Process(IPlayer player)
         {
+            Console.WriteLine($"GM for game {GameId} disconnected");
             player.HandleGameMasterDisconnection();
         }
 

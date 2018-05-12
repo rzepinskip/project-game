@@ -119,7 +119,6 @@ namespace Player
 
         public void HandleGameMasterDisconnection()
         {
-            Console.WriteLine("GM disconnected");
             _playerCoordinator = new PlayerCoordinator(_gameName, _color, _role);
         }
 
@@ -145,18 +144,14 @@ namespace Player
 
         public void HandleConnectionError(CommunicationException e)
         {
-            if (e.Severity == CommunicationException.ErrorSeverity.Temporary)
-            {
-                Console.WriteLine("\tNon-fatal error during communication:\n" + e);
-                return;
-            }
+            CommunicationClient.HandleCommunicationError(e);
 
-            Console.WriteLine("\tFatal error during communication - attempting to reconnect to CS:\n" + e);
-            CommunicationClient.CloseConnection();
+            if (e.Severity == CommunicationException.ErrorSeverity.Temporary)
+                return;
+
             _playerCoordinator = new PlayerCoordinator(_gameName, _color, _role);
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
-            CommunicationClient.Send(_playerCoordinator.NextMove());
-            
+            CommunicationClient.Send(_playerCoordinator.NextMove());           
         }
     }
 }

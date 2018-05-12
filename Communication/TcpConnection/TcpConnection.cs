@@ -68,7 +68,7 @@ namespace Communication.TcpConnection
         public override void CloseConnection()
         {
             base.CloseConnection();
-
+            CheckReceivedKeepAlivesTimer.Stop();
             CheckReceivedKeepAlivesTimer.Dispose();
         }
     }
