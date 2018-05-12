@@ -21,6 +21,7 @@ namespace GameMaster
         private readonly MessagingHandler _messagingHandler;
         private Dictionary<Guid, int> _playerGuidToId;
         private List<(TeamColor team, PlayerType role)> _playersSlots;
+        private IKnowledgeExchangeManager _knowledgeExchangeManager;
         private int _gameId;
         private bool _gameInProgress;
         private PieceGenerator _pieceGenerator;
@@ -97,6 +98,24 @@ namespace GameMaster
                 _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam)));
         }
 
+        public IKnowledgeExchangeManager KnowledgeExchangeManager { get; }
+        public int? Authorize(Guid playerGuid)
+        {
+            if (_playerGuidToId.ContainsKey(playerGuid))
+                return _playerGuidToId[playerGuid];
+            return null;
+        }
+
+        public void SendDataToInitiator(int initiatorId, IMessage message)
+        {
+            _messagingHandler.CommunicationClient.Send(message);
+        }
+
+        public bool PlayerIdExists(int playerId)
+        {
+            return _playerGuidToId.ContainsValue(playerId);
+        }
+
         public void SetGameId(int gameId)
         {
             _gameId = gameId;
@@ -105,7 +124,7 @@ namespace GameMaster
         public (DataFieldSet data, bool isGameFinished) EvaluateAction(ActionInfo actionInfo)
         {
             var playerId = _playerGuidToId[actionInfo.PlayerGuid];
-            var action = new ActionHandlerDispatcher((dynamic) actionInfo, Board, playerId);
+            var action = new ActionHandlerDispatcher((dynamic) actionInfo, Board, playerId, _knowledgeExchangeManager);
             return (data: action.Execute(), isGameFinished: Board.IsGameFinished());
         }
 
@@ -119,16 +138,16 @@ namespace GameMaster
             lock (Board.Lock)
             {
                 response = message.Process(this);
-            }
 
-            if (_gameInProgress && Board.IsGameFinished())
-            {
-                GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner()));
-                FinishGame();
-            }
+                if (_gameInProgress && Board.IsGameFinished())
+                {
+                    GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner()));
+                    FinishGame();
+                }
 
-            if (response != null)
-                _messagingHandler.CommunicationClient.Send(response);
+                if (response != null)
+                    _messagingHandler.CommunicationClient.Send(response);
+            }
         }
 
         private void CheckIfGameFullCallback(object obj)
@@ -165,6 +184,7 @@ namespace GameMaster
 
             _pieceGenerator = new PieceGenerator(Board, _gameConfiguration.GameDefinition.ShamProbability,
                 _gameConfiguration.GameDefinition.PlacingNewPiecesFrequency);
+            _knowledgeExchangeManager = new KnowledgeExchangeManager();
         }
 
         private void HostNewGame()

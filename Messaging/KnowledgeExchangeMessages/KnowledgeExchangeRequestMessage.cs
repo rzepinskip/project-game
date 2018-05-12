@@ -7,9 +7,13 @@ using System.Xml.Serialization;
 namespace Messaging.ExchangeKnowledgeMessages
 {
     [XmlType(XmlRootName)]
-    public class KnowledgeExchangeRequestMessage : KnowledgeExchangeMessage
+    public class KnowledgeExchangeRequestMessage : BetweenPlayersMessage
     {
         public const string XmlRootName = "KnowledgeExchangeRequest";
+
+        public KnowledgeExchangeRequestMessage(int playerId, int senderPlayerId) : base(playerId, senderPlayerId)
+        {
+        }
 
         public override IMessage Process(IGameMaster gameMaster)
         {
@@ -18,7 +22,7 @@ namespace Messaging.ExchangeKnowledgeMessages
 
         public override void Process(IPlayer player)
         {
-            player.HandleExchangeKnowledge(SenderPlayerId);
+            player.HandleKnowledgeExchangeRequest(SenderPlayerId);
         }
 
         public override void Process(ICommunicationServer cs, int id)

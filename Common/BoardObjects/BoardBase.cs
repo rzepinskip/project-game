@@ -130,6 +130,11 @@ namespace Common.BoardObjects
             var readElements = ReadCollection<Field>(reader, nameof(Content), types);
             foreach (var element in readElements) this[element] = element;
         }
+        public IEnumerable<Field> ToEnumerable()
+        {
+            foreach (var item in Content)
+                yield return item;
+        }
 
         public virtual void WriteXml(XmlWriter writer)
         {

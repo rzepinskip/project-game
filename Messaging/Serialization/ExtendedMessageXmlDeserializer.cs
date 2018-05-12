@@ -87,10 +87,6 @@ namespace Messaging.Serialization
                     GetDefaultXmlSerializer(typeof(KnowledgeExchangeRequestMessage))
                 },
                 {
-                    AcceptExchangeRequestMessage.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(AcceptExchangeRequestMessage))
-                },
-                {
                     PlayerDisconnected.XmlRootName,
                     GetDefaultXmlSerializer(typeof(PlayerDisconnected))
                 },

@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Xml.Serialization;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
+using Messaging.ExchangeKnowledgeMessages;
+using Messaging.Requests;
 
 namespace Messaging.Responses
 {
@@ -22,13 +25,14 @@ namespace Messaging.Responses
 
         public ResponseWithData(int playerId, Location location, IEnumerable<TaskField> taskFields = null,
             IEnumerable<GoalField> goalFields = null, IEnumerable<Piece> pieces = null,
-            bool gameFinished = false) : base(playerId)
+            bool gameFinished = false, Guid? senderGuid = null) : base(playerId)
         {
             PlayerLocation = location;
             TaskFields = taskFields?.ToArray();
             GoalFields = goalFields?.ToArray();
             Pieces = pieces?.ToArray();
             GameFinished = gameFinished;
+            PlayerGuid = senderGuid;
         }
 
 
@@ -41,6 +45,7 @@ namespace Messaging.Responses
         public Location PlayerLocation { get; set; }
 
         [XmlAttribute("gameFinished")] public bool GameFinished { get; set; }
+        [XmlAttribute("playerGuid")] public Guid? PlayerGuid { get; set; }
 
         public bool Equals(ResponseWithData other)
         {
@@ -52,10 +57,46 @@ namespace Messaging.Responses
                    EqualityComparer<Location>.Default.Equals(PlayerLocation, other.PlayerLocation) &&
                    GameFinished == other.GameFinished;
         }
-
         public override IMessage Process(IGameMaster gameMaster)
         {
-            throw new InvalidOperationException();
+            var knowledgeExchangeManager = gameMaster.KnowledgeExchangeManager;
+            if (PlayerGuid == null)
+            {
+                ///
+                /// TODO: maybe new exception ?
+                /// Guid not send with data 
+                ///
+                return null;
+            }
+            var playerGuidValue = PlayerGuid.Value;
+            var optionalSenderId = gameMaster.Authorize(playerGuidValue);
+            if (!optionalSenderId.HasValue)
+            {
+                //authorization failed
+                return null;
+            }
+            int senderId = optionalSenderId.Value;
+            // stripping guid from data;
+            this.PlayerGuid = null;
+            if (knowledgeExchangeManager.IsExchangeInitiator(senderId, PlayerId))
+            {
+                knowledgeExchangeManager.AttachDataToInitiator(this, initiatorId: senderId, subjectId: PlayerId);
+                //send KnowledgeExchangeRequest to PlayerId
+                return new KnowledgeExchangeRequestMessage(PlayerId, senderId);
+
+            }
+            else
+            {
+                if (knowledgeExchangeManager.HasMatchingInitiatorWithData(senderId: senderId, initiatorId: PlayerId ))
+                {
+                    gameMaster.SendDataToInitiator(initiatorId: PlayerId, message:  this);
+                    return knowledgeExchangeManager.FinalizeExchange(initiatorId: PlayerId, subjectId:senderId);
+                }
+                // No matching knowledge exchange initiator
+
+                return null;
+
+            }
         }
 
         public override void Process(IPlayer player)
@@ -76,7 +117,7 @@ namespace Messaging.Responses
                 player.NotifyAboutGameEnd();
         }
 
-        public static IMessage ConvertToData(DataFieldSet datafieldset, bool isGameFinished)
+        public static IMessage ConvertToData(DataFieldSet datafieldset, bool isGameFinished, Guid? PlayerGuid = null)
         {
             return (datafieldset is null) ? null : new ResponseWithData(datafieldset.PlayerId, datafieldset.PlayerLocation, datafieldset.TaskFields,
                 datafieldset.GoalFields, datafieldset.Pieces, isGameFinished);

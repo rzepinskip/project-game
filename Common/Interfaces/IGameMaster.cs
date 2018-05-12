@@ -15,5 +15,9 @@ namespace Common.Interfaces
 
         void HandlePlayerDisconnection(int playerId);
         void RegisterGame();
+        IKnowledgeExchangeManager KnowledgeExchangeManager { get; }
+        int? Authorize(Guid playerGuid);
+        void SendDataToInitiator(int initiatorId, IMessage message);
+        bool PlayerIdExists(int playerId);
     }
 }

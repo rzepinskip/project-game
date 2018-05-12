@@ -43,5 +43,12 @@ namespace Common
         {
             return new DataFieldSet(playerId, null, new TaskField[0], goalFields, new Piece[0]);
         }
+
+        public static DataFieldSet Create(int playerId, Location playerLocation, TaskField[] taskFields,
+            GoalField[] goalFields,
+            Piece[] pieces)
+        {
+            return new DataFieldSet(playerId, playerLocation, taskFields, goalFields, pieces);
+        }
     }
 }

@@ -8,19 +8,24 @@ using Common.Interfaces;
 namespace Messaging.ExchangeKnowledgeMessages
 {
     [XmlType(XmlRootName)]
-    public class RejectKnowledgeExchangeMessage : KnowledgeExchangeMessage
+    public class RejectKnowledgeExchangeMessage : BetweenPlayersMessage
     {
         public const string XmlRootName = "RejectKnowledgeExchange";
+        public RejectKnowledgeExchangeMessage(int senderId, int withPlayerId, bool permanent = false): base(senderId, withPlayerId)
+        {
+            Permanent = permanent;
+        }
 
         public bool Permanent { get; set; }
         public override IMessage Process(IGameMaster gameMaster)
         {
+            gameMaster.KnowledgeExchangeManager.HandleExchangeRejection(subjectId: SenderPlayerId, initiatorId: PlayerId);
             return this;
         }
 
         public override void Process(IPlayer player)
         {
-            player.HandleExchangeKnowledge(SenderPlayerId);
+            player.HandleKnowledgeExchangeRequest(SenderPlayerId);
         }
 
         public override void Process(ICommunicationServer cs, int id)
