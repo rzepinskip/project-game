@@ -39,5 +39,11 @@ namespace Messaging.InitialisationMessages
         {
             throw new NotImplementedException();
         }
+
+        public override string ToLog()
+        {
+            return string.Join(',', XmlRootName, GameId, base.ToLog());
+
+        }
     }
 }

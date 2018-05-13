@@ -25,5 +25,10 @@ namespace Messaging.ExchangeKnowledgeMessages
             var gameId = cs.GetGameIdFor(id);
             cs.Send(this, gameId == id ? PlayerId : gameId);
         }
+
+        public override string ToLog()
+        {
+            return XmlRootName + base.ToLog();
+        }
     }
 }

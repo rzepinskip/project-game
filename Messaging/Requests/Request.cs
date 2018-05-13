@@ -49,7 +49,7 @@ namespace Messaging.Requests
 
         public abstract ActionInfo GetActionInfo();
 
-        public virtual string ToLog()
+        public override string ToLog()
         {
             return string.Join(',', PlayerGuid, GameId);
         }

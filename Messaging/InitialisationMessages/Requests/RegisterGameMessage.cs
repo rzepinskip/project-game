@@ -43,5 +43,10 @@ namespace Messaging.InitialisationMessages
             else
                 cs.Send(new RejectGameRegistrationMessage(NewGameInfo.GameName), id);
         }
+
+        public override string ToLog()
+        {
+            return string.Join(',', NewGameInfo.GameName, XmlRootName);
+        }
     }
 }

@@ -48,5 +48,9 @@ namespace Messaging.InitialisationMessages
             cs.AssignGameIdToPlayerId(id, PlayerId);
             cs.Send(this, PlayerId);
         }
+        public override string ToLog()
+        {
+            return string.Join(',', XmlRootName, base.ToLog());
+        }
     }
 }

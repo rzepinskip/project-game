@@ -3,7 +3,7 @@ using Messaging.Serialization;
 
 namespace Messaging
 {
-    public abstract class Message : IMessage
+    public abstract class Message : IMessage, ILoggable
     {
         public abstract IMessage Process(IGameMaster gameMaster);
         public abstract void Process(IPlayer player);
@@ -13,5 +13,7 @@ namespace Messaging
         {
             return MessageSerializer.Instance.Serialize(this);
         }
+
+        public abstract string ToLog();
     }
 }

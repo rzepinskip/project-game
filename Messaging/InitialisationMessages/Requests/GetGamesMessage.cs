@@ -26,5 +26,10 @@ namespace Messaging.InitialisationMessages
         {
             cs.Send(new RegisteredGamesMessage(cs.GetAllJoinableGames()), id);
         }
+
+        public override string ToLog()
+        {
+            return XmlRootName;
+        }
     }
 }
