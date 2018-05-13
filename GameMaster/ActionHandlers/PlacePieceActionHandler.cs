@@ -29,7 +29,7 @@ namespace GameMaster.ActionHandlers
             player.Piece = null;
 
             if (piece.Type == PieceType.Sham)
-                return DataFieldSet.Create(PlayerId, new GoalField[0]);
+                return null;
 
             var playerGoalField = Board[player.Location] as GoalField;
 
