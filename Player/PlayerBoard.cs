@@ -27,10 +27,10 @@ namespace Player
         {
             var oldTaskField = (TaskField)this[taskField];
 
-            if (DateTime.Compare(oldTaskField.Timestamp, taskField.Timestamp) < 0)
+            if (IsNewer(taskField,oldTaskField))
             {
-                ClearPlayerFromField(taskField);
-                ClearPieceFromField(taskField);
+                ClearPlayerFromField(oldTaskField);
+                ClearPieceFromField(oldTaskField);
 
                 if (taskField.PlayerId.HasValue)
                 {
@@ -68,7 +68,7 @@ namespace Player
             }
         }
 
-        public void HandleGoalFieldAfterPlace(int playerId, GoalField goalField)
+        public void HandleGoalFieldAfterPieceAction(int playerId, GoalField goalField)
         {
             var playerInfo = Players[playerId];
 
@@ -81,7 +81,7 @@ namespace Player
 
         private bool IsNewer(Field filed, Field fieldToComapre)
         {
-            return DateTime.Compare(filed.Timestamp, fieldToComapre.Timestamp) > 0;
+            return DateTime.Compare(filed.Timestamp, fieldToComapre.Timestamp) >= 0;
         }
 
         private void ClearPlayerFromField(Field field)
