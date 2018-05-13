@@ -20,7 +20,7 @@ namespace GameMaster.App
         private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            
+
             var gm = CreateGameMasterFrom(args);
             gm.GameFinished += GenerateNewFinishedGameMessage;
             _logger = GameMaster.Logger;
@@ -47,14 +47,14 @@ namespace GameMaster.App
             var addressFlag = false;
             var port = default(int);
             var gameConfigPath = default(string);
-            var address = default(IPAddress);
+            var ipAddress = default(IPAddress);
             var gameName = default(string);
 
             var options = new OptionSet
             {
                 {"port=", "port number", (int p) => port = p},
                 {"conf=", "configuration filename", c => gameConfigPath = c},
-                {"address=", "server adress or hostname", a => addressFlag = IPAddress.TryParse(a, out address)},
+                {"address=", "server adress or hostname", a => addressFlag = IPAddress.TryParse(a, out ipAddress)},
                 {"game=", "name of the game", g => gameName = g}
             };
 
@@ -64,7 +64,7 @@ namespace GameMaster.App
             {
                 addressFlag = true;
                 var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-                address = ipHostInfo.AddressList[0];
+                ipAddress = ipHostInfo.AddressList[0];
             }
 
             if (port == default(int) || gameConfigPath == default(string) || gameName == default(string) ||
@@ -74,9 +74,7 @@ namespace GameMaster.App
             var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(gameConfigPath);
 
-            var communicationClient = new AsynchronousClient(new TcpSocketConnector(MessageSerializer.Instance, port,
-                address,
-                TimeSpan.FromMilliseconds((int) config.KeepAliveInterval)));
+            var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), TimeSpan.FromMilliseconds((int) config.KeepAliveInterval), MessageSerializer.Instance);
 
             return new GameMaster(config, communicationClient, gameName);
         }

@@ -16,16 +16,21 @@ namespace Player
         private bool _hasGameEnded;
         private PlayerCoordinator _playerCoordinator;
         public ILogger Logger;
-
-        public Player(IClient communicationClient, string gameName, TeamColor color, PlayerType role)
+        private readonly string _gameName;
+        private readonly TeamColor _color;
+        private readonly PlayerType _role;
+        public Player(ICommunicationClient communicationClient, string gameName, TeamColor color, PlayerType role)
         {
             CommunicationClient = communicationClient;
+            _gameName = gameName;
+            _color = color;
+            _role = role;
 
             var factory = new LoggerFactory();
             Logger = factory.GetPlayerLogger(0);
 
             _playerCoordinator = new PlayerCoordinator(gameName, color, role);
-            new Thread(() => CommunicationClient.Connect(HandleResponse)).Start();
+            new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
         }
 
         public Player(int id, Guid guid, TeamColor team, PlayerType role,
@@ -46,7 +51,7 @@ namespace Player
         public PlayerBoard PlayerBoard { get; private set; }
         public Guid PlayerGuid { get; private set; }
 
-        public IClient CommunicationClient { get; }
+        public ICommunicationClient CommunicationClient { get; }
         public IPlayerBoard Board => PlayerBoard;
 
         public void UpdateGameState(IEnumerable<GameInfo> gameInfo)
@@ -111,6 +116,12 @@ namespace Player
         {
             //evaluate
         }
+
+        public void HandleGameMasterDisconnection()
+        {
+            _playerCoordinator = new PlayerCoordinator(_gameName, _color, _role);
+        }
+
         private void HandleResponse(IMessage response)
         {
             //if (_hasGameEnded)
@@ -129,6 +140,18 @@ namespace Player
             }
 
             _playerCoordinator.NextState();
+        }
+
+        public void HandleConnectionError(CommunicationException e)
+        {
+            CommunicationClient.HandleCommunicationError(e);
+
+            if (e.Severity == CommunicationException.ErrorSeverity.Temporary)
+                return;
+
+            _playerCoordinator = new PlayerCoordinator(_gameName, _color, _role);
+            new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
+            CommunicationClient.Send(_playerCoordinator.NextMove());           
         }
     }
 }

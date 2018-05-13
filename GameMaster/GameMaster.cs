@@ -19,35 +19,27 @@ namespace GameMaster
         private readonly GameConfiguration _gameConfiguration;
 
         private readonly MessagingHandler _messagingHandler;
-        private readonly Dictionary<Guid, int> _playerGuidToId;
-        private readonly List<(TeamColor team, PlayerType role)> _playersSlots;
+        private Dictionary<Guid, int> _playerGuidToId;
+        private List<(TeamColor team, PlayerType role)> _playersSlots;
         private int _gameId;
         private bool _gameInProgress;
         private PieceGenerator _pieceGenerator;
         private Timer checkIfFullTeamTimer;
+        private readonly string _gameName;
 
-        public GameMaster(GameConfiguration gameConfiguration, IClient communicationClient, string gameName)
+        public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, string gameName)
         {
             _gameConfiguration = gameConfiguration;
-
-            var boardGenerator = new GameMasterBoardGenerator();
-            Board = boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
-            _playersSlots =
-                boardGenerator.GeneratePlayerSlots(_gameConfiguration.GameDefinition.NumberOfPlayersPerTeam);
-
-            _playerGuidToId = new Dictionary<Guid, int>();
-            foreach (var player in Board.Players) _playerGuidToId.Add(Guid.NewGuid(), player.Key);
+            _gameName = gameName;
 
             checkIfFullTeamTimer = new Timer(CheckIfGameFullCallback, null,
                 (int) Constants.GameFullCheckStartDelay.TotalMilliseconds,
                 (int) Constants.GameFullCheckInterval.TotalMilliseconds);
 
-            _messagingHandler = new MessagingHandler(gameConfiguration, communicationClient);
+            _messagingHandler = new MessagingHandler(gameConfiguration, communicationCommunicationClient, HostNewGame);
             _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
 
-            _messagingHandler.Client.Send(new RegisterGameMessage(new GameInfo(gameName,
-                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam,
-                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam)));
+            HostNewGame();
         }
 
         public GameMaster(GameMasterBoard board, Dictionary<Guid, int> playerGuidToId)
@@ -86,6 +78,21 @@ namespace GameMaster
             return (_gameId, playerGuid, playerInfo);
         }
 
+        public void HandlePlayerDisconnection(int playerId)
+        {
+            if (!_playerGuidToId.ContainsValue(playerId))
+                return;
+            var disconnectedPlayerPair = _playerGuidToId.Single(x => x.Value == playerId);
+            _playerGuidToId.Remove(disconnectedPlayerPair.Key);
+        }
+
+        public void RegisterGame()
+        {
+            _messagingHandler.CommunicationClient.Send(new RegisterGameMessage(new GameInfo(_gameName,
+                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam,
+                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam)));
+        }
+
         public void SetGameId(int gameId)
         {
             _gameId = gameId;
@@ -117,7 +124,7 @@ namespace GameMaster
             }
 
             if (response != null)
-                _messagingHandler.Client.Send(response);
+                _messagingHandler.CommunicationClient.Send(response);
         }
 
         private void CheckIfGameFullCallback(object obj)
@@ -134,7 +141,7 @@ namespace GameMaster
             {
                 var playerLocation = Board.Players.Values.Single(x => x.Id == i.Value).Location;
                 var gameStartMessage = new GameMessage(i.Value, Board.Players.Values, playerLocation, boardInfo);
-                _messagingHandler.Client.Send(gameStartMessage);
+                _messagingHandler.CommunicationClient.Send(gameStartMessage);
             }
         }
 
@@ -156,10 +163,27 @@ namespace GameMaster
                 _gameConfiguration.GameDefinition.PlacingNewPiecesFrequency);
         }
 
+        private void HostNewGame()
+        {
+            FinishGame();
+            var boardGenerator = new GameMasterBoardGenerator();
+            Board = boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
+            _playersSlots =
+                boardGenerator.GeneratePlayerSlots(_gameConfiguration.GameDefinition.NumberOfPlayersPerTeam);
+
+            _playerGuidToId = new Dictionary<Guid, int>();
+            foreach (var player in Board.Players) _playerGuidToId.Add(Guid.NewGuid(), player.Key);
+
+            RegisterGame();
+        }
+
         private void FinishGame()
         {
-            _gameInProgress = false;
-            _pieceGenerator.SpawnTimer.Dispose();
+            if (_gameInProgress)
+            {
+                _gameInProgress = false;
+                _pieceGenerator.SpawnTimer.Dispose();
+            }
         }
 
         public virtual event EventHandler<GameFinishedEventArgs> GameFinished;

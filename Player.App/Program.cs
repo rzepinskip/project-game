@@ -28,7 +28,7 @@ namespace Player.App
         private static Player CreatePlayerFrom(IEnumerable<string> parameters)
         {
             bool teamFlag = false, roleFlag = false, addressFlag = false;
-            var address = default(IPAddress);
+            var ipAddress = default(IPAddress);
             var port = default(int);
             var gameConfigPath = default(string);
             var gameName = default(string);
@@ -39,7 +39,7 @@ namespace Player.App
             {
                 {"port=", "port number", (int p) => port = p},
                 {"conf=", "configuration filename", c => gameConfigPath = c},
-                {"address=", "server adress or hostname", a => addressFlag = IPAddress.TryParse(a, out address)},
+                {"address=", "server adress or hostname", a => addressFlag = IPAddress.TryParse(a, out ipAddress)},
                 {"game=", "name of the game", g => gameName = g},
                 {"team=", "red|blue", t => teamFlag = Enum.TryParse(t, true, out team)},
                 {"role=", "leader|player", r => roleFlag = Enum.TryParse(r, true, out role)}
@@ -51,7 +51,7 @@ namespace Player.App
             {
                 addressFlag = true;
                 var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-                address = ipHostInfo.AddressList[0];
+                ipAddress = ipHostInfo.AddressList[0];
             }
 
             if (port == default(int) || gameConfigPath == default(string) || gameName == default(string) ||
@@ -62,9 +62,9 @@ namespace Player.App
             var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(gameConfigPath);
 
-            var communicationClient = new AsynchronousClient(new TcpSocketConnector(MessageSerializer.Instance, port,
-                address,
-                TimeSpan.FromMilliseconds((int) config.KeepAliveInterval)));
+            var keepAliveInterval = TimeSpan.FromMilliseconds((int) config.KeepAliveInterval);
+            var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
+                MessageSerializer.Instance);
 
             var player = new Player(communicationClient, gameName, team, role);
 

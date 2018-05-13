@@ -1,35 +1,33 @@
 ﻿using System;
 using System.Net.Sockets;
+using Common;
 using Common.Interfaces;
 using Communication;
-using Communication.Exceptions;
+using Communication.TcpConnection;
 
 namespace CommunicationServer
 {
     public class ServerTcpConnection : TcpConnection
     {
-        private readonly Action<IMessage, int> _handleMessage;
+        private readonly Action<IMessage, int> _messageHandler;
 
-        public ServerTcpConnection(Socket workSocket, int id, IMessageDeserializer messageDeserializer,
-            Action<IMessage, int> handleMessage)
-            : base(workSocket, id, messageDeserializer)
+        public ServerTcpConnection(int id, Socket socket, Action<CommunicationException> connectionFailureHandler,
+            TimeSpan maxUnresponsivenessDuration, IMessageDeserializer messageDeserializer,
+            Action<IMessage, int> messageHandler)
+            : base(id, socket, maxUnresponsivenessDuration, connectionFailureHandler, messageDeserializer)
         {
-            _handleMessage = handleMessage;
+            _messageHandler = messageHandler;
         }
 
-        public override void Handle(IMessage message, int id = -404)
+        public override void Handle(IMessage message, int connectionId = -404)
         {
-            _handleMessage(message, id);
+            _messageHandler(message, connectionId);
         }
 
-        public override void HandleKeepAliveMessage()
+        protected override void FinalizeReceive(IAsyncResult ar)
         {
+            base.FinalizeReceive(ar);
             SendKeepAlive();
-        }
-
-        protected override void HandleConnectionException(Exception e)
-        {
-            //Console.WriteLine("Next send will give us better exception so we do nothing");
         }
     }
 }

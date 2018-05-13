@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ClientsCommon;
+using Common;
 using Common.Interfaces;
 using GameMaster.Configuration;
 using GameMaster.Delays;
@@ -13,16 +14,16 @@ namespace GameMaster
     public class MessagingHandler
     {
         private readonly ActionCosts _actionCosts;
-        public readonly IClient Client;
-
+        public readonly ICommunicationClient CommunicationClient;
+        private readonly Action _restartGM;
         private Dictionary<Guid, PlayerHandle> _playerHandles;
 
-        public MessagingHandler(GameConfiguration gameConfiguration, IClient communicationClient)
+        public MessagingHandler(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, Action restartGM)
         {
             _actionCosts = gameConfiguration.ActionCosts;
-
-            Client = communicationClient;
-            new Thread(() => Client.Connect(HandleMessagesFromClient)).Start();
+            _restartGM = restartGM;
+            CommunicationClient = communicationCommunicationClient;
+            new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleMessagesFromClient)).Start();
         }
 
         private async void HandleMessagesFromPlayer(Guid playerGuid)
@@ -89,7 +90,6 @@ namespace GameMaster
             }
         }
 
-
         public void CreateQueues(IEnumerable<Guid> guids)
         {
             _playerHandles = new Dictionary<Guid, PlayerHandle>();
@@ -109,6 +109,18 @@ namespace GameMaster
             public ObservableConcurrentQueue<IRequest> Queue { get; }
             public bool IsProcessed { get; set; }
             public object Lock { get; }
+        }
+
+        public void HandleConnectionError(CommunicationException e)
+        {
+            CommunicationClient.HandleCommunicationError(e);
+
+            if (e.Severity == CommunicationException.ErrorSeverity.Temporary)
+                return;
+
+            new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleMessagesFromClient)).Start();
+            _restartGM();
+
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Messaging.InitialisationMessages
 
         public override void Process(ICommunicationServer cs, int id)
         {
-            cs.Send(new RegisteredGamesMessage(cs.GetGames()), id);
+            cs.Send(new RegisteredGamesMessage(cs.GetAllJoinableGames()), id);
         }
     }
 }

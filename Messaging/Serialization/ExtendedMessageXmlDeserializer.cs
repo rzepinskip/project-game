@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using Messaging.ErrorsMessages;
 using Messaging.ExchangeKnowledgeMessages;
 using Messaging.InitialisationMessages;
 using Messaging.Requests;
@@ -88,8 +89,19 @@ namespace Messaging.Serialization
                 {
                     AcceptExchangeRequestMessage.XmlRootName,
                     GetDefaultXmlSerializer(typeof(AcceptExchangeRequestMessage))
-                }
-
+                },
+                {
+                    PlayerDisconnected.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(PlayerDisconnected))
+                },
+                {
+                    GameMasterDisconnected.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(GameMasterDisconnected))
+                },
+                {
+                    RejectGameRegistrationMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(RejectGameRegistrationMessage))
+                },
             };
         }
 

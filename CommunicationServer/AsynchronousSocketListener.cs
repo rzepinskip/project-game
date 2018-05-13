@@ -1,61 +1,129 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using Common;
 using Common.Interfaces;
 using Communication;
-using Communication.Exceptions;
-using CommunicationServer.Accepters;
+using Communication.Errors;
+using Communication.TcpConnection;
 
 namespace CommunicationServer
 {
     public class AsynchronousSocketListener : IAsynchronousSocketListener
     {
-        private readonly IAccepter _accepter;
+        private readonly TimeSpan _keepAliveTimeout;
+        private readonly IMessageDeserializer _messageDeserializer;
+        private readonly Action<IMessage, int> _messageHandler;
+        private readonly int _port;
 
-        public AsynchronousSocketListener(IAccepter accepter)
+        private readonly ManualResetEvent _readyForAccept = new ManualResetEvent(false);
+        private readonly Dictionary<int, ITcpConnection> _connectionIdToTcpConnection;
+        private Action<CommunicationException> _connectionExceptionHandler;
+        private int _nextConnectionId;
+
+        public AsynchronousSocketListener(int port, TimeSpan keepAliveTimeout,
+            IMessageDeserializer messageDeserializer, Action<IMessage, int> messageHandler)
         {
-            _accepter = accepter;
+            _connectionIdToTcpConnection = new Dictionary<int, ITcpConnection>();
+            _port = port;
+            _nextConnectionId = 0;
+            _messageHandler = messageHandler;
+            _messageDeserializer = messageDeserializer;
+            _keepAliveTimeout = keepAliveTimeout;
         }
 
-        public void StartListening()
+        public void Send(IMessage message, int connectionId)
         {
-            _accepter.StartListening();
-        }
+            var byteData = Encoding.ASCII.GetBytes(message.SerializeToXml() + Communication.Constants.EtbByte);
+            
+            if (!IsConnectionExistent(connectionId))
+                throw new IdentifiableCommunicationException(connectionId, $"Non existent connection during Send\n{message}", null, CommunicationException.ErrorSeverity.Temporary);
 
-        public void Send(IMessage message, int id)
-        {
-            var byteData = Encoding.ASCII.GetBytes(message.SerializeToXml() + Constants.EtbByte);
-            var findResult = _accepter.AgentToCommunicationHandler.TryGetValue(id, out var handler);
-            if (!findResult)
-                throw new Exception("Non exsistent socket id");
+            var connection = _connectionIdToTcpConnection[connectionId];
 
             try
             {
-                handler.Send(byteData);
+                connection.Send(byteData);
             }
             catch (Exception e)
             {
-                /// [ERROR_STATE]
-                /// BeginSend throws throws SocketException (error when attempting to access socket)
-                /// and ObjectDisposedException (when socket is closed)
-                /// ArgumentOutOfRangeException
-                ///    offset is less than the length of buffer.
-                ///-or -
-                ///    size is less than 0.
-                ///- or -
-                ///    size is greater than the length of buffer minus the value of the offset parameter.
-                /// 
-                /// handle as connection error (shutdown or reconnection)
-
-                if (e is SocketException socketException && socketException.SocketErrorCode == SocketError.ConnectionReset)
-                {
-                    throw;
-                }
-
-                ConnectionException.PrintUnexpectedConnectionErrorDetails(e);
+                ConnectionError.PrintUnexpectedConnectionErrorDetails(e, connection.Id);
                 throw;
             }
+        }
+
+        public void StartListening(Action<CommunicationException> connectionExceptionHandler)
+        {
+            var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
+            var ipAddress = ipHostInfo.AddressList[0];
+            var localEndPoint = new IPEndPoint(ipAddress, _port);
+            _connectionExceptionHandler = connectionExceptionHandler;
+
+            var listeningSocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            try
+            {
+                listeningSocket.Bind(localEndPoint);
+                listeningSocket.Listen(100);
+
+                while (true)
+                {
+                    _readyForAccept.Reset();
+                    listeningSocket.BeginAccept(AcceptCallback, listeningSocket);
+
+                    _readyForAccept.WaitOne();
+                }
+            }
+            catch (Exception e)
+            {
+                ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
+                throw;
+            }
+        }
+
+        public void CloseConnection(int connectionId)
+        {
+            if(!IsConnectionExistent(connectionId))
+                throw new IdentifiableCommunicationException(connectionId, "Non existent connection during CloseConnection", null, CommunicationException.ErrorSeverity.Temporary);
+
+            var tcpConnection = _connectionIdToTcpConnection[connectionId];
+
+            tcpConnection.CloseConnection();
+            _connectionIdToTcpConnection.Remove(connectionId);
+        }
+
+        public bool IsConnectionExistent(int connectionId)
+        {
+            return _connectionIdToTcpConnection.ContainsKey(connectionId);
+        }
+
+        private void AcceptCallback(IAsyncResult ar)
+        {
+            Socket socket;
+            var listener = ar.AsyncState as Socket;
+            try
+            {
+                socket = listener.EndAccept(ar);
+            }
+            catch (Exception e)
+            {
+                ConnectionError.PrintUnexpectedConnectionErrorDetails(e, _nextConnectionId);
+                throw;
+            }            
+
+            var state = new ServerTcpConnection(_nextConnectionId, socket, _connectionExceptionHandler, _keepAliveTimeout, _messageDeserializer,
+                _messageHandler);
+            _connectionIdToTcpConnection.Add(_nextConnectionId++, state);
+            _readyForAccept.Set();
+            StartReading(state);
+        }
+
+        private void StartReading(TcpConnection tool)
+        {
+            while (true)
+                tool.Receive();
         }
     }
 }

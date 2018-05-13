@@ -12,5 +12,8 @@ namespace Common.Interfaces
 
         (int gameId, Guid playerGuid, PlayerBase playerInfo) AssignPlayerToAvailableSlotWithPrefered(int playerId,
             TeamColor preferedTeam, PlayerType preferedRole);
+
+        void HandlePlayerDisconnection(int playerId);
+        void RegisterGame();
     }
 }

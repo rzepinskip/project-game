@@ -6,6 +6,7 @@ using Common;
 using Communication.Client;
 using GameMaster;
 using GameMaster.Configuration;
+using Messaging.ErrorsMessages;
 using Messaging.Serialization;
 
 namespace GameSimulation
@@ -22,19 +23,19 @@ namespace GameSimulation
 
             var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(configFilePath);
-            var communicationClient = new AsynchronousClient(new TcpSocketConnector(MessageSerializer.Instance, port,
-                ipAddress,
-                TimeSpan.FromMilliseconds((int) config.KeepAliveInterval)));
+            var keepAliveInterval = TimeSpan.FromMilliseconds((int) config.KeepAliveInterval);
+            var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
+                MessageSerializer.Instance);
+
 
             CommunicationServer =
-                new CommunicationServer.CommunicationServer(MessageSerializer.Instance, config.KeepAliveInterval, port);
+                new CommunicationServer.CommunicationServer(MessageSerializer.Instance, keepAliveInterval, port, new ErrorsMessagesFactory());
             GameMaster = new GameMaster.GameMaster(config, communicationClient, "game");
             Players = new List<Player.Player>();
             for (var i = 0; i < 2 * config.GameDefinition.NumberOfPlayersPerTeam; i++)
             {
-                communicationClient = new AsynchronousClient(new TcpSocketConnector(MessageSerializer.Instance, port,
-                    ipAddress,
-                    TimeSpan.FromMilliseconds((int) config.KeepAliveInterval)));
+                communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
+                    MessageSerializer.Instance);
                 var player = new Player.Player(communicationClient, "game", TeamColor.Blue, PlayerType.Leader);
                 Players.Add(player);
             }
