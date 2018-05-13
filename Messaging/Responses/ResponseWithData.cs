@@ -78,7 +78,7 @@ namespace Messaging.Responses
 
         public static IMessage ConvertToData(DataFieldSet datafieldset, bool isGameFinished)
         {
-            return new ResponseWithData(datafieldset.PlayerId, datafieldset.PlayerLocation, datafieldset.TaskFields,
+            return (datafieldset is null) ? null : new ResponseWithData(datafieldset.PlayerId, datafieldset.PlayerLocation, datafieldset.TaskFields,
                 datafieldset.GoalFields, datafieldset.Pieces, isGameFinished);
         }
 

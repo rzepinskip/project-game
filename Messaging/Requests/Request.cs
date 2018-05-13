@@ -33,6 +33,7 @@ namespace Messaging.Requests
         public override IMessage Process(IGameMaster gameMaster)
         {
             var result = gameMaster.EvaluateAction(GetActionInfo());
+
             return ResponseWithData.ConvertToData(result.data, result.isGameFinished);
         }
 
