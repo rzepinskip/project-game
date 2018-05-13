@@ -14,7 +14,6 @@ namespace GameMaster.ActionHandlers
 
         protected override bool Validate()
         {
-            var playerInfo = Board.Players[PlayerId];
             return new DestroyAvailabilityChain(PlayerId, Board.Players).ActionAvailable();
         }
 
