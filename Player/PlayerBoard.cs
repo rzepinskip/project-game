@@ -6,6 +6,7 @@ using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Player
@@ -21,92 +22,189 @@ namespace Player
         {
         }
 
-        public void HandleTaskField(int playerId, TaskField taskField)
+        public void HandleData(int playerId, List<TaskField> taskFields, List<GoalField> goalFields, List<Piece> pieces)
         {
-            var oldTaskField = (TaskField)this[taskField];
+            //TODO: players can exchange pieces
 
-
-            if (DateTime.Compare(oldTaskField.Timestamp, taskField.Timestamp) < 0)
+            foreach (var taskField in taskFields)
             {
-                if (oldTaskField.PlayerId.HasValue)
-                {
-                    Players[oldTaskField.PlayerId.Value].Location = null;
-                }
+                var oldTaskField = (TaskField)this[taskField];
 
-                if (taskField.PlayerId.HasValue)
+                if (DateTime.Compare(oldTaskField.Timestamp, taskField.Timestamp) < 0)
                 {
-                    var player = Players[taskField.PlayerId.Value];
+                    ClearPlayerFromField(taskField);
+                    ClearPieceFromField(taskField);
 
-                    if (player.Location != null)
+                    if (taskField.PlayerId.HasValue)
                     {
-                        var oldPlayerField = this[player.Location];
-
-                        if (DateTime.Compare(oldPlayerField.Timestamp, taskField.Timestamp) < 0)
-                        {
-                            oldPlayerField.PlayerId = null;
-                            player.Location = new Location(taskField.X, taskField.Y);
-                        }
-                        else
-                        {
-                            taskField.PlayerId = null; //!!!
-                        }
+                        HandlePlayerInField(taskField, pieces);
                     }
 
-                }
-
-
-                if (oldTaskField.PieceId.HasValue)
-                {
-                    Pieces.Remove(oldTaskField.PieceId.Value);
-                }
-
-                if (taskField.PieceId.HasValue)
-                {
-                    var pieceId = taskField.PieceId.Value;
-
-                    for (var i = 0; i < Width; ++i)
+                    if (taskField.PieceId.HasValue)
                     {
-                        for (var j = GoalAreaSize; j < TaskAreaSize + GoalAreaSize; ++j)
+                        HandlePieceInField(taskField,pieces);
+                    }
+
+                    this[taskField] = new TaskField(taskField, taskField.DistanceToPiece, taskField.PieceId, taskField.PlayerId);
+                }
+            }
+
+            if (goalFields.Count == 1) //piece placement
+            {
+                var playerInfo = Players[playerId];
+
+                Pieces.Remove(playerInfo.Piece.Id);
+                playerInfo.Piece = null;
+
+                var goalfield = goalFields[0];
+                this[goalfield] = goalfield;
+            }
+            else
+            {
+                foreach (var goalField in goalFields)
+                {
+                    var oldGoalField = this[goalField];
+                    if (IsNewer(goalField, oldGoalField))
+                    {
+                        ClearPlayerFromField(oldGoalField);
+
+                        if (goalField.PlayerId.HasValue)
                         {
-                            var field = (TaskField)Content[i, j];
-                            if (field.PieceId != pieceId)
-                                continue;
+                            HandlePlayerInField(goalField, pieces);
+                        }
 
-                            if (DateTime.Compare(field.Timestamp, taskField.Timestamp) < 0)
-                            {
-                                field.PieceId = null;
-                            }
-                            else
-                            {
-                                taskField.PieceId = null; //!!!
-                            }
+                        if (goalField.PlayerId.HasValue)
+                        {
+                            var player = Players[goalField.PlayerId.Value];
+                            player.Location = new Location(goalField.X, goalField.Y);
+                        }
 
+                        this[goalField] = goalField;
+                    }
+                }
+            }
+
+            //TODO: handle pieces
+        }
+
+        private bool IsNewer(Field filed, Field fieldToComapre)
+        {
+            return DateTime.Compare(filed.Timestamp, fieldToComapre.Timestamp) > 0;
+        }
+
+        private void HandlePlayerInField(Field field, List<Piece> pieces)
+        {
+            var player = Players[field.PlayerId.Value];
+            if (player.Location == null)
+            {
+                player.Location = new Location(field.X, field.Y);
+            }
+            else
+            {
+                var oldPlayerField = this[player.Location];
+
+                if (IsNewer(field, oldPlayerField))
+                {
+                    if (player.Piece != null)
+                        Pieces.Remove(player.Piece.Id);
+
+                    oldPlayerField.PlayerId = null;
+                    player.Location = new Location(field.X, field.Y);
+                }
+                else
+                {
+                    foreach (var piece in pieces.ToList())
+                    {
+                        if (piece.PlayerId == player.Id)
+                        {
+                            pieces.Remove(piece);
                             break;
                         }
                     }
+
+                    field.PlayerId = null;
+                }
+            }
+        }
+
+        private void HandlePieceInField(TaskField taskField, List<Piece> pieces)
+        {
+            var piece = Pieces[taskField.PieceId.Value];
+
+            var oldPieceField = FindFieldWithPiece(piece.Id);
+            if (oldPieceField != null)
+            {
+                if (IsNewer(taskField, oldPieceField))
+                {
+                    Pieces.Remove(oldPieceField.PieceId.Value);
+                    oldPieceField.PieceId = null;
+                }
+                else
+                {
+                    pieces.Remove(piece);
+                    taskField.PieceId = null;
+                }
+            }
+        }
+
+        private TaskField FindFieldWithPiece(int pieceId)
+        {
+            TaskField result = null;
+            for (var i = 0; i < Width; ++i)
+            {
+                for (var j = GoalAreaSize; j < TaskAreaSize + GoalAreaSize; ++j)
+                {
+                    var field = Content[i, j];
+                    if (!IsLocationInTaskArea(field)) continue;
+
+                    var taskFiled = (TaskField)field;
+                    if (taskFiled.PieceId != pieceId) continue;
+
+                    result = taskFiled;
+                    break;
+                }
+            }
+
+            return result;
+        }
+
+
+
+        private void ClearPlayerFromField(Field field)
+        {
+            if (field.PlayerId.HasValue)
+            {
+                var player = Players[field.PlayerId.Value];
+                if (player.Piece != null)
+                {
+                    Pieces.Remove(player.Piece.Id);
+                    player.Piece = null;
                 }
 
-                this[taskField] = new TaskField(taskField, taskField.DistanceToPiece, taskField.PieceId, taskField.PlayerId);
+                player.Location = null;
+                field.PlayerId = null;
             }
+        }
+        private void ClearPieceFromField(TaskField taskField)
+        {
+            if (taskField.PieceId.HasValue)
+            {
+                Pieces.Remove(taskField.PieceId.Value);
+                taskField.PieceId = null;
+            }
+        }
+
+        public void HandleTaskField(int playerId, TaskField taskField)
+        {
+           
         }
 
         public void HandleGoalField(int playerId, GoalField goalField)
         {
-            var oldGoalField = this[goalField];
-
-            if (DateTime.Compare(oldGoalField.Timestamp, goalField.Timestamp) < 0)
-                this[goalField] = goalField;
         }
 
         public void HandleGoalFieldAfterPlace(int playerId, GoalField goalField)
         {
-            var playerInfo = Players[playerId];
-            var pieceId = playerInfo.Piece.Id;
-
-            playerInfo.Piece = null;
-            Pieces.Remove(pieceId);
-
-            this[goalField] = goalField;
         }
 
         public void HandlePiece(int playerId, Piece piece)
