@@ -25,55 +25,77 @@ namespace Player
         {
             var oldTaskField = (TaskField)this[taskField];
 
-            if (oldTaskField.PlayerId.HasValue)
-            {
-                Players[oldTaskField.PlayerId.Value].Location = null;
-            }
 
-            if (taskField.PlayerId.HasValue)
+            if (DateTime.Compare(oldTaskField.Timestamp, taskField.Timestamp) < 0)
             {
-                var player = Players[taskField.PlayerId.Value];
-
-                if(player.Location!=null)
+                if (oldTaskField.PlayerId.HasValue)
                 {
-                    this[player.Location].PlayerId = null;
+                    Players[oldTaskField.PlayerId.Value].Location = null;
                 }
 
-                player.Location = new Location(taskField.X, taskField.Y);
-            }
-
-
-            if (oldTaskField.PieceId.HasValue)
-            {
-                Pieces.Remove(oldTaskField.PieceId.Value);
-            }
-
-            if (taskField.PieceId.HasValue)
-            {
-                var pieceId = taskField.PieceId.Value;
-
-                for (var i = 0; i < Width; ++i)
+                if (taskField.PlayerId.HasValue)
                 {
-                    for (var j = GoalAreaSize; j < TaskAreaSize + GoalAreaSize; ++j)
-                    {
-                        var filed = (TaskField)Content[i, j];
+                    var player = Players[taskField.PlayerId.Value];
 
-                        if (filed.PieceId == pieceId)
-                            filed.PieceId = null;
+                    if (player.Location != null)
+                    {
+                        var oldPlayerField = this[player.Location];
+
+                        if (DateTime.Compare(oldPlayerField.Timestamp, taskField.Timestamp) < 0)
+                        {
+                            oldPlayerField.PlayerId = null;
+                            player.Location = new Location(taskField.X, taskField.Y);
+                        }
+                        else
+                        {
+                            taskField.PlayerId = null; //!!!
+                        }
+                    }
+
+                }
+
+
+                if (oldTaskField.PieceId.HasValue)
+                {
+                    Pieces.Remove(oldTaskField.PieceId.Value);
+                }
+
+                if (taskField.PieceId.HasValue)
+                {
+                    var pieceId = taskField.PieceId.Value;
+
+                    for (var i = 0; i < Width; ++i)
+                    {
+                        for (var j = GoalAreaSize; j < TaskAreaSize + GoalAreaSize; ++j)
+                        {
+                            var field = (TaskField)Content[i, j];
+                            if (field.PieceId != pieceId)
+                                continue;
+
+                            if (DateTime.Compare(field.Timestamp, taskField.Timestamp) < 0)
+                            {
+                                field.PieceId = null;
+                            }
+                            else
+                            {
+                                taskField.PieceId = null; //!!!
+                            }
+
+                            break;
+                        }
                     }
                 }
+
+                this[taskField] = new TaskField(taskField, taskField.DistanceToPiece, taskField.PieceId, taskField.PlayerId);
             }
-
-
-            this[taskField] = new TaskField(taskField, taskField.DistanceToPiece, taskField.PieceId, taskField.PlayerId);
-
-            if (taskField.PlayerId.HasValue)
-                Players[taskField.PlayerId.Value].Location = new Location(taskField.X, taskField.Y);
         }
 
         public void HandleGoalField(int playerId, GoalField goalField)
         {
-            this[goalField] = goalField;
+            var oldGoalField = this[goalField];
+
+            if (DateTime.Compare(oldGoalField.Timestamp, goalField.Timestamp) < 0)
+                this[goalField] = goalField;
         }
 
         public void HandleGoalFieldAfterPlace(int playerId, GoalField goalField)
