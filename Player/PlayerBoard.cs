@@ -5,6 +5,8 @@ using System.Xml;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
+using System;
+using System.Linq;
 
 namespace Player
 {
@@ -21,22 +23,49 @@ namespace Player
 
         public void HandleTaskField(int playerId, TaskField taskField)
         {
-            // Remove old data
-            //var oldPlayer = this[taskField].PlayerId;
-            //if (oldPlayer.HasValue)
-            //{
-            //    Players[oldPlayer.Value].Location = null;
-            //}
+            var oldTaskField = (TaskField)this[taskField];
 
-            //var oldPiece = (this[taskField] as TaskField).PieceId;
-            //if (oldPiece.HasValue)
-            //{
-            //    Pieces.Remove(oldPiece.Value);
-            //}
+            if (oldTaskField.PlayerId.HasValue)
+            {
+                Players[oldTaskField.PlayerId.Value].Location = null;
+            }
 
-            // Insert new data
-            this[taskField] =
-                new TaskField(taskField, taskField.DistanceToPiece, taskField.PieceId, taskField.PlayerId);
+            if (taskField.PlayerId.HasValue)
+            {
+                var player = Players[taskField.PlayerId.Value];
+
+                if(player.Location!=null)
+                {
+                    this[player.Location].PlayerId = null;
+                }
+
+                player.Location = new Location(taskField.X, taskField.Y);
+            }
+
+
+            if (oldTaskField.PieceId.HasValue)
+            {
+                Pieces.Remove(oldTaskField.PieceId.Value);
+            }
+
+            if (taskField.PieceId.HasValue)
+            {
+                var pieceId = taskField.PieceId.Value;
+
+                for (var i = 0; i < Width; ++i)
+                {
+                    for (var j = GoalAreaSize; j < TaskAreaSize + GoalAreaSize; ++j)
+                    {
+                        var filed = (TaskField)Content[i, j];
+
+                        if (filed.PieceId == pieceId)
+                            filed.PieceId = null;
+                    }
+                }
+            }
+
+
+            this[taskField] = new TaskField(taskField, taskField.DistanceToPiece, taskField.PieceId, taskField.PlayerId);
 
             if (taskField.PlayerId.HasValue)
                 Players[taskField.PlayerId.Value].Location = new Location(taskField.X, taskField.Y);
@@ -44,14 +73,6 @@ namespace Player
 
         public void HandleGoalField(int playerId, GoalField goalField)
         {
-            //// Remove old data
-            //foreach (var piecesValue in Pieces.Values)
-            //    if (piecesValue.PlayerId == playerId)
-            //    {
-            //        piecesValue.PlayerId = null;
-            //        break;
-            //    }
-
             var playerInfo = Players[playerId];
             var pieceId = playerInfo.Piece.Id;
 
@@ -66,9 +87,18 @@ namespace Player
         {
             // Insert new data
             if (Pieces.ContainsKey(piece.Id))
+            {
+                var oldPiece = Pieces[piece.Id];
+                if (oldPiece.PlayerId.HasValue)
+                    Players[oldPiece.PlayerId.Value].Piece = null;
+
                 Pieces[piece.Id] = piece;
+            }
             else
+            {
                 Pieces.Add(piece.Id, piece);
+            }
+
 
             if (piece.PlayerId.HasValue) Players[piece.PlayerId.Value].Piece = piece;
 
