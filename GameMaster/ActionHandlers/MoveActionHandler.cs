@@ -21,22 +21,26 @@ namespace GameMaster.ActionHandlers
             var actionAvailability = new MoveAvailabilityChain(playerInfo.Location, _direction, playerInfo.Team, Board);
             return actionAvailability.ActionAvailable();
         }
+        private bool IsStepInsideBoard()
+        {
+            var playerInfo = Board.Players[PlayerId];
+
+            var actionAvailability = new StepInsideBoard(playerInfo.Location, _direction, playerInfo.Team, Board);
+            return actionAvailability.ActionAvailable();
+        }
 
         public override DataFieldSet Respond()
         {
             var player = Board.Players[PlayerId];
+
+            if (!IsStepInsideBoard())
+                return DataFieldSet.Create(PlayerId, player.Location, new TaskField[0], new Piece[0]);
+
             var taskFields = new List<TaskField>();
             var pieces = new List<Piece>();
 
-
-
-            Location newPlayerLocation;
+            Location resultPlayerLocation;
             var newLocation = player.Location.GetNewLocation(_direction);
-
-            //QUICK FIX
-            if (newLocation.X < 0 || newLocation.Y < 0 || newLocation.X >= Board.Width || newLocation.Y >= Board.Height)
-                return DataFieldSet.Create(PlayerId, player.Location, taskFields.ToArray(), pieces.ToArray());
-
 
             var fieldAtNewLocation = Board[newLocation];
 
@@ -54,15 +58,16 @@ namespace GameMaster.ActionHandlers
 
             if (Validate())
             {
+                resultPlayerLocation = newLocation;
+
                 Board[player.Location].PlayerId = null;
                 fieldAtNewLocation.PlayerId = PlayerId;
                 player.Location = newLocation;
 
-                newPlayerLocation = newLocation;
             }
             else
             {
-                newPlayerLocation = player.Location;
+                resultPlayerLocation = player.Location;
 
                 if (fieldAtNewLocation.PlayerId.HasValue &&
                     Board.Players[fieldAtNewLocation.PlayerId.Value].Piece != null)
@@ -72,7 +77,7 @@ namespace GameMaster.ActionHandlers
                 }
             }
 
-            return DataFieldSet.Create(PlayerId, newPlayerLocation, taskFields.ToArray(), pieces.ToArray());
+            return DataFieldSet.Create(PlayerId, resultPlayerLocation, taskFields.ToArray(), pieces.ToArray());
         }
     }
 }

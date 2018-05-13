@@ -20,13 +20,16 @@ namespace GameMaster.ActionHandlers
 
         public override DataFieldSet Respond()
         {
-            ///TODO: different action on TaskField
+            //TODO: different action on TaskField
+
             if (!Validate())
                 return DataFieldSet.Create(PlayerId, new GoalField[0]);
+
             var player = Board.Players[PlayerId];
             var piece = player.Piece;
 
             player.Piece = null;
+            Board.Pieces.Remove(piece.Id);
 
             if (piece.Type == PieceType.Sham)
                 return null;
@@ -36,8 +39,7 @@ namespace GameMaster.ActionHandlers
             if (playerGoalField != null && playerGoalField.Type == GoalFieldType.Goal)
                 Board.MarkGoalAsCompleted(playerGoalField);
 
-            Board.Pieces.Remove(piece.Id);
-            return DataFieldSet.Create(PlayerId, new[] {playerGoalField});
+            return DataFieldSet.Create(PlayerId, new[] { playerGoalField });
         }
     }
 }
