@@ -88,8 +88,7 @@ namespace Messaging
 
         public override void Process(IPlayer player)
         {
-            foreach (var taskField in TaskFields)
-                player.Board.HandleTaskField(PlayerId, taskField);
+            var pieces = Pieces.ToList();
 
             if (GoalFields.Length == 1)
             {
@@ -98,10 +97,13 @@ namespace Messaging
             else
             {
                 foreach (var goalField in GoalFields)
-                    player.Board.HandleGoalField(PlayerId, goalField);
+                    player.Board.HandleGoalField(PlayerId, goalField, ref pieces);
             }
 
-            foreach (var piece in Pieces)
+            foreach (var taskField in TaskFields)
+                player.Board.HandleTaskField(PlayerId, taskField, ref pieces);
+
+            foreach (var piece in pieces)
                 player.Board.HandlePiece(PlayerId, piece);
 
             if (PlayerLocation != null)

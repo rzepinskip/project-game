@@ -22,74 +22,91 @@ namespace Player
         {
         }
 
-        public void HandleData(int playerId, List<TaskField> taskFields, List<GoalField> goalFields, List<Piece> pieces)
+       
+        public void HandleTaskField(int playerId, TaskField taskField, ref List<Piece> pieces)
         {
-            //TODO: players can exchange pieces
+            var oldTaskField = (TaskField)this[taskField];
 
-            foreach (var taskField in taskFields)
+            if (DateTime.Compare(oldTaskField.Timestamp, taskField.Timestamp) < 0)
             {
-                var oldTaskField = (TaskField)this[taskField];
+                ClearPlayerFromField(taskField);
+                ClearPieceFromField(taskField);
 
-                if (DateTime.Compare(oldTaskField.Timestamp, taskField.Timestamp) < 0)
+                if (taskField.PlayerId.HasValue)
                 {
-                    ClearPlayerFromField(taskField);
-                    ClearPieceFromField(taskField);
-
-                    if (taskField.PlayerId.HasValue)
-                    {
-                        HandlePlayerInField(taskField, pieces);
-                    }
-
-                    if (taskField.PieceId.HasValue)
-                    {
-                        HandlePieceInField(taskField,pieces);
-                    }
-
-                    this[taskField] = new TaskField(taskField, taskField.DistanceToPiece, taskField.PieceId, taskField.PlayerId);
+                    HandlePlayerInField(taskField, pieces);
                 }
-            }
 
-            if (goalFields.Count == 1) //piece placement
-            {
-                var playerInfo = Players[playerId];
-
-                Pieces.Remove(playerInfo.Piece.Id);
-                playerInfo.Piece = null;
-
-                var goalfield = goalFields[0];
-                this[goalfield] = goalfield;
-            }
-            else
-            {
-                foreach (var goalField in goalFields)
+                if (taskField.PieceId.HasValue)
                 {
-                    var oldGoalField = this[goalField];
-                    if (IsNewer(goalField, oldGoalField))
-                    {
-                        ClearPlayerFromField(oldGoalField);
-
-                        if (goalField.PlayerId.HasValue)
-                        {
-                            HandlePlayerInField(goalField, pieces);
-                        }
-
-                        if (goalField.PlayerId.HasValue)
-                        {
-                            var player = Players[goalField.PlayerId.Value];
-                            player.Location = new Location(goalField.X, goalField.Y);
-                        }
-
-                        this[goalField] = goalField;
-                    }
+                    HandlePieceInField(taskField, pieces);
                 }
-            }
 
-            //TODO: handle pieces
+                this[taskField] = new TaskField(taskField, taskField.DistanceToPiece, taskField.PieceId, taskField.PlayerId);
+            }
         }
+
+        public void HandleGoalField(int playerId, GoalField goalField, ref List<Piece> pieces)
+        {
+            var oldGoalField = this[goalField];
+            if (IsNewer(goalField, oldGoalField))
+            {
+                ClearPlayerFromField(oldGoalField);
+
+                if (goalField.PlayerId.HasValue)
+                {
+                    HandlePlayerInField(goalField, pieces);
+                }
+
+                if (goalField.PlayerId.HasValue)
+                {
+                    var player = Players[goalField.PlayerId.Value];
+                    player.Location = new Location(goalField.X, goalField.Y);
+                }
+
+                this[goalField] = goalField;
+            }
+        }
+
+        public void HandleGoalFieldAfterPlace(int playerId, GoalField goalField)
+        {
+            var playerInfo = Players[playerId];
+
+            Pieces.Remove(playerInfo.Piece.Id);
+            playerInfo.Piece = null;
+
+            this[goalField] = goalField;
+        }
+
 
         private bool IsNewer(Field filed, Field fieldToComapre)
         {
             return DateTime.Compare(filed.Timestamp, fieldToComapre.Timestamp) > 0;
+        }
+
+        private void ClearPlayerFromField(Field field)
+        {
+            if (field.PlayerId.HasValue)
+            {
+                var player = Players[field.PlayerId.Value];
+                if (player.Piece != null)
+                {
+                    Pieces.Remove(player.Piece.Id);
+                    player.Piece = null;
+                }
+
+                player.Location = null;
+                field.PlayerId = null;
+            }
+        }
+
+        private void ClearPieceFromField(TaskField taskField)
+        {
+            if (taskField.PieceId.HasValue)
+            {
+                Pieces.Remove(taskField.PieceId.Value);
+                taskField.PieceId = null;
+            }
         }
 
         private void HandlePlayerInField(Field field, List<Piece> pieces)
@@ -168,44 +185,6 @@ namespace Player
             return result;
         }
 
-
-
-        private void ClearPlayerFromField(Field field)
-        {
-            if (field.PlayerId.HasValue)
-            {
-                var player = Players[field.PlayerId.Value];
-                if (player.Piece != null)
-                {
-                    Pieces.Remove(player.Piece.Id);
-                    player.Piece = null;
-                }
-
-                player.Location = null;
-                field.PlayerId = null;
-            }
-        }
-        private void ClearPieceFromField(TaskField taskField)
-        {
-            if (taskField.PieceId.HasValue)
-            {
-                Pieces.Remove(taskField.PieceId.Value);
-                taskField.PieceId = null;
-            }
-        }
-
-        public void HandleTaskField(int playerId, TaskField taskField)
-        {
-           
-        }
-
-        public void HandleGoalField(int playerId, GoalField goalField)
-        {
-        }
-
-        public void HandleGoalFieldAfterPlace(int playerId, GoalField goalField)
-        {
-        }
 
         public void HandlePiece(int playerId, Piece piece)
         {
