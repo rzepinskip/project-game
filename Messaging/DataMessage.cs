@@ -91,8 +91,15 @@ namespace Messaging
             foreach (var taskField in TaskFields)
                 player.Board.HandleTaskField(PlayerId, taskField);
 
-            foreach (var goalField in GoalFields)
-                player.Board.HandleGoalField(PlayerId, goalField);
+            if (GoalFields.Length == 1)
+            {
+                player.Board.HandleGoalFieldAfterPlace(PlayerId, GoalFields[0]);
+            }
+            else
+            {
+                foreach (var goalField in GoalFields)
+                    player.Board.HandleGoalField(PlayerId, goalField);
+            }
 
             foreach (var piece in Pieces)
                 player.Board.HandlePiece(PlayerId, piece);

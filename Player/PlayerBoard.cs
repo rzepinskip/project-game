@@ -73,19 +73,22 @@ namespace Player
 
         public void HandleGoalField(int playerId, GoalField goalField)
         {
+            this[goalField] = goalField;
+        }
+
+        public void HandleGoalFieldAfterPlace(int playerId, GoalField goalField)
+        {
             var playerInfo = Players[playerId];
             var pieceId = playerInfo.Piece.Id;
 
             playerInfo.Piece = null;
             Pieces.Remove(pieceId);
 
-            // Insert new data
             this[goalField] = goalField;
         }
 
         public void HandlePiece(int playerId, Piece piece)
         {
-            // Insert new data
             if (Pieces.ContainsKey(piece.Id))
             {
                 var oldPiece = Pieces[piece.Id];
