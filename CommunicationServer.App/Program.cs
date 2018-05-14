@@ -11,14 +11,14 @@ namespace CommunicationServer.App
 {
     internal class Program
     {
-        private static ILogger _logger;
+        private static VerboseLogger _logger;
 
         private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             var cs = CreateCommunicationServerFrom(args);
-            _logger = CommunicationServer.Logger;
+            _logger = CommunicationServer.VerboseLogger;
         }
 
         private static CommunicationServer CreateCommunicationServerFrom(string[] args)
@@ -41,7 +41,7 @@ namespace CommunicationServer.App
             var config = configLoader.LoadConfigurationFromFile(gameConfigPath);
             var keepAliveInterval = TimeSpan.FromMilliseconds((int) config.KeepAliveInterval);
 
-            return new CommunicationServer(MessageSerializer.Instance, keepAliveInterval, port, new ErrorsMessagesFactory());
+            return new CommunicationServer(MessageSerializer.Instance, keepAliveInterval, port, new ErrorsMessagesFactory(), LoggingMode.Verbose);
         }
 
         private static void Usage(OptionSet options)

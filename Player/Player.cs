@@ -15,11 +15,11 @@ namespace Player
     {
         private bool _hasGameEnded;
         private PlayerCoordinator _playerCoordinator;
-        public ILogger Logger;
+        public VerboseLogger VerboseLogger;
         private readonly string _gameName;
         private readonly TeamColor _color;
         private readonly PlayerType _role;
-        public Player(ICommunicationClient communicationClient, string gameName, TeamColor color, PlayerType role)
+        public Player(ICommunicationClient communicationClient, string gameName, TeamColor color, PlayerType role, LoggingMode loggingMode)
         {
             CommunicationClient = communicationClient;
             _gameName = gameName;
@@ -27,7 +27,7 @@ namespace Player
             _role = role;
 
             var factory = new LoggerFactory();
-            Logger = factory.GetPlayerLogger(0);
+            VerboseLogger =   new VerboseLogger(factory.GetPlayerLogger(0), loggingMode);
 
             _playerCoordinator = new PlayerCoordinator(gameName, color, role);
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
@@ -91,10 +91,10 @@ namespace Player
         }
 
         public void InitializePlayer(int id, Guid guid, TeamColor team, PlayerType role, PlayerBoard board,
-            Location location)
+            Location location, LoggingMode loggingMode)
         {
             var factory = new LoggerFactory();
-            Logger = factory.GetPlayerLogger(id);
+            VerboseLogger = new VerboseLogger(factory.GetPlayerLogger(id), loggingMode);
 
             Id = id;
             Team = team;
@@ -119,6 +119,7 @@ namespace Player
 
         public void HandleGameMasterDisconnection()
         {
+            VerboseLogger.Log($"GM for game {GameId} disconnected");
             _playerCoordinator = new PlayerCoordinator(_gameName, _color, _role);
         }
 
@@ -135,7 +136,7 @@ namespace Player
             if (_playerCoordinator.StrategyReturnsMessage())
             {
                 var request = GetNextRequestMessage();
-                Logger.Info(request.ToLog());
+                VerboseLogger.Log(request.ToLog());
                 CommunicationClient.Send(request);
             }
 

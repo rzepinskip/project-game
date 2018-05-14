@@ -13,7 +13,7 @@ namespace CommunicationServer
 {
     public class CommunicationServer : ICommunicationServer
     {
-        public static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
+        public static VerboseLogger VerboseLogger;
         private readonly ICommunicationRouter _communicationRouter;
 
         private readonly IErrorsMessagesFactory _errorsMessagesFactory;
@@ -21,8 +21,10 @@ namespace CommunicationServer
 
         public CommunicationServer(IMessageDeserializer messageDeserializer, TimeSpan keepAliveTimeout, int port,
             IErrorsMessagesFactory
-                errorsMessagesFactory)
+                errorsMessagesFactory, LoggingMode loggingMode)
         {
+            VerboseLogger = new VerboseLogger(LogManager.GetCurrentClassLogger(), loggingMode);
+
             _errorsMessagesFactory = errorsMessagesFactory;
             _socketListener = new AsynchronousSocketListener(port, keepAliveTimeout,
                 messageDeserializer, HandleMessage
@@ -101,7 +103,7 @@ namespace CommunicationServer
 
         public void HandleMessage(IMessage message, int connectionId)
         {
-            Logger.Info(message + " from  id: " + connectionId);
+            VerboseLogger.Log(message + " from  id: " + connectionId);
             message.Process(this, connectionId);
         }
 
@@ -115,17 +117,17 @@ namespace CommunicationServer
 
             if (ice.Severity == CommunicationException.ErrorSeverity.Temporary)
             {
-                Console.WriteLine($"Encountered temporary problem with connection #{connectionId}: {ice.Message}");
+                VerboseLogger.Log($"Encountered temporary problem with connection #{connectionId}: {ice.Message}");
                 return;
             }
 
             if (!_socketListener.IsConnectionExistent(connectionId))
             {
-                Console.WriteLine("Non existent connenctionId in HandleConnectionError");
+                VerboseLogger.Log("Non existent connenctionId in HandleConnectionError");
                 return;
             }
 
-            Console.WriteLine($"Handling disconnection event for connection #{connectionId}: {e.Message}");
+            VerboseLogger.Log($"Handling disconnection event for connection #{connectionId}: {e.Message}");
 
             var clientType = _communicationRouter.GetClientTypeFrom(connectionId);
             IMessage disconnectedMessage;

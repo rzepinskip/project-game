@@ -23,13 +23,11 @@ namespace Common
         {
         }
         
-        public static void HandleFatalException(UnhandledExceptionEventArgs args, ILogger logger)
+        public static void HandleFatalException(UnhandledExceptionEventArgs args, VerboseLogger logger)
         {
             if (args.ExceptionObject is Exception innerException)
             {
-                Console.WriteLine("FATAL ERROR - check logs for more details!");
-                Console.WriteLine(args.ExceptionObject.ToString());
-                logger.Fatal($"FATAL error: {innerException}");
+                logger.LogException(innerException);
                 Console.ReadKey();
             }
         }
