@@ -151,7 +151,6 @@ namespace Player
                 Players[playerId].Piece = piece;
             }
 
-
             if (piece.Type == PieceType.Destroyed && Pieces.ContainsKey(piece.Id))
             {
                 Pieces.Remove(piece.Id);
