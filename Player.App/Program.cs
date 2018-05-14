@@ -34,6 +34,7 @@ namespace Player.App
             var gameName = default(string);
             var team = default(TeamColor);
             var role = default(PlayerType);
+            var loggingMode = LoggingMode.NonVerbose;
 
             var options = new OptionSet
             {
@@ -42,7 +43,8 @@ namespace Player.App
                 {"address=", "server adress or hostname", a => addressFlag = IPAddress.TryParse(a, out ipAddress)},
                 {"game=", "name of the game", g => gameName = g},
                 {"team=", "red|blue", t => teamFlag = Enum.TryParse(t, true, out team)},
-                {"role=", "leader|player", r => roleFlag = Enum.TryParse(r, true, out role)}
+                {"role=", "leader|player", r => roleFlag = Enum.TryParse(r, true, out role)},
+                {"verbose:", "logging mode", v => loggingMode = LoggingMode.Verbose }
             };
 
             options.Parse(parameters);
@@ -66,7 +68,7 @@ namespace Player.App
             var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
                 MessageSerializer.Instance);
 
-            var player = new Player(communicationClient, gameName, team, role, LoggingMode.Verbose);
+            var player = new Player(communicationClient, gameName, team, role, loggingMode);
 
             return player;
         }

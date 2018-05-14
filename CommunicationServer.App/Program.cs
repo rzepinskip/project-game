@@ -25,11 +25,13 @@ namespace CommunicationServer.App
         {
             var port = default(int);
             var gameConfigPath = default(string);
+            var loggingMode = LoggingMode.NonVerbose;
 
             var options = new OptionSet
             {
                 {"port=", "port number", (int p) => port = p},
-                {"conf=", "configuration filename", c => gameConfigPath = c}
+                {"conf=", "configuration filename", c => gameConfigPath = c},
+                {"verbose:", "logging mode", v => loggingMode = LoggingMode.Verbose }
             };
 
             options.Parse(args);
@@ -41,7 +43,7 @@ namespace CommunicationServer.App
             var config = configLoader.LoadConfigurationFromFile(gameConfigPath);
             var keepAliveInterval = TimeSpan.FromMilliseconds((int) config.KeepAliveInterval);
 
-            return new CommunicationServer(MessageSerializer.Instance, keepAliveInterval, port, new ErrorsMessagesFactory(), LoggingMode.Verbose);
+            return new CommunicationServer(MessageSerializer.Instance, keepAliveInterval, port, new ErrorsMessagesFactory(), loggingMode);
         }
 
         private static void Usage(OptionSet options)
