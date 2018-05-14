@@ -39,6 +39,8 @@ namespace GameMaster.App
 
         private static void GenerateNewFinishedGameMessage(object sender, GameFinishedEventArgs e)
         {
+            var gameMaster = sender as GameMaster;
+            gameMaster.LogGameResults(e.Winners);
             _finishedGameMessage = "Last game winners: " + (e.Winners == TeamColor.Red ? "Red " : "Blue");
         }
 
