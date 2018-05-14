@@ -36,5 +36,10 @@ namespace Messaging.ErrorsMessages
         {
             throw new NotImplementedException();
         }
+
+        public override string ToLog()
+        {
+            return $"{XmlRootName}, {PlayerId} disconnected";
+        }
     }
 }
