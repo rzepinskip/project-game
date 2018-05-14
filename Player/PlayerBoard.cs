@@ -22,47 +22,30 @@ namespace Player
         {
         }
 
-       
-        public void HandleTaskField(int playerId, TaskField taskField, ref List<Piece> pieces)
+        public void HandleTaskField(TaskField taskField)
         {
             var oldTaskField = (TaskField)this[taskField];
 
-            if (IsNewer(taskField,oldTaskField))
+            if (taskField.IsNewerThan(oldTaskField))
             {
                 ClearPlayerFromField(oldTaskField);
                 ClearPieceFromField(oldTaskField);
 
-                if (taskField.PlayerId.HasValue)
-                {
-                    HandlePlayerInField(taskField, pieces);
-                }
-
-                if (taskField.PieceId.HasValue)
-                {
-                    HandlePieceInField(taskField, pieces);
-                }
+                HandlePlayerInField(taskField);
+                HandlePieceInField(taskField);
 
                 this[taskField] = new TaskField(taskField, taskField.DistanceToPiece, taskField.PieceId, taskField.PlayerId);
             }
         }
 
-        public void HandleGoalField(int playerId, GoalField goalField, ref List<Piece> pieces)
+        public void HandleGoalField(GoalField goalField)
         {
             var oldGoalField = this[goalField];
-            if (IsNewer(goalField, oldGoalField))
+            if (goalField.IsNewerThan(oldGoalField))
             {
                 ClearPlayerFromField(oldGoalField);
 
-                if (goalField.PlayerId.HasValue)
-                {
-                    HandlePlayerInField(goalField, pieces);
-                }
-
-                if (goalField.PlayerId.HasValue)
-                {
-                    var player = Players[goalField.PlayerId.Value];
-                    player.Location = new Location(goalField.X, goalField.Y);
-                }
+                HandlePlayerInField(goalField);
 
                 this[goalField] = goalField;
             }
@@ -78,24 +61,11 @@ namespace Player
             this[goalField] = goalField;
         }
 
-
-        private bool IsNewer(Field filed, Field fieldToComapre)
-        {
-            return DateTime.Compare(filed.Timestamp, fieldToComapre.Timestamp) >= 0;
-        }
-
         private void ClearPlayerFromField(Field field)
         {
             if (field.PlayerId.HasValue)
             {
-                var player = Players[field.PlayerId.Value];
-                if (player.Piece != null)
-                {
-                    Pieces.Remove(player.Piece.Id);
-                    player.Piece = null;
-                }
-
-                player.Location = null;
+                Players[field.PlayerId.Value].Location = null;
                 field.PlayerId = null;
             }
         }
@@ -104,13 +74,14 @@ namespace Player
         {
             if (taskField.PieceId.HasValue)
             {
-                Pieces.Remove(taskField.PieceId.Value);
                 taskField.PieceId = null;
             }
         }
 
-        private void HandlePlayerInField(Field field, List<Piece> pieces)
+        private void HandlePlayerInField(Field field)
         {
+            if (!field.PlayerId.HasValue) return;
+
             var player = Players[field.PlayerId.Value];
             if (player.Location == null)
             {
@@ -120,45 +91,31 @@ namespace Player
             {
                 var oldPlayerField = this[player.Location];
 
-                if (IsNewer(field, oldPlayerField))
+                if (field.IsNewerThan(oldPlayerField))
                 {
-                    if (player.Piece != null)
-                        Pieces.Remove(player.Piece.Id);
-
                     oldPlayerField.PlayerId = null;
                     player.Location = new Location(field.X, field.Y);
                 }
                 else
                 {
-                    foreach (var piece in pieces.ToList())
-                    {
-                        if (piece.PlayerId == player.Id)
-                        {
-                            pieces.Remove(piece);
-                            break;
-                        }
-                    }
-
                     field.PlayerId = null;
                 }
             }
         }
 
-        private void HandlePieceInField(TaskField taskField, List<Piece> pieces)
+        private void HandlePieceInField(TaskField taskField)
         {
-            var piece = Pieces[taskField.PieceId.Value];
+            if (!taskField.PieceId.HasValue) return;
 
-            var oldPieceField = FindFieldWithPiece(piece.Id);
+            var oldPieceField = FindFieldWithPiece(taskField.PieceId.Value);
             if (oldPieceField != null)
             {
-                if (IsNewer(taskField, oldPieceField))
+                if (taskField.IsNewerThan(oldPieceField))
                 {
-                    Pieces.Remove(oldPieceField.PieceId.Value);
                     oldPieceField.PieceId = null;
                 }
                 else
                 {
-                    pieces.Remove(piece);
                     taskField.PieceId = null;
                 }
             }
@@ -188,26 +145,17 @@ namespace Player
 
         public void HandlePiece(int playerId, Piece piece)
         {
-            if (Pieces.ContainsKey(piece.Id))
+            if (piece.PlayerId == playerId)
             {
-                var oldPiece = Pieces[piece.Id];
-                if (oldPiece.PlayerId.HasValue)
-                    Players[oldPiece.PlayerId.Value].Piece = null;
-
                 Pieces[piece.Id] = piece;
-            }
-            else
-            {
-                Pieces.Add(piece.Id, piece);
+                Players[playerId].Piece = piece;
             }
 
 
-            if (piece.PlayerId.HasValue) Players[piece.PlayerId.Value].Piece = piece;
-
-            if (piece.Type == PieceType.Destroyed)
+            if (piece.Type == PieceType.Destroyed && Pieces.ContainsKey(piece.Id))
             {
                 Pieces.Remove(piece.Id);
-                if (piece.PlayerId.HasValue) Players[piece.PlayerId.Value].Piece = null;
+                Players[playerId].Piece = null;
             }
         }
 

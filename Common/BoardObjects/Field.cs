@@ -75,5 +75,11 @@ namespace Common.BoardObjects
         {
             return base.ToString() + $", PlayerId={PlayerId}";
         }
+
+        public bool IsNewerThan(Field field)
+        {
+            //">=" instead of ">" beacause of tests
+            return DateTime.Compare(Timestamp, field.Timestamp) >= 0;
+        }
     }
 }

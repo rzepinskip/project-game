@@ -7,8 +7,8 @@ namespace Common.Interfaces
     {
         void HandlePlayerLocation(int playerId, Location playerLocation);
         void HandlePiece(int playerId, Piece piece);
-        void HandleTaskField(int playerId, TaskField taskField, ref List<Piece> pieces);
-        void HandleGoalField(int playerId, GoalField goalField, ref List<Piece> pieces);
+        void HandleTaskField(TaskField taskField);
+        void HandleGoalField(GoalField goalField);
         void HandleGoalFieldAfterPieceAction(int playerId, GoalField goalField);
     }
 }
