@@ -192,16 +192,11 @@ namespace GameMaster
 
         public virtual event EventHandler<GameFinishedEventArgs> GameFinished;
 
-        public void PutLog(ILoggable record)
-        {
-            VerboseLogger.Log(record.ToLog());
-        }
-
         public void PutActionLog(IRequest record)
         {
             var playerId = _playerGuidToId[record.PlayerGuid];
             var playerInfo = Board.Players[playerId];
-            var actionLog = new RequestLog(record, playerInfo.Team, playerInfo.Role);
+            var actionLog = new RequestLog(record, playerId, playerInfo.Team, playerInfo.Role);
             VerboseLogger.Log(actionLog.ToLog());
         }
     }
