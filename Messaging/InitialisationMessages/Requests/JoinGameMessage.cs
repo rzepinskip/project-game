@@ -67,5 +67,10 @@ namespace Messaging.InitialisationMessages
                 throw;
             }
         }
+
+        public override string ToLog()
+        {
+            return string.Join(',', PlayerId, XmlRootName);
+        }
     }
 }

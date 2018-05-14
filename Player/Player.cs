@@ -135,7 +135,7 @@ namespace Player
             if (_playerCoordinator.StrategyReturnsMessage())
             {
                 var request = GetNextRequestMessage();
-                Logger.Info(request);
+                Logger.Info(request.ToLog());
                 CommunicationClient.Send(request);
             }
 

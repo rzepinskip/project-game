@@ -25,5 +25,10 @@ namespace Messaging.ExchangeKnowledgeMessages
         {
             cs.Send(this, PlayerId);
         }
+
+        public override string ToLog()
+        {
+            return XmlRootName + base.ToLog();
+        }
     }
 }

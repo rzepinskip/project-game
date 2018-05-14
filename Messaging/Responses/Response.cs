@@ -5,7 +5,7 @@ using Common.Interfaces;
 
 namespace Messaging.Responses
 {
-    public abstract class Response : Message, IResponse, ILoggable, IEquatable<Response>
+    public abstract class Response : Message, IResponse, IEquatable<Response>
     {
         protected Response()
         {
@@ -21,10 +21,9 @@ namespace Messaging.Responses
             return other != null &&
                    PlayerId == other.PlayerId;
         }
-
-        public virtual string ToLog()
+        public override string ToLog()
         {
-            return string.Join(',', PlayerId);
+            return PlayerId.ToString();
         }
 
         [XmlAttribute("playerId")] public int PlayerId { get; set; }
