@@ -51,7 +51,7 @@ namespace Messaging.Requests
 
         public override string ToLog()
         {
-            return string.Join(',', PlayerGuid, GameId);
+            return string.Join(',', DateTime.Now, GameId);
         }
 
         public override bool Equals(object obj)
