@@ -101,8 +101,8 @@ namespace TestScenarios
             {
                 new  object[] {new PlaceValidPieceOnGoalFieldWithGoal()},
                 new  object[] {new PlaceValidPieceOnGoalFieldWithNonGoal()},
-                new  object[] {new PlaceValidPieceOnTaskFieldWithPiece()},
-                new  object[] {new PlaceValidPieceOnTaskFieldWithoutPiece()},
+                //new  object[] {new PlaceValidPieceOnTaskFieldWithPiece()},
+                //new  object[] {new PlaceValidPieceOnTaskFieldWithoutPiece()},
                 new  object[] {new PlaceWithoutPiece()}
             };
         }
@@ -111,9 +111,9 @@ namespace TestScenarios
         {
             return new List<object[]>
             {
-                new  object[] { new PickUpPieceOnTaskFieldWithPiece()},
-                new  object[] { new PickUpPieceOnTaskFieldWithPieceHavingPiece()},
-                new  object[] { new PickUpPieceOnTaskFieldWithoutPiece()},
+                //new  object[] { new PickUpPieceOnTaskFieldWithPiece()},
+                //new  object[] { new PickUpPieceOnTaskFieldWithPieceHavingPiece()},
+                //new  object[] { new PickUpPieceOnTaskFieldWithoutPiece()},
                 new  object[] { new PickUpPieceOnGoalArea()},
             };
         }
