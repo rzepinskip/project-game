@@ -49,13 +49,15 @@ namespace GameMaster.App
             var gameConfigPath = default(string);
             var ipAddress = default(IPAddress);
             var gameName = default(string);
+            var loggingMode = LoggingMode.NonVerbose;
 
             var options = new OptionSet
             {
                 {"port=", "port number", (int p) => port = p},
                 {"conf=", "configuration filename", c => gameConfigPath = c},
                 {"address=", "server adress or hostname", a => addressFlag = IPAddress.TryParse(a, out ipAddress)},
-                {"game=", "name of the game", g => gameName = g}
+                {"game=", "name of the game", g => gameName = g},
+                {"verbose:", "logging mode", v => loggingMode = LoggingMode.Verbose }
             };
 
             options.Parse(parameters);
@@ -76,7 +78,7 @@ namespace GameMaster.App
 
             var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), TimeSpan.FromMilliseconds((int) config.KeepAliveInterval), MessageSerializer.Instance);
 
-            return new GameMaster(config, communicationClient, gameName, LoggingMode.Verbose);
+            return new GameMaster(config, communicationClient, gameName, loggingMode);
         }
 
         private static void Usage(OptionSet options)
