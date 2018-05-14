@@ -103,4 +103,10 @@ namespace Common
         GameMaster,
         Player
     }
+
+    public enum LoggingMode
+    {
+        Verbose,
+        NonVerbose
+    }
 }

@@ -13,7 +13,7 @@ namespace Player.App
 {
     internal class Program
     {
-        private static ILogger _logger;
+        private static VerboseLogger _logger;
 
         private static void Main(string[] args)
         {
@@ -21,7 +21,7 @@ namespace Player.App
 
             var player = CreatePlayerFrom(args);
 
-            _logger = player.Logger;
+            _logger = player.VerboseLogger;
             player.CommunicationClient.Send(player.GetNextRequestMessage());
         }
 
@@ -66,7 +66,7 @@ namespace Player.App
             var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
                 MessageSerializer.Instance);
 
-            var player = new Player(communicationClient, gameName, team, role);
+            var player = new Player(communicationClient, gameName, team, role, LoggingMode.Verbose);
 
             return player;
         }

@@ -22,7 +22,6 @@ namespace Messaging.ErrorsMessages
 
         public override IMessage Process(IGameMaster gameMaster)
         {
-            Console.WriteLine($"Player {PlayerId} disconnected from game");
             gameMaster.HandlePlayerDisconnection(PlayerId);
             return null;
         }

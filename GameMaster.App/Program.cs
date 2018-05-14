@@ -14,7 +14,7 @@ namespace GameMaster.App
 {
     internal class Program
     {
-        private static ILogger _logger;
+        private static VerboseLogger _logger;
         private static string _finishedGameMessage = "";
 
         private static void Main(string[] args)
@@ -23,7 +23,7 @@ namespace GameMaster.App
 
             var gm = CreateGameMasterFrom(args);
             gm.GameFinished += GenerateNewFinishedGameMessage;
-            _logger = GameMaster.Logger;
+            _logger = gm.VerboseLogger;
             while (true)
             {
                 var boardVisualizer = new BoardVisualizer();
@@ -76,7 +76,7 @@ namespace GameMaster.App
 
             var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), TimeSpan.FromMilliseconds((int) config.KeepAliveInterval), MessageSerializer.Instance);
 
-            return new GameMaster(config, communicationClient, gameName);
+            return new GameMaster(config, communicationClient, gameName, LoggingMode.Verbose);
         }
 
         private static void Usage(OptionSet options)

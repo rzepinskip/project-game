@@ -9,14 +9,14 @@ namespace GameSimulation
 {
     internal class Program
     {
-        private static ILogger _logger;
+        private static VerboseLogger _logger;
 
         private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             var simulation = new GameSimulation("../../../../ExampleConfig.xml");
 
-            _logger = GameMaster.GameMaster.Logger;
+            _logger = simulation.GameMaster.VerboseLogger;
             simulation.StartSimulation();
 
             while (true)

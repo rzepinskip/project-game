@@ -14,7 +14,7 @@ namespace GameMaster
 {
     public class GameMaster : IGameMaster
     {
-        public static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
+        public VerboseLogger VerboseLogger { get; set; }
 
         private readonly GameConfiguration _gameConfiguration;
 
@@ -27,7 +27,7 @@ namespace GameMaster
         private Timer checkIfFullTeamTimer;
         private readonly string _gameName;
 
-        public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, string gameName)
+        public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, string gameName, LoggingMode loggingMode)
         {
             _gameConfiguration = gameConfiguration;
             _gameName = gameName;
@@ -38,6 +38,8 @@ namespace GameMaster
 
             _messagingHandler = new MessagingHandler(gameConfiguration, communicationCommunicationClient, HostNewGame);
             _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
+
+            VerboseLogger = new VerboseLogger(LogManager.GetCurrentClassLogger(), loggingMode);
 
             HostNewGame();
         }
@@ -80,6 +82,8 @@ namespace GameMaster
 
         public void HandlePlayerDisconnection(int playerId)
         {
+            VerboseLogger.Log($"Player {playerId} disconnected from game");
+
             if (!_playerGuidToId.ContainsValue(playerId))
                 return;
             var disconnectedPlayerPair = _playerGuidToId.Single(x => x.Value == playerId);
@@ -190,7 +194,7 @@ namespace GameMaster
 
         public void PutLog(ILoggable record)
         {
-            Logger.Info(record.ToLog());
+            VerboseLogger.Log(record.ToLog());
         }
 
         public void PutActionLog(IRequest record)
@@ -198,7 +202,7 @@ namespace GameMaster
             var playerId = _playerGuidToId[record.PlayerGuid];
             var playerInfo = Board.Players[playerId];
             var actionLog = new RequestLog(record, playerInfo.Team, playerInfo.Role);
-            Logger.Info(actionLog.ToLog());
+            VerboseLogger.Log(actionLog.ToLog());
         }
     }
 
