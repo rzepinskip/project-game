@@ -29,12 +29,12 @@ namespace GameMaster.ActionHandlers
             return actionAvailability.ActionAvailable();
         }
 
-        public override DataFieldSet Respond()
+        public override BoardData Respond()
         {
             var player = Board.Players[PlayerId];
 
             if (!IsStepInsideBoard())
-                return DataFieldSet.Create(PlayerId, player.Location, new TaskField[0], new Piece[0]);
+                return BoardData.Create(PlayerId, player.Location, new TaskField[0], new Piece[0]);
 
             var taskFields = new List<TaskField>();
             var pieces = new List<Piece>();
@@ -77,7 +77,7 @@ namespace GameMaster.ActionHandlers
                 }
             }
 
-            return DataFieldSet.Create(PlayerId, resultPlayerLocation, taskFields.ToArray(), pieces.ToArray());
+            return BoardData.Create(PlayerId, resultPlayerLocation, taskFields.ToArray(), pieces.ToArray());
         }
     }
 }

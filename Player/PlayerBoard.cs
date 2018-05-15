@@ -97,12 +97,13 @@ namespace Player
             reader.ReadEndElement();
         }
 
-        public DataFieldSet ConvertToDataFieldSet(int responderId, int dataReceiverId)
+        public BoardData ToBoardData(int responderId, int dataReceiverId)
         {
             var taskFields = ToEnumerable().Where(f => f is TaskField taskField && taskField.DistanceToPiece != -1).Select(t => (TaskField)t);
             var goalFields = ToEnumerable().Where(f => f is GoalField goalField && goalField.Type != GoalFieldType.Unknown).Select(t => (GoalField)t);
             var pieces = Pieces.Values.ToArray();
-            return DataFieldSet.Create(dataReceiverId, Players[responderId].Location, taskFields.ToArray(), goalFields.ToArray(), pieces);
+
+            return BoardData.Create(dataReceiverId, Players[responderId].Location, taskFields.ToArray(), goalFields.ToArray(), pieces);
         }
     }
 }

@@ -33,7 +33,7 @@ namespace Messaging.Requests
         {
             var result = gameMaster.EvaluateAction(GetActionInfo());
 
-            return DataMessage.ConvertToData(result.data, result.isGameFinished);
+            return DataMessage.FromBoardData(result.data, result.isGameFinished);
         }
 
         public override void Process(IPlayer player)

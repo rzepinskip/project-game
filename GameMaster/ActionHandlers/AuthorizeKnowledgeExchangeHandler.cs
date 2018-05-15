@@ -16,7 +16,7 @@ namespace GameMaster.ActionHandlers
             return true;
         }
 
-        public override DataFieldSet Respond()
+        public override BoardData Respond()
         {
             return null;
         }

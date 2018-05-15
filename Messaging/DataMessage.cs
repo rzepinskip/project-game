@@ -104,12 +104,13 @@ namespace Messaging
                 player.NotifyAboutGameEnd();
         }
 
-        public static IMessage ConvertToData(DataFieldSet datafieldset, bool isGameFinished, Guid? PlayerGuid = null)
+        public static IMessage FromBoardData(BoardData boardData, bool isGameFinished, Guid? PlayerGuid = null)
         {
-            return datafieldset is null
-                ? null
-                : new DataMessage(datafieldset.PlayerId, datafieldset.PlayerLocation, datafieldset.TaskFields,
-                    datafieldset.GoalFields, datafieldset.Pieces, isGameFinished);
+            if (boardData == null)
+                return null;
+
+            return new DataMessage(boardData.PlayerId, boardData.PlayerLocation, boardData.TaskFields,
+                    boardData.GoalFields, boardData.Pieces, isGameFinished);
         }
 
         #region Equality

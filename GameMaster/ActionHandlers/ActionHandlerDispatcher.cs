@@ -51,7 +51,7 @@ namespace GameMaster.ActionHandlers
             return new AuthorizeKnowledgeExchangeHandler(playerId, actionInfo.SubjectId, _knowledgeExchangeManager );
         }
 
-        public DataFieldSet Execute()
+        public BoardData Execute()
         {
             return _actionHandler.Respond();
         }

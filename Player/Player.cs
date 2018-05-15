@@ -117,7 +117,7 @@ namespace Player
         {
             IMessage knowledgeExchangeResponse = null;
             if (Role == PlayerType.Leader)
-                knowledgeExchangeResponse = DataMessage.ConvertToData(PlayerBoard.ConvertToDataFieldSet(Id, initiatorId), false, PlayerGuid);
+                knowledgeExchangeResponse = DataMessage.FromBoardData(PlayerBoard.ToBoardData(Id, initiatorId), false, PlayerGuid);
             else
                 knowledgeExchangeResponse = new RejectKnowledgeExchangeMessage(Id, initiatorId);
             CommunicationClient.Send(knowledgeExchangeResponse);
