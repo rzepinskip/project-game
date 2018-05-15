@@ -1,5 +1,4 @@
-﻿using System;
-using Common.Interfaces;
+﻿using Common.Interfaces;
 using Messaging.Serialization;
 
 namespace Messaging
@@ -15,9 +14,6 @@ namespace Messaging
             return MessageSerializer.Instance.Serialize(this);
         }
 
-        public virtual string ToLog()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract string ToLog();
     }
 }
