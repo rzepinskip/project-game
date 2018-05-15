@@ -18,10 +18,10 @@ namespace GameMaster.ActionHandlers
             return new PickUpAvailabilityChain(playerInfo.Location, Board, PlayerId).ActionAvailable();
         }
 
-        public override DataFieldSet Respond()
+        public override BoardData Respond()
         {
             if (!Validate())
-                return DataFieldSet.Create(PlayerId, new Piece[0]);
+                return BoardData.Create(PlayerId, new Piece[0]);
 
             var player = Board.Players[PlayerId];
             var playerField = Board[player.Location] as TaskField;
@@ -32,7 +32,7 @@ namespace GameMaster.ActionHandlers
             player.Piece = piece;
             playerField.PieceId = null;
 
-            return DataFieldSet.Create(PlayerId, new[] {new Piece(piece.Id, PieceType.Unknown, piece.PlayerId)});
+            return BoardData.Create(PlayerId, new[] {new Piece(piece.Id, PieceType.Unknown, piece.PlayerId)});
         }
     }
 }

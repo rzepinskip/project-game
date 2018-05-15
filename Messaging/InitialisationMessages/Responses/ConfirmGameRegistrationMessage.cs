@@ -1,31 +1,32 @@
 ﻿using System;
 using System.Xml.Serialization;
-using Common;
 using Common.Interfaces;
-using Messaging.Responses;
 
 namespace Messaging.InitialisationMessages
 {
-
+    /// <summary>
+    ///     CS response to GM registration
+    /// </summary>
     [XmlType(XmlRootName)]
-    public class RejectGameRegistrationMessage : Message
+    public class ConfirmGameRegistrationMessage : MessageToPlayer
     {
-        public const string XmlRootName = "RejectGameRegistration";
+        public const string XmlRootName = "ConfirmGameRegistration";
 
-        protected RejectGameRegistrationMessage()
+        protected ConfirmGameRegistrationMessage()
         {
         }
 
-        public RejectGameRegistrationMessage(string gameName)
+        public ConfirmGameRegistrationMessage(int gameId)
         {
-            GameName = gameName;
+            GameId = gameId;
         }
 
-        [XmlAttribute("gameName")] public string GameName { get; set; }
+        [XmlAttribute("gameId")] public int GameId { get; set; }
 
         public override IMessage Process(IGameMaster gameMaster)
         {
-            throw new ApplicationFatalException("Failed to register game");
+            gameMaster.SetGameId(GameId);
+            return null;
         }
 
         public override void Process(IPlayer player)
@@ -40,7 +41,7 @@ namespace Messaging.InitialisationMessages
 
         public override string ToLog()
         {
-            return $"{XmlRootName} in {GameName}";
+            return string.Join(',', XmlRootName, GameId, base.ToLog());
         }
     }
 }

@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Common.Interfaces;
-
-namespace Messaging.ExchangeKnowledgeMessages
+﻿namespace Messaging.KnowledgeExchangeMessages
 {
-    public abstract class BetweenPlayersMessage : Message
+    public abstract class BetweenPlayersMessage : MessageToPlayer
     {
         protected BetweenPlayersMessage()
         {
         }
 
-        protected BetweenPlayersMessage(int playerId, int senderPlayerId)
+        protected BetweenPlayersMessage(int playerId, int senderPlayerId) : base(playerId)
         {
-            PlayerId = playerId;
             SenderPlayerId = senderPlayerId;
         }
 
-        public int PlayerId { get; set; }
         public int SenderPlayerId { get; set; }
     }
 }

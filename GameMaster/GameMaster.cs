@@ -121,7 +121,7 @@ namespace GameMaster
             _gameId = gameId;
         }
 
-        public (DataFieldSet data, bool isGameFinished) EvaluateAction(ActionInfo actionInfo)
+        public (BoardData data, bool isGameFinished) EvaluateAction(ActionInfo actionInfo)
         {
             var playerId = _playerGuidToId[actionInfo.PlayerGuid];
             var action = new ActionHandlerDispatcher((dynamic) actionInfo, Board, playerId, _knowledgeExchangeManager);

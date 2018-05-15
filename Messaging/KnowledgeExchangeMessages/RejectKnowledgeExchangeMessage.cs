@@ -1,25 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 using Common.Interfaces;
 
-namespace Messaging.ExchangeKnowledgeMessages
+namespace Messaging.KnowledgeExchangeMessages
 {
     [XmlType(XmlRootName)]
     public class RejectKnowledgeExchangeMessage : BetweenPlayersMessage
     {
         public const string XmlRootName = "RejectKnowledgeExchange";
-        public RejectKnowledgeExchangeMessage(int senderId, int withPlayerId, bool permanent = false): base(senderId, withPlayerId)
+
+        public RejectKnowledgeExchangeMessage(int senderId, int withPlayerId, bool permanent = false) : base(senderId,
+            withPlayerId)
         {
             Permanent = permanent;
         }
 
         public bool Permanent { get; set; }
+
         public override IMessage Process(IGameMaster gameMaster)
         {
-            gameMaster.KnowledgeExchangeManager.HandleExchangeRejection(subjectId: SenderPlayerId, initiatorId: PlayerId);
+            gameMaster.KnowledgeExchangeManager.HandleExchangeRejection(SenderPlayerId, PlayerId);
             return this;
         }
 
@@ -33,6 +32,7 @@ namespace Messaging.ExchangeKnowledgeMessages
             var gameId = cs.GetGameIdFor(id);
             cs.Send(this, gameId == id ? PlayerId : gameId);
         }
+
         public override string ToLog()
         {
             return XmlRootName + base.ToLog();

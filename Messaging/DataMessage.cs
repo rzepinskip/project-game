@@ -1,29 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
 using System.Xml.Serialization;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
-using Messaging.ExchangeKnowledgeMessages;
-using Messaging.Requests;
+using Messaging.KnowledgeExchangeMessages;
 
-namespace Messaging.Responses
+namespace Messaging
 {
     [XmlType(XmlRootName)]
-    public class ResponseWithData : Response, IEquatable<ResponseWithData>
+    public class DataMessage : MessageToPlayer, IEquatable<DataMessage>
     {
         public const string XmlRootName = "Data";
 
-        protected ResponseWithData()
+        protected DataMessage()
         {
             TaskFields = new TaskField[0];
             GoalFields = new GoalField[0];
             Pieces = new Piece[0];
         }
 
-        public ResponseWithData(int playerId, Location location, IEnumerable<TaskField> taskFields = null,
+        public DataMessage(int playerId, Location location, IEnumerable<TaskField> taskFields = null,
             IEnumerable<GoalField> goalFields = null, IEnumerable<Piece> pieces = null,
             bool gameFinished = false, Guid? senderGuid = null) : base(playerId)
         {
@@ -35,7 +33,6 @@ namespace Messaging.Responses
             PlayerGuid = senderGuid;
         }
 
-
         public TaskField[] TaskFields { get; set; }
 
         public GoalField[] GoalFields { get; set; }
@@ -45,58 +42,48 @@ namespace Messaging.Responses
         public Location PlayerLocation { get; set; }
 
         [XmlAttribute("gameFinished")] public bool GameFinished { get; set; }
-        [XmlAttribute("playerGuid")] public Guid? PlayerGuid { get; set; }
 
-        public bool Equals(ResponseWithData other)
+        [XmlIgnore] public Guid? PlayerGuid { get; set; }
+
+        [XmlAttribute("playerGuid")]
+        protected Guid PlayerGuidValue
         {
-            return other != null &&
-                   base.Equals(other) &&
-                   IsCollectionsEqual(TaskFields, other.TaskFields) &&
-                   IsCollectionsEqual(GoalFields, other.GoalFields) &&
-                   IsCollectionsEqual(Pieces, other.Pieces) &&
-                   EqualityComparer<Location>.Default.Equals(PlayerLocation, other.PlayerLocation) &&
-                   GameFinished == other.GameFinished;
+            get
+            {
+                if (PlayerGuid != null) return PlayerGuid.Value;
+
+                throw new InvalidOperationException();
+            }
+            set => PlayerGuid = value;
         }
+
+        [XmlIgnore] protected bool PlayerGuidValueSpecified => PlayerGuid.HasValue;
+
         public override IMessage Process(IGameMaster gameMaster)
         {
             var knowledgeExchangeManager = gameMaster.KnowledgeExchangeManager;
-            if (PlayerGuid == null)
-            {
-                ///
-                /// TODO: maybe new exception ?
-                /// Guid not send with data 
-                ///
-                return null;
-            }
+            if (PlayerGuid == null) return null;
             var playerGuidValue = PlayerGuid.Value;
             var optionalSenderId = gameMaster.Authorize(playerGuidValue);
-            if (!optionalSenderId.HasValue)
-            {
-                //authorization failed
-                return null;
-            }
-            int senderId = optionalSenderId.Value;
+            if (!optionalSenderId.HasValue) return null;
+            var senderId = optionalSenderId.Value;
             // stripping guid from data;
-            this.PlayerGuid = null;
+            PlayerGuid = null;
             if (knowledgeExchangeManager.IsExchangeInitiator(senderId, PlayerId))
             {
-                knowledgeExchangeManager.AttachDataToInitiator(this, initiatorId: senderId, subjectId: PlayerId);
+                knowledgeExchangeManager.AttachDataToInitiator(this, senderId, PlayerId);
                 //send KnowledgeExchangeRequest to PlayerId
                 return new KnowledgeExchangeRequestMessage(PlayerId, senderId);
-
             }
-            else
+
+            if (knowledgeExchangeManager.HasMatchingInitiatorWithData(senderId, PlayerId))
             {
-                if (knowledgeExchangeManager.HasMatchingInitiatorWithData(senderId: senderId, initiatorId: PlayerId ))
-                {
-                    gameMaster.SendDataToInitiator(initiatorId: PlayerId, message:  this);
-                    return knowledgeExchangeManager.FinalizeExchange(initiatorId: PlayerId, subjectId:senderId);
-                }
-                // No matching knowledge exchange initiator
-
-                return null;
-
+                gameMaster.SendDataToInitiator(PlayerId, this);
+                return knowledgeExchangeManager.FinalizeExchange(PlayerId, senderId);
             }
+            // No matching knowledge exchange initiator
+
+            return null;
         }
 
         public override void Process(IPlayer player)
@@ -117,15 +104,30 @@ namespace Messaging.Responses
                 player.NotifyAboutGameEnd();
         }
 
-        public static IMessage ConvertToData(DataFieldSet datafieldset, bool isGameFinished, Guid? PlayerGuid = null)
+        public static IMessage FromBoardData(BoardData boardData, bool isGameFinished, Guid? PlayerGuid = null)
         {
-            return (datafieldset is null) ? null : new ResponseWithData(datafieldset.PlayerId, datafieldset.PlayerLocation, datafieldset.TaskFields,
-                datafieldset.GoalFields, datafieldset.Pieces, isGameFinished);
+            if (boardData == null)
+                return null;
+
+            return new DataMessage(boardData.PlayerId, boardData.PlayerLocation, boardData.TaskFields,
+                    boardData.GoalFields, boardData.Pieces, isGameFinished);
+        }
+
+        #region Equality
+        public bool Equals(DataMessage other)
+        {
+            return other != null &&
+                   base.Equals(other) &&
+                   IsCollectionsEqual(TaskFields, other.TaskFields) &&
+                   IsCollectionsEqual(GoalFields, other.GoalFields) &&
+                   IsCollectionsEqual(Pieces, other.Pieces) &&
+                   EqualityComparer<Location>.Default.Equals(PlayerLocation, other.PlayerLocation) &&
+                   GameFinished == other.GameFinished;
         }
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as ResponseWithData);
+            return Equals(obj as DataMessage);
         }
 
         private bool IsCollectionsEqual<T>(IEnumerable<T> l1, IEnumerable<T> l2)
@@ -157,14 +159,15 @@ namespace Messaging.Responses
             return hashCode;
         }
 
-        public static bool operator ==(ResponseWithData data1, ResponseWithData data2)
+        public static bool operator ==(DataMessage data1, DataMessage data2)
         {
-            return EqualityComparer<ResponseWithData>.Default.Equals(data1, data2);
+            return EqualityComparer<DataMessage>.Default.Equals(data1, data2);
         }
 
-        public static bool operator !=(ResponseWithData data1, ResponseWithData data2)
+        public static bool operator !=(DataMessage data1, DataMessage data2)
         {
             return !(data1 == data2);
         }
+        #endregion
     }
 }

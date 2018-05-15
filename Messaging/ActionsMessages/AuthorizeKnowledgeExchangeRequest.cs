@@ -3,9 +3,10 @@ using System.Xml.Serialization;
 using Common;
 using Common.ActionInfo;
 using Common.Interfaces;
-using Messaging.ExchangeKnowledgeMessages;
+using Messaging.KnowledgeExchangeMessages;
+using Messaging.Requests;
 
-namespace Messaging.Requests
+namespace Messaging.ActionsMessages
 {
     [XmlType(XmlRootName)]
     public class AuthorizeKnowledgeExchangeRequest : Request
@@ -37,10 +38,10 @@ namespace Messaging.Requests
             var optionalSenderId = gameMaster.Authorize(PlayerGuid);
             if (!optionalSenderId.HasValue) throw new ApplicationFatalException();
             var senderId = optionalSenderId.Value;
-            if (!gameMaster.PlayerIdExists(WithPlayerId)) 
+            if (!gameMaster.PlayerIdExists(WithPlayerId))
                 return new RejectKnowledgeExchangeMessage(senderId, WithPlayerId, true);
             gameMaster.EvaluateAction(GetActionInfo());
-            return null; 
+            return null;
         }
     }
 }

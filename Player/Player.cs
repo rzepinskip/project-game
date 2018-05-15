@@ -5,9 +5,8 @@ using System.Threading;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
-using Messaging.ExchangeKnowledgeMessages;
-using Messaging.Responses;
-using NLog;
+using Messaging;
+using Messaging.KnowledgeExchangeMessages;
 using Player.Logging;
 using Player.Strategy;
 
@@ -118,7 +117,7 @@ namespace Player
         {
             IMessage knowledgeExchangeResponse = null;
             if (Role == PlayerType.Leader)
-                knowledgeExchangeResponse = ResponseWithData.ConvertToData(PlayerBoard.ConvertToDataFieldSet(Id, initiatorId), false, PlayerGuid);
+                knowledgeExchangeResponse = DataMessage.FromBoardData(PlayerBoard.ToBoardData(Id, initiatorId), false, PlayerGuid);
             else
                 knowledgeExchangeResponse = new RejectKnowledgeExchangeMessage(Id, initiatorId);
             CommunicationClient.Send(knowledgeExchangeResponse);
