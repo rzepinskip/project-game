@@ -5,7 +5,6 @@ using GameMaster.Configuration;
 using Messaging.ErrorsMessages;
 using Messaging.Serialization;
 using Mono.Options;
-using NLog;
 
 namespace CommunicationServer.App
 {

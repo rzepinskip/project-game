@@ -30,13 +30,13 @@ namespace GameSimulation
 
             CommunicationServer =
                 new CommunicationServer.CommunicationServer(MessageSerializer.Instance, keepAliveInterval, port, new ErrorsMessagesFactory(), LoggingMode.NonVerbose);
-            GameMaster = new GameMaster.GameMaster(config, communicationClient, "game", LoggingMode.NonVerbose);
+            GameMaster = new GameMaster.GameMaster(config, communicationClient, "game", new ErrorsMessagesFactory(), LoggingMode.NonVerbose);
             Players = new List<Player.Player>();
             for (var i = 0; i < 2 * config.GameDefinition.NumberOfPlayersPerTeam; i++)
             {
                 communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
                     MessageSerializer.Instance);
-                var player = new Player.Player(communicationClient, "game", TeamColor.Blue, PlayerType.Leader, LoggingMode.NonVerbose);
+                var player = new Player.Player(communicationClient, "game", TeamColor.Blue, PlayerType.Leader, new ErrorsMessagesFactory(), LoggingMode.NonVerbose);
                 Players.Add(player);
             }
 

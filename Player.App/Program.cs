@@ -5,6 +5,7 @@ using BoardGenerators.Loaders;
 using Common;
 using Communication.Client;
 using GameMaster.Configuration;
+using Messaging.ErrorsMessages;
 using Messaging.Serialization;
 using Mono.Options;
 using NLog;
@@ -68,7 +69,7 @@ namespace Player.App
             var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
                 MessageSerializer.Instance);
 
-            var player = new Player(communicationClient, gameName, team, role, loggingMode);
+            var player = new Player(communicationClient, gameName, team, role, new ErrorsMessagesFactory(), loggingMode);
 
             return player;
         }
