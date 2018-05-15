@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Common.Interfaces;
 using System.Xml.Serialization;
 
@@ -12,6 +10,10 @@ namespace Messaging.ExchangeKnowledgeMessages
         public const string XmlRootName = "KnowledgeExchangeRequest";
 
         public KnowledgeExchangeRequestMessage(int playerId, int senderPlayerId) : base(playerId, senderPlayerId)
+        {
+        }
+
+        protected KnowledgeExchangeRequestMessage()
         {
         }
 

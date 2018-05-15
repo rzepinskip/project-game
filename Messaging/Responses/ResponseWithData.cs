@@ -45,7 +45,24 @@ namespace Messaging.Responses
         public Location PlayerLocation { get; set; }
 
         [XmlAttribute("gameFinished")] public bool GameFinished { get; set; }
-        [XmlAttribute("playerGuid")] public Guid? PlayerGuid { get; set; }
+
+        [XmlIgnore]
+        public Guid? PlayerGuid { get; set; }
+
+        [XmlAttribute("playerGuid")]
+        protected Guid PlayerGuidValue
+        {
+            get
+            {
+                if (PlayerGuid != null) return PlayerGuid.Value;
+
+                throw new InvalidOperationException();
+            }
+            set => PlayerGuid = value;
+        }
+
+        [XmlIgnore]
+        protected bool PlayerGuidValueSpecified => PlayerGuid.HasValue;
 
         public bool Equals(ResponseWithData other)
         {
