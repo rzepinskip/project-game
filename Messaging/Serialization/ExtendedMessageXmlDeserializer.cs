@@ -2,11 +2,11 @@
 using System.IO;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using Messaging.ActionsMessages;
 using Messaging.ErrorsMessages;
-using Messaging.ExchangeKnowledgeMessages;
 using Messaging.InitialisationMessages;
+using Messaging.KnowledgeExchangeMessages;
 using Messaging.Requests;
-using Messaging.Responses;
 
 namespace Messaging.Serialization
 {
@@ -39,8 +39,8 @@ namespace Messaging.Serialization
                     GetDefaultXmlSerializer(typeof(TestPieceRequest))
                 },
                 {
-                    ResponseWithData.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(ResponseWithData))
+                    DataMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(DataMessage))
                 },
                 {
                     ConfirmGameRegistrationMessage.XmlRootName,
@@ -87,10 +87,6 @@ namespace Messaging.Serialization
                     GetDefaultXmlSerializer(typeof(KnowledgeExchangeRequestMessage))
                 },
                 {
-                    AcceptExchangeRequestMessage.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(AcceptExchangeRequestMessage))
-                },
-                {
                     PlayerDisconnected.XmlRootName,
                     GetDefaultXmlSerializer(typeof(PlayerDisconnected))
                 },
@@ -101,7 +97,7 @@ namespace Messaging.Serialization
                 {
                     RejectGameRegistrationMessage.XmlRootName,
                     GetDefaultXmlSerializer(typeof(RejectGameRegistrationMessage))
-                },
+                }
             };
         }
 

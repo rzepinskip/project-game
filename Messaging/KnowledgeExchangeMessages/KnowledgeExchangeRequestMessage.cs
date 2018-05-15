@@ -1,15 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Common.Interfaces;
 using System.Xml.Serialization;
+using Common.Interfaces;
 
-namespace Messaging.ExchangeKnowledgeMessages
+namespace Messaging.KnowledgeExchangeMessages
 {
     [XmlType(XmlRootName)]
-    public class KnowledgeExchangeRequestMessage : KnowledgeExchangeMessage
+    public class KnowledgeExchangeRequestMessage : BetweenPlayersMessage
     {
         public const string XmlRootName = "KnowledgeExchangeRequest";
+
+        public KnowledgeExchangeRequestMessage(int playerId, int senderPlayerId) : base(playerId, senderPlayerId)
+        {
+        }
+
+        protected KnowledgeExchangeRequestMessage()
+        {
+        }
 
         public override IMessage Process(IGameMaster gameMaster)
         {
@@ -18,7 +24,7 @@ namespace Messaging.ExchangeKnowledgeMessages
 
         public override void Process(IPlayer player)
         {
-            player.HandleExchangeKnowledge(SenderPlayerId);
+            player.HandleKnowledgeExchangeRequest(SenderPlayerId);
         }
 
         public override void Process(ICommunicationServer cs, int id)

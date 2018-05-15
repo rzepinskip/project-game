@@ -1,9 +1,10 @@
-﻿using Common.Interfaces;
+﻿using System;
+using Common.Interfaces;
 using Messaging.Serialization;
 
 namespace Messaging
 {
-    public abstract class Message : IMessage, ILoggable
+    public abstract class Message : IMessage
     {
         public abstract IMessage Process(IGameMaster gameMaster);
         public abstract void Process(IPlayer player);
@@ -14,6 +15,9 @@ namespace Messaging
             return MessageSerializer.Instance.Serialize(this);
         }
 
-        public abstract string ToLog();
+        public virtual string ToLog()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

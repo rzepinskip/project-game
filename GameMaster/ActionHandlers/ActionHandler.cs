@@ -14,6 +14,6 @@ namespace GameMaster.ActionHandlers
         }
 
         protected abstract bool Validate();
-        public abstract DataFieldSet Respond();
+        public abstract BoardData Respond();
     }
 }

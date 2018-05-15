@@ -5,7 +5,6 @@ using System.Xml.Serialization;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
-using Messaging.Responses;
 
 namespace Messaging.InitialisationMessages
 {
@@ -13,7 +12,7 @@ namespace Messaging.InitialisationMessages
     ///     Game start messages sent to every player
     /// </summary>
     [XmlType(XmlRootName)]
-    public class GameMessage : Response
+    public class GameMessage : MessageToPlayer
     {
         public const string XmlRootName = "Game";
 
@@ -51,6 +50,7 @@ namespace Messaging.InitialisationMessages
             cs.DeregisterGame(id);
             cs.Send(this, PlayerId);
         }
+
         public override string ToLog()
         {
             return string.Join(',', XmlRootName, base.ToLog());

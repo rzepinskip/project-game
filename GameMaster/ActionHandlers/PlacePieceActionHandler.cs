@@ -18,12 +18,12 @@ namespace GameMaster.ActionHandlers
             return new PlaceAvailabilityChain(playerInfo.Location, Board, PlayerId).ActionAvailable();
         }
 
-        public override DataFieldSet Respond()
+        public override BoardData Respond()
         {
             //TODO: different action on TaskField
 
             if (!Validate())
-                return DataFieldSet.Create(PlayerId, new GoalField[0]);
+                return BoardData.Create(PlayerId, new GoalField[0]);
 
             var player = Board.Players[PlayerId];
             var piece = player.Piece;
@@ -39,7 +39,7 @@ namespace GameMaster.ActionHandlers
             if (playerGoalField != null && playerGoalField.Type == GoalFieldType.Goal)
                 Board.MarkGoalAsCompleted(playerGoalField);
 
-            return DataFieldSet.Create(PlayerId, new[] { playerGoalField });
+            return BoardData.Create(PlayerId, new[] { playerGoalField });
         }
     }
 }

@@ -3,27 +3,17 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using Common.Interfaces;
 
-namespace Messaging.Responses
+namespace Messaging
 {
-    public abstract class Response : Message, IResponse, IEquatable<Response>
+    public abstract class MessageToPlayer : Message, IResponse, IEquatable<MessageToPlayer>
     {
-        protected Response()
+        protected MessageToPlayer()
         {
         }
 
-        public Response(int playerId)
+        protected MessageToPlayer(int playerId)
         {
             PlayerId = playerId;
-        }
-
-        public bool Equals(Response other)
-        {
-            return other != null &&
-                   PlayerId == other.PlayerId;
-        }
-        public override string ToLog()
-        {
-            return PlayerId.ToString();
         }
 
         [XmlAttribute("playerId")] public int PlayerId { get; set; }
@@ -43,9 +33,21 @@ namespace Messaging.Responses
             cs.Send(this, PlayerId);
         }
 
+        public override string ToLog()
+        {
+            return PlayerId.ToString();
+        }
+
+        #region Equality
+        public bool Equals(MessageToPlayer other)
+        {
+            return other != null &&
+                   PlayerId == other.PlayerId;
+        }
+
         public override bool Equals(object obj)
         {
-            return Equals(obj as Response);
+            return Equals(obj as MessageToPlayer);
         }
 
         public override int GetHashCode()
@@ -55,14 +57,15 @@ namespace Messaging.Responses
             return hashCode;
         }
 
-        public static bool operator ==(Response response1, Response response2)
+        public static bool operator ==(MessageToPlayer response1, MessageToPlayer response2)
         {
-            return EqualityComparer<Response>.Default.Equals(response1, response2);
+            return EqualityComparer<MessageToPlayer>.Default.Equals(response1, response2);
         }
 
-        public static bool operator !=(Response response1, Response response2)
+        public static bool operator !=(MessageToPlayer response1, MessageToPlayer response2)
         {
             return !(response1 == response2);
         }
+        #endregion
     }
 }

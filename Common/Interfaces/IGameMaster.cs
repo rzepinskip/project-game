@@ -4,7 +4,7 @@ namespace Common.Interfaces
 {
     public interface IGameMaster
     {
-        (DataFieldSet data, bool isGameFinished) EvaluateAction(ActionInfo.ActionInfo actionInfo);
+        (BoardData data, bool isGameFinished) EvaluateAction(ActionInfo.ActionInfo actionInfo);
 
         void SetGameId(int gameId);
 
@@ -15,5 +15,9 @@ namespace Common.Interfaces
 
         void HandlePlayerDisconnection(int playerId);
         void RegisterGame();
+        IKnowledgeExchangeManager KnowledgeExchangeManager { get; }
+        int? Authorize(Guid playerGuid);
+        void SendDataToInitiator(int initiatorId, IMessage message);
+        bool PlayerIdExists(int playerId);
     }
 }

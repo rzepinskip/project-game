@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Xml.Serialization;
 using Common.Interfaces;
-using Messaging.Responses;
 
 namespace Messaging.InitialisationMessages
 {
@@ -9,7 +8,7 @@ namespace Messaging.InitialisationMessages
     ///     GM's response to Player about join game denial
     /// </summary>
     [XmlType(XmlRootName)]
-    public class RejectJoiningGame : Response
+    public class RejectJoiningGame : MessageToPlayer
     {
         public const string XmlRootName = "RejectJoiningGame";
 
@@ -39,6 +38,7 @@ namespace Messaging.InitialisationMessages
         {
             cs.Send(this, PlayerId);
         }
+
         public override string ToLog()
         {
             return string.Join(',', XmlRootName, base.ToLog());

@@ -1,4 +1,7 @@
-﻿using System.Xml;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
@@ -92,6 +95,15 @@ namespace Player
             base.ReadXml(reader);
 
             reader.ReadEndElement();
+        }
+
+        public BoardData ToBoardData(int responderId, int dataReceiverId)
+        {
+            var taskFields = ToEnumerable().Where(f => f is TaskField taskField && taskField.DistanceToPiece != -1).Select(t => (TaskField)t);
+            var goalFields = ToEnumerable().Where(f => f is GoalField goalField && goalField.Type != GoalFieldType.Unknown).Select(t => (GoalField)t);
+            var pieces = Pieces.Values.ToArray();
+
+            return BoardData.Create(dataReceiverId, Players[responderId].Location, taskFields.ToArray(), goalFields.ToArray(), pieces);
         }
     }
 }

@@ -38,7 +38,7 @@ namespace Messaging.InitialisationMessages
         {
             cs.MarkClientAsGameMaster(id);
             var result = cs.RegisterNewGame(NewGameInfo, id);
-            if(result)
+            if (result)
                 cs.Send(new ConfirmGameRegistrationMessage(id), id);
             else
                 cs.Send(new RejectGameRegistrationMessage(NewGameInfo.GameName), id);
