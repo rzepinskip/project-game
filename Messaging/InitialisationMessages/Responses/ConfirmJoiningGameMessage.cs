@@ -2,7 +2,6 @@
 using System.Xml.Serialization;
 using Common;
 using Common.Interfaces;
-using Messaging.Responses;
 
 namespace Messaging.InitialisationMessages
 {
@@ -10,7 +9,7 @@ namespace Messaging.InitialisationMessages
     ///     GM sends confirmation to player about his registration
     /// </summary>
     [XmlType(XmlRootName)]
-    public class ConfirmJoiningGameMessage : Response
+    public class ConfirmJoiningGameMessage : MessageToPlayer
     {
         public const string XmlRootName = "ConfirmJoiningGame";
 
@@ -43,11 +42,11 @@ namespace Messaging.InitialisationMessages
 
         public override void Process(ICommunicationServer cs, int id)
         {
-            //update team count
             cs.UpdateTeamCount(id, PlayerDefinition.Team);
             cs.AssignGameIdToPlayerId(id, PlayerId);
             cs.Send(this, PlayerId);
         }
+
         public override string ToLog()
         {
             return string.Join(',', XmlRootName, base.ToLog());

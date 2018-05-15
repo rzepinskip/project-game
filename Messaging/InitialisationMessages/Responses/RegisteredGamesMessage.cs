@@ -4,7 +4,6 @@ using System.Linq;
 using System.Xml.Serialization;
 using Common;
 using Common.Interfaces;
-using Messaging.Responses;
 
 namespace Messaging.InitialisationMessages
 {
@@ -12,7 +11,7 @@ namespace Messaging.InitialisationMessages
     ///     CS's response to player about listing all joinable games
     /// </summary>
     [XmlType(XmlRootName)]
-    public class RegisteredGamesMessage : Response
+    public class RegisteredGamesMessage : MessageToPlayer
     {
         public const string XmlRootName = "RegisteredGames";
 
@@ -41,6 +40,7 @@ namespace Messaging.InitialisationMessages
         {
             throw new NotImplementedException();
         }
+
         public override string ToLog()
         {
             return string.Join(',', XmlRootName, base.ToLog());

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using Common.ActionInfo;
 using Common.Interfaces;
-using Messaging.Responses;
 
 namespace Messaging.Requests
 {
@@ -34,7 +33,7 @@ namespace Messaging.Requests
         {
             var result = gameMaster.EvaluateAction(GetActionInfo());
 
-            return ResponseWithData.ConvertToData(result.data, result.isGameFinished);
+            return DataMessage.ConvertToData(result.data, result.isGameFinished);
         }
 
         public override void Process(IPlayer player)

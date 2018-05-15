@@ -1,8 +1,8 @@
 ﻿using System;
-using Common.Interfaces;
 using System.Xml.Serialization;
+using Common.Interfaces;
 
-namespace Messaging.ExchangeKnowledgeMessages
+namespace Messaging.KnowledgeExchangeMessages
 {
     [XmlType(XmlRootName)]
     public class KnowledgeExchangeRequestMessage : BetweenPlayersMessage
