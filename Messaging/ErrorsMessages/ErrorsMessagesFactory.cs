@@ -13,5 +13,11 @@ namespace Messaging.ErrorsMessages
         {
             return new GameMasterDisconnected(gameId);
         }
+
+        public IMessage CreateErrorMessage(string exceptionType, string exceptionMessage = "",
+            string exceptionCauseParameterName = "")
+        {
+            return new ErrorMessage(exceptionType, exceptionMessage, exceptionCauseParameterName);
+        }
     }
 }

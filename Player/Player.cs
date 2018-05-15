@@ -14,26 +14,32 @@ namespace Player
 {
     public class Player : PlayerBase, IPlayer
     {
+        private readonly TeamColor _color;
+        private readonly IErrorsMessagesFactory _errorsMessagesFactory;
+        private readonly string _gameName;
+        private readonly PlayerType _role;
         private bool _hasGameEnded;
         private PlayerCoordinator _playerCoordinator;
-        public VerboseLogger VerboseLogger;
-        private readonly string _gameName;
-        private readonly TeamColor _color;
-        private readonly PlayerType _role;
-        public Player(ICommunicationClient communicationClient, string gameName, TeamColor color, PlayerType role, LoggingMode loggingMode)
+
+        public Player(ICommunicationClient communicationClient, string gameName, TeamColor color, PlayerType role,
+            IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode)
         {
             CommunicationClient = communicationClient;
             _gameName = gameName;
             _color = color;
             _role = role;
+            _errorsMessagesFactory = errorsMessagesFactory;
 
             var factory = new LoggerFactory();
-            VerboseLogger =   new VerboseLogger(factory.GetPlayerLogger(0), loggingMode);
+            VerboseLogger = new VerboseLogger(factory.GetPlayerLogger(0), loggingMode);
 
             _playerCoordinator = new PlayerCoordinator(gameName, color, role);
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
         }
 
+        /// <summary>
+        /// Only for tests
+        /// </summary>
         public Player(int id, Guid guid, TeamColor team, PlayerType role,
             PlayerBoard board, Location location)
         {
@@ -47,6 +53,8 @@ namespace Player
 
             _playerCoordinator = new PlayerCoordinator("", team, role);
         }
+
+        public VerboseLogger VerboseLogger { get; private set; }
 
         public int GameId { get; private set; }
         public PlayerBoard PlayerBoard { get; private set; }
@@ -91,6 +99,23 @@ namespace Player
             Debug.WriteLine("Player has updated game data and started playing");
         }
 
+        public void HandleKnowledgeExchangeRequest(int initiatorId)
+        {
+            IMessage knowledgeExchangeResponse = null;
+            if (Role == PlayerType.Leader)
+                knowledgeExchangeResponse =
+                    DataMessage.FromBoardData(PlayerBoard.ToBoardData(Id, initiatorId), false, PlayerGuid);
+            else
+                knowledgeExchangeResponse = new RejectKnowledgeExchangeMessage(Id, initiatorId);
+            CommunicationClient.Send(knowledgeExchangeResponse);
+        }
+
+        public void HandleGameMasterDisconnection()
+        {
+            VerboseLogger.Log($"GM for game {GameId} disconnected");
+            _playerCoordinator = new PlayerCoordinator(_gameName, _color, _role);
+        }
+
         public void InitializePlayer(int id, Guid guid, TeamColor team, PlayerType role, PlayerBoard board,
             Location location, LoggingMode loggingMode)
         {
@@ -111,22 +136,6 @@ namespace Player
         public IMessage GetNextRequestMessage()
         {
             return _playerCoordinator.NextMove();
-        }
-
-        public void HandleKnowledgeExchangeRequest(int initiatorId)
-        {
-            IMessage knowledgeExchangeResponse = null;
-            if (Role == PlayerType.Leader)
-                knowledgeExchangeResponse = DataMessage.FromBoardData(PlayerBoard.ToBoardData(Id, initiatorId), false, PlayerGuid);
-            else
-                knowledgeExchangeResponse = new RejectKnowledgeExchangeMessage(Id, initiatorId);
-            CommunicationClient.Send(knowledgeExchangeResponse);
-        }
-
-        public void HandleGameMasterDisconnection()
-        {
-            VerboseLogger.Log($"GM for game {GameId} disconnected");
-            _playerCoordinator = new PlayerCoordinator(_gameName, _color, _role);
         }
 
         private void HandleResponse(IMessage response)
@@ -158,7 +167,7 @@ namespace Player
 
             _playerCoordinator = new PlayerCoordinator(_gameName, _color, _role);
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
-            CommunicationClient.Send(_playerCoordinator.NextMove());           
+            CommunicationClient.Send(_playerCoordinator.NextMove());
         }
     }
 }

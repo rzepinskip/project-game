@@ -14,21 +14,21 @@ namespace GameMaster
 {
     public class GameMaster : IGameMaster
     {
-        public VerboseLogger VerboseLogger { get; set; }
-
+        private readonly IErrorsMessagesFactory _errorsMessagesFactory;
         private readonly GameConfiguration _gameConfiguration;
-
+        private readonly string _gameName;
         private readonly MessagingHandler _messagingHandler;
-        private Dictionary<Guid, int> _playerGuidToId;
-        private List<(TeamColor team, PlayerType role)> _playersSlots;
-        private IKnowledgeExchangeManager _knowledgeExchangeManager;
+
         private int _gameId;
         private bool _gameInProgress;
+        private IKnowledgeExchangeManager _knowledgeExchangeManager;
         private PieceGenerator _pieceGenerator;
+        private Dictionary<Guid, int> _playerGuidToId;
+        private List<(TeamColor team, PlayerType role)> _playersSlots;
         private Timer checkIfFullTeamTimer;
-        private readonly string _gameName;
 
-        public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, string gameName, LoggingMode loggingMode)
+        public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient,
+            string gameName, IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode)
         {
             _gameConfiguration = gameConfiguration;
             _gameName = gameName;
@@ -36,6 +36,8 @@ namespace GameMaster
             checkIfFullTeamTimer = new Timer(CheckIfGameFullCallback, null,
                 (int) Constants.GameFullCheckStartDelay.TotalMilliseconds,
                 (int) Constants.GameFullCheckInterval.TotalMilliseconds);
+
+            _errorsMessagesFactory = errorsMessagesFactory;
 
             _messagingHandler = new MessagingHandler(gameConfiguration, communicationCommunicationClient, HostNewGame);
             _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
@@ -45,12 +47,17 @@ namespace GameMaster
             HostNewGame();
         }
 
+        /// <summary>
+        /// Only for tests
+        /// </summary>
         public GameMaster(GameMasterBoard board, Dictionary<Guid, int> playerGuidToId)
         {
             Board = board;
 
             _playerGuidToId = playerGuidToId;
         }
+
+        public VerboseLogger VerboseLogger { get; }
 
         public GameMasterBoard Board { get; private set; }
 
@@ -99,6 +106,7 @@ namespace GameMaster
         }
 
         public IKnowledgeExchangeManager KnowledgeExchangeManager { get; }
+
         public int? Authorize(Guid playerGuid)
         {
             if (_playerGuidToId.ContainsKey(playerGuid))
@@ -230,8 +238,9 @@ namespace GameMaster
                 if (player.Team == winners)
                     result = GameResult.Victory;
 
-                VerboseLogger.Log($"{result}, {DateTime.Now}, {_gameId}, {player.Id}, {playerGuid},{player.Team}, {player.Role}");
-            } 
+                VerboseLogger.Log(
+                    $"{result}, {DateTime.Now}, {_gameId}, {player.Id}, {playerGuid},{player.Team}, {player.Role}");
+            }
         }
     }
 
