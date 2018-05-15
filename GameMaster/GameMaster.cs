@@ -219,6 +219,20 @@ namespace GameMaster
             var actionLog = new RequestLog(record, playerId, playerInfo.Team, playerInfo.Role);
             VerboseLogger.Log(actionLog.ToLog());
         }
+
+        public void LogGameResults(TeamColor winners)
+        {
+            foreach (var player in Board.Players.Values)
+            {
+                var result = GameResult.Defeat;
+                var playerGuid = _playerGuidToId.FirstOrDefault(p => p.Value == player.Id).Key;
+
+                if (player.Team == winners)
+                    result = GameResult.Victory;
+
+                VerboseLogger.Log($"{result}, {DateTime.Now}, {_gameId}, {player.Id}, {playerGuid},{player.Team}, {player.Role}");
+            } 
+        }
     }
 
     public class GameFinishedEventArgs : EventArgs

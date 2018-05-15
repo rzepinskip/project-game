@@ -109,4 +109,11 @@ namespace Common
         Verbose,
         NonVerbose
     }
+
+    public enum GameResult
+    {
+        Victory,
+        Defeat
+    }
+
 }
