@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using System;
+using Common;
 using Common.ActionInfo;
 using Common.Interfaces;
 
@@ -54,7 +55,7 @@ namespace GameMaster.ActionHandlers
         public AuthorizeKnowledgeExchangeHandler ActionHandler(KnowledgeExchangeInfo actionInfo, GameMasterBoard board,
             int playerId)
         {
-            return new AuthorizeKnowledgeExchangeHandler(playerId, actionInfo.SubjectId, _knowledgeExchangeManager);
+            return new AuthorizeKnowledgeExchangeHandler(playerId, board, actionInfo.SubjectId, _knowledgeExchangeManager);
         }
     }
 }

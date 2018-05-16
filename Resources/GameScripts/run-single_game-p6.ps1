@@ -4,8 +4,8 @@ $address = $address.Trim()
 $CSAppPath = "..\..\CommunicationServer.App\bin\Debug\netcoreapp2.0\CommunicationServer.App.dll"
 $GMAppPath = "..\..\GameMaster.App\bin\Debug\netcoreapp2.0\GameMaster.App.dll"
 $PlayerAppPath = "..\..\Player.App\bin\Debug\netcoreapp2.0\Player.App.dll"
-$gameConfigFilePath = "..\GameConfigs\run-single_game-p2.xml"
-$playersCount = 6
+$gameConfigFilePath = "..\GameConfigs\run-single_game-p6.xml"
+$playersCount = 4
 $portNumber = 11000
 
 

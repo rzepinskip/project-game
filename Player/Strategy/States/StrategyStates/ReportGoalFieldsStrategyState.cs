@@ -1,11 +1,14 @@
-﻿using Player.Strategy.Conditions.StrategyConditions;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using Player.Strategy.Conditions.StrategyConditions;
 using Player.Strategy.StateInfo;
 
 namespace Player.Strategy.States.StrategyStates
 {
-    public class PlacePieceStrategyState : StrategyState
+    class ReportGoalFieldsStrategyState : StrategyState
     {
-        protected PlacePieceStrategyState(StrategyInfo strategyInfo) : base(strategyInfo)
+        public ReportGoalFieldsStrategyState(StrategyInfo strategyInfo) : base(strategyInfo)
         {
             transitionConditions.Add(new IsThereSomeoneToCommunicateWithStrategyCondition(strategyInfo));
             transitionConditions.Add(new IsInGoalWithoutPieceStrategyCondition(strategyInfo));

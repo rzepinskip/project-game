@@ -27,25 +27,25 @@ namespace Player.Strategy
             undiscoveredGoalFields.Shuffle();
 
             strategyInfo = new StrategyInfo(null, board, playerGuid, gameId, player, undiscoveredGoalFields);
-            CurrentStrategyState = new InitStrategyState(strategyInfo);
+            CurrentGameState = new InitStrategyState(strategyInfo);
         }
 
-        public BaseState CurrentStrategyState { get; set; }
+        public BaseState CurrentGameState { get; set; }
 
 
         public IMessage NextMove()
         {
-            var nextState = CurrentStrategyState.GetNextState();
-            var gameMessage = CurrentStrategyState.GetNextMessage();
+            var nextState = CurrentGameState.GetNextState();
+            var gameMessage = CurrentGameState.GetNextMessage();
 
-            CurrentStrategyState = nextState;
+            CurrentGameState = nextState;
             return gameMessage;
         }
 
         public bool StrategyReturnsMessage()
         {
             strategyInfo.FromLocation = strategyInfo.Board.Players[strategyInfo.PlayerId].Location;
-            return CurrentStrategyState.StateReturnsMessage();
+            return CurrentGameState.StateReturnsMessage();
         }
     }
 }

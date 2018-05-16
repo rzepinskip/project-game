@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
 using Messaging;
+using Messaging.ActionsMessages;
 using Messaging.KnowledgeExchangeMessages;
 using Player.Logging;
 using Player.Strategy;
+using Player.Strategy.States.StrategyStates;
 
 namespace Player
 {
@@ -101,8 +104,9 @@ namespace Player
 
         public void HandleKnowledgeExchangeRequest(int initiatorId)
         {
+            Console.WriteLine($"Player #{initiatorId} requested communication");
             IMessage knowledgeExchangeResponse = null;
-            if (Role == PlayerType.Leader)
+            if (PlayerBoard.Players[initiatorId].Team  == Team)
                 knowledgeExchangeResponse =
                     DataMessage.FromBoardData(PlayerBoard.ToBoardData(Id, initiatorId), false, PlayerGuid);
             else
@@ -145,17 +149,49 @@ namespace Player
             //    _hasGameEnded = true;
             //    return;
             //}
-
+            Console.WriteLine("Got: " + response);
             response.Process(this);
+            
+            if (response is DataMessage dataMessage && dataMessage.GoalFields.Length > 1)
+            {
+                Console.WriteLine($"Got some data");
+
+                return;
+            }
+
+            if (response is KnowledgeExchangeRequestMessage)
+            {
+                Console.Write("Omitting strategy for KnowledgeExchangeRequestMessage");
+                return;
+            }
+
 
             if (_playerCoordinator.StrategyReturnsMessage())
             {
                 var request = GetNextRequestMessage();
                 VerboseLogger.Log(request.ToLog());
+                Console.WriteLine("Sent: " + request);
                 CommunicationClient.Send(request);
+                if (request is AuthorizeKnowledgeExchangeRequest authorize)
+                {
+                    Console.WriteLine($"Initiating coms with {authorize.WithPlayerId}");
+                    var withPlayerId = authorize.WithPlayerId;
+                    var boardData = PlayerBoard.ToBoardData(Id, withPlayerId);
+                    VerboseLogger.Log(request.ToLog());
+                    Thread.Sleep(2000);
+                    var msg = DataMessage.FromBoardData(boardData, false, PlayerGuid) as DataMessage;
+                    Console.WriteLine($"Sending initial data to {msg.PlayerId}");
+                    CommunicationClient.Send(msg);
+
+                    request = GetNextRequestMessage();
+                    VerboseLogger.Log(request.ToLog());
+                    Console.WriteLine("Sent: " + request);
+                    CommunicationClient.Send(request);
+                }
             }
 
             _playerCoordinator.NextState();
+            Console.WriteLine("\t" + _playerCoordinator?._gameStateInfo?.PlayerStrategy?.CurrentGameState); 
         }
 
         public void HandleConnectionError(CommunicationException e)
@@ -167,7 +203,7 @@ namespace Player
 
             _playerCoordinator = new PlayerCoordinator(_gameName, _color, _role);
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
-            CommunicationClient.Send(_playerCoordinator.NextMove());
+            CommunicationClient.Send(GetNextRequestMessage());
         }
     }
 }

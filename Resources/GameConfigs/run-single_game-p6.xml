@@ -58,7 +58,7 @@
     <BoardWidth>20</BoardWidth>
     <TaskAreaLength>10</TaskAreaLength>
     <GoalAreaLength>3</GoalAreaLength>
-    <NumberOfPlayersPerTeam>3</NumberOfPlayersPerTeam>
+    <NumberOfPlayersPerTeam>2</NumberOfPlayersPerTeam>
     <GameName>Endgame</GameName>
   </GameDefinition>
   <ActionCosts>
@@ -67,6 +67,6 @@
     <TestDelay>50</TestDelay>
     <PickUpDelay>10</PickUpDelay>
     <PlacingDelay>10</PlacingDelay>
-    <KnowledgeExchangeDelay>500</KnowledgeExchangeDelay>
+    <KnowledgeExchangeDelay>50</KnowledgeExchangeDelay>
   </ActionCosts>
 </GameMasterSettings>

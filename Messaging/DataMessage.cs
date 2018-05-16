@@ -46,21 +46,26 @@ namespace Messaging
         [XmlIgnore] public Guid? PlayerGuid { get; set; }
 
         [XmlAttribute("playerGuid")]
-        protected Guid PlayerGuidValue
+        public Guid PlayerGuidValue
         {
             get
             {
-                if (PlayerGuid != null) return PlayerGuid.Value;
+                if (PlayerGuid != null)
+                {
+                    return PlayerGuid.Value;
+                }
 
                 throw new InvalidOperationException();
             }
             set => PlayerGuid = value;
         }
 
-        [XmlIgnore] protected bool PlayerGuidValueSpecified => PlayerGuid.HasValue;
+        [XmlIgnore] public bool PlayerGuidValueSpecified => PlayerGuid.HasValue;
 
         public override IMessage Process(IGameMaster gameMaster)
         {
+            //Console.Write("Data message");
+
             var knowledgeExchangeManager = gameMaster.KnowledgeExchangeManager;
             if (PlayerGuid == null) return null;
             var playerGuidValue = PlayerGuid.Value;
@@ -69,25 +74,35 @@ namespace Messaging
             var senderId = optionalSenderId.Value;
             // stripping guid from data;
             PlayerGuid = null;
+            if (knowledgeExchangeManager.HasMatchingInitiatorWithData(senderId, PlayerId))
+            {
+                //Console.WriteLine($" from subject {senderId} to {PlayerId}");
+                gameMaster.SendDataToInitiator(PlayerId, this);
+                return knowledgeExchangeManager.FinalizeExchange(PlayerId, senderId);
+            }
+
             if (knowledgeExchangeManager.IsExchangeInitiator(senderId, PlayerId))
             {
+                //Console.WriteLine($" from initiator {senderId} to {PlayerId}");
                 knowledgeExchangeManager.AttachDataToInitiator(this, senderId, PlayerId);
                 //send KnowledgeExchangeRequest to PlayerId
                 return new KnowledgeExchangeRequestMessage(PlayerId, senderId);
             }
 
-            if (knowledgeExchangeManager.HasMatchingInitiatorWithData(senderId, PlayerId))
-            {
-                gameMaster.SendDataToInitiator(PlayerId, this);
-                return knowledgeExchangeManager.FinalizeExchange(PlayerId, senderId);
-            }
             // No matching knowledge exchange initiator
-
+            Console.Write($"UNEXPECTED from {senderId} to {PlayerId}");
+            Console.WriteLine();
             return null;
         }
 
         public override void Process(IPlayer player)
         {
+            if (GoalFields.Length > 1)
+            {
+                //Console.WriteLine("Exchange successful");
+                return;
+            }
+
             foreach (var taskField in TaskFields)
                 player.Board.HandleTaskField(PlayerId, taskField);
 
@@ -104,13 +119,30 @@ namespace Messaging
                 player.NotifyAboutGameEnd();
         }
 
+        public override void Process(ICommunicationServer cs, int id)
+        {
+            if (GoalFields.Length > 1)
+            {
+                //Console.WriteLine($"Processing exchange data from socket {id} to {PlayerId}");
+            }
+
+            if (PlayerGuid != null)
+            {
+                //Console.WriteLine($"Forwarding data message to GM");
+                cs.Send(this, cs.GetGameIdFor(PlayerId));
+                return;
+            }
+
+            cs.Send(this, PlayerId);
+        }
+
         public static IMessage FromBoardData(BoardData boardData, bool isGameFinished, Guid? PlayerGuid = null)
         {
             if (boardData == null)
                 return null;
 
             return new DataMessage(boardData.PlayerId, boardData.PlayerLocation, boardData.TaskFields,
-                    boardData.GoalFields, boardData.Pieces, isGameFinished);
+                    boardData.GoalFields, boardData.Pieces, isGameFinished, PlayerGuid);
         }
 
         #region Equality

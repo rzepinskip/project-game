@@ -21,7 +21,7 @@ namespace Player.Strategy.Conditions.StrategyConditions
 
         public override BaseState GetNextState(BaseState fromStrategyState)
         {
-            return new InGoalAreaMovingToTaskStrategyState(StrategyInfo);
+            return new ReportGoalFieldsStrategyState(StrategyInfo);
         }
 
         public override IMessage GetNextMessage(BaseState fromStrategyState)

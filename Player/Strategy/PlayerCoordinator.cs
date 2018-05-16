@@ -18,23 +18,22 @@ namespace Player.Strategy
         public PlayerCoordinator(string gameName, TeamColor color, PlayerType role)
         {
             _gameStateInfo = new GameStateInfo(gameName, color, role);
-            CurrentStrategyState = new GetGamesState(_gameStateInfo);
+            CurrentGameState = new GetGamesState(_gameStateInfo);
         }
 
         public IMessage NextMove()
         {
-            var message = CurrentStrategyState.GetNextMessage();
-            //CurrentStrategyState = CurrentStrategyState.GetNextState();
+            var message = CurrentGameState.GetNextMessage();
 
             return message;
         }
 
         public bool StrategyReturnsMessage()
         {
-            return CurrentStrategyState.StateReturnsMessage();
+            return CurrentGameState.StateReturnsMessage();
         }
 
-        public BaseState CurrentStrategyState { get; set; }
+        public BaseState CurrentGameState { get; set; }
 
         public void UpdateJoinInfo(bool info)
         {
@@ -43,7 +42,7 @@ namespace Player.Strategy
 
         public void NextState()
         {
-            CurrentStrategyState = CurrentStrategyState.GetNextState();
+            CurrentGameState = CurrentGameState.GetNextState();
         }
 
         public void UpdateGameStateInfo(IEnumerable<GameInfo> gameInfo)

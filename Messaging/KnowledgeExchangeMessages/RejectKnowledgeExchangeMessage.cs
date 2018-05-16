@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Xml.Serialization;
 using Common.Interfaces;
 
 namespace Messaging.KnowledgeExchangeMessages
@@ -22,12 +23,14 @@ namespace Messaging.KnowledgeExchangeMessages
 
         public override IMessage Process(IGameMaster gameMaster)
         {
+            Console.WriteLine($"Player {SenderPlayerId} rejected");
             gameMaster.KnowledgeExchangeManager.HandleExchangeRejection(SenderPlayerId, PlayerId);
             return this;
         }
 
         public override void Process(IPlayer player)
         {
+            Console.WriteLine($"Player {SenderPlayerId} rejected");
             player.HandleKnowledgeExchangeRequest(SenderPlayerId);
         }
 
