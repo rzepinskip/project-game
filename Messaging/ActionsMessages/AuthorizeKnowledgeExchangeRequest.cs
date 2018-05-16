@@ -17,8 +17,9 @@ namespace Messaging.ActionsMessages
         {
         }
 
-        public AuthorizeKnowledgeExchangeRequest(Guid playerGuid, int gameId) : base(playerGuid, gameId)
+        public AuthorizeKnowledgeExchangeRequest(Guid playerGuid, int gameId, int withPlayerId) : base(playerGuid, gameId)
         {
+            WithPlayerId = withPlayerId;
         }
 
         public int WithPlayerId { get; set; }

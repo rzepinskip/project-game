@@ -22,7 +22,7 @@ namespace GameMaster
             
             if (!_initiatorsExchanges.ContainsKey(initiatorId))
                 _initiatorsExchanges.Add(initiatorId, new List<ExchangeState>());
-            if (!_subjectsExchanges.ContainsKey(initiatorId))
+            if (!_subjectsExchanges.ContainsKey(subjectId))
                 _subjectsExchanges.Add(subjectId, new List<ExchangeState>());
 
             _initiatorsExchanges[initiatorId].Add(exchange);
