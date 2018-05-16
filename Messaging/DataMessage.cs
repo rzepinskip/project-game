@@ -97,11 +97,11 @@ namespace Messaging
             else
             {
                 foreach (var goalField in GoalFields)
-                    player.Board.HandleGoalField(PlayerId, goalField, ref pieces);
+                    player.Board.HandleGoalField( goalField);
             }
 
             foreach (var taskField in TaskFields)
-                player.Board.HandleTaskField(PlayerId, taskField, ref pieces);
+                player.Board.HandleTaskField(taskField);
 
             foreach (var piece in pieces)
                 player.Board.HandlePiece(PlayerId, piece);

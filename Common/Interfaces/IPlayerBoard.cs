@@ -9,6 +9,6 @@ namespace Common.Interfaces
         void HandlePiece(int playerId, Piece piece);
         void HandleTaskField(TaskField taskField);
         void HandleGoalField(GoalField goalField);
-        void HandleGoalFieldAfterPieceAction(int playerId, GoalField goalField);
+        void HandleGoalFieldAfterPlace(int playerId, GoalField goalField);
     }
 }

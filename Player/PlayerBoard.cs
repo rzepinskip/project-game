@@ -6,8 +6,6 @@ using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Player
 {
@@ -51,7 +49,7 @@ namespace Player
             }
         }
 
-        public void HandleGoalFieldAfterPieceAction(int playerId, GoalField goalField)
+        public void HandleGoalFieldAfterPlace(int playerId, GoalField goalField)
         {
             var playerInfo = Players[playerId];
 
