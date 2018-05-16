@@ -60,6 +60,11 @@ namespace GameMaster.Delays
             return DestroyDelay;
         }
 
+        private double GetDelayFor(KnowledgeExchangeInfo actionInfo)
+        {
+            return KnowledgeExchangeDelay;
+        }
+
         public override bool Equals(object obj)
         {
             return Equals(obj as ActionCosts);

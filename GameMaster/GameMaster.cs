@@ -18,10 +18,10 @@ namespace GameMaster
         private readonly GameConfiguration _gameConfiguration;
         private readonly string _gameName;
         private readonly MessagingHandler _messagingHandler;
+        private ActionHandlerDispatcher _actionHandler;
 
         private int _gameId;
         private bool _gameInProgress;
-        private IKnowledgeExchangeManager _knowledgeExchangeManager;
         private PieceGenerator _pieceGenerator;
         private Dictionary<Guid, int> _playerGuidToId;
         private List<(TeamColor team, PlayerType role)> _playersSlots;
@@ -43,12 +43,12 @@ namespace GameMaster
             _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
 
             VerboseLogger = new VerboseLogger(LogManager.GetCurrentClassLogger(), loggingMode);
-
+            KnowledgeExchangeManager = new KnowledgeExchangeManager();
             HostNewGame();
         }
 
         /// <summary>
-        /// Only for tests
+        ///     Only for tests
         /// </summary>
         public GameMaster(GameMasterBoard board, Dictionary<Guid, int> playerGuidToId)
         {
@@ -105,7 +105,7 @@ namespace GameMaster
                 _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam)));
         }
 
-        public IKnowledgeExchangeManager KnowledgeExchangeManager { get; }
+        public IKnowledgeExchangeManager KnowledgeExchangeManager { get; private set; }
 
         public int? Authorize(Guid playerGuid)
         {
@@ -132,8 +132,8 @@ namespace GameMaster
         public (BoardData data, bool isGameFinished) EvaluateAction(ActionInfo actionInfo)
         {
             var playerId = _playerGuidToId[actionInfo.PlayerGuid];
-            var action = new ActionHandlerDispatcher((dynamic) actionInfo, Board, playerId, _knowledgeExchangeManager);
-            return (data: action.Execute(), isGameFinished: Board.IsGameFinished());
+            var action = _actionHandler.Resolve((dynamic) actionInfo, playerId);
+            return (data: action.Respond(), isGameFinished: Board.IsGameFinished());
         }
 
         public void MessageHandler(IMessage message)
@@ -192,7 +192,9 @@ namespace GameMaster
 
             _pieceGenerator = new PieceGenerator(Board, _gameConfiguration.GameDefinition.ShamProbability,
                 _gameConfiguration.GameDefinition.PlacingNewPiecesFrequency);
-            _knowledgeExchangeManager = new KnowledgeExchangeManager();
+
+            KnowledgeExchangeManager = new KnowledgeExchangeManager();
+            _actionHandler = new ActionHandlerDispatcher(Board, KnowledgeExchangeManager);
         }
 
         private void HostNewGame()
