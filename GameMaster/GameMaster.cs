@@ -7,7 +7,7 @@ using Common.ActionInfo;
 using Common.Interfaces;
 using GameMaster.ActionHandlers;
 using GameMaster.Configuration;
-using Messaging.InitialisationMessages;
+using Messaging.InitializationMessages;
 using NLog;
 
 namespace GameMaster

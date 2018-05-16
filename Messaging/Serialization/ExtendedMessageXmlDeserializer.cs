@@ -4,7 +4,7 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using Messaging.ActionsMessages;
 using Messaging.ErrorsMessages;
-using Messaging.InitialisationMessages;
+using Messaging.InitializationMessages;
 using Messaging.KnowledgeExchangeMessages;
 using Messaging.Requests;
 
@@ -18,6 +18,15 @@ namespace Messaging.Serialization
         {
             _serializers = new Dictionary<string, XmlSerializer>
             {
+                // Actions
+                {
+                    AuthorizeKnowledgeExchangeRequest.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(AuthorizeKnowledgeExchangeRequest))
+                },
+                {
+                    DestroyPieceRequest.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(DestroyPieceRequest))
+                },
                 {
                     DiscoverRequest.XmlRootName,
                     GetDefaultXmlSerializer(typeof(DiscoverRequest))
@@ -38,18 +47,20 @@ namespace Messaging.Serialization
                     TestPieceRequest.XmlRootName,
                     GetDefaultXmlSerializer(typeof(TestPieceRequest))
                 },
+                // Errors
                 {
-                    DataMessage.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(DataMessage))
+                    ErrorMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(ErrorMessage))
                 },
                 {
-                    ConfirmGameRegistrationMessage.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(ConfirmGameRegistrationMessage))
+                    GameMasterDisconnected.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(GameMasterDisconnected))
                 },
                 {
-                    GameMessage.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(GameMessage))
+                    PlayerDisconnected.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(PlayerDisconnected))
                 },
+                // Initialization request
                 {
                     GetGamesMessage.XmlRootName,
                     GetDefaultXmlSerializer(typeof(GetGamesMessage))
@@ -59,45 +70,48 @@ namespace Messaging.Serialization
                     GetDefaultXmlSerializer(typeof(JoinGameMessage))
                 },
                 {
-                    RegisteredGamesMessage.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(RegisteredGamesMessage))
-                },
-                {
                     RegisterGameMessage.XmlRootName,
                     GetDefaultXmlSerializer(typeof(RegisterGameMessage))
                 },
+                // Initialization responses
                 {
-                    RejectJoiningGame.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(RejectJoiningGame))
+                    ConfirmGameRegistrationMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(ConfirmGameRegistrationMessage))
                 },
                 {
                     ConfirmJoiningGameMessage.XmlRootName,
                     GetDefaultXmlSerializer(typeof(ConfirmJoiningGameMessage))
                 },
                 {
-                    DestroyPieceRequest.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(DestroyPieceRequest))
+                    GameMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(GameMessage))
                 },
                 {
-                    AuthorizeKnowledgeExchangeRequest.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(AuthorizeKnowledgeExchangeRequest))
+                    RegisteredGamesMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(RegisteredGamesMessage))
                 },
+                {
+                    RejectGameRegistrationMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(RejectGameRegistrationMessage))
+                },
+                {
+                    RejectJoiningGame.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(RejectJoiningGame))
+                },
+                // KnowledgeExchangeMessages
                 {
                     KnowledgeExchangeRequestMessage.XmlRootName,
                     GetDefaultXmlSerializer(typeof(KnowledgeExchangeRequestMessage))
                 },
                 {
-                    PlayerDisconnected.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(PlayerDisconnected))
+                    RejectKnowledgeExchangeMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(RejectKnowledgeExchangeMessage))
                 },
+                // Other
                 {
-                    GameMasterDisconnected.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(GameMasterDisconnected))
+                    DataMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(DataMessage))
                 },
-                {
-                    RejectGameRegistrationMessage.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(RejectGameRegistrationMessage))
-                }
             };
         }
 

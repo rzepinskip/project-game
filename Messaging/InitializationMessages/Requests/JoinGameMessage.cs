@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 using Common;
 using Common.Interfaces;
 
-namespace Messaging.InitialisationMessages
+namespace Messaging.InitializationMessages
 {
     /// <summary>
     ///     Player's request to GM to join game

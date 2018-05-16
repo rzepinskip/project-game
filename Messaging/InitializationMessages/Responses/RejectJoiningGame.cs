@@ -1,30 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Xml.Serialization;
-using Common;
 using Common.Interfaces;
 
-namespace Messaging.InitialisationMessages
+namespace Messaging.InitializationMessages
 {
     /// <summary>
-    ///     CS's response to player about listing all joinable games
+    ///     GM's response to Player about join game denial
     /// </summary>
     [XmlType(XmlRootName)]
-    public class RegisteredGamesMessage : MessageToPlayer
+    public class RejectJoiningGame : MessageToPlayer
     {
-        public const string XmlRootName = "RegisteredGames";
+        public const string XmlRootName = "RejectJoiningGame";
 
-        protected RegisteredGamesMessage()
+        protected RejectJoiningGame()
         {
         }
 
-        public RegisteredGamesMessage(IEnumerable<GameInfo> games)
+        public RejectJoiningGame(string gameName, int playerId)
         {
-            Games = games.ToArray();
+            GameName = gameName;
+            PlayerId = playerId;
         }
 
-        public GameInfo[] Games { get; set; }
+        [XmlAttribute("gameName")] public string GameName { get; set; }
 
         public override IMessage Process(IGameMaster gameMaster)
         {
@@ -33,12 +31,12 @@ namespace Messaging.InitialisationMessages
 
         public override void Process(IPlayer player)
         {
-            player.UpdateGameState(Games);
+            player.UpdateJoiningInfo(false);
         }
 
         public override void Process(ICommunicationServer cs, int id)
         {
-            throw new NotImplementedException();
+            cs.Send(this, PlayerId);
         }
 
         public override string ToLog()

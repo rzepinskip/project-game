@@ -2,7 +2,7 @@
 using System.Xml.Serialization;
 using Common.Interfaces;
 
-namespace Messaging.InitialisationMessages
+namespace Messaging.InitializationMessages
 {
     /// <summary>
     ///     Player's request to list all games handled by CS that can be joined(not in progress)

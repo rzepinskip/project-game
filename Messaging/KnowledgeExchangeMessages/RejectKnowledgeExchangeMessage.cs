@@ -8,6 +8,10 @@ namespace Messaging.KnowledgeExchangeMessages
     {
         public const string XmlRootName = "RejectKnowledgeExchange";
 
+        protected RejectKnowledgeExchangeMessage()
+        {
+        }
+
         public RejectKnowledgeExchangeMessage(int senderId, int withPlayerId, bool permanent = false) : base(senderId,
             withPlayerId)
         {
