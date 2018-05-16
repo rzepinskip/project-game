@@ -6,7 +6,7 @@ using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
 
-namespace Messaging.InitialisationMessages
+namespace Messaging.InitializationMessages
 {
     /// <summary>
     ///     Game start messages sent to every player

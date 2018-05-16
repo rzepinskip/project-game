@@ -1,5 +1,5 @@
 ﻿using Common.Interfaces;
-using Messaging.InitialisationMessages;
+using Messaging.InitializationMessages;
 using Player.Strategy.StateInfo;
 using Player.Strategy.States;
 using Player.Strategy.States.GameStates;

@@ -3,7 +3,7 @@ using System.Xml.Serialization;
 using Common;
 using Common.Interfaces;
 
-namespace Messaging.InitialisationMessages
+namespace Messaging.InitializationMessages
 {
     [XmlType(XmlRootName)]
     public class RejectGameRegistrationMessage : Message

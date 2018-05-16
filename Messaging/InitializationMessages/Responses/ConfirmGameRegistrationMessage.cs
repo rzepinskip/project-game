@@ -2,7 +2,7 @@
 using System.Xml.Serialization;
 using Common.Interfaces;
 
-namespace Messaging.InitialisationMessages
+namespace Messaging.InitializationMessages
 {
     /// <summary>
     ///     CS response to GM registration
