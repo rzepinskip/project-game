@@ -22,7 +22,7 @@ namespace Player.Strategy.States
             foreach (var condition in transitionConditions)
                 if (condition.CheckCondition())
                     return condition.GetNextMessage(this);
-            throw new StrategyException("GetNextMessage error", this, stateInfo);
+            throw new StrategyException("GetNextMessage error", stateInfo, this);
         }
 
         public BaseState GetNextState()
@@ -31,7 +31,7 @@ namespace Player.Strategy.States
                 if (condition.CheckCondition())
                     return condition.GetNextState(this);
 
-            throw new StrategyException("GetNextState error", stateInfo);
+            throw new StrategyException("GetNextState error", stateInfo, this);
         }
 
         public bool StateReturnsMessage()
@@ -40,7 +40,7 @@ namespace Player.Strategy.States
                 if (condition.CheckCondition())
                     return condition.ReturnsMessage(this);
 
-            throw new StrategyException("StateReturnsMessage error", stateInfo);
+            throw new StrategyException("StateReturnsMessage error", stateInfo, this);
         }
     }
 }

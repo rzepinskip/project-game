@@ -1,4 +1,5 @@
 ﻿using System;
+using Player.Strategy.States;
 
 namespace Player.Strategy
 {
@@ -9,8 +10,8 @@ namespace Player.Strategy
         {
         }
 
-        public StrategyException(string message, IExceptionContentProvider currentStrategyState,
-            IExceptionContentProvider context)
+        public StrategyException(string message, IExceptionContentProvider context,
+            BaseState currentStrategyState)
             : base(string.Join("\n", message, "StrategyState: " + currentStrategyState, context))
         {
         }

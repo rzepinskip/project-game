@@ -37,7 +37,7 @@ namespace Player.Strategy.Conditions.StrategyConditions
                     case MoveToUndiscoveredGoalStrategyState moveToUndiscoveredGoalState:
                         return new MoveToUndiscoveredGoalStrategyState(StrategyInfo);
                     default:
-                        throw new StrategyException("Unknown state", fromStrategyState, StrategyInfo);
+                        throw new StrategyException("Unknown state", StrategyInfo, fromStrategyState);
                 }
             return new DiscoverStrategyState(StrategyInfo);
         }
@@ -58,7 +58,7 @@ namespace Player.Strategy.Conditions.StrategyConditions
                     break;
 
                 default:
-                    throw new StrategyException("Unknown state", fromStrategyState, StrategyInfo);
+                    throw new StrategyException("Unknown state", StrategyInfo, fromStrategyState);
             }
 
             direction = Randomize4WayDirection(StrategyInfo, onlyTaskArea, out var isAnyMoveAvailable);
