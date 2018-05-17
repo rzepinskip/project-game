@@ -24,6 +24,8 @@ namespace GameMaster.App
             var gm = CreateGameMasterFrom(args);
             gm.GameFinished += GenerateNewFinishedGameMessage;
             _logger = gm.VerboseLogger;
+            Console.Title = "Game Master";
+
             while (true)
             {
                 var boardVisualizer = new BoardVisualizer();

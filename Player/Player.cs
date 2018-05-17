@@ -89,6 +89,8 @@ namespace Player
             Team = playerBase.Team;
             Role = playerBase.Role;
             GameId = gameId;
+
+            Console.Title = $"Player #{Id} [{Team}]";
         }
 
         public void InitializeGameData(Location playerLocation, BoardInfo board, IEnumerable<PlayerBase> players)

@@ -18,6 +18,7 @@ namespace CommunicationServer.App
 
             var cs = CreateCommunicationServerFrom(args);
             _logger = CommunicationServer.VerboseLogger;
+            Console.Title = "Communication Server";
         }
 
         private static CommunicationServer CreateCommunicationServerFrom(string[] args)
