@@ -11,7 +11,7 @@ namespace Messaging.InitializationMessages
     ///     CS's response to player about listing all joinable games
     /// </summary>
     [XmlType(XmlRootName)]
-    public class RegisteredGamesMessage : MessageToPlayer
+    public class RegisteredGamesMessage : Message
     {
         public const string XmlRootName = "RegisteredGames";
 
@@ -24,6 +24,7 @@ namespace Messaging.InitializationMessages
             Games = games.ToArray();
         }
 
+        [XmlElement("GameInfo")]
         public GameInfo[] Games { get; set; }
 
         public override IMessage Process(IGameMaster gameMaster)
@@ -43,7 +44,7 @@ namespace Messaging.InitializationMessages
 
         public override string ToLog()
         {
-            return string.Join(',', XmlRootName, base.ToLog());
+            return string.Join(',', XmlRootName);
         }
     }
 }
