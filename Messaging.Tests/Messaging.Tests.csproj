@@ -20,4 +20,10 @@
     <ProjectReference Include="..\TestScenarios\TestScenarios.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Resources\RegisteredGamesMessage.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
