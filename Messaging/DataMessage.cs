@@ -88,13 +88,22 @@ namespace Messaging
 
         public override void Process(IPlayer player)
         {
+            var pieces = Pieces.ToList();
+
+            if (GoalFields.Length == 1)
+            {
+                player.Board.HandleGoalFieldAfterPlace(PlayerId, GoalFields[0]);
+            }
+            else
+            {
+                foreach (var goalField in GoalFields)
+                    player.Board.HandleGoalField( goalField);
+            }
+
             foreach (var taskField in TaskFields)
-                player.Board.HandleTaskField(PlayerId, taskField);
+                player.Board.HandleTaskField(taskField);
 
-            foreach (var goalField in GoalFields)
-                player.Board.HandleGoalField(PlayerId, goalField);
-
-            foreach (var piece in Pieces)
+            foreach (var piece in pieces)
                 player.Board.HandlePiece(PlayerId, piece);
 
             if (PlayerLocation != null)
