@@ -5,7 +5,7 @@ using Common.Interfaces;
 
 namespace Messaging
 {
-    public abstract class MessageToPlayer : Message, IResponse, IEquatable<MessageToPlayer>
+    public abstract class MessageToPlayer : Message, IResponseMessage, IEquatable<MessageToPlayer>
     {
         protected MessageToPlayer()
         {

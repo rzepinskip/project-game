@@ -6,7 +6,7 @@ using Common.ActionInfo;
 namespace Messaging.Requests
 {
     [XmlType(XmlRootName)]
-    public class DiscoverRequest : Request
+    public class DiscoverRequest : RequestMessage
     {
         public const string XmlRootName = "Discover";
 

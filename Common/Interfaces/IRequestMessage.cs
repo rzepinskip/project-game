@@ -2,7 +2,7 @@
 
 namespace Common.Interfaces
 {
-    public interface IRequest : IMessage, ILoggable
+    public interface IRequestMessage : IMessage
     {
         Guid PlayerGuid { get; set; }
 

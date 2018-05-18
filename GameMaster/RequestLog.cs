@@ -5,7 +5,7 @@ namespace GameMaster
 {
     public class RequestLog : ILoggable
     {
-        public RequestLog(IRequest message, int playerId,TeamColor color, PlayerType role)
+        public RequestLog(IRequestMessage message, int playerId,TeamColor color, PlayerType role)
         {
             Message = message;
             PlayerId = playerId;
@@ -13,7 +13,7 @@ namespace GameMaster
             Role = role;
         }
 
-        public IRequest Message { get; set; }
+        public IRequestMessage Message { get; set; }
         public int PlayerId { get; set; }
         public TeamColor Color { get; set; }
         public PlayerType Role { get; set; }

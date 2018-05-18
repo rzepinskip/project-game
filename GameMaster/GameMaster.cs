@@ -139,7 +139,7 @@ namespace GameMaster
         public void MessageHandler(IMessage message)
         {
             // TODO Log all messages
-            if (message is IRequest request)
+            if (message is IRequestMessage request)
                 PutActionLog(request);
 
             IMessage response;
@@ -222,7 +222,7 @@ namespace GameMaster
 
         public virtual event EventHandler<GameFinishedEventArgs> GameFinished;
 
-        public void PutActionLog(IRequest record)
+        public void PutActionLog(IRequestMessage record)
         {
             var playerId = _playerGuidToId[record.PlayerGuid];
             var playerInfo = Board.Players[playerId];

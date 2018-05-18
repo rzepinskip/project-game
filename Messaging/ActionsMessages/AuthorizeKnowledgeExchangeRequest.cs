@@ -9,7 +9,7 @@ using Messaging.Requests;
 namespace Messaging.ActionsMessages
 {
     [XmlType(XmlRootName)]
-    public class AuthorizeKnowledgeExchangeRequest : Request
+    public class AuthorizeKnowledgeExchangeRequest : RequestMessage
     {
         public const string XmlRootName = "AuthorizeKnowledgeExchange";
 

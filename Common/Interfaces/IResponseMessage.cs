@@ -1,6 +1,6 @@
 ﻿namespace Common.Interfaces
 {
-    public interface IResponse : IMessage
+    public interface IResponseMessage : IMessage
     {
         int PlayerId { get; set; }
     }

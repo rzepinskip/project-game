@@ -6,13 +6,13 @@ using Common.Interfaces;
 
 namespace Messaging.Requests
 {
-    public abstract class Request : Message, IRequest, IEquatable<Request>
+    public abstract class RequestMessage : Message, IRequestMessage, IEquatable<RequestMessage>
     {
-        protected Request()
+        protected RequestMessage()
         {
         }
 
-        protected Request(Guid playerGuid, int gameId)
+        protected RequestMessage(Guid playerGuid, int gameId)
         {
             PlayerGuid = playerGuid;
             GameId = gameId;
@@ -20,7 +20,7 @@ namespace Messaging.Requests
 
         [XmlAttribute("gameId")] public int GameId { get; set; }
 
-        public bool Equals(Request other)
+        public bool Equals(RequestMessage other)
         {
             return other != null &&
                    GameId == other.GameId &&
@@ -55,7 +55,7 @@ namespace Messaging.Requests
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as Request);
+            return Equals(obj as RequestMessage);
         }
 
         public override int GetHashCode()
@@ -66,12 +66,12 @@ namespace Messaging.Requests
             return hashCode;
         }
 
-        public static bool operator ==(Request request1, Request request2)
+        public static bool operator ==(RequestMessage request1, RequestMessage request2)
         {
-            return EqualityComparer<Request>.Default.Equals(request1, request2);
+            return EqualityComparer<RequestMessage>.Default.Equals(request1, request2);
         }
 
-        public static bool operator !=(Request request1, Request request2)
+        public static bool operator !=(RequestMessage request1, RequestMessage request2)
         {
             return !(request1 == request2);
         }
