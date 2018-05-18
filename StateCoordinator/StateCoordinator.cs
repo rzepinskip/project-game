@@ -34,14 +34,16 @@ namespace PlayerStateCoordinator
             {
                 do
                 {
-                    Console.WriteLine("\t" + CurrentState);
                     var transition = CurrentState.Process(message);
+                    Console.WriteLine("\t" + CurrentState);
+                    Console.WriteLine("\t\t" + transition);
                     CurrentState = transition.NextState;
                     messagesToSend.AddRange(transition.Message);
                 } while (CurrentState.TransitionType == StateTransitionType.Immediate);
             }
             catch (StrategyException strategyException)
             {
+                strategyException.PrintFull();
                 CurrentState = _gameInitializationInfo.PlayerGameStrategyBeginningState;
                 messagesToSend = new List<IMessage>();
             }
