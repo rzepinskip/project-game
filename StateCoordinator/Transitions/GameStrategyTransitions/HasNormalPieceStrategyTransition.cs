@@ -26,7 +26,7 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
                 GameStrategyInfo.TargetLocation = currentLocation.GetNewLocation(direction);
                 return new List<IMessage>
                 {
-                    new DiscoverRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId)
+                    new MoveRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId, direction)
                 };
             }
         }
