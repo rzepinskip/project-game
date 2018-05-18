@@ -15,6 +15,8 @@ namespace Player
         {
         }
 
+        public override SerializableDictionary<int, Piece> Pieces => throw new InvalidOperationException();
+
         public PlayerBoard(int boardWidth, int taskAreaSize, int goalAreaSize) : base(boardWidth, taskAreaSize,
             goalAreaSize)
         {
@@ -51,10 +53,7 @@ namespace Player
 
         public void HandleGoalFieldAfterPlace(int playerId, GoalField goalField)
         {
-            var playerInfo = Players[playerId];
-
-            Pieces.Remove(playerInfo.Piece.Id);
-            playerInfo.Piece = null;
+            Players[playerId].Piece = null;
 
             this[goalField] = goalField;
         }
@@ -140,18 +139,15 @@ namespace Player
             return result;
         }
 
-
         public void HandlePiece(int playerId, Piece piece)
         {
             if (piece.PlayerId == playerId)
             {
-                Pieces[piece.Id] = piece;
                 Players[playerId].Piece = piece;
             }
 
-            if (piece.Type == PieceType.Destroyed && Pieces.ContainsKey(piece.Id))
+            if (piece.Type == PieceType.Destroyed && Players[playerId].Piece.Id == piece.Id)
             {
-                Pieces.Remove(piece.Id);
                 Players[playerId].Piece = null;
             }
         }

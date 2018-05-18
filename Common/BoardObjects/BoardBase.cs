@@ -56,7 +56,7 @@ namespace Common.BoardObjects
         public SerializableDictionary<int, PlayerInfo> Players { get; } =
             new SerializableDictionary<int, PlayerInfo>();
 
-        public SerializableDictionary<int, Piece> Pieces { get; } = new SerializableDictionary<int, Piece>();
+        public virtual SerializableDictionary<int, Piece> Pieces { get; } = new SerializableDictionary<int, Piece>();
 
         public int? GetPieceIdAt(Location location)
         {
