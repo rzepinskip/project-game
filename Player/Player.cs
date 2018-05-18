@@ -10,8 +10,7 @@ using Messaging;
 using Messaging.ActionsMessages;
 using Messaging.KnowledgeExchangeMessages;
 using Player.Logging;
-using Player.Strategy;
-using Player.Strategy.States.StrategyStates;
+using PlayerStateCoordinator;
 
 namespace Player
 {
@@ -22,7 +21,7 @@ namespace Player
         private readonly string _gameName;
         private readonly PlayerType _role;
         private bool _hasGameEnded;
-        private PlayerCoordinator _playerCoordinator;
+        private StateCoordinator _stateCoordinator;
 
         public Player(ICommunicationClient communicationClient, string gameName, TeamColor color, PlayerType role,
             IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode)
@@ -36,8 +35,9 @@ namespace Player
             var factory = new LoggerFactory();
             VerboseLogger = new VerboseLogger(factory.GetPlayerLogger(0), loggingMode);
 
-            _playerCoordinator = new PlayerCoordinator(gameName, color, role);
+            _stateCoordinator = new StateCoordinator(gameName, color, role);
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
+            CommunicationClient.Send(_stateCoordinator.Start());
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Player
             PlayerBoard = board;
             PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
 
-            _playerCoordinator = new PlayerCoordinator("", team, role);
+            _stateCoordinator = new StateCoordinator("", team, role);
         }
 
         public VerboseLogger VerboseLogger { get; private set; }
@@ -68,18 +68,18 @@ namespace Player
 
         public void UpdateGameState(IEnumerable<GameInfo> gameInfo)
         {
-            _playerCoordinator.UpdateGameStateInfo(gameInfo);
+            _stateCoordinator.UpdateGamesInfo(gameInfo);
         }
 
         public void UpdateJoiningInfo(bool info)
         {
-            _playerCoordinator.UpdateJoinInfo(info);
+            _stateCoordinator.UpdateJoiningResult(info);
         }
 
         public void NotifyAboutGameEnd()
         {
             _hasGameEnded = true;
-            _playerCoordinator.NotifyAboutGameEnd();
+            _stateCoordinator.NotifyAboutGameEnd();
         }
 
         public void UpdatePlayer(int playerId, Guid playerGuid, PlayerBase playerBase, int gameId)
@@ -99,7 +99,7 @@ namespace Player
             foreach (var playerBase in players) PlayerBoard.Players.Add(playerBase.Id, new PlayerInfo(playerBase));
 
             PlayerBoard.Players[Id].Location = playerLocation;
-            _playerCoordinator.CreatePlayerStrategyFactory(new PlayerStrategyFactory(this));
+            //_stateCoordinator.CreatePlayerStrategyFactory(new PlayerStrategyFactory(this));
 
             Debug.WriteLine("Player has updated game data and started playing");
         }
@@ -119,7 +119,7 @@ namespace Player
         public void HandleGameMasterDisconnection()
         {
             VerboseLogger.Log($"GM for game {GameId} disconnected");
-            _playerCoordinator = new PlayerCoordinator(_gameName, _color, _role);
+            _stateCoordinator = new StateCoordinator(_gameName, _color, _role);
         }
 
         public void InitializePlayer(int id, Guid guid, TeamColor team, PlayerType role, PlayerBoard board,
@@ -136,64 +136,68 @@ namespace Player
             PlayerBoard = board;
             PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
 
-            _playerCoordinator = new PlayerCoordinator("", team, role);
+            _stateCoordinator = new StateCoordinator("", team, role);
         }
 
-        public IMessage GetNextRequestMessage()
-        {
-            return _playerCoordinator.NextMove();
-        }
-
-        private void HandleResponse(IMessage response)
+        private void HandleResponse(IMessage message)
         {
             //if (_hasGameEnded)
             //{
             //    _hasGameEnded = true;
             //    return;
             //}
-            Console.WriteLine("Got: " + response);
-            response.Process(this);
+            Console.WriteLine("Got: " + message);
+            message.Process(this);
             
-            if (response is DataMessage dataMessage && dataMessage.GoalFields.Length > 1)
-            {
-                Console.WriteLine($"Got some data");
+            //if (response is DataMessage dataMessage && dataMessage.GoalFields.Length > 1)
+            //{
+            //    Console.WriteLine($"Got some data");
 
-                return;
+            //    return;
+            //}
+
+            //if (response is KnowledgeExchangeRequestMessage)
+            //{
+            //    Console.Write("Omitting strategy for KnowledgeExchangeRequestMessage");
+            //    return;
+            //}
+
+
+            var responsesToSend = _stateCoordinator.Process(message);
+
+            foreach (var response in responsesToSend)
+            {
+                VerboseLogger.Log(response.ToLog());
+                Console.WriteLine("Sent: " + response);
+                CommunicationClient.Send(response);
             }
 
-            if (response is KnowledgeExchangeRequestMessage)
-            {
-                Console.Write("Omitting strategy for KnowledgeExchangeRequestMessage");
-                return;
-            }
+            //if (_stateCoordinator.StrategyReturnsMessage())
+            //{
+            //    var request = GetNextRequestMessage();
+            //    VerboseLogger.Log(request.ToLog());
+            //    Console.WriteLine("Sent: " + request);
+            //    CommunicationClient.Send(request);
+            //    if (request is AuthorizeKnowledgeExchangeRequest authorize)
+            //    {
+            //        Console.WriteLine($"Initiating coms with {authorize.WithPlayerId}");
+            //        var withPlayerId = authorize.WithPlayerId;
+            //        var boardData = PlayerBoard.ToBoardData(Id, withPlayerId);
+            //        VerboseLogger.Log(request.ToLog());
+            //        Thread.Sleep(2000);
+            //        var msg = DataMessage.FromBoardData(boardData, false, PlayerGuid) as DataMessage;
+            //        Console.WriteLine($"Sending initial data to {msg.PlayerId}");
+            //        CommunicationClient.Send(msg);
 
+            //        request = GetNextRequestMessage();
+            //        VerboseLogger.Log(request.ToLog());
+            //        Console.WriteLine("Sent: " + request);
+            //        CommunicationClient.Send(request);
+            //    }
+            //}
 
-            if (_playerCoordinator.StrategyReturnsMessage())
-            {
-                var request = GetNextRequestMessage();
-                VerboseLogger.Log(request.ToLog());
-                Console.WriteLine("Sent: " + request);
-                CommunicationClient.Send(request);
-                if (request is AuthorizeKnowledgeExchangeRequest authorize)
-                {
-                    Console.WriteLine($"Initiating coms with {authorize.WithPlayerId}");
-                    var withPlayerId = authorize.WithPlayerId;
-                    var boardData = PlayerBoard.ToBoardData(Id, withPlayerId);
-                    VerboseLogger.Log(request.ToLog());
-                    Thread.Sleep(2000);
-                    var msg = DataMessage.FromBoardData(boardData, false, PlayerGuid) as DataMessage;
-                    Console.WriteLine($"Sending initial data to {msg.PlayerId}");
-                    CommunicationClient.Send(msg);
-
-                    request = GetNextRequestMessage();
-                    VerboseLogger.Log(request.ToLog());
-                    Console.WriteLine("Sent: " + request);
-                    CommunicationClient.Send(request);
-                }
-            }
-
-            _playerCoordinator.NextState();
-            Console.WriteLine("\t" + _playerCoordinator?._gameStateInfo?.PlayerStrategy?.CurrentGameState); 
+            //_stateCoordinator.NextState();
+            //Console.WriteLine("\t" + _stateCoordinator?._gameStateInfo?.PlayerStrategy?.CurrentGameState); 
         }
 
         public void HandleConnectionError(CommunicationException e)
@@ -203,9 +207,9 @@ namespace Player
             if (e.Severity == CommunicationException.ErrorSeverity.Temporary)
                 return;
 
-            _playerCoordinator = new PlayerCoordinator(_gameName, _color, _role);
+            _stateCoordinator = new StateCoordinator(_gameName, _color, _role);
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
-            CommunicationClient.Send(GetNextRequestMessage());
+            CommunicationClient.Send(_stateCoordinator.Start());
         }
     }
 }
