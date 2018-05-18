@@ -31,12 +31,12 @@ namespace PlayerStateCoordinator
 
             try
             {
-                while (CurrentState.TransitionType == StateTransitionType.Triggered)
+                do
                 {
                     var transition = CurrentState.Process(message);
                     CurrentState = transition.NextState;
                     messagesToSend.AddRange(transition.Message);
-                }
+                } while (CurrentState.TransitionType == StateTransitionType.Immediate);
             }
             catch (StrategyException strategyException)
             {

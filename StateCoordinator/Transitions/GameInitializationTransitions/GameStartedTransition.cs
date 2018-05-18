@@ -13,28 +13,9 @@ namespace PlayerStateCoordinator.Transitions.GameInitializationTransitions
         {
         }
 
-        //public override bool CheckTransition()
-        //{
-        //    return GameInitializationInfo.IsRunning;
-        //}
+        public override State NextState => GameInitializationInfo.PlayerGameStrategyBeginningState;
 
-        //public override BaseState GetNextState(BaseState fromStrategyState)
-        //{
-        //    return fromStrategyState;
-        //}
-
-        //public override IMessage GetNextMessage(BaseState fromStrategyState)
-        //{
-        //    return GameInitializationInfo.PlayerStrategy.NextMove();
-        //}
-
-        //public override bool ReturnsMessage(BaseState fromStrategyState)
-        //{
-        //    return GameInitializationInfo.PlayerStrategy.StrategyReturnsMessage();
-        //}
-
-        public override State NextState => throw new NotImplementedException();
-        public override IEnumerable<IMessage> Message => throw new NotImplementedException();
+        public override IEnumerable<IMessage> Message => new List<IMessage>();
 
         public override bool IsPossible()
         {

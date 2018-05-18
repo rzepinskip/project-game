@@ -7,7 +7,7 @@ namespace PlayerStateCoordinator.States.GameStrategyStates
     public class InitStrategyState : GameStrategyState
     {
         public InitStrategyState(GameStrategyInfo gameStrategyInfo) : base(
-            StateTransitionType.Triggered,
+            StateTransitionType.Immediate,
             gameStrategyInfo)
         {
             Transitions = new Transition[]
