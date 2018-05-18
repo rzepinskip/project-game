@@ -9,10 +9,10 @@ namespace PlayerStateCoordinator.Info
     {
         public readonly string GameName;
 
-        public GameInitializationInfo(string gameName, TeamColor color, PlayerType role)
+        public GameInitializationInfo(string gameName, TeamColor team, PlayerType role)
         {
             GameName = gameName;
-            Color = color;
+            Team = team;
             Role = role;
         }
 
@@ -20,7 +20,7 @@ namespace PlayerStateCoordinator.Info
 
         public bool IsGameRunning { get; set; }
         public IEnumerable<GameInfo> GamesInfo { get; set; }
-        public TeamColor Color { get; }
+        public TeamColor Team { get; }
         public PlayerType Role { get; }
         public bool JoiningSuccessful { get; set; }
     }

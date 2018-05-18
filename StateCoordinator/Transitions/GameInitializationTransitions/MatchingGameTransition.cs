@@ -19,7 +19,7 @@ namespace PlayerStateCoordinator.Transitions.GameInitializationTransitions
         public override IEnumerable<IMessage> Message => new List<IMessage>
         {
             new JoinGameMessage(GameInitializationInfo.GameName, GameInitializationInfo.Role,
-                GameInitializationInfo.Color)
+                GameInitializationInfo.Team)
         };
 
         public override bool IsPossible()

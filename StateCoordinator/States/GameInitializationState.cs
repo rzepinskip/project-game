@@ -10,7 +10,7 @@ namespace PlayerStateCoordinator.States
         private readonly GameInitializationInfo _gameInitializationInfo;
 
         public GameInitializationState(StateTransitionType transitionType, IEnumerable<Transition> transitions,
-            GameInitializationInfo gameInitializationInfo) : base(transitionType, transitions)
+            GameInitializationInfo gameInitializationInfo) : base(transitionType, transitions, gameInitializationInfo)
         {
             _gameInitializationInfo = gameInitializationInfo;
         }

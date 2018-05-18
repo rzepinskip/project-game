@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Common.Interfaces;
+using PlayerStateCoordinator.Info;
 using PlayerStateCoordinator.Transitions;
 
 namespace PlayerStateCoordinator.States
@@ -9,12 +10,14 @@ namespace PlayerStateCoordinator.States
     {
         private readonly MessageHandler _messageHandler;
         private readonly IEnumerable<Transition> _transitions;
+        public readonly BaseInfo Info;
         public readonly StateTransitionType TransitionType;
 
-        protected State(StateTransitionType transitionType, IEnumerable<Transition> transitions)
+        protected State(StateTransitionType transitionType, IEnumerable<Transition> transitions, BaseInfo info)
         {
             TransitionType = transitionType;
             _transitions = transitions;
+            Info = info;
             _messageHandler = new MessageHandler(HandleRequestMessage, HandleResponseMessage, HandleErrorMessage);
         }
 
