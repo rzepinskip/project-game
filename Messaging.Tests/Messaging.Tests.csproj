@@ -21,28 +21,58 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Resources\ConfirmGameRegistrationMessage.xml">
+    <None Update="Resources\ActionMessages\AuthorizeKnowledgeExchangeRequest.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\ConfirmJoiningGameMessage.xml">
+    <None Update="Resources\ActionMessages\DataMessage.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\GameMessage.xml">
+    <None Update="Resources\ActionMessages\DestroyPieceRequest.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\GetGamesMessage.xml">
+    <None Update="Resources\ActionMessages\DiscoverRequest.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\JoinGameMessage.xml">
+    <None Update="Resources\ActionMessages\MoveRequest.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\RegisteredGamesMessage.xml">
+    <None Update="Resources\ActionMessages\PickUpPieceRequest.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\RejectGameRegistrationMessage.xml">
+    <None Update="Resources\ActionMessages\PlacePieceRequest.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\RejectJoiningGame.xml">
+    <None Update="Resources\ActionMessages\TestPieceRequest.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\InitializationMessages\ConfirmGameRegistrationMessage.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\InitializationMessages\ConfirmJoiningGameMessage.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\InitializationMessages\GameMessage.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\InitializationMessages\GetGamesMessage.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\InitializationMessages\JoinGameMessage.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\InitializationMessages\RegisteredGamesMessage.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\InitializationMessages\RejectGameRegistrationMessage.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\InitializationMessages\RejectJoiningGame.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\KnowledgeExchangeMessages\KnowledgeExchangeRequestMessage.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\KnowledgeExchangeMessages\RejectKnowledgeExchangeMessage.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

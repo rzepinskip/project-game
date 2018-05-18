@@ -3,37 +3,39 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
 using FluentAssertions;
+using Messaging.ActionsMessages;
 using Messaging.InitializationMessages;
+using Messaging.Requests;
 using Messaging.Serialization;
 using Xunit;
 
 namespace Messaging.Tests
 {
-    public class InitializationMessagesTests
+    public class ActionMessagesTests
     {
         private const string DefaultNamespace = "https://se2.mini.pw.edu.pl/17-results/";
 
         protected ExtendedMessageXmlDeserializer MessageXmlSerializer =
             new ExtendedMessageXmlDeserializer(DefaultNamespace);
 
-        public static IEnumerable<object[]> InitializationMessagesTypes =>
+        public static IEnumerable<object[]> ActionMessagesTypes =>
             new List<object[]>
             {
-                new object[] {typeof(GetGamesMessage)},
-                new object[] {typeof(JoinGameMessage)},
-                new object[] {typeof(RegisteredGamesMessage)},
-                new object[] {typeof(ConfirmGameRegistrationMessage) },
-                new object[] {typeof(ConfirmJoiningGameMessage) },
-                new object[] {typeof(GameMessage) },
-                new object[] {typeof(RejectGameRegistrationMessage) },
-                new object[] {typeof(RejectJoiningGame) }
+                new object[] {typeof(AuthorizeKnowledgeExchangeRequest) },
+                new object[] {typeof(DestroyPieceRequest) },
+                new object[] {typeof(DiscoverRequest) },
+                new object[] {typeof(MoveRequest) },
+                new object[] {typeof(PickUpPieceRequest) },
+                new object[] {typeof(PlacePieceRequest) },
+                new object[] {typeof(TestPieceRequest) },
+                new object[] {typeof(DataMessage) },
             };
 
         [Theory]
-        [MemberData(nameof(InitializationMessagesTypes))]
-        public void TestInitializationMessages(Type messageType)
+        [MemberData(nameof(ActionMessagesTypes))]
+        public void TestActionMessages(Type messageType)
         {
-            var filePath = $"Resources/InitializationMessages/{messageType.Name}.xml";
+            var filePath = $"Resources/ActionMessages/{messageType.Name}.xml";
             var expected = File.ReadAllText(filePath);
 
             var message = MessageXmlSerializer.Deserialize(expected);

@@ -4,12 +4,13 @@ using System.IO;
 using System.Xml.Linq;
 using FluentAssertions;
 using Messaging.InitializationMessages;
+using Messaging.KnowledgeExchangeMessages;
 using Messaging.Serialization;
 using Xunit;
 
 namespace Messaging.Tests
 {
-    public class InitializationMessagesTests
+    public class KnowledgeExchangeMessagesTests
     {
         private const string DefaultNamespace = "https://se2.mini.pw.edu.pl/17-results/";
 
@@ -19,21 +20,15 @@ namespace Messaging.Tests
         public static IEnumerable<object[]> InitializationMessagesTypes =>
             new List<object[]>
             {
-                new object[] {typeof(GetGamesMessage)},
-                new object[] {typeof(JoinGameMessage)},
-                new object[] {typeof(RegisteredGamesMessage)},
-                new object[] {typeof(ConfirmGameRegistrationMessage) },
-                new object[] {typeof(ConfirmJoiningGameMessage) },
-                new object[] {typeof(GameMessage) },
-                new object[] {typeof(RejectGameRegistrationMessage) },
-                new object[] {typeof(RejectJoiningGame) }
+                new object[] {typeof(KnowledgeExchangeRequestMessage) },
+                new object[] {typeof(RejectKnowledgeExchangeMessage) },
             };
 
         [Theory]
         [MemberData(nameof(InitializationMessagesTypes))]
-        public void TestInitializationMessages(Type messageType)
+        public void TestKnowledgeExchangeMessages(Type messageType)
         {
-            var filePath = $"Resources/InitializationMessages/{messageType.Name}.xml";
+            var filePath = $"Resources/KnowledgeExchangeMessages/{messageType.Name}.xml";
             var expected = File.ReadAllText(filePath);
 
             var message = MessageXmlSerializer.Deserialize(expected);
