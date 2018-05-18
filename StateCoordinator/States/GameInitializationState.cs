@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Common.Interfaces;
+﻿using Common.Interfaces;
 using PlayerStateCoordinator.Info;
 using PlayerStateCoordinator.Transitions;
 
@@ -9,8 +8,8 @@ namespace PlayerStateCoordinator.States
     {
         private readonly GameInitializationInfo _gameInitializationInfo;
 
-        public GameInitializationState(StateTransitionType transitionType, IEnumerable<Transition> transitions,
-            GameInitializationInfo gameInitializationInfo) : base(transitionType, transitions, gameInitializationInfo)
+        public GameInitializationState(StateTransitionType transitionType,
+            GameInitializationInfo gameInitializationInfo) : base(transitionType, gameInitializationInfo)
         {
             _gameInitializationInfo = gameInitializationInfo;
         }

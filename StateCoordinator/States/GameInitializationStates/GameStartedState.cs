@@ -8,16 +8,14 @@ namespace PlayerStateCoordinator.States.GameInitializationStates
     {
         public GameStartedState(GameInitializationInfo baseInfo) : base(
             StateTransitionType.Triggered,
-            new Transition[]
+            baseInfo)
+        {
+            baseInfo.IsGameRunning = true;
+            Transitions = new Transition[]
             {
                 new GameStartedTransition(baseInfo),
                 new GameEndedTransition(baseInfo)
-            },
-            baseInfo)
-        {
-            //if (gameInitializationInfo.PlayerStrategyFactory != null)
-            //    gameInitializationInfo.CreatePlayerStrategy();
-            baseInfo.IsGameRunning = true;
+            };
         }
     }
 }

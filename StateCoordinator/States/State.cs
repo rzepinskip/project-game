@@ -9,14 +9,14 @@ namespace PlayerStateCoordinator.States
     public abstract class State
     {
         private readonly MessageHandler _messageHandler;
-        private readonly IEnumerable<Transition> _transitions;
+        protected IEnumerable<Transition> Transitions;
         public readonly BaseInfo Info;
         public readonly StateTransitionType TransitionType;
 
-        protected State(StateTransitionType transitionType, IEnumerable<Transition> transitions, BaseInfo info)
+        protected State(StateTransitionType transitionType, BaseInfo info)
         {
             TransitionType = transitionType;
-            _transitions = transitions;
+            Transitions = new Transition[0];
             Info = info;
             _messageHandler = new MessageHandler(HandleRequestMessage, HandleResponseMessage, HandleErrorMessage);
         }
@@ -28,7 +28,7 @@ namespace PlayerStateCoordinator.States
 
         private Transition ProceedToNextState()
         {
-            foreach (var transition in _transitions)
+            foreach (var transition in Transitions)
                 if (transition.IsPossible())
                     return transition;
 

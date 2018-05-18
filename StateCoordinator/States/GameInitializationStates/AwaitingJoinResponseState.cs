@@ -8,13 +8,13 @@ namespace PlayerStateCoordinator.States.GameInitializationStates
     {
         public AwaitingJoinResponseState(GameInitializationInfo baseInfo) : base(
             StateTransitionType.Triggered,
-            new Transition[]
+            baseInfo)
+        {
+            Transitions = new Transition[]
             {
                 new JoinSuccessfulTransition(baseInfo),
                 new JoinUnsuccessfulTransition(baseInfo)
-            },
-            baseInfo)
-        {
+            };
         }
     }
 }

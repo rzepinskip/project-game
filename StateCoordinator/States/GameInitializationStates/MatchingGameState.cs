@@ -8,13 +8,13 @@ namespace PlayerStateCoordinator.States.GameInitializationStates
     {
         public MatchingGameState(GameInitializationInfo baseInfo) : base(
             StateTransitionType.Triggered,
-            new Transition[]
+            baseInfo)
+        {
+            Transitions = new Transition[]
             {
                 new MatchingGameTransition(baseInfo),
                 new NoMatchingGameTransition(baseInfo)
-            },
-            baseInfo)
-        {
+            };
         }
     }
 }

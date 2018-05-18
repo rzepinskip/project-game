@@ -8,12 +8,12 @@ namespace PlayerStateCoordinator.States.GameInitializationStates
     {
         public GetGamesState(GameInitializationInfo baseInfo) : base(
             StateTransitionType.Triggered,
-            new Transition[]
-            {
-                new GetGamesTransition(baseInfo)
-            },
             baseInfo)
         {
+            Transitions = new Transition[]
+            {
+                new GetGamesTransition(baseInfo)
+            };
         }
     }
 }
