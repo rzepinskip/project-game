@@ -2,7 +2,7 @@
 using PlayerStateCoordinator.Transitions;
 using PlayerStateCoordinator.Transitions.GameInitializationTransitions;
 
-namespace PlayerStateCoordinator.States.InitializationStates
+namespace PlayerStateCoordinator.States.GameInitializationStates
 {
     public class AwaitingJoinResponseState : GameInitializationState
     {

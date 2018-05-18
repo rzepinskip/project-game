@@ -2,15 +2,16 @@
 using PlayerStateCoordinator.Transitions;
 using PlayerStateCoordinator.Transitions.GameInitializationTransitions;
 
-namespace PlayerStateCoordinator.States.InitializationStates
+namespace PlayerStateCoordinator.States.GameInitializationStates
 {
-    public class GetGamesState : GameInitializationState
+    public class MatchingGameState : GameInitializationState
     {
-        public GetGamesState(GameInitializationInfo baseInfo) : base(
+        public MatchingGameState(GameInitializationInfo baseInfo) : base(
             StateTransitionType.Triggered,
             new Transition[]
             {
-                new GetGamesTransition(baseInfo)
+                new MatchingGameTransition(baseInfo),
+                new NoMatchingGameTransition(baseInfo)
             },
             baseInfo)
         {

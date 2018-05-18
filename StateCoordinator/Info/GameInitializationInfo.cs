@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Common;
 using PlayerStateCoordinator.States;
-using PlayerStateCoordinator.States.InitializationStates;
+using PlayerStateCoordinator.States.GameInitializationStates;
 
 namespace PlayerStateCoordinator.Info
 {

@@ -4,7 +4,7 @@ using Common.Interfaces;
 using Messaging.InitializationMessages;
 using PlayerStateCoordinator.Info;
 using PlayerStateCoordinator.States;
-using PlayerStateCoordinator.States.InitializationStates;
+using PlayerStateCoordinator.States.GameInitializationStates;
 
 namespace PlayerStateCoordinator
 {
