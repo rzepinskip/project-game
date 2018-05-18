@@ -19,7 +19,14 @@ namespace Messaging.Tests
         public static IEnumerable<object[]> InitializationMessagesTypes =>
             new List<object[]>
             {
-                new object[] {typeof(RegisteredGamesMessage)}
+                new object[] {typeof(GetGamesMessage)},
+                new object[] {typeof(JoinGameMessage)},
+                new object[] {typeof(RegisteredGamesMessage)},
+                new object[] {typeof(ConfirmGameRegistrationMessage) },
+                new object[] {typeof(ConfirmJoiningGameMessage) },
+                new object[] {typeof(GameMessage) },
+                new object[] {typeof(RejectGameRegistrationMessage) },
+                new object[] {typeof(RejectJoiningGame) }
             };
 
         [Theory]
