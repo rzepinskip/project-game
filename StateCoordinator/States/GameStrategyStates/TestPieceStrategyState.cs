@@ -4,15 +4,17 @@ using PlayerStateCoordinator.Transitions.GameStrategyTransitions;
 
 namespace PlayerStateCoordinator.States.GameStrategyStates
 {
-    public class DestroyPieceStrategyState : GameStrategyState
+    public class TestPieceStrategyState : GameStrategyState
     {
-        public DestroyPieceStrategyState(GameStrategyInfo gameStrategyInfo) : base(
+        public TestPieceStrategyState(GameStrategyInfo gameStrategyInfo) : base(
             StateTransitionType.Triggered,
             gameStrategyInfo)
         {
             Transitions = new Transition[]
             {
-                new HasNoPieceStrategyTransition(gameStrategyInfo)
+                new HasNoPieceStrategyTransition(gameStrategyInfo),
+                new HasNormalPieceStrategyTransition(gameStrategyInfo),
+                new HasShamStrategyTransition(gameStrategyInfo)
             };
         }
     }

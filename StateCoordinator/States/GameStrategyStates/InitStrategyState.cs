@@ -4,15 +4,16 @@ using PlayerStateCoordinator.Transitions.GameStrategyTransitions;
 
 namespace PlayerStateCoordinator.States.GameStrategyStates
 {
-    public class DestroyPieceStrategyState : GameStrategyState
+    public class InitStrategyState : GameStrategyState
     {
-        public DestroyPieceStrategyState(GameStrategyInfo gameStrategyInfo) : base(
+        public InitStrategyState(GameStrategyInfo gameStrategyInfo) : base(
             StateTransitionType.Triggered,
             gameStrategyInfo)
         {
             Transitions = new Transition[]
             {
-                new HasNoPieceStrategyTransition(gameStrategyInfo)
+                new IsInGoalWithoutPieceStrategyTransition(gameStrategyInfo),
+                new IsInTaskAreaStrategyTransition(gameStrategyInfo)
             };
         }
     }
