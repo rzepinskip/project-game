@@ -11,6 +11,8 @@ using Messaging.ActionsMessages;
 using Messaging.KnowledgeExchangeMessages;
 using Player.Logging;
 using PlayerStateCoordinator;
+using PlayerStateCoordinator.Info;
+using PlayerStateCoordinator.States.GameStrategyStates;
 
 namespace Player
 {
@@ -99,7 +101,9 @@ namespace Player
             foreach (var playerBase in players) PlayerBoard.Players.Add(playerBase.Id, new PlayerInfo(playerBase));
 
             PlayerBoard.Players[Id].Location = playerLocation;
-            //_stateCoordinator.CreatePlayerStrategyFactory(new PlayerStrategyFactory(this));
+            
+            var playerStrategy = new PlayerStrategy(this, PlayerBoard, PlayerGuid, GameId);
+            _stateCoordinator.UpdatePlayerStrategyBeginningState(playerStrategy.GetBeginningState());
 
             Debug.WriteLine("Player has updated game data and started playing");
         }

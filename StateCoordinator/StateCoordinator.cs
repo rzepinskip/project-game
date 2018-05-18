@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Common;
 using Common.Interfaces;
 using Messaging.InitializationMessages;
@@ -33,6 +34,7 @@ namespace PlayerStateCoordinator
             {
                 do
                 {
+                    Console.WriteLine("\t" + CurrentState);
                     var transition = CurrentState.Process(message);
                     CurrentState = transition.NextState;
                     messagesToSend.AddRange(transition.Message);

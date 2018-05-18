@@ -48,5 +48,10 @@ namespace PlayerStateCoordinator.States
         {
             return new ErrorTransition(GameStrategyInfo.PlayerGameStrategyBeginningState);
         }
+
+        protected override Transition HandleNoMatchingTransitionCase()
+        {
+            throw new StrategyException(this, "No matching condition");
+        }
     }
 }
