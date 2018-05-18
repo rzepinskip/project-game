@@ -1,6 +1,6 @@
 ﻿using PlayerStateCoordinator.Info;
 
-namespace PlayerStateCoordinator.Transitions.GameInitializationTransitions
+namespace PlayerStateCoordinator.Transitions
 {
     public abstract class GameInitializationTransition : Transition
     {

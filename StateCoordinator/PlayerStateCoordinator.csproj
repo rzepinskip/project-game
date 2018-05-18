@@ -9,4 +9,8 @@
     <ProjectReference Include="..\Messaging\Messaging.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="States\GameStrategyStates\" />
+  </ItemGroup>
+
 </Project>

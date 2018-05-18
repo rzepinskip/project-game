@@ -40,7 +40,7 @@ namespace PlayerStateCoordinator
             }
             catch (StrategyException strategyException)
             {
-                CurrentState = _gameInitializationInfo.PlayerStrategyBeginningState;
+                CurrentState = _gameInitializationInfo.PlayerGameStrategyBeginningState;
                 messagesToSend = new List<IMessage>();
             }
 
@@ -49,7 +49,7 @@ namespace PlayerStateCoordinator
 
         public void UpdatePlayerStrategyBeginningState(State state)
         {
-            _gameInitializationInfo.PlayerStrategyBeginningState = state;
+            _gameInitializationInfo.PlayerGameStrategyBeginningState = state;
         }
 
         public void UpdateJoiningResult(bool joiningSuccessful)

@@ -5,7 +5,7 @@ namespace PlayerStateCoordinator.Info
 {
     public abstract class BaseInfo : ILoggable
     {
-        public State PlayerStrategyBeginningState { get; set; }
+        public State PlayerGameStrategyBeginningState { get; set; }
 
         public string ToLog()
         {
