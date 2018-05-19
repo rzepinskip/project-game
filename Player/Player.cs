@@ -104,8 +104,9 @@ namespace Player
             
             var playerStrategy = new PlayerStrategy(this, PlayerBoard, PlayerGuid, GameId);
             _stateCoordinator.UpdatePlayerStrategyBeginningState(playerStrategy.GetBeginningState());
+            _stateCoordinator.CurrentState = playerStrategy.GetBeginningState();
 
-            Debug.WriteLine("Player has updated game data and started playing");
+            Console.WriteLine("Player has updated game data and started playing");
         }
 
         public void HandleKnowledgeExchangeRequest(int initiatorId)

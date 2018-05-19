@@ -19,7 +19,7 @@ namespace PlayerStateCoordinator
             CurrentState = new GetGamesState(_gameInitializationInfo);
         }
 
-        public State CurrentState { get; private set; }
+        public State CurrentState { get; set; }
 
         public IMessage Start()
         {
