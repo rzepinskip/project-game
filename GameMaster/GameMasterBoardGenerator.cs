@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using BoardGenerators.Generators;
 using Common;
@@ -54,6 +55,22 @@ namespace GameMaster
             var playersLocations = GenerateLocationsForPlayers(gameDefinition.NumberOfPlayersPerTeam);
             var playersWithLocation = AssignLocationsToPlayers(Board.Players.Values, playersLocations);
             PlacePlayers(playersWithLocation);
+        }
+
+        protected void PlacePieces(IEnumerable<(Piece piece, Location location)> piecesWithLocations)
+        {
+            Board.Pieces.Clear();
+            foreach (var (piece, location) in piecesWithLocations)
+            {
+                var taskFieldToFill = Board[location] as TaskField;
+                if (taskFieldToFill == null)
+                    throw new InvalidDataException();
+
+                taskFieldToFill.DistanceToPiece = 0;
+                taskFieldToFill.PieceId = piece.Id;
+
+                Board.Pieces.Add(piece.Id, piece);
+            }
         }
 
         protected override void PlaceGoals(IEnumerable<GoalField> goals)

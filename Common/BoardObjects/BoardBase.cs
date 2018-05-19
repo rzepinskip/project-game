@@ -56,7 +56,6 @@ namespace Common.BoardObjects
         public SerializableDictionary<int, PlayerInfo> Players { get; } =
             new SerializableDictionary<int, PlayerInfo>();
 
-        public virtual SerializableDictionary<int, Piece> Pieces { get; } = new SerializableDictionary<int, Piece>();
 
         public int? GetPieceIdAt(Location location)
         {
@@ -102,8 +101,7 @@ namespace Common.BoardObjects
                    GoalAreaSize == other.GoalAreaSize &&
                    Width == other.Width &&
                    Height == other.Height &&
-                   Players.SequenceEqual(other.Players) &&
-                   Pieces.SequenceEqual(other.Pieces);
+                   Players.SequenceEqual(other.Players);
         }
 
 
@@ -123,7 +121,6 @@ namespace Common.BoardObjects
             reader.ReadStartElement();
 
             ReadCollection(reader, Players, nameof(Players));
-            ReadCollection(reader, Pieces, nameof(Pieces));
 
             Content = new Field[Width, Height];
             var types = new[] {typeof(GoalField), typeof(TaskField)};
@@ -143,7 +140,6 @@ namespace Common.BoardObjects
             writer.WriteAttributeString("width", Width.ToString());
 
             WriteCollection(writer, Players, nameof(Players));
-            WriteCollection(writer, Pieces, nameof(Pieces));
 
             writer.WriteStartElement(nameof(Content));
             foreach (var field in Content)
@@ -221,7 +217,6 @@ namespace Common.BoardObjects
             hashCode = hashCode * -1521134295 + Height.GetHashCode();
             hashCode = hashCode * -1521134295 +
                        EqualityComparer<Dictionary<int, PlayerInfo>>.Default.GetHashCode(Players);
-            hashCode = hashCode * -1521134295 + EqualityComparer<Dictionary<int, Piece>>.Default.GetHashCode(Pieces);
             return hashCode;
         }
 

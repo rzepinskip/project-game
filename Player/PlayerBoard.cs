@@ -15,8 +15,6 @@ namespace Player
         {
         }
 
-        public override SerializableDictionary<int, Piece> Pieces => throw new InvalidOperationException();
-
         public PlayerBoard(int boardWidth, int taskAreaSize, int goalAreaSize) : base(boardWidth, taskAreaSize,
             goalAreaSize)
         {
@@ -174,7 +172,8 @@ namespace Player
         {
             var taskFields = ToEnumerable().Where(f => f is TaskField taskField && taskField.DistanceToPiece != -1).Select(t => (TaskField)t);
             var goalFields = ToEnumerable().Where(f => f is GoalField goalField && goalField.Type != GoalFieldType.Unknown).Select(t => (GoalField)t);
-            var pieces = Pieces.Values.ToArray();
+            //var pieces = Pieces.Values.ToArray();
+            var pieces = new Piece[0];
 
             return BoardData.Create(dataReceiverId, Players[responderId].Location, taskFields.ToArray(), goalFields.ToArray(), pieces);
         }
