@@ -73,7 +73,6 @@ namespace Player
 
         public void NotifyAboutGameEnd()
         {
-            _hasGameEnded = true;
             _stateCoordinator.NotifyAboutGameEnd();
         }
 

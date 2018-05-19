@@ -39,7 +39,6 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
         public override bool IsPossible()
         {
             var result = GameStrategyInfo.Board.Players.Count > 2;
-            Console.WriteLine($"IsThereSomeoneToCommunicateWithStrategyCondition result {result}");
             return result;
         }
     }
