@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Xml.Serialization;
 using Common.Interfaces;
 
 namespace Messaging.KnowledgeExchangeMessages
@@ -18,7 +19,7 @@ namespace Messaging.KnowledgeExchangeMessages
             Permanent = permanent;
         }
 
-        public bool Permanent { get; set; }
+        [XmlAttribute("permanent")] public bool Permanent { get; set; }
 
         public override IMessage Process(IGameMaster gameMaster)
         {
