@@ -13,7 +13,7 @@ namespace PlayerStateCoordinator.States.GameStrategyStates
             Transitions = new Transition[]
             {
                 new IsPlayerBlockedStrategyTransition(gameStrategyInfo, this),
-                new IsOnUndiscoveredGoalFieldStrategyTransition(gameStrategyInfo),
+                new IsOnDesiredUndiscoveredGoalFieldStrategyTransition(gameStrategyInfo),
                 new HasNormalPieceStrategyTransition(gameStrategyInfo),
             };
         }

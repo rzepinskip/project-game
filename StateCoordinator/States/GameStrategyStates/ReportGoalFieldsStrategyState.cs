@@ -7,7 +7,7 @@ namespace PlayerStateCoordinator.States.GameStrategyStates
     public class ReportGoalFieldsStrategyState : GameStrategyState
     {
         public ReportGoalFieldsStrategyState(GameStrategyInfo gameStrategyInfo) : base(
-            StateTransitionType.Immediate,
+            StateTransitionType.Triggered,
             gameStrategyInfo)
         {
             Transitions = new Transition[]

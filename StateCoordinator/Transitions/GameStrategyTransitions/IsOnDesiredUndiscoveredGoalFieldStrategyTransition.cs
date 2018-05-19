@@ -7,13 +7,13 @@ using PlayerStateCoordinator.States.GameStrategyStates;
 
 namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
 {
-    public class IsOnUndiscoveredGoalFieldStrategyTransition : GameStrategyTransition
+    public class IsOnDesiredUndiscoveredGoalFieldStrategyTransition : GameStrategyTransition
     {
-        public IsOnUndiscoveredGoalFieldStrategyTransition(GameStrategyInfo gameStrategyInfo) : base(gameStrategyInfo)
+        public IsOnDesiredUndiscoveredGoalFieldStrategyTransition(GameStrategyInfo gameStrategyInfo) : base(gameStrategyInfo)
         {
         }
 
-        public override State NextState => new InGoalAreaMovingToTaskStrategyState(GameStrategyInfo);
+        public override State NextState => new ReportGoalFieldsStrategyState(GameStrategyInfo);
 
         public override IEnumerable<IMessage> Message
         {

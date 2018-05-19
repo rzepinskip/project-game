@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
-using Messaging;
-using Messaging.ActionsMessages;
-using Messaging.KnowledgeExchangeMessages;
 using Player.Logging;
 using PlayerStateCoordinator;
-using PlayerStateCoordinator.Info;
-using PlayerStateCoordinator.States.GameStrategyStates;
 
 namespace Player
 {
@@ -22,7 +16,6 @@ namespace Player
         private readonly IErrorsMessagesFactory _errorsMessagesFactory;
         private readonly string _gameName;
         private readonly PlayerType _role;
-        private bool _hasGameEnded;
         private StateCoordinator _stateCoordinator;
 
         public Player(ICommunicationClient communicationClient, string gameName, TeamColor color, PlayerType role,
@@ -43,7 +36,7 @@ namespace Player
         }
 
         /// <summary>
-        /// Only for tests
+        ///     Only for tests
         /// </summary>
         public Player(int id, Guid guid, TeamColor team, PlayerType role,
             PlayerBoard board, Location location)
@@ -101,24 +94,12 @@ namespace Player
             foreach (var playerBase in players) PlayerBoard.Players.Add(playerBase.Id, new PlayerInfo(playerBase));
 
             PlayerBoard.Players[Id].Location = playerLocation;
-            
+
             var playerStrategy = new PlayerStrategy(this, PlayerBoard, PlayerGuid, GameId);
             _stateCoordinator.UpdatePlayerStrategyBeginningState(playerStrategy.GetBeginningState());
             _stateCoordinator.CurrentState = playerStrategy.GetBeginningState();
 
             Console.WriteLine("Player has updated game data and started playing");
-        }
-
-        public void HandleKnowledgeExchangeRequest(int initiatorId)
-        {
-            Console.WriteLine($"Player #{initiatorId} requested communication");
-            IMessage knowledgeExchangeResponse = null;
-            if (PlayerBoard.Players[initiatorId].Team  == Team)
-                knowledgeExchangeResponse =
-                    DataMessage.FromBoardData(PlayerBoard.ToBoardData(Id, initiatorId), false, PlayerGuid);
-            else
-                knowledgeExchangeResponse = new RejectKnowledgeExchangeMessage(Id, initiatorId);
-            CommunicationClient.Send(knowledgeExchangeResponse);
         }
 
         public void HandleGameMasterDisconnection()
@@ -146,63 +127,15 @@ namespace Player
 
         private void HandleResponse(IMessage message)
         {
-            //if (_hasGameEnded)
-            //{
-            //    _hasGameEnded = true;
-            //    return;
-            //}
-            Console.WriteLine("Got: " + message);
             message.Process(this);
-            
-            //if (response is DataMessage dataMessage && dataMessage.GoalFields.Length > 1)
-            //{
-            //    Console.WriteLine($"Got some data");
 
-            //    return;
-            //}
-
-            //if (response is KnowledgeExchangeRequestMessage)
-            //{
-            //    Console.Write("Omitting strategy for KnowledgeExchangeRequestMessage");
-            //    return;
-            //}
-
-
-            var responsesToSend = _stateCoordinator.Process(message);
+            var responsesToSend = _stateCoordinator.Process(message).ToList();
 
             foreach (var response in responsesToSend)
             {
                 VerboseLogger.Log(response.ToLog());
-                Console.WriteLine("Sent: " + response);
                 CommunicationClient.Send(response);
             }
-
-            //if (_stateCoordinator.StrategyReturnsMessage())
-            //{
-            //    var request = GetNextRequestMessage();
-            //    VerboseLogger.Log(request.ToLog());
-            //    Console.WriteLine("Sent: " + request);
-            //    CommunicationClient.Send(request);
-            //    if (request is AuthorizeKnowledgeExchangeRequest authorize)
-            //    {
-            //        Console.WriteLine($"Initiating coms with {authorize.WithPlayerId}");
-            //        var withPlayerId = authorize.WithPlayerId;
-            //        var boardData = PlayerBoard.ToBoardData(Id, withPlayerId);
-            //        VerboseLogger.Log(request.ToLog());
-            //        Thread.Sleep(2000);
-            //        var msg = DataMessage.FromBoardData(boardData, false, PlayerGuid) as DataMessage;
-            //        Console.WriteLine($"Sending initial data to {msg.PlayerId}");
-            //        CommunicationClient.Send(msg);
-
-            //        request = GetNextRequestMessage();
-            //        VerboseLogger.Log(request.ToLog());
-            //        Console.WriteLine("Sent: " + request);
-            //        CommunicationClient.Send(request);
-            //    }
-            //}
-
-            //_stateCoordinator.NextState();
-            //Console.WriteLine("\t" + _stateCoordinator?._gameStateInfo?.PlayerStrategy?.CurrentGameState); 
         }
 
         public void HandleConnectionError(CommunicationException e)

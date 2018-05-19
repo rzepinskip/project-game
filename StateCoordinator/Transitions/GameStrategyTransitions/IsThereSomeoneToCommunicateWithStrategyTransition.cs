@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Common.Interfaces;
+using Messaging;
 using Messaging.ActionsMessages;
 using PlayerStateCoordinator.Info;
 using PlayerStateCoordinator.States;
@@ -15,7 +17,7 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
         {
         }
 
-        public override State NextState => new InGoalAreaMovingToTaskStrategyState(GameStrategyInfo);
+        public override State NextState => new InitialMoveAfterPlaceStrategyState(GameStrategyInfo);
 
         public override IEnumerable<IMessage> Message
         {
@@ -23,17 +25,21 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
             {
                 var withPlayerId = GameStrategyInfo.Board.Players.Values
                     .First(v => v.Id != GameStrategyInfo.PlayerId && v.Team == GameStrategyInfo.Team).Id;
+                Console.WriteLine($"Exchanging data with {withPlayerId}");
 
-                var request = new AuthorizeKnowledgeExchangeRequest(GameStrategyInfo.PlayerGuid,
+                var knowledgeExchangeRequest = new AuthorizeKnowledgeExchangeRequest(GameStrategyInfo.PlayerGuid,
                     GameStrategyInfo.GameId, withPlayerId);
-                return new List<IMessage> {request};
+                var dataMessage = DataMessage.FromBoardData(
+                    GameStrategyInfo.Board.ToBoardData(GameStrategyInfo.PlayerId, withPlayerId), false,
+                    GameStrategyInfo.PlayerGuid);
+                return new List<IMessage> {knowledgeExchangeRequest, dataMessage};
             }
         }
 
         public override bool IsPossible()
         {
             var result = GameStrategyInfo.Board.Players.Count > 2;
-            //Console.WriteLine($"IsThereSomeoneToCommunicateWithStrategyCondition result {result}");
+            Console.WriteLine($"IsThereSomeoneToCommunicateWithStrategyCondition result {result}");
             return result;
         }
     }
