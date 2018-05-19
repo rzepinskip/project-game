@@ -96,16 +96,5 @@ namespace Player
 
             reader.ReadEndElement();
         }
-
-        public BoardData ToBoardData(int senderId, int receiverId)
-        {
-            var taskFields = ToEnumerable().Where(f => f is TaskField taskField && taskField.DistanceToPiece != -1).Select(t => (TaskField)t);
-            //var goalFields = ToEnumerable().Where(f => f is GoalField goalField && goalField.Type != GoalFieldType.Unknown).Select(t => (GoalField)t);
-            var goalFields = ToEnumerable().Where(f => f is GoalField goalField).Select(t => (GoalField)t);
-        
-            var pieces = Pieces.Values.ToArray();
-
-            return BoardData.Create(receiverId, Players[senderId].Location, taskFields.ToArray(), goalFields.ToArray(), pieces);
-        }
     }
 }

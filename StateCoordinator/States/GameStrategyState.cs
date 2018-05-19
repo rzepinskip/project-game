@@ -27,9 +27,9 @@ namespace PlayerStateCoordinator.States
                 IMessage knowledgeExchangeResponse =
                     new RejectKnowledgeExchangeMessage(GameStrategyInfo.PlayerId, initiatorId);
 
-                //if (GameStrategyInfo.Board.Players[initiatorId].Team  == GameStrategyInfo.Team)
-                //    knowledgeExchangeResponse =
-                //        DataMessage.FromBoardData(GameStrategyInfo.Board.ToBoardData(GameStrategyInfo.PlayerId, initiatorId), false, GameStrategyInfo.PlayerGuid);
+                if (GameStrategyInfo.Board.Players[initiatorId].Team == GameStrategyInfo.Team)
+                    knowledgeExchangeResponse =
+                        DataMessage.FromBoardData(GameStrategyInfo.Board.ToBoardData(GameStrategyInfo.PlayerId, initiatorId), false, GameStrategyInfo.PlayerGuid);
 
                 return new LoopbackTransition(this, new List<IMessage> {knowledgeExchangeResponse});
             }

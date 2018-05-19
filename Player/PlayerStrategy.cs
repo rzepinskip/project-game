@@ -10,7 +10,7 @@ namespace Player
 {
     public class PlayerStrategy
     {
-        private readonly InitStrategyState _beginningState;
+        private readonly GameStrategyState _beginningState;
 
         public PlayerStrategy(PlayerBase player, BoardBase board, Guid playerGuid, int gameId)
         {

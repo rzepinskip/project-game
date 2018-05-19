@@ -24,7 +24,7 @@ namespace Messaging.KnowledgeExchangeMessages
 
         public override void Process(IPlayer player)
         {
-            player.HandleKnowledgeExchangeRequest(SenderPlayerId);
+            // Strategy handles this message
         }
 
         public override void Process(ICommunicationServer cs, int id)
