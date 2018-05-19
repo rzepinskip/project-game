@@ -25,7 +25,7 @@ namespace Player
             undiscoveredGoalFields.Shuffle();
 
             var gameStrategyInfo = new GameStrategyInfo(board, player.Id, playerGuid, gameId, player.Team,
-                undiscoveredGoalFields, null);
+                undiscoveredGoalFields, new Location(board.Width / 2, board.GoalAreaSize + 1));
             _beginningState = new InitStrategyState(gameStrategyInfo);
         }
 

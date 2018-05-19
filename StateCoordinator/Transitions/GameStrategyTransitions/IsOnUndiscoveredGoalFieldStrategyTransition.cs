@@ -13,14 +13,14 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
         {
         }
 
-        public override State NextState => new ReportGoalFieldsStrategyState(GameStrategyInfo);
+        public override State NextState => new InGoalAreaMovingToTaskStrategyState(GameStrategyInfo);
 
         public override IEnumerable<IMessage> Message
         {
             get
             {
                 GameStrategyInfo.UndiscoveredGoalFields.RemoveAt(0);
-                return new List<IMessage>()
+                return new List<IMessage>
                 {
                     new PlacePieceRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId)
                 };
