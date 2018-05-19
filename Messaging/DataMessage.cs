@@ -62,11 +62,9 @@ namespace Messaging
         public override IMessage Process(IGameMaster gameMaster)
         {
             var knowledgeExchangeManager = gameMaster.KnowledgeExchangeManager;
-            if (PlayerGuid == null) return null;
-            var playerGuidValue = PlayerGuid.Value;
-            var optionalSenderId = gameMaster.Authorize(playerGuidValue);
-            if (!optionalSenderId.HasValue) return null;
-            var senderId = optionalSenderId.Value;
+            var promisedSenderId = PlayerGuid.HasValue ? gameMaster.Authorize(PlayerGuid.Value) : null;
+            if (!promisedSenderId.HasValue) return null;
+            var senderId = promisedSenderId.Value;
             // stripping guid from data;
             PlayerGuid = null;
             if (knowledgeExchangeManager.IsExchangeInitiator(senderId, PlayerId))

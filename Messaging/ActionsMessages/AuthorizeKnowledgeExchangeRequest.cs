@@ -39,7 +39,7 @@ namespace Messaging.ActionsMessages
             if (!optionalSenderId.HasValue) throw new ApplicationFatalException();
             var senderId = optionalSenderId.Value;
             if (!gameMaster.PlayerIdExists(WithPlayerId))
-                return new RejectKnowledgeExchangeMessage(senderId, WithPlayerId, true);
+                return new RejectKnowledgeExchangeMessage(senderId, WithPlayerId, null, true);
             gameMaster.EvaluateAction(GetActionInfo());
             return null;
         }
