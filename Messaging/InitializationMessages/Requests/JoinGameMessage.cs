@@ -14,7 +14,19 @@ namespace Messaging.InitializationMessages
     {
         public const string XmlRootName = "JoinGame";
 
-        public int PlayerId;
+        [XmlIgnore] public int? PlayerId { get; set; }
+
+        [XmlAttribute("playerId")]
+        public int PlayerIdValue
+        {
+            get
+            {
+                if (PlayerId != null) return PlayerId.Value;
+                throw new InvalidOperationException();
+            }
+            set => PlayerId = value;
+        }
+        [XmlIgnore] public bool PlayerIdValueSpecified => PlayerId.HasValue;
 
         protected JoinGameMessage()
         {
@@ -34,12 +46,12 @@ namespace Messaging.InitializationMessages
         public override IMessage Process(IGameMaster gameMaster)
         {
             if (!gameMaster.IsSlotAvailable())
-                return new RejectJoiningGame(GameName, PlayerId);
+                return new RejectJoiningGame(GameName, PlayerIdValue);
 
             var (gameId, guid, playerInfo) =
-                gameMaster.AssignPlayerToAvailableSlotWithPrefered(PlayerId, PreferedTeam, PreferedRole);
+                gameMaster.AssignPlayerToAvailableSlotWithPrefered(PlayerIdValue, PreferedTeam, PreferedRole);
 
-            return new ConfirmJoiningGameMessage(gameId, PlayerId, guid, playerInfo);
+            return new ConfirmJoiningGameMessage(gameId, PlayerIdValue, guid, playerInfo);
         }
 
         public override void Process(IPlayer player)
@@ -61,7 +73,7 @@ namespace Messaging.InitializationMessages
                 if (e is KeyNotFoundException)
                 {
                     Console.WriteLine($"{PlayerId} tried to join non-existent game");
-                    cs.Send(new RejectJoiningGame(GameName, PlayerId), id);
+                    cs.Send(new RejectJoiningGame(GameName, PlayerId.Value), id);
                 }
 
                 throw;

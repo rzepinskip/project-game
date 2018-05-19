@@ -2,4 +2,6 @@
 <RejectKnowledgeExchange xmlns="https://se2.mini.pw.edu.pl/17-results/"
                          permanent="false"
                          playerId="1"
-                         senderPlayerId="2" />
+                         senderPlayerId="2"
+                         playerGuid="c094cab7-da7b-457f-89e5-a5c51756035f"
+/>

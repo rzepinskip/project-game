@@ -21,7 +21,7 @@ namespace Messaging.ActionsMessages
         {
         }
 
-        public int WithPlayerId { get; set; }
+        [XmlAttribute("withPlayerId")] public int WithPlayerId { get; set; }
 
         public override ActionInfo GetActionInfo()
         {
