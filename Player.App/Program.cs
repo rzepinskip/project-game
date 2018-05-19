@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading;
 using BoardGenerators.Loaders;
 using Common;
 using Communication.Client;
@@ -24,6 +25,23 @@ namespace Player.App
             var player = CreatePlayerFrom(args);
 
             _logger = player.VerboseLogger;
+            if (true)
+            {
+                var boardVisualizer = new BoardVisualizer();
+                for (var i = 0;; i++)
+                {
+                    if (player.PlayerBoard != null)
+                    {
+                        Thread.Sleep(200);
+                        boardVisualizer.VisualizeBoard(player.PlayerBoard, player.Id);
+                        Console.WriteLine(i);
+                    }
+                    else
+                    {
+                        Thread.Sleep(2000);
+                    }
+                }
+            }
         }
 
         private static Player CreatePlayerFrom(IEnumerable<string> parameters)

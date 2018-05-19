@@ -27,16 +27,13 @@ namespace GameMaster.App
             _logger = gm.VerboseLogger;
             Console.Title = "Game Master";
 
-            while (true)
+            var boardVisualizer = new BoardVisualizer();
+            for (var i = 0;; i++)
             {
-                var boardVisualizer = new BoardVisualizer();
-                for (var i = 0;; i++)
-                {
-                    Thread.Sleep(200);
-                    boardVisualizer.VisualizeBoard(gm.Board);
-                    Console.WriteLine(i);
-                    Console.WriteLine(_finishedGameMessage);
-                }
+                Thread.Sleep(200);
+                boardVisualizer.VisualizeBoard(gm.Board);
+                Console.WriteLine(i);
+                Console.WriteLine(_finishedGameMessage);
             }
         }
 
