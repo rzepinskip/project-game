@@ -21,7 +21,7 @@ namespace Messaging
             Pieces = new Piece[0];
         }
 
-        public DataMessage(int playerId, Location location, IEnumerable<TaskField> taskFields = null,
+        protected DataMessage(int playerId, Location location, IEnumerable<TaskField> taskFields = null,
             IEnumerable<GoalField> goalFields = null, IEnumerable<Piece> pieces = null,
             bool gameFinished = false, Guid? senderGuid = null) : base(playerId)
         {
@@ -120,6 +120,32 @@ namespace Messaging
 
             return new DataMessage(boardData.PlayerId, boardData.PlayerLocation, boardData.TaskFields,
                     boardData.GoalFields, boardData.Pieces, isGameFinished);
+        }
+
+        public static IMessage FromBoardDataOverridingTimestamps(BoardData boardData, bool isGameFinished, Guid? PlayerGuid = null)
+        {
+            if (boardData == null)
+                return null;
+
+            var sentTime = DateTime.Now;
+
+            foreach (var goalField in boardData.GoalFields)
+            {
+                goalField.Timestamp = sentTime;
+            }
+
+            foreach (var piece in boardData.Pieces)
+            {
+                piece.Timestamp = sentTime;
+            }
+
+            foreach (var taskField in boardData.TaskFields)
+            {
+                taskField.Timestamp = sentTime;
+            }
+
+            return new DataMessage(boardData.PlayerId, boardData.PlayerLocation, boardData.TaskFields,
+                boardData.GoalFields, boardData.Pieces, isGameFinished);
         }
 
         #region Equality
