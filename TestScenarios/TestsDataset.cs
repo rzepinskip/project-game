@@ -42,9 +42,9 @@ namespace TestScenarios
 
         public TestsDataset()
         {
-            _testScenarios.AddRange(GetMoveTests());
+            //_testScenarios.AddRange(GetMoveTests());
             //_testScenarios.AddRange(GetDiscoverTests());
-            //_testScenarios.AddRange(GetPlaceTests());
+            _testScenarios.AddRange(GetPlaceTests());
             //_testScenarios.AddRange(GetPickUpTests());
             //_testScenarios.AddRange(TestPieceTests());
         }
@@ -111,9 +111,9 @@ namespace TestScenarios
         {
             return new List<object[]>
             {
-                //new  object[] { new PickUpPieceOnTaskFieldWithPiece()},
-                //new  object[] { new PickUpPieceOnTaskFieldWithPieceHavingPiece()},
-                //new  object[] { new PickUpPieceOnTaskFieldWithoutPiece()},
+                new  object[] { new PickUpPieceOnTaskFieldWithPiece()},
+                new  object[] { new PickUpPieceOnTaskFieldWithPieceHavingPiece()},
+                new  object[] { new PickUpPieceOnTaskFieldWithoutPiece()},
                 new  object[] { new PickUpPieceOnGoalArea()},
             };
         }
