@@ -42,8 +42,8 @@ namespace TestScenarios
 
         public TestsDataset()
         {
-            //_testScenarios.AddRange(GetMoveTests());
-            _testScenarios.AddRange(GetDiscoverTests());
+            _testScenarios.AddRange(GetMoveTests());
+            //_testScenarios.AddRange(GetDiscoverTests());
             //_testScenarios.AddRange(GetPlaceTests());
             //_testScenarios.AddRange(GetPickUpTests());
             //_testScenarios.AddRange(TestPieceTests());
