@@ -4,7 +4,7 @@ using PlayerStateCoordinator.Transitions.GameStrategyTransitions;
 
 namespace PlayerStateCoordinator.States.GameStrategyStates
 {
-    public class MoveToUndiscoveredGoalStrategyState : GameStrategyState
+    public class MoveToUndiscoveredGoalStrategyState : NormalPlayerStrategyState
     {
         public MoveToUndiscoveredGoalStrategyState(GameStrategyInfo gameStrategyInfo) : base(
             StateTransitionType.Triggered,

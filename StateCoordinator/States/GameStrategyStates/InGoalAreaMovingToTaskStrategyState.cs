@@ -4,7 +4,7 @@ using PlayerStateCoordinator.Transitions.GameStrategyTransitions;
 
 namespace PlayerStateCoordinator.States.GameStrategyStates
 {
-    public class InGoalAreaMovingToTaskStrategyState : GameStrategyState
+    public class InGoalAreaMovingToTaskStrategyState : NormalPlayerStrategyState
     {
         public InGoalAreaMovingToTaskStrategyState(GameStrategyInfo gameStrategyInfo) : base(
             StateTransitionType.Triggered,

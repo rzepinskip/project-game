@@ -4,7 +4,7 @@ using PlayerStateCoordinator.Transitions.GameStrategyTransitions;
 
 namespace PlayerStateCoordinator.States.GameStrategyStates
 {
-    public class DestroyPieceStrategyState : GameStrategyState
+    public class DestroyPieceStrategyState : NormalPlayerStrategyState
     {
         public DestroyPieceStrategyState(GameStrategyInfo gameStrategyInfo) : base(
             StateTransitionType.Triggered,

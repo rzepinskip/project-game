@@ -4,7 +4,7 @@ using PlayerStateCoordinator.Transitions.GameStrategyTransitions;
 
 namespace PlayerStateCoordinator.States.GameStrategyStates
 {
-    public class PickupPieceStrategyState : GameStrategyState
+    public class PickupPieceStrategyState : NormalPlayerStrategyState
     {
         public PickupPieceStrategyState(GameStrategyInfo gameStrategyInfo) : base(
             StateTransitionType.Triggered,

@@ -8,19 +8,18 @@ using PlayerStateCoordinator.Transitions;
 
 namespace PlayerStateCoordinator.States
 {
-    public class GameStrategyState : State
+    public class GamePlayStrategyState : State
     {
         protected readonly GameStrategyInfo GameStrategyInfo;
 
-        public GameStrategyState(StateTransitionType transitionType,
+        public GamePlayStrategyState(StateTransitionType transitionType,
             GameStrategyInfo gameStrategyInfo) : base(transitionType, gameStrategyInfo)
         {
             GameStrategyInfo = gameStrategyInfo;
         }
-
-        protected override Transition HandleGenericMessage(IMessage message)
+        protected virtual bool IsExchangeWantedWithPlayer(int initiatorId)
         {
-            throw new InvalidOperationException($"Not expecting processing incoming generic message while playing: {message.GetType().Name}");
+            return GameStrategyInfo.Board.Players[initiatorId].Team == GameStrategyInfo.Team;
         }
 
         protected override Transition HandleRequestMessage(IRequestMessage requestMessage)
@@ -37,7 +36,7 @@ namespace PlayerStateCoordinator.States
                 IMessage knowledgeExchangeResponse =
                     new RejectKnowledgeExchangeMessage(GameStrategyInfo.PlayerId, initiatorId, GameStrategyInfo.PlayerGuid);
 
-                if (GameStrategyInfo.Board.Players[initiatorId].Team == GameStrategyInfo.Team)
+                if (IsExchangeWantedWithPlayer(initiatorId))
                     knowledgeExchangeResponse =
                         DataMessage.FromBoardData(
                             GameStrategyInfo.Board.ToBoardData(GameStrategyInfo.PlayerId, initiatorId), false,

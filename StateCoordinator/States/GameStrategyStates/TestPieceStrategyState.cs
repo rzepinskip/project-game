@@ -4,7 +4,7 @@ using PlayerStateCoordinator.Transitions.GameStrategyTransitions;
 
 namespace PlayerStateCoordinator.States.GameStrategyStates
 {
-    public class TestPieceStrategyState : GameStrategyState
+    public class TestPieceStrategyState : NormalPlayerStrategyState
     {
         public TestPieceStrategyState(GameStrategyInfo gameStrategyInfo) : base(
             StateTransitionType.Triggered,

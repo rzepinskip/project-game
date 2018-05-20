@@ -4,7 +4,7 @@ using PlayerStateCoordinator.Transitions.GameStrategyTransitions;
 
 namespace PlayerStateCoordinator.States.GameStrategyStates
 {
-    public class ReportGoalFieldsStrategyState : GameStrategyState
+    public class ReportGoalFieldsStrategyState : NormalPlayerStrategyState
     {
         public ReportGoalFieldsStrategyState(GameStrategyInfo gameStrategyInfo) : base(
             StateTransitionType.Triggered,

@@ -8,7 +8,7 @@ namespace PlayerStateCoordinator.States.GameStrategyStates
     ///     Send Move request after initiating KnowledgeExchange to ensure immmunity to lack of response from KnowledgeExchange
     ///     subject(f.e. due to disconnection)
     /// </summary>
-    public class InitialMoveAfterPlaceStrategyState : GameStrategyState
+    public class InitialMoveAfterPlaceStrategyState : NormalPlayerStrategyState
     {
         public InitialMoveAfterPlaceStrategyState(GameStrategyInfo gameStrategyInfo) : base(
             StateTransitionType.Immediate,
