@@ -105,8 +105,12 @@ namespace Messaging
             }
             else
             {
+                var reciverPlayerLocation = player.Board.Players[PlayerId].Location;
+
                 foreach (var goalField in GoalFields)
                     player.Board.HandleGoalField( goalField);
+
+                player.Board.Players[PlayerId].Location = reciverPlayerLocation;
             }
 
             foreach (var taskField in TaskFields)
