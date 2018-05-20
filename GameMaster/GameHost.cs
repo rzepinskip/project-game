@@ -1,27 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Timers;
+using System.Threading;
 using Common;
-using GameMaster.ActionHandlers;
 using GameMaster.Configuration;
-using Messaging.InitializationMessages;
-using Timer = System.Threading.Timer;
 
 namespace GameMaster
 {
     public class GameHost
     {
-        public int GameId;
-        private readonly GameConfiguration _gameConfiguration;
-        private readonly Action _startGame;
         private readonly GameMasterBoardGenerator _boardGenerator;
-        public bool GameInProgress;
+        private readonly GameConfiguration _gameConfiguration;
+
+        private readonly string _gameName;
+        private readonly Action _startGame;
+        private List<PlayerInfo> _connectedPlayers;
         private PieceGenerator _pieceGenerator;
         private List<(TeamColor team, PlayerType role)> _playersSlots;
-        private List<PlayerInfo> _connectedPlayers;
         private Timer checkIfFullTeamTimer;
+        public int GameId;
+        public bool GameInProgress;
 
         public GameHost(string gameName, GameConfiguration gameConfiguration, Action startGame)
         {
@@ -37,7 +35,15 @@ namespace GameMaster
             Board = _boardGenerator.InitializeBoard(gameConfiguration.GameDefinition);
         }
 
-        private readonly string _gameName;
+        /// <summary>
+        ///     Only for tests
+        /// </summary>
+        public GameHost(GameMasterBoard board)
+        {
+            Board = board;
+        }
+
+        public GameMasterBoard Board { get; set; }
 
         private void CheckIfGameFullCallback(object obj)
         {
@@ -60,8 +66,6 @@ namespace GameMaster
                 GameMasterBoardGenerator.GeneratePlayerSlots(_gameConfiguration.GameDefinition.NumberOfPlayersPerTeam);
             _pieceGenerator?.SpawnTimer.Dispose();
         }
-
-        public GameMasterBoard Board { get; set; }
 
         public (int gameId, PlayerBase playerInfo) AssignPlayerToAvailableSlotWithPrefered(
             int playerId, TeamColor preferredTeam, PlayerType preferredRole)

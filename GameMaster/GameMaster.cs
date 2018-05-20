@@ -15,11 +15,11 @@ namespace GameMaster
     {
         private readonly IErrorsMessagesFactory _errorsMessagesFactory;
 
+        private readonly GameHost _gameHost;
+
         private readonly string _gameName;
         private readonly MessagingHandler _messagingHandler;
         private ActionHandlerDispatcher _actionHandler;
-
-        private readonly GameHost _gameHost;
         private Dictionary<Guid, int> _playerGuidToId;
         private HashSet<Guid> _playersInformedAboutGameResult;
 
@@ -43,17 +43,14 @@ namespace GameMaster
         /// </summary>
         public GameMaster(GameMasterBoard board, Dictionary<Guid, int> playerGuidToId)
         {
-            Board = board;
-
+            _gameHost = new GameHost(board);
             _playerGuidToId = playerGuidToId;
+            _actionHandler = new ActionHandlerDispatcher(Board, new KnowledgeExchangeManager());
         }
 
         public VerboseLogger VerboseLogger { get; }
 
-        public GameMasterBoard Board {
-            get { return _gameHost.Board; }
-            private set { _gameHost.Board = value; }
-        }
+        public GameMasterBoard Board => _gameHost.Board;
 
         public void HandlePlayerDisconnection(int playerId)
         {
@@ -63,21 +60,6 @@ namespace GameMaster
                 return;
             var disconnectedPlayerPair = _playerGuidToId.Single(x => x.Value == playerId);
             _playerGuidToId.Remove(disconnectedPlayerPair.Key);
-        }
-
-        public void StartGame()
-        {
-            _messagingHandler.StartListeningToRequests(_playerGuidToId.Keys);
-            KnowledgeExchangeManager = new KnowledgeExchangeManager();
-            _actionHandler = new ActionHandlerDispatcher(Board, KnowledgeExchangeManager);
-
-            var boardInfo = new BoardInfo(Board.Width, Board.TaskAreaSize, Board.GoalAreaSize);
-            foreach (var i in _playerGuidToId)
-            {
-                var playerLocation = Board.Players.Values.Single(x => x.Id == i.Value).Location;
-                var gameStartMessage = new GameMessage(i.Value, Board.Players.Values, playerLocation, boardInfo);
-                _messagingHandler.CommunicationClient.Send(gameStartMessage);
-            }
         }
 
         public bool IsSlotAvailable()
@@ -90,17 +72,10 @@ namespace GameMaster
         {
             var playerGuid = Guid.NewGuid();
             _playerGuidToId.Add(playerGuid, playerId);
-            var (gameId, playerInfo) = _gameHost.AssignPlayerToAvailableSlotWithPrefered(playerId, preferredTeam, preferredRole);
+            var (gameId, playerInfo) =
+                _gameHost.AssignPlayerToAvailableSlotWithPrefered(playerId, preferredTeam, preferredRole);
 
             return (gameId, playerGuid, playerInfo);
-        }
-
-        public void HostNewGame()
-        {
-            _playerGuidToId = new Dictionary<Guid, int>();
-            _playersInformedAboutGameResult = new HashSet<Guid>();
-            _gameHost.HostNewGame();
-            RegisterGame();
         }
 
         public void RegisterGame()
@@ -134,11 +109,7 @@ namespace GameMaster
 
         public (BoardData data, bool isGameFinished) EvaluateAction(ActionInfo actionInfo)
         {
-            if (!_playerGuidToId.ContainsKey(actionInfo.PlayerGuid))
-            {
-                //Console.WriteLine("Message from old game arrived?");
-                return (null, true);
-            }
+            if (!_playerGuidToId.ContainsKey(actionInfo.PlayerGuid)) return (null, true);
 
             var playerId = _playerGuidToId[actionInfo.PlayerGuid];
             var action = _actionHandler.Resolve((dynamic) actionInfo, playerId);
@@ -149,13 +120,33 @@ namespace GameMaster
                 _gameHost.GameInProgress = false;
 
                 _playersInformedAboutGameResult.Add(actionInfo.PlayerGuid);
-                if (_playersInformedAboutGameResult.Count == _playerGuidToId.Count)
-                {
-                    HostNewGame();
-                }
+                if (_playersInformedAboutGameResult.Count == _playerGuidToId.Count) HostNewGame();
             }
 
             return (data: action.Respond(), isGameFinished: hasGameEnded);
+        }
+
+        public void StartGame()
+        {
+            _messagingHandler.StartListeningToRequests(_playerGuidToId.Keys);
+            KnowledgeExchangeManager = new KnowledgeExchangeManager();
+            _actionHandler = new ActionHandlerDispatcher(Board, KnowledgeExchangeManager);
+
+            var boardInfo = new BoardInfo(Board.Width, Board.TaskAreaSize, Board.GoalAreaSize);
+            foreach (var i in _playerGuidToId)
+            {
+                var playerLocation = Board.Players.Values.Single(x => x.Id == i.Value).Location;
+                var gameStartMessage = new GameMessage(i.Value, Board.Players.Values, playerLocation, boardInfo);
+                _messagingHandler.CommunicationClient.Send(gameStartMessage);
+            }
+        }
+
+        public void HostNewGame()
+        {
+            _playerGuidToId = new Dictionary<Guid, int>();
+            _playersInformedAboutGameResult = new HashSet<Guid>();
+            _gameHost.HostNewGame();
+            RegisterGame();
         }
 
         public void MessageHandler(IMessage message)
