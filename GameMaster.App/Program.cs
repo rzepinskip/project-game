@@ -19,7 +19,7 @@ namespace GameMaster.App
 
         private static void Main(string[] args)
         {
-            //AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             var gm = CreateGameMasterFrom(args);
             gm.GameFinished += GenerateNewFinishedGameMessage;
