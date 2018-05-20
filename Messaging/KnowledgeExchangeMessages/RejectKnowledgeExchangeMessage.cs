@@ -13,16 +13,35 @@ namespace Messaging.KnowledgeExchangeMessages
         {
         }
 
-        public RejectKnowledgeExchangeMessage(int senderId, int withPlayerId, bool permanent = false) : base(senderId,
+        public RejectKnowledgeExchangeMessage(int senderId, int withPlayerId, Guid? playerGuid, bool permanent = false) : base(senderId,
             withPlayerId)
         {
             Permanent = permanent;
+            PlayerGuid = playerGuid;
         }
 
         [XmlAttribute("permanent")] public bool Permanent { get; set; }
+        [XmlIgnore] public Guid? PlayerGuid { get; set; }
+
+        [XmlAttribute("playerGuid")]
+        public Guid PlayerGuidValue
+        {
+            get
+            {
+                if (PlayerGuid != null) return PlayerGuid.Value;
+
+                throw new InvalidOperationException();
+            }
+            set => PlayerGuid = value;
+        }
+        [XmlIgnore] public bool PlayerGuidValueSpecified => PlayerGuid.HasValue;
 
         public override IMessage Process(IGameMaster gameMaster)
         {
+            var promisedRejecterId = PlayerGuid.HasValue ? gameMaster.Authorize(PlayerGuid.Value) : null;
+            if (!promisedRejecterId.HasValue) return null;
+            SenderPlayerId = promisedRejecterId.Value;
+            PlayerGuid = null;
             gameMaster.KnowledgeExchangeManager.HandleExchangeRejection(SenderPlayerId, PlayerId);
             return this;
         }

@@ -106,7 +106,7 @@ namespace Player
                 knowledgeExchangeResponse =
                     DataMessage.FromBoardData(PlayerBoard.ToBoardData(Id, initiatorId), false, PlayerGuid);
             else
-                knowledgeExchangeResponse = new RejectKnowledgeExchangeMessage(Id, initiatorId);
+                knowledgeExchangeResponse = new RejectKnowledgeExchangeMessage(Id, initiatorId, PlayerGuid);
             CommunicationClient.Send(knowledgeExchangeResponse);
         }
 
