@@ -28,7 +28,8 @@ namespace Messaging.Tests
                 new object[] {"PickUpPieceRequest"},
                 new object[] {"PlacePieceRequest"},
                 new object[] {"TestPieceRequest"},
-                new object[] {"DataMessage"},
+                new object[] {"DataMessageWithGuid"},
+                new object[] {"DataMessageWithoutGuid"},
             };
 
         [Theory]

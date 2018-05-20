@@ -24,7 +24,10 @@
     <None Update="Resources\ActionMessages\AuthorizeKnowledgeExchangeRequest.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\ActionMessages\DataMessage.xml">
+    <None Update="Resources\ActionMessages\DataMessageWithGuid.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\ActionMessages\DataMessageWithoutGuid.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\ActionMessages\DestroyPieceRequest.xml">
