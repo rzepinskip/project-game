@@ -31,7 +31,7 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
             {
                 if (!_isDirectionChosen)
                 {
-                    _chosenDirection = Randomize4WayDirection(GameStrategyInfo, out _isAnyMoveAvailable);
+                    _chosenDirection = Randomize4WayDirection(GameStrategyInfo);
                     _isDirectionChosen = true;
                 }
 
@@ -54,7 +54,7 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
             {
                 if (!_isDirectionChosen)
                 {
-                    _chosenDirection = Randomize4WayDirection(GameStrategyInfo, out _isAnyMoveAvailable);
+                    _chosenDirection = Randomize4WayDirection(GameStrategyInfo);
                     _isDirectionChosen = true;
                 }
 
@@ -76,7 +76,7 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
             }
         }
 
-        private Direction Randomize4WayDirection(GameStrategyInfo strategyInfo, out bool isAnyMoveAvailable)
+        private Direction Randomize4WayDirection(GameStrategyInfo strategyInfo)
         {
             var onlyTaskArea = false;
             switch (_fromState)
@@ -95,7 +95,7 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
                     break;
             }
 
-            isAnyMoveAvailable = true;
+            _isAnyMoveAvailable = true;
             var currentLocation = GameStrategyInfo.CurrentLocation;
             var desiredLocation = GameStrategyInfo.TargetLocation;
             var directionValue = _directionGenerator.Next(4);
@@ -113,7 +113,7 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
 
                 if (checkDirectionsCounter >= 4)
                 {
-                    isAnyMoveAvailable = false;
+                    _isAnyMoveAvailable = false;
                     break;
                 }
             }
