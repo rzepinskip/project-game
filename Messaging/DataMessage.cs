@@ -77,7 +77,7 @@ namespace Messaging
             {
                 //Console.WriteLine($" from subject {senderId} to {PlayerId}");
                 gameMaster.SendDataToInitiator(PlayerId, this);
-                return knowledgeExchangeManager.FinalizeExchange(PlayerId, senderId);
+                return knowledgeExchangeManager.DelayedFinalizeExchange(PlayerId, senderId);
             }
 
             if (knowledgeExchangeManager.IsExchangeInitiator(senderId, PlayerId))
