@@ -8,7 +8,7 @@ namespace Messaging.InitializationMessages
     ///     CS response to GM registration
     /// </summary>
     [XmlType(XmlRootName)]
-    public class ConfirmGameRegistrationMessage : MessageToPlayer
+    public class ConfirmGameRegistrationMessage : Message
     {
         public const string XmlRootName = "ConfirmGameRegistration";
 
@@ -41,7 +41,7 @@ namespace Messaging.InitializationMessages
 
         public override string ToLog()
         {
-            return string.Join(',', XmlRootName, GameId, base.ToLog());
+            return string.Join(',', XmlRootName, GameId);
         }
     }
 }

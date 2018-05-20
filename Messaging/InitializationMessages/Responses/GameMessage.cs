@@ -31,9 +31,9 @@ namespace Messaging.InitializationMessages
         [XmlArray("Players")]
         [XmlArrayItem("Player")]
         public PlayerBase[] Players { get; set; }
+        public BoardInfo Board { get; set; }
 
         public Location PlayerLocation { get; set; }
-        public BoardInfo Board { get; set; }
 
         public override IMessage Process(IGameMaster gameMaster)
         {

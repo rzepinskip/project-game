@@ -1,4 +1,6 @@
-﻿namespace Messaging.KnowledgeExchangeMessages
+﻿using System.Xml.Serialization;
+
+namespace Messaging.KnowledgeExchangeMessages
 {
     public abstract class BetweenPlayersMessage : MessageToPlayer
     {
@@ -11,6 +13,6 @@
             SenderPlayerId = senderPlayerId;
         }
 
-        public int SenderPlayerId { get; set; }
+        [XmlAttribute("senderPlayerId")] public int SenderPlayerId { get; set; }
     }
 }

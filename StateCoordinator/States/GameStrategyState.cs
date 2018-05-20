@@ -25,7 +25,7 @@ namespace PlayerStateCoordinator.States
                 var initiatorId = knowledgeExchangeRequest.SenderPlayerId;
                 //Console.WriteLine($"Player #{initiatorId} requested communication in state {this}");
                 IMessage knowledgeExchangeResponse =
-                    new RejectKnowledgeExchangeMessage(GameStrategyInfo.PlayerId, initiatorId);
+                    new RejectKnowledgeExchangeMessage(GameStrategyInfo.PlayerId, initiatorId, GameStrategyInfo.PlayerGuid);
 
                 if (GameStrategyInfo.Board.Players[initiatorId].Team == GameStrategyInfo.Team)
                     knowledgeExchangeResponse =

@@ -22,7 +22,7 @@ namespace Messaging.ActionsMessages
             WithPlayerId = withPlayerId;
         }
 
-        public int WithPlayerId { get; set; }
+        [XmlAttribute("withPlayerId")] public int WithPlayerId { get; set; }
 
         public override ActionInfo GetActionInfo()
         {
@@ -44,7 +44,7 @@ namespace Messaging.ActionsMessages
             //Console.WriteLine($"Player {senderId} request to {WithPlayerId}");
 
             if (!gameMaster.PlayerIdExists(WithPlayerId))
-                return new RejectKnowledgeExchangeMessage(senderId, WithPlayerId, true);
+                return new RejectKnowledgeExchangeMessage(senderId, WithPlayerId, null, true);
             gameMaster.EvaluateAction(GetActionInfo());
             return null;
         }

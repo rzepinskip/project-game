@@ -59,7 +59,6 @@ namespace Messaging
             }
             set => PlayerGuid = value;
         }
-
         [XmlIgnore] public bool PlayerGuidValueSpecified => PlayerGuid.HasValue;
 
         public override IMessage Process(IGameMaster gameMaster)
