@@ -13,10 +13,8 @@ namespace Messaging.Tests
 {
     public class ActionMessagesTests
     {
-        private const string DefaultNamespace = "https://se2.mini.pw.edu.pl/17-results/";
-
         protected ExtendedMessageXmlDeserializer MessageXmlSerializer =
-            new ExtendedMessageXmlDeserializer(DefaultNamespace);
+            new ExtendedMessageXmlDeserializer(Constants.DefaultMessagingNameSpace);
 
         public static IEnumerable<object[]> ActionMessagesTypes =>
             new List<object[]>
