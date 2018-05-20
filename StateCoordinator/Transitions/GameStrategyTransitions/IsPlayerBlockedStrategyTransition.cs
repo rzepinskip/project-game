@@ -14,25 +14,23 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
     {
         private readonly Random _directionGenerator;
         private readonly GameStrategyState _fromState;
-        private Direction _chosenDirection;
+        private Direction? _chosenDirection;
         private bool _isAnyMoveAvailable;
-        private bool _isDirectionChosen;
         public IsPlayerBlockedStrategyTransition(GameStrategyInfo gameStrategyInfo, GameStrategyState fromState) : base(
             gameStrategyInfo)
         {
             _directionGenerator = new Random();
             _fromState = fromState;
-            _isDirectionChosen = false;
+            _chosenDirection = null;
         }
 
         public override State NextState
         {
             get
             {
-                if (!_isDirectionChosen)
+                if (!_chosenDirection.HasValue)
                 {
                     _chosenDirection = Randomize4WayDirection(GameStrategyInfo);
-                    _isDirectionChosen = true;
                 }
 
                 if (_isAnyMoveAvailable)
@@ -52,10 +50,9 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
         {
             get
             {
-                if (!_isDirectionChosen)
+                if (!_chosenDirection.HasValue)
                 {
                     _chosenDirection = Randomize4WayDirection(GameStrategyInfo);
-                    _isDirectionChosen = true;
                 }
 
                 var message = default(IMessage);
@@ -65,8 +62,8 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
                 }
                 else
                 {
-                    GameStrategyInfo.TargetLocation = GameStrategyInfo.CurrentLocation.GetNewLocation(_chosenDirection);
-                    message = new MoveRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId, _chosenDirection);
+                    GameStrategyInfo.TargetLocation = GameStrategyInfo.CurrentLocation.GetNewLocation(_chosenDirection.Value);
+                    message = new MoveRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId, _chosenDirection.Value);
                 }
 
                 return new List<IMessage>
