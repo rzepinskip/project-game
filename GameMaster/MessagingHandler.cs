@@ -18,7 +18,6 @@ namespace GameMaster
         private bool _gameFinished;
         private readonly Action _hostNewGame;
         private Dictionary<Guid, PlayerHandle> _playerHandles;
-        private readonly HashSet<Guid> _playersInformedAboutGameResult = new HashSet<Guid>();
 
         public MessagingHandler(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, Action hostNewGame)
         {
@@ -31,12 +30,6 @@ namespace GameMaster
         private async void HandleMessagesFromPlayer(Guid playerGuid)
         {
             var playerHandle = _playerHandles[playerGuid];
-
-            if (_gameFinished)
-                _playersInformedAboutGameResult.Add(playerGuid);
-
-            if(_playersInformedAboutGameResult.Count == _playerHandles.Count)
-                _hostNewGame();
 
             while (true)
             {
@@ -130,11 +123,6 @@ namespace GameMaster
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleMessagesFromClient)).Start();
             _hostNewGame();
 
-        }
-
-        public void FinishGame()
-        {
-            _gameFinished = true;
         }
     }
 }

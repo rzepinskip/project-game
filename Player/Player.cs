@@ -73,7 +73,7 @@ namespace Player
 
         public void NotifyAboutGameEnd()
         {
-            _stateCoordinator.NotifyAboutGameEnd();
+            Console.WriteLine("Game finished");
             _stateCoordinator = new StateCoordinator(_gameName, _color, _role);
         }
 

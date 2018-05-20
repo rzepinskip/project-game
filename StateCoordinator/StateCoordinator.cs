@@ -35,6 +35,7 @@ namespace PlayerStateCoordinator
                 do
                 {
                     var transition = CurrentState.Process(message);
+                    Console.WriteLine($"{transition.GetType().Name} for {message.GetType().Name}\n\t{transition.NextState.GetType().Name}\n");
                     CurrentState = transition.NextState;
                     messagesToSend.AddRange(transition.Message);
                 } while (CurrentState.TransitionType == StateTransitionType.Immediate);

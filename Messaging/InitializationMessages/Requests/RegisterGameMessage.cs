@@ -39,7 +39,10 @@ namespace Messaging.InitializationMessages
             cs.MarkClientAsGameMaster(id);
             var result = cs.RegisterNewGame(NewGameInfo, id);
             if (result)
+            {
                 cs.Send(new ConfirmGameRegistrationMessage(id), id);
+                Console.WriteLine($"Added new game #{id}: {NewGameInfo.GameName}");
+            }
             else
                 cs.Send(new RejectGameRegistrationMessage(NewGameInfo.GameName), id);
         }

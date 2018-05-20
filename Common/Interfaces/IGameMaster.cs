@@ -11,7 +11,7 @@ namespace Common.Interfaces
         bool IsSlotAvailable();
 
         (int gameId, Guid playerGuid, PlayerBase playerInfo) AssignPlayerToAvailableSlotWithPrefered(int playerId,
-            TeamColor preferedTeam, PlayerType preferedRole);
+            TeamColor preferredTeam, PlayerType preferredRole);
 
         void HandlePlayerDisconnection(int playerId);
         void RegisterGame();
