@@ -23,14 +23,14 @@ namespace Messaging.KnowledgeExchangeMessages
 
         public override IMessage Process(IGameMaster gameMaster)
         {
-            Console.WriteLine($"Player #{SenderPlayerId} rejected");
+            //Console.WriteLine($"Player #{SenderPlayerId} rejected");
             gameMaster.KnowledgeExchangeManager.HandleExchangeRejection(SenderPlayerId, PlayerId);
             return this;
         }
 
         public override void Process(IPlayer player)
         {
-            Console.WriteLine($"Player #{SenderPlayerId} rejected communication");
+            //Console.WriteLine($"Player #{SenderPlayerId} rejected communication");
         }
 
         public override void Process(ICommunicationServer cs, int id)

@@ -136,7 +136,7 @@ namespace GameMaster
         {
             if (!_playerGuidToId.ContainsKey(actionInfo.PlayerGuid))
             {
-                Console.WriteLine("Message from old game arrived?");
+                //Console.WriteLine("Message from old game arrived?");
                 return (null, true);
             }
 

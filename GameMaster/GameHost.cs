@@ -58,6 +58,7 @@ namespace GameMaster
             _connectedPlayers = new List<PlayerInfo>();
             _playersSlots =
                 GameMasterBoardGenerator.GeneratePlayerSlots(_gameConfiguration.GameDefinition.NumberOfPlayersPerTeam);
+            _pieceGenerator?.SpawnTimer.Dispose();
         }
 
         public GameMasterBoard Board { get; set; }
@@ -77,8 +78,6 @@ namespace GameMaster
 
             var playerInfo = new PlayerInfo(playerId, assignedValue.team, assignedValue.role);
             _connectedPlayers.Add(playerInfo);
-
-            //Console.WriteLine($"Added: {playerInfo}");
 
             return (GameId, playerInfo);
         }

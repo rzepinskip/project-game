@@ -30,7 +30,7 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
                 Randomize4WayDirection(GameStrategyInfo, onlyTaskArea, out var isAnyMoveAvailable);
                 if (isAnyMoveAvailable)
                 {
-                    Console.WriteLine($"PlayerBlocked returning to {_fromState}");
+                    //Console.WriteLine($"PlayerBlocked returning to {_fromState}");
                     if (_fromState.TransitionType == StateTransitionType.Immediate)
                         throw new StrategyException(_fromState,
                             "IsPlayerBlocked transition cannot proceed to Immediate state! - an error in designing strategy");

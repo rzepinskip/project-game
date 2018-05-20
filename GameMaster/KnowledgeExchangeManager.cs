@@ -41,7 +41,7 @@ namespace GameMaster
 
         public IMessage FinalizeExchange(int initiatorId, int subjectId)
         {
-            Console.WriteLine($"{initiatorId} with {subjectId} succesful exchange");
+            //Console.WriteLine($"{initiatorId} with {subjectId} succesful exchange");
             var exchange = _initiatorsExchanges[initiatorId].First(e => e.SubjectId == subjectId);
             _initiatorsExchanges[initiatorId].Remove(exchange);
             if (!_subjectsExchanges[subjectId].Remove(exchange))

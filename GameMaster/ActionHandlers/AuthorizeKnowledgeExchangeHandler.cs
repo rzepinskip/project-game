@@ -8,7 +8,7 @@ namespace GameMaster.ActionHandlers
     {
         public AuthorizeKnowledgeExchangeHandler(int playerId, GameMasterBoard board, int withPlayerId,  IKnowledgeExchangeManager knowledgeExchangeManager) : base(playerId, board)
         {
-            Console.WriteLine($"Authorize forward from {playerId}({Board.Players[playerId].Team}) to {withPlayerId}({Board.Players[withPlayerId].Team})");
+            //Console.WriteLine($"Authorize forward from {playerId}({Board.Players[playerId].Team}) to {withPlayerId}({Board.Players[withPlayerId].Team})");
             knowledgeExchangeManager.AssignSubjectToInitiator(playerId, withPlayerId);
         }
 
