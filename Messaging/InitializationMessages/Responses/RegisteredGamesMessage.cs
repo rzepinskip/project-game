@@ -11,7 +11,7 @@ namespace Messaging.InitializationMessages
     ///     CS's response to player about listing all joinable games
     /// </summary>
     [XmlType(XmlRootName)]
-    public class RegisteredGamesMessage : MessageToPlayer
+    public class RegisteredGamesMessage : Message
     {
         public const string XmlRootName = "RegisteredGames";
 

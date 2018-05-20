@@ -6,7 +6,7 @@ using Common.Interfaces;
 namespace Messaging.InitializationMessages
 {
     [XmlType(XmlRootName)]
-    public class RejectGameRegistrationMessage : MessageToPlayer
+    public class RejectGameRegistrationMessage : Message
     {
         public const string XmlRootName = "RejectGameRegistration";
 

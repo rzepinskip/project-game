@@ -18,6 +18,16 @@ namespace PlayerStateCoordinator.States
             GameStrategyInfo = gameStrategyInfo;
         }
 
+        protected override Transition HandleGenericMessage(IMessage message)
+        {
+            throw new InvalidOperationException($"Not expecting processing incoming generic message while playing: {message.GetType().Name}");
+        }
+
+        protected override Transition HandleRequestMessage(IRequestMessage requestMessage)
+        {
+            throw new InvalidOperationException($"Not expecting processing incoming request while playing: {requestMessage.GetType().Name}");
+        }
+
         protected override Transition HandleResponseMessage(IResponseMessage responseMessage)
         {
             if (responseMessage is KnowledgeExchangeRequestMessage knowledgeExchangeRequest)

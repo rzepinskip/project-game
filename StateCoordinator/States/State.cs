@@ -18,7 +18,7 @@ namespace PlayerStateCoordinator.States
             TransitionType = transitionType;
             Transitions = new Transition[0];
             Info = info;
-            _messageHandler = new MessageHandler(HandleRequestMessage, HandleResponseMessage, HandleErrorMessage);
+            _messageHandler = new MessageHandler(HandleRequestMessage, HandleResponseMessage, HandleErrorMessage, HandleGenericMessage);
         }
 
         public Transition Process(IMessage message)
@@ -48,6 +48,11 @@ namespace PlayerStateCoordinator.States
         protected virtual Transition HandleErrorMessage(IErrorMessage errorMessage)
         {
             throw new NotImplementedException();
+        }
+
+        protected virtual Transition HandleGenericMessage(IMessage genericMessage)
+        {
+            return ProceedToNextState();
         }
 
         protected virtual Transition HandleNoMatchingTransitionCase()
