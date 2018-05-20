@@ -6,7 +6,7 @@ using Common.ActionInfo;
 namespace Messaging.Requests
 {
     [XmlType(XmlRootName)]
-    public class TestPieceRequest : Request
+    public class TestPieceRequest : RequestMessage
     {
         public const string XmlRootName = "TestPiece";
 

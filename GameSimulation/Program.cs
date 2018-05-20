@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Threading;
 using Common;
-using NLog;
-using GameMaster;
-using Messaging.Serialization;
 
 namespace GameSimulation
 {
@@ -17,7 +14,6 @@ namespace GameSimulation
             var simulation = new GameSimulation("../../../../ExampleConfig.xml");
 
             _logger = simulation.GameMaster.VerboseLogger;
-            simulation.StartSimulation();
 
             while (true)
             {

@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
-using Messaging;
-using Messaging.KnowledgeExchangeMessages;
 using Player.Logging;
-using Player.Strategy;
+using PlayerStateCoordinator;
 
 namespace Player
 {
@@ -18,8 +16,7 @@ namespace Player
         private readonly IErrorsMessagesFactory _errorsMessagesFactory;
         private readonly string _gameName;
         private readonly PlayerType _role;
-        private bool _hasGameEnded;
-        private PlayerCoordinator _playerCoordinator;
+        private StateCoordinator _stateCoordinator;
 
         public Player(ICommunicationClient communicationClient, string gameName, TeamColor color, PlayerType role,
             IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode)
@@ -33,12 +30,13 @@ namespace Player
             var factory = new LoggerFactory();
             VerboseLogger = new VerboseLogger(factory.GetPlayerLogger(0), loggingMode);
 
-            _playerCoordinator = new PlayerCoordinator(gameName, color, role);
+            _stateCoordinator = new StateCoordinator(gameName, color, role);
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
+            CommunicationClient.Send(_stateCoordinator.Start());
         }
 
         /// <summary>
-        /// Only for tests
+        ///     Only for tests
         /// </summary>
         public Player(int id, Guid guid, TeamColor team, PlayerType role,
             PlayerBoard board, Location location)
@@ -51,7 +49,7 @@ namespace Player
             PlayerBoard = board;
             PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
 
-            _playerCoordinator = new PlayerCoordinator("", team, role);
+            _stateCoordinator = new StateCoordinator("", team, role);
         }
 
         public VerboseLogger VerboseLogger { get; private set; }
@@ -65,18 +63,17 @@ namespace Player
 
         public void UpdateGameState(IEnumerable<GameInfo> gameInfo)
         {
-            _playerCoordinator.UpdateGameStateInfo(gameInfo);
+            _stateCoordinator.UpdateGamesInfo(gameInfo);
         }
 
         public void UpdateJoiningInfo(bool info)
         {
-            _playerCoordinator.UpdateJoinInfo(info);
+            _stateCoordinator.UpdateJoiningResult(info);
         }
 
         public void NotifyAboutGameEnd()
         {
-            _hasGameEnded = true;
-            _playerCoordinator.NotifyAboutGameEnd();
+            _stateCoordinator.NotifyAboutGameEnd();
         }
 
         public void UpdatePlayer(int playerId, Guid playerGuid, PlayerBase playerBase, int gameId)
@@ -96,26 +93,18 @@ namespace Player
             foreach (var playerBase in players) PlayerBoard.Players.Add(playerBase.Id, new PlayerInfo(playerBase));
 
             PlayerBoard.Players[Id].Location = playerLocation;
-            _playerCoordinator.CreatePlayerStrategyFactory(new PlayerStrategyFactory(this));
 
-            Debug.WriteLine("Player has updated game data and started playing");
-        }
+            var playerStrategy = new PlayerStrategy(this, PlayerBoard, PlayerGuid, GameId);
+            _stateCoordinator.UpdatePlayerStrategyBeginningState(playerStrategy.GetBeginningState());
+            _stateCoordinator.CurrentState = playerStrategy.GetBeginningState();
 
-        public void HandleKnowledgeExchangeRequest(int initiatorId)
-        {
-            IMessage knowledgeExchangeResponse = null;
-            if (Role == PlayerType.Leader)
-                knowledgeExchangeResponse =
-                    DataMessage.FromBoardData(PlayerBoard.ToBoardData(Id, initiatorId), false, PlayerGuid);
-            else
-                knowledgeExchangeResponse = new RejectKnowledgeExchangeMessage(Id, initiatorId);
-            CommunicationClient.Send(knowledgeExchangeResponse);
+            Console.WriteLine("Player has updated game data and started playing");
         }
 
         public void HandleGameMasterDisconnection()
         {
             VerboseLogger.Log($"GM for game {GameId} disconnected");
-            _playerCoordinator = new PlayerCoordinator(_gameName, _color, _role);
+            _stateCoordinator = new StateCoordinator(_gameName, _color, _role);
         }
 
         public void InitializePlayer(int id, Guid guid, TeamColor team, PlayerType role, PlayerBoard board,
@@ -132,32 +121,20 @@ namespace Player
             PlayerBoard = board;
             PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
 
-            _playerCoordinator = new PlayerCoordinator("", team, role);
+            _stateCoordinator = new StateCoordinator("", team, role);
         }
 
-        public IMessage GetNextRequestMessage()
+        private void HandleResponse(IMessage message)
         {
-            return _playerCoordinator.NextMove();
-        }
+            message.Process(this);
 
-        private void HandleResponse(IMessage response)
-        {
-            //if (_hasGameEnded)
-            //{
-            //    _hasGameEnded = true;
-            //    return;
-            //}
+            var responsesToSend = _stateCoordinator.Process(message).ToList();
 
-            response.Process(this);
-
-            if (_playerCoordinator.StrategyReturnsMessage())
+            foreach (var response in responsesToSend)
             {
-                var request = GetNextRequestMessage();
-                VerboseLogger.Log(request.ToLog());
-                CommunicationClient.Send(request);
+                VerboseLogger.Log(response.ToLog());
+                CommunicationClient.Send(response);
             }
-
-            _playerCoordinator.NextState();
         }
 
         public void HandleConnectionError(CommunicationException e)
@@ -167,9 +144,9 @@ namespace Player
             if (e.Severity == CommunicationException.ErrorSeverity.Temporary)
                 return;
 
-            _playerCoordinator = new PlayerCoordinator(_gameName, _color, _role);
+            _stateCoordinator = new StateCoordinator(_gameName, _color, _role);
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
-            CommunicationClient.Send(_playerCoordinator.NextMove());
+            CommunicationClient.Send(_stateCoordinator.Start());
         }
     }
 }

@@ -42,14 +42,14 @@ namespace GameMaster
                     playerHandle.IsProcessed = true;
                 }
 
-                IRequest request;
-                while (!playerHandle.Queue.TryDequeue(out request))
+                IRequestMessage requestMessage;
+                while (!playerHandle.Queue.TryDequeue(out requestMessage))
                     await Task.Delay(10);
 
-                var timeSpan = Convert.ToInt32(_actionCosts.GetDelayFor(request.GetActionInfo()));
+                var timeSpan = Convert.ToInt32(_actionCosts.GetDelayFor(requestMessage.GetActionInfo()));
                 await Task.Delay(timeSpan);
 
-                MessageReceived.Invoke(this, request);
+                MessageReceived.Invoke(this, requestMessage);
             }
         }
 
@@ -76,7 +76,7 @@ namespace GameMaster
 
         private void HandleMessagesFromClient(IMessage message)
         {
-            if (message is IRequest request)
+            if (message is IRequestMessage request)
             {
                 var playerHandle = _playerHandles[request.PlayerGuid];
                 lock (playerHandle.Lock)
@@ -101,12 +101,12 @@ namespace GameMaster
         {
             public PlayerHandle()
             {
-                Queue = new ObservableConcurrentQueue<IRequest>();
+                Queue = new ObservableConcurrentQueue<IRequestMessage>();
                 IsProcessed = false;
                 Lock = new object();
             }
 
-            public ObservableConcurrentQueue<IRequest> Queue { get; }
+            public ObservableConcurrentQueue<IRequestMessage> Queue { get; }
             public bool IsProcessed { get; set; }
             public object Lock { get; }
         }

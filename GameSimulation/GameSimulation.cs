@@ -54,10 +54,5 @@ namespace GameSimulation
             Winners = e.Winners;
             GameFinished = true;
         }
-
-        public void StartSimulation()
-        {
-            foreach (var player in Players) player.CommunicationClient.Send(player.GetNextRequestMessage());
-        }
     }
 }

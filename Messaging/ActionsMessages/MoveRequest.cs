@@ -7,7 +7,7 @@ using Common.ActionInfo;
 namespace Messaging.Requests
 {
     [XmlType(XmlRootName)]
-    public class MoveRequest : Request, IEquatable<MoveRequest>
+    public class MoveRequest : RequestMessage, IEquatable<MoveRequest>
     {
         public const string XmlRootName = "Move";
 

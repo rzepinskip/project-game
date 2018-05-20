@@ -6,7 +6,7 @@ using Common.ActionInfo;
 namespace Messaging.Requests
 {
     [XmlType(XmlRootName)]
-    public class DestroyPieceRequest : Request
+    public class DestroyPieceRequest : RequestMessage
     {
         public const string XmlRootName = "DestroyPiece";
 

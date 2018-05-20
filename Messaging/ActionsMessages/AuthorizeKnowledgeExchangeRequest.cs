@@ -9,7 +9,7 @@ using Messaging.Requests;
 namespace Messaging.ActionsMessages
 {
     [XmlType(XmlRootName)]
-    public class AuthorizeKnowledgeExchangeRequest : Request
+    public class AuthorizeKnowledgeExchangeRequest : RequestMessage
     {
         public const string XmlRootName = "AuthorizeKnowledgeExchange";
 
@@ -17,8 +17,9 @@ namespace Messaging.ActionsMessages
         {
         }
 
-        public AuthorizeKnowledgeExchangeRequest(Guid playerGuid, int gameId) : base(playerGuid, gameId)
+        public AuthorizeKnowledgeExchangeRequest(Guid playerGuid, int gameId, int withPlayerId) : base(playerGuid, gameId)
         {
+            WithPlayerId = withPlayerId;
         }
 
         public int WithPlayerId { get; set; }
@@ -36,12 +37,21 @@ namespace Messaging.ActionsMessages
         public override IMessage Process(IGameMaster gameMaster)
         {
             var optionalSenderId = gameMaster.Authorize(PlayerGuid);
-            if (!optionalSenderId.HasValue) throw new ApplicationFatalException();
+            if (!optionalSenderId.HasValue) throw new ApplicationFatalException("Not signed request");
+
             var senderId = optionalSenderId.Value;
+
+            Console.WriteLine($"Player {senderId} request to {WithPlayerId}");
+
             if (!gameMaster.PlayerIdExists(WithPlayerId))
                 return new RejectKnowledgeExchangeMessage(senderId, WithPlayerId, true);
             gameMaster.EvaluateAction(GetActionInfo());
             return null;
+        }
+
+        public override void Process(ICommunicationServer cs, int id)
+        {
+            cs.Send(this, GameId);
         }
     }
 }
