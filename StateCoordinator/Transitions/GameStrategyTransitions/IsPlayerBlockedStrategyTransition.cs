@@ -98,7 +98,8 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
             _isAnyMoveAvailable = true;
             var currentLocation = GameStrategyInfo.CurrentLocation;
             var desiredLocation = GameStrategyInfo.TargetLocation;
-            var directionValue = _directionGenerator.Next(4);
+            var numberOfDirections = Enum.GetNames(typeof(Direction)).Length;
+            var directionValue = _directionGenerator.Next(numberOfDirections);
             var direction = (Direction) directionValue;
             var newLocation = currentLocation.GetNewLocation(direction);
             var checkDirectionsCounter = 0;
