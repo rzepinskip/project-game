@@ -12,25 +12,25 @@ namespace Player
 {
     public class Player : PlayerBase, IPlayer
     {
-        private readonly TeamColor _color;
+        private readonly TeamColor _preferedColor;
         private readonly IErrorsMessagesFactory _errorsMessagesFactory;
         private readonly string _gameName;
-        private readonly PlayerType _role;
+        private readonly PlayerType _preferedRole;
         private StateCoordinator _stateCoordinator;
 
-        public Player(ICommunicationClient communicationClient, string gameName, TeamColor color, PlayerType role,
+        public Player(ICommunicationClient communicationClient, string gameName, TeamColor preferedColor, PlayerType preferedRole,
             IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode)
         {
             CommunicationClient = communicationClient;
             _gameName = gameName;
-            _color = color;
-            _role = role;
+            _preferedColor = preferedColor;
+            _preferedRole = preferedRole;
             _errorsMessagesFactory = errorsMessagesFactory;
 
             var factory = new LoggerFactory();
             VerboseLogger = new VerboseLogger(factory.GetPlayerLogger(0), loggingMode);
 
-            _stateCoordinator = new StateCoordinator(gameName, color, role);
+            _stateCoordinator = new StateCoordinator(gameName, preferedColor, preferedRole);
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
             CommunicationClient.Send(_stateCoordinator.Start());
         }
@@ -38,18 +38,18 @@ namespace Player
         /// <summary>
         ///     Only for tests
         /// </summary>
-        public Player(int id, Guid guid, TeamColor team, PlayerType role,
+        public Player(int id, Guid guid, TeamColor team, PlayerType preferedRole,
             PlayerBoard board, Location location)
         {
             Id = id;
             Team = team;
-            Role = role;
+            Role = preferedRole;
             PlayerGuid = guid;
             GameId = 0;
             PlayerBoard = board;
-            PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
+            PlayerBoard.Players[id] = new PlayerInfo(id, team, preferedRole, location);
 
-            _stateCoordinator = new StateCoordinator("", team, role);
+            _stateCoordinator = new StateCoordinator("", team, preferedRole);
         }
 
         public VerboseLogger VerboseLogger { get; private set; }
@@ -95,7 +95,11 @@ namespace Player
 
             PlayerBoard.Players[Id].Location = playerLocation;
 
-            var playerStrategy = new PlayerStrategy(this, PlayerBoard, PlayerGuid, GameId);
+            Strategy playerStrategy = new NormalPlayerStrategy(this, PlayerBoard, PlayerGuid, GameId);
+            if (this.Role == PlayerType.Leader) 
+                playerStrategy = new LeaderStrategy(this, PlayerBoard, PlayerGuid, GameId);
+            Console.WriteLine("Player has chosen " + playerStrategy.GetType().Name);
+
             _stateCoordinator.UpdatePlayerStrategyBeginningState(playerStrategy.GetBeginningState());
             _stateCoordinator.CurrentState = playerStrategy.GetBeginningState();
 
@@ -105,7 +109,7 @@ namespace Player
         public void HandleGameMasterDisconnection()
         {
             VerboseLogger.Log($"GM for game {GameId} disconnected");
-            _stateCoordinator = new StateCoordinator(_gameName, _color, _role);
+            _stateCoordinator = new StateCoordinator(_gameName, _preferedColor, _preferedRole);
         }
 
         public void InitializePlayer(int id, Guid guid, TeamColor team, PlayerType role, PlayerBoard board,
@@ -145,7 +149,7 @@ namespace Player
             if (e.Severity == CommunicationException.ErrorSeverity.Temporary)
                 return;
 
-            _stateCoordinator = new StateCoordinator(_gameName, _color, _role);
+            _stateCoordinator = new StateCoordinator(_gameName, _preferedColor, _preferedRole);
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
             CommunicationClient.Send(_stateCoordinator.Start());
         }
