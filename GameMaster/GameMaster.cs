@@ -19,14 +19,14 @@ namespace GameMaster
         private readonly string _gameName;
         private readonly MessagingHandler _messagingHandler;
         private ActionHandlerDispatcher _actionHandler;
+        private GameMasterBoardGenerator _boardGenerator;
 
         private int _gameId;
+        private Dictionary<int, bool> _hasPlayerBeenInformedAboutGameResult = new Dictionary<int, bool>();
         private PieceGenerator _pieceGenerator;
         private Dictionary<Guid, int> _playerGuidToId;
         private List<(TeamColor team, PlayerType role)> _playersSlots;
         private Timer checkIfFullTeamTimer;
-        private Dictionary<int, bool> _hasPlayerBeenInformedAboutGameResult = new Dictionary<int, bool>();
-        private GameMasterBoardGenerator _boardGenerator;
 
         public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient,
             string gameName, IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode)
@@ -134,7 +134,14 @@ namespace GameMaster
         {
             var playerId = _playerGuidToId[actionInfo.PlayerGuid];
             var action = _actionHandler.Resolve((dynamic) actionInfo, playerId);
-            return (data: action.Respond(), isGameFinished: Board.IsGameFinished());
+            var hasGameEnded = Board.IsGameFinished();
+            if (hasGameEnded)
+            {
+                GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner()));
+                _messagingHandler.FinishGame();
+            }
+
+            return (data: action.Respond(), isGameFinished: hasGameEnded);
         }
 
         public void MessageHandler(IMessage message)
@@ -147,12 +154,6 @@ namespace GameMaster
             lock (Board.Lock)
             {
                 response = message.Process(this);
-
-                if (Board.IsGameFinished())
-                {
-                    GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner()));
-                    _messagingHandler.FinishGame();
-                }
 
                 if (response != null)
                     _messagingHandler.CommunicationClient.Send(response);
