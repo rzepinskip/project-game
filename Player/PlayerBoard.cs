@@ -51,10 +51,7 @@ namespace Player
 
         public void HandleGoalFieldAfterPlace(int playerId, GoalField goalField)
         {
-            var playerInfo = Players[playerId];
-
-            Pieces.Remove(playerInfo.Piece.Id);
-            playerInfo.Piece = null;
+            Players[playerId].Piece = null;
 
             this[goalField] = goalField;
         }
@@ -140,18 +137,15 @@ namespace Player
             return result;
         }
 
-
         public void HandlePiece(int playerId, Piece piece)
         {
             if (piece.PlayerId == playerId)
             {
-                Pieces[piece.Id] = piece;
                 Players[playerId].Piece = piece;
             }
 
-            if (piece.Type == PieceType.Destroyed && Pieces.ContainsKey(piece.Id))
+            if (piece.Type == PieceType.Destroyed && Players[playerId].Piece.Id == piece.Id)
             {
-                Pieces.Remove(piece.Id);
                 Players[playerId].Piece = null;
             }
         }
@@ -178,7 +172,8 @@ namespace Player
         {
             var taskFields = ToEnumerable().Where(f => f is TaskField taskField && taskField.DistanceToPiece != -1).Select(t => (TaskField)t);
             var goalFields = ToEnumerable().Where(f => f is GoalField goalField && goalField.Type != GoalFieldType.Unknown).Select(t => (GoalField)t);
-            var pieces = Pieces.Values.ToArray();
+            //var pieces = Pieces.Values.ToArray();
+            var pieces = new Piece[0];
 
             return BoardData.Create(dataReceiverId, Players[responderId].Location, taskFields.ToArray(), goalFields.ToArray(), pieces);
         }

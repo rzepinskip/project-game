@@ -5,7 +5,6 @@ namespace Common.Interfaces
     public interface IBoard
     {
         SerializableDictionary<int, PlayerInfo> Players { get; }
-        SerializableDictionary<int, Piece> Pieces { get; }
 
         int TaskAreaSize { get; }
         int GoalAreaSize { get; }

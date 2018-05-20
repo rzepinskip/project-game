@@ -111,9 +111,9 @@ namespace TestScenarios
         {
             return new List<object[]>
             {
-                //new  object[] { new PickUpPieceOnTaskFieldWithPiece()},
-                //new  object[] { new PickUpPieceOnTaskFieldWithPieceHavingPiece()},
-                //new  object[] { new PickUpPieceOnTaskFieldWithoutPiece()},
+                new  object[] { new PickUpPieceOnTaskFieldWithPiece()},
+                new  object[] { new PickUpPieceOnTaskFieldWithPieceHavingPiece()},
+                new  object[] { new PickUpPieceOnTaskFieldWithoutPiece()},
                 new  object[] { new PickUpPieceOnGoalArea()},
             };
         }

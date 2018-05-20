@@ -23,12 +23,15 @@ namespace GameMaster
         public List<Location> UncompletedBlueGoalsLocations { get; set; } = new List<Location>();
         public List<Location> UncompletedRedGoalsLocations { get; set; } = new List<Location>();
 
+        public SerializableDictionary<int, Piece> Pieces { get; } = new SerializableDictionary<int, Piece>();
+
         public bool Equals(GameMasterBoard other)
         {
             return other != null &&
                    base.Equals(other) &&
                    UncompletedBlueGoalsLocations.SequenceEqual(other.UncompletedBlueGoalsLocations) &&
-                   UncompletedRedGoalsLocations.SequenceEqual(other.UncompletedRedGoalsLocations);
+                   UncompletedRedGoalsLocations.SequenceEqual(other.UncompletedRedGoalsLocations) &&
+                   Pieces.SequenceEqual(other.Pieces);
         }
 
         public void MarkGoalAsCompleted(GoalField goal)
@@ -74,6 +77,7 @@ namespace GameMaster
                        EqualityComparer<List<Location>>.Default.GetHashCode(UncompletedBlueGoalsLocations);
             hashCode = hashCode * -1521134295 +
                        EqualityComparer<List<Location>>.Default.GetHashCode(UncompletedRedGoalsLocations);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Dictionary<int, Piece>>.Default.GetHashCode(Pieces);
             return hashCode;
         }
 
@@ -90,6 +94,7 @@ namespace GameMaster
         public override void WriteXml(XmlWriter writer)
         {
             base.WriteXml(writer);
+            WriteCollection(writer, Pieces, nameof(Pieces));
             WriteUncompletedGoalsLocations(writer, UncompletedBlueGoalsLocations,
                 nameof(UncompletedBlueGoalsLocations));
             WriteUncompletedGoalsLocations(writer, UncompletedRedGoalsLocations,
@@ -111,6 +116,7 @@ namespace GameMaster
         public override void ReadXml(XmlReader reader)
         {
             base.ReadXml(reader);
+            ReadCollection(reader, Pieces, nameof(Pieces));
 
             if (reader.NodeType != XmlNodeType.EndElement)
             {
