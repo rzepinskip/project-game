@@ -23,7 +23,7 @@ namespace PlayerStateCoordinator.States
             if (responseMessage is KnowledgeExchangeRequestMessage knowledgeExchangeRequest)
             {
                 var initiatorId = knowledgeExchangeRequest.SenderPlayerId;
-                Console.WriteLine($"Player #{initiatorId} requested communication in state {this}");
+                //Console.WriteLine($"Player #{initiatorId} requested communication in state {this}");
                 IMessage knowledgeExchangeResponse =
                     new RejectKnowledgeExchangeMessage(GameStrategyInfo.PlayerId, initiatorId);
 
@@ -38,7 +38,7 @@ namespace PlayerStateCoordinator.States
 
             if (responseMessage is DataMessage dataMessage && dataMessage.GoalFields.Length > 1)
             {
-                Console.WriteLine($"Got some data, doing nothing");
+                //Console.WriteLine($"Got some data, doing nothing");
 
                 return new LoopbackTransition(this, new List<IMessage>());
             }
@@ -54,7 +54,7 @@ namespace PlayerStateCoordinator.States
 
         protected override Transition HandleNoMatchingTransitionCase()
         {
-            throw new StrategyException(this, "No matching condition");
+            throw new StrategyException(this, "No matching transition");
         }
     }
 }

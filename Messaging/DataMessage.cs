@@ -90,8 +90,8 @@ namespace Messaging
             }
 
             // No matching knowledge exchange initiator
-            Console.Write($"UNEXPECTED from {senderId} to {PlayerId}");
-            Console.WriteLine();
+            //Console.Write($"UNEXPECTED from {senderId} to {PlayerId}");
+            //Console.WriteLine();
             return null;
         }
 

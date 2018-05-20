@@ -25,7 +25,7 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
             {
                 var withPlayerId = GameStrategyInfo.Board.Players.Values
                     .First(v => v.Id != GameStrategyInfo.PlayerId && v.Team == GameStrategyInfo.Team).Id;
-                Console.WriteLine($"Exchanging data with {withPlayerId}");
+                //Console.WriteLine($"Exchanging data with {withPlayerId}");
 
                 var knowledgeExchangeRequest = new AuthorizeKnowledgeExchangeRequest(GameStrategyInfo.PlayerGuid,
                     GameStrategyInfo.GameId, withPlayerId);

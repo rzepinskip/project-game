@@ -14,14 +14,15 @@ namespace GameMaster
     public class MessagingHandler
     {
         private readonly ActionCosts _actionCosts;
-        public readonly ICommunicationClient CommunicationClient;
-        private readonly Action _restartGM;
+        public readonly ICommunicationClient CommunicationClient;    
+        private bool _gameFinished;
+        private readonly Action _hostNewGame;
         private Dictionary<Guid, PlayerHandle> _playerHandles;
 
-        public MessagingHandler(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, Action restartGM)
+        public MessagingHandler(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, Action hostNewGame)
         {
             _actionCosts = gameConfiguration.ActionCosts;
-            _restartGM = restartGM;
+            _hostNewGame = hostNewGame;
             CommunicationClient = communicationCommunicationClient;
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleMessagesFromClient)).Start();
         }
@@ -29,6 +30,7 @@ namespace GameMaster
         private async void HandleMessagesFromPlayer(Guid playerGuid)
         {
             var playerHandle = _playerHandles[playerGuid];
+
             while (true)
             {
                 lock (playerHandle.Lock)
@@ -119,7 +121,7 @@ namespace GameMaster
                 return;
 
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleMessagesFromClient)).Start();
-            _restartGM();
+            _hostNewGame();
 
         }
     }

@@ -51,7 +51,7 @@ namespace Communication.Client
 
         private void StopSendKeepAliveTimer()
         {
-            SendKeepAliveTimer.Stop();
+            SendKeepAliveTimer?.Stop();
         }
 
         private void ResetSendKeepAliveTimer()

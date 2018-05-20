@@ -58,10 +58,11 @@ namespace Messaging.InitializationMessages
             }
             catch (Exception e)
             {
-                if (e is KeyNotFoundException)
+                if (e is InvalidOperationException)
                 {
                     Console.WriteLine($"{PlayerId} tried to join non-existent game");
                     cs.Send(new RejectJoiningGame(GameName, PlayerId), id);
+                    return;
                 }
 
                 throw;

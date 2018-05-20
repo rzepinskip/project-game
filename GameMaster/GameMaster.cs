@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Common;
 using Common.ActionInfo;
 using Common.Interfaces;
@@ -15,27 +14,19 @@ namespace GameMaster
     public class GameMaster : IGameMaster
     {
         private readonly IErrorsMessagesFactory _errorsMessagesFactory;
-        private readonly GameConfiguration _gameConfiguration;
+
         private readonly string _gameName;
         private readonly MessagingHandler _messagingHandler;
         private ActionHandlerDispatcher _actionHandler;
 
-        private int _gameId;
-        private bool _gameInProgress;
-        private PieceGenerator _pieceGenerator;
+        private readonly GameHost _gameHost;
         private Dictionary<Guid, int> _playerGuidToId;
-        private List<(TeamColor team, PlayerType role)> _playersSlots;
-        private Timer checkIfFullTeamTimer;
+        private HashSet<Guid> _playersInformedAboutGameResult;
 
         public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient,
             string gameName, IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode)
         {
-            _gameConfiguration = gameConfiguration;
-            _gameName = gameName;
-
-            checkIfFullTeamTimer = new Timer(CheckIfGameFullCallback, null,
-                (int) Constants.GameFullCheckStartDelay.TotalMilliseconds,
-                (int) Constants.GameFullCheckInterval.TotalMilliseconds);
+            _gameHost = new GameHost(gameName, gameConfiguration, StartGame);
 
             _errorsMessagesFactory = errorsMessagesFactory;
 
@@ -59,33 +50,9 @@ namespace GameMaster
 
         public VerboseLogger VerboseLogger { get; }
 
-        public GameMasterBoard Board { get; private set; }
-
-        public bool IsSlotAvailable()
-        {
-            return _playersSlots.Count > 0;
-        }
-
-        public (int gameId, Guid playerGuid, PlayerBase playerInfo) AssignPlayerToAvailableSlotWithPrefered(
-            int playerId, TeamColor preferedTeam, PlayerType preferedRole)
-        {
-            (TeamColor team, PlayerType role) assignedValue;
-            if (_playersSlots.Contains((preferedTeam, preferedRole)))
-                assignedValue = (preferedTeam, preferedRole);
-            else if (_playersSlots.Contains((preferedTeam, PlayerType.Member)))
-                assignedValue = (preferedTeam, PlayerType.Member);
-            else
-                assignedValue = _playersSlots.First();
-
-            _playersSlots.Remove(assignedValue);
-
-            var playerInfo = new PlayerInfo(playerId, assignedValue.team, assignedValue.role);
-            Board.Players.Add(playerId, playerInfo);
-
-            var playerGuid = Guid.NewGuid();
-            _playerGuidToId.Add(playerGuid, playerId);
-
-            return (_gameId, playerGuid, playerInfo);
+        public GameMasterBoard Board {
+            get { return _gameHost.Board; }
+            private set { _gameHost.Board = value; }
         }
 
         public void HandlePlayerDisconnection(int playerId)
@@ -98,11 +65,47 @@ namespace GameMaster
             _playerGuidToId.Remove(disconnectedPlayerPair.Key);
         }
 
+        public void StartGame()
+        {
+            _messagingHandler.StartListeningToRequests(_playerGuidToId.Keys);
+            KnowledgeExchangeManager = new KnowledgeExchangeManager();
+            _actionHandler = new ActionHandlerDispatcher(Board, KnowledgeExchangeManager);
+
+            var boardInfo = new BoardInfo(Board.Width, Board.TaskAreaSize, Board.GoalAreaSize);
+            foreach (var i in _playerGuidToId)
+            {
+                var playerLocation = Board.Players.Values.Single(x => x.Id == i.Value).Location;
+                var gameStartMessage = new GameMessage(i.Value, Board.Players.Values, playerLocation, boardInfo);
+                _messagingHandler.CommunicationClient.Send(gameStartMessage);
+            }
+        }
+
+        public bool IsSlotAvailable()
+        {
+            return _gameHost.IsSlotAvailable();
+        }
+
+        public (int gameId, Guid playerGuid, PlayerBase playerInfo) AssignPlayerToAvailableSlotWithPrefered(
+            int playerId, TeamColor preferredTeam, PlayerType preferredRole)
+        {
+            var playerGuid = Guid.NewGuid();
+            _playerGuidToId.Add(playerGuid, playerId);
+            var (gameId, playerInfo) = _gameHost.AssignPlayerToAvailableSlotWithPrefered(playerId, preferredTeam, preferredRole);
+
+            return (gameId, playerGuid, playerInfo);
+        }
+
+        public void HostNewGame()
+        {
+            _playerGuidToId = new Dictionary<Guid, int>();
+            _playersInformedAboutGameResult = new HashSet<Guid>();
+            _gameHost.HostNewGame();
+            RegisterGame();
+        }
+
         public void RegisterGame()
         {
-            _messagingHandler.CommunicationClient.Send(new RegisterGameMessage(new GameInfo(_gameName,
-                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam,
-                _gameConfiguration.GameDefinition.NumberOfPlayersPerTeam)));
+            _messagingHandler.CommunicationClient.Send(new RegisterGameMessage(_gameHost.CurrentGameInfo()));
         }
 
         public IKnowledgeExchangeManager KnowledgeExchangeManager { get; private set; }
@@ -126,14 +129,33 @@ namespace GameMaster
 
         public void SetGameId(int gameId)
         {
-            _gameId = gameId;
+            _gameHost.GameId = gameId;
         }
 
         public (BoardData data, bool isGameFinished) EvaluateAction(ActionInfo actionInfo)
         {
+            if (!_playerGuidToId.ContainsKey(actionInfo.PlayerGuid))
+            {
+                //Console.WriteLine("Message from old game arrived?");
+                return (null, true);
+            }
+
             var playerId = _playerGuidToId[actionInfo.PlayerGuid];
             var action = _actionHandler.Resolve((dynamic) actionInfo, playerId);
-            return (data: action.Respond(), isGameFinished: Board.IsGameFinished());
+            var hasGameEnded = Board.IsGameFinished();
+            if (hasGameEnded)
+            {
+                GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner()));
+                _gameHost.GameInProgress = false;
+
+                _playersInformedAboutGameResult.Add(actionInfo.PlayerGuid);
+                if (_playersInformedAboutGameResult.Count == _playerGuidToId.Count)
+                {
+                    HostNewGame();
+                }
+            }
+
+            return (data: action.Respond(), isGameFinished: hasGameEnded);
         }
 
         public void MessageHandler(IMessage message)
@@ -147,76 +169,8 @@ namespace GameMaster
             {
                 response = message.Process(this);
 
-                if (_gameInProgress && Board.IsGameFinished())
-                {
-                    GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner()));
-                    FinishGame();
-                }
-
                 if (response != null)
                     _messagingHandler.CommunicationClient.Send(response);
-            }
-        }
-
-        private void CheckIfGameFullCallback(object obj)
-        {
-            if (_playersSlots.Count > 0 || _gameInProgress) return;
-
-            _gameInProgress = true;
-            StartNewGame();
-
-            var boardInfo = new BoardInfo(Board.Width, Board.TaskAreaSize, Board.GoalAreaSize);
-
-            _messagingHandler.StartListeningToRequests(_playerGuidToId.Keys);
-            foreach (var i in _playerGuidToId)
-            {
-                var playerLocation = Board.Players.Values.Single(x => x.Id == i.Value).Location;
-                var gameStartMessage = new GameMessage(i.Value, Board.Players.Values, playerLocation, boardInfo);
-                _messagingHandler.CommunicationClient.Send(gameStartMessage);
-            }
-        }
-
-        private void StartNewGame()
-        {
-            var oldBoard = Board;
-            var boardGenerator = new GameMasterBoardGenerator();
-            Board = boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
-            foreach (var boardPlayer in oldBoard.Players)
-            {
-                var oldPlayerInfo = boardPlayer.Value;
-                var playerInfo = new PlayerInfo(oldPlayerInfo.Id, oldPlayerInfo.Team, oldPlayerInfo.Role);
-                Board.Players.Add(boardPlayer.Key, playerInfo);
-            }
-
-            boardGenerator.SpawnGameObjects(_gameConfiguration.GameDefinition);
-
-            _pieceGenerator = new PieceGenerator(Board, _gameConfiguration.GameDefinition.ShamProbability,
-                _gameConfiguration.GameDefinition.PlacingNewPiecesFrequency);
-
-            KnowledgeExchangeManager = new KnowledgeExchangeManager();
-            _actionHandler = new ActionHandlerDispatcher(Board, KnowledgeExchangeManager);
-        }
-
-        private void HostNewGame()
-        {
-            FinishGame();
-            var boardGenerator = new GameMasterBoardGenerator();
-            Board = boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
-            _playersSlots =
-                boardGenerator.GeneratePlayerSlots(_gameConfiguration.GameDefinition.NumberOfPlayersPerTeam);
-
-            _playerGuidToId = new Dictionary<Guid, int>();
-            foreach (var player in Board.Players) _playerGuidToId.Add(Guid.NewGuid(), player.Key);
-
-            RegisterGame();
-        }
-
-        private void FinishGame()
-        {
-            if (_gameInProgress)
-            {
-                _gameInProgress = false;
-                _pieceGenerator.SpawnTimer.Dispose();
             }
         }
 
@@ -241,7 +195,7 @@ namespace GameMaster
                     result = GameResult.Victory;
 
                 VerboseLogger.Log(
-                    $"{result}, {DateTime.Now}, {_gameId}, {player.Id}, {playerGuid},{player.Team}, {player.Role}");
+                    $"{result}, {DateTime.Now}, {_gameHost.GameId}, {player.Id}, {playerGuid},{player.Team}, {player.Role}");
             }
         }
     }

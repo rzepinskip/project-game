@@ -41,7 +41,7 @@ namespace Messaging.ActionsMessages
 
             var senderId = optionalSenderId.Value;
 
-            Console.WriteLine($"Player {senderId} request to {WithPlayerId}");
+            //Console.WriteLine($"Player {senderId} request to {WithPlayerId}");
 
             if (!gameMaster.PlayerIdExists(WithPlayerId))
                 return new RejectKnowledgeExchangeMessage(senderId, WithPlayerId, true);
