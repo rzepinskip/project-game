@@ -21,12 +21,11 @@ namespace GameMaster
         private ActionHandlerDispatcher _actionHandler;
 
         private int _gameId;
-        private bool _gameInProgress;
         private PieceGenerator _pieceGenerator;
         private Dictionary<Guid, int> _playerGuidToId;
         private List<(TeamColor team, PlayerType role)> _playersSlots;
         private Timer checkIfFullTeamTimer;
-        private int _playersDisconnectedCounter;
+        private Dictionary<int, bool> _hasPlayerBeenInformedAboutGameResult = new Dictionary<int, bool>();
         private GameMasterBoardGenerator _boardGenerator;
 
         public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient,
@@ -149,16 +148,11 @@ namespace GameMaster
             {
                 response = message.Process(this);
 
-                if (_gameInProgress && Board.IsGameFinished())
+                if (Board.IsGameFinished())
                 {
                     GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner()));
-                    FinishGame();
+                    _messagingHandler.FinishGame();
                 }
-
-                if (!_gameInProgress)
-                    _playersDisconnectedCounter++;
-                if(_playersDisconnectedCounter == _playerGuidToId.Count)
-                    HostNewGame();
 
                 if (response != null)
                     _messagingHandler.CommunicationClient.Send(response);
@@ -167,13 +161,9 @@ namespace GameMaster
 
         private void CheckIfGameFullCallback(object obj)
         {
-            if (_playersSlots.Count > 0 || _gameInProgress) return;
-
-            _gameInProgress = true;
+            if (_playersSlots.Count > 0) return;
 
             var boardInfo = new BoardInfo(Board.Width, Board.TaskAreaSize, Board.GoalAreaSize);
-
-            _playersDisconnectedCounter = 0;
 
             _messagingHandler.StartListeningToRequests(_playerGuidToId.Keys);
 
@@ -195,7 +185,6 @@ namespace GameMaster
 
         private void HostNewGame()
         {
-            FinishGame();
             _boardGenerator = new GameMasterBoardGenerator();
             Board = _boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
             _playersSlots =
@@ -205,15 +194,6 @@ namespace GameMaster
             foreach (var player in Board.Players) _playerGuidToId.Add(Guid.NewGuid(), player.Key);
 
             RegisterGame();
-        }
-
-        private void FinishGame()
-        {
-            if (_gameInProgress)
-            {
-                _gameInProgress = false;
-                _pieceGenerator.SpawnTimer.Dispose();
-            }
         }
 
         public virtual event EventHandler<GameFinishedEventArgs> GameFinished;
