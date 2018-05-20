@@ -14,21 +14,28 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
     {
         private readonly Random _directionGenerator;
         private readonly GameStrategyState _fromState;
-
+        private Direction _chosenDirection;
+        private bool _isAnyMoveAvailable;
+        private bool _isDirectionChosen;
         public IsPlayerBlockedStrategyTransition(GameStrategyInfo gameStrategyInfo, GameStrategyState fromState) : base(
             gameStrategyInfo)
         {
             _directionGenerator = new Random();
             _fromState = fromState;
+            _isDirectionChosen = false;
         }
 
         public override State NextState
         {
             get
             {
-                var onlyTaskArea = false;
-                Randomize4WayDirection(GameStrategyInfo, onlyTaskArea, out var isAnyMoveAvailable);
-                if (isAnyMoveAvailable)
+                if (!_isDirectionChosen)
+                {
+                    _chosenDirection = Randomize4WayDirection(GameStrategyInfo, out _isAnyMoveAvailable);
+                    _isDirectionChosen = true;
+                }
+
+                if (_isAnyMoveAvailable)
                 {
                     Console.WriteLine($"PlayerBlocked returning to {_fromState}");
                     if (_fromState.TransitionType == StateTransitionType.Immediate)
@@ -45,34 +52,21 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
         {
             get
             {
-                var direction = default(Direction);
-                var onlyTaskArea = false;
-                var message = default(IMessage);
-                switch (_fromState)
+                if (!_isDirectionChosen)
                 {
-                    case MoveToPieceStrategyState moveToPieceState:
-                    {
-                        onlyTaskArea = true;
-                        break;
-                    }
-                    case InGoalAreaMovingToTaskStrategyState inGoalAreaMovingToTaskState:
-                    case MoveToUndiscoveredGoalStrategyState moveToUndiscoveredGoalState:
-                    case InitialMoveAfterPlaceStrategyState initialMoveAfterPlaceStrategyState:
-                        break;
-                    default:
-                        Console.WriteLine("Unexpeted state in PlayerBlocked transition");
-                        break;
+                    _chosenDirection = Randomize4WayDirection(GameStrategyInfo, out _isAnyMoveAvailable);
+                    _isDirectionChosen = true;
                 }
 
-                direction = Randomize4WayDirection(GameStrategyInfo, onlyTaskArea, out var isAnyMoveAvailable);
-                if (!isAnyMoveAvailable)
+                var message = default(IMessage);
+                if (!_isAnyMoveAvailable)
                 {
                     message = new DiscoverRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId);
                 }
                 else
                 {
-                    GameStrategyInfo.TargetLocation = GameStrategyInfo.CurrentLocation.GetNewLocation(direction);
-                    message = new MoveRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId, direction);
+                    GameStrategyInfo.TargetLocation = GameStrategyInfo.CurrentLocation.GetNewLocation(_chosenDirection);
+                    message = new MoveRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId, _chosenDirection);
                 }
 
                 return new List<IMessage>
@@ -82,13 +76,29 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
             }
         }
 
-        private Direction Randomize4WayDirection(GameStrategyInfo strategyInfo, bool onlyTaskArea,
-            out bool isAnyMoveAvailable)
+        private Direction Randomize4WayDirection(GameStrategyInfo strategyInfo, out bool isAnyMoveAvailable)
         {
+            var onlyTaskArea = false;
+            switch (_fromState)
+            {
+                case MoveToPieceStrategyState moveToPieceState:
+                {
+                    onlyTaskArea = true;
+                    break;
+                }
+                case InGoalAreaMovingToTaskStrategyState inGoalAreaMovingToTaskState:
+                case MoveToUndiscoveredGoalStrategyState moveToUndiscoveredGoalState:
+                case InitialMoveAfterPlaceStrategyState initialMoveAfterPlaceStrategyState:
+                    break;
+                default:
+                    Console.WriteLine("Unexpeted state in PlayerBlocked transition");
+                    break;
+            }
+
             isAnyMoveAvailable = true;
             var currentLocation = GameStrategyInfo.CurrentLocation;
             var desiredLocation = GameStrategyInfo.TargetLocation;
-            var directionValue = 0;
+            var directionValue = _directionGenerator.Next(4);
             var direction = (Direction) directionValue;
             var newLocation = currentLocation.GetNewLocation(direction);
             var checkDirectionsCounter = 0;
