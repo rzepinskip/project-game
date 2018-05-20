@@ -13,7 +13,7 @@ namespace PlayerStateCoordinator.Transitions.GameInitializationTransitions
         {
         }
 
-        public override State NextState => new GameStartedState(GameInitializationInfo);
+        public override State NextState => new GetGamesState(GameInitializationInfo);
 
         public override IEnumerable<IMessage> Message => new List<IMessage>();
 

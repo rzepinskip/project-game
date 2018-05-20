@@ -26,6 +26,8 @@ namespace GameMaster
         private Dictionary<Guid, int> _playerGuidToId;
         private List<(TeamColor team, PlayerType role)> _playersSlots;
         private Timer checkIfFullTeamTimer;
+        private int _playersDisconnectedCounter;
+        private GameMasterBoardGenerator _boardGenerator;
 
         public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient,
             string gameName, IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode)
@@ -153,6 +155,11 @@ namespace GameMaster
                     FinishGame();
                 }
 
+                if (!_gameInProgress)
+                    _playersDisconnectedCounter++;
+                if(_playersDisconnectedCounter == _playerGuidToId.Count)
+                    HostNewGame();
+
                 if (response != null)
                     _messagingHandler.CommunicationClient.Send(response);
             }
@@ -163,11 +170,21 @@ namespace GameMaster
             if (_playersSlots.Count > 0 || _gameInProgress) return;
 
             _gameInProgress = true;
-            StartNewGame();
 
             var boardInfo = new BoardInfo(Board.Width, Board.TaskAreaSize, Board.GoalAreaSize);
 
+            _playersDisconnectedCounter = 0;
+
             _messagingHandler.StartListeningToRequests(_playerGuidToId.Keys);
+
+            _boardGenerator.SpawnGameObjects(_gameConfiguration.GameDefinition);
+
+            _pieceGenerator = new PieceGenerator(Board, _gameConfiguration.GameDefinition.ShamProbability,
+                _gameConfiguration.GameDefinition.PlacingNewPiecesFrequency);
+
+            KnowledgeExchangeManager = new KnowledgeExchangeManager();
+            _actionHandler = new ActionHandlerDispatcher(Board, KnowledgeExchangeManager);
+
             foreach (var i in _playerGuidToId)
             {
                 var playerLocation = Board.Players.Values.Single(x => x.Id == i.Value).Location;
@@ -176,34 +193,13 @@ namespace GameMaster
             }
         }
 
-        private void StartNewGame()
-        {
-            var oldBoard = Board;
-            var boardGenerator = new GameMasterBoardGenerator();
-            Board = boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
-            foreach (var boardPlayer in oldBoard.Players)
-            {
-                var oldPlayerInfo = boardPlayer.Value;
-                var playerInfo = new PlayerInfo(oldPlayerInfo.Id, oldPlayerInfo.Team, oldPlayerInfo.Role);
-                Board.Players.Add(boardPlayer.Key, playerInfo);
-            }
-
-            boardGenerator.SpawnGameObjects(_gameConfiguration.GameDefinition);
-
-            _pieceGenerator = new PieceGenerator(Board, _gameConfiguration.GameDefinition.ShamProbability,
-                _gameConfiguration.GameDefinition.PlacingNewPiecesFrequency);
-
-            KnowledgeExchangeManager = new KnowledgeExchangeManager();
-            _actionHandler = new ActionHandlerDispatcher(Board, KnowledgeExchangeManager);
-        }
-
         private void HostNewGame()
         {
             FinishGame();
-            var boardGenerator = new GameMasterBoardGenerator();
-            Board = boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
+            _boardGenerator = new GameMasterBoardGenerator();
+            Board = _boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
             _playersSlots =
-                boardGenerator.GeneratePlayerSlots(_gameConfiguration.GameDefinition.NumberOfPlayersPerTeam);
+                _boardGenerator.GeneratePlayerSlots(_gameConfiguration.GameDefinition.NumberOfPlayersPerTeam);
 
             _playerGuidToId = new Dictionary<Guid, int>();
             foreach (var player in Board.Players) _playerGuidToId.Add(Guid.NewGuid(), player.Key);

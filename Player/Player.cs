@@ -74,6 +74,7 @@ namespace Player
         public void NotifyAboutGameEnd()
         {
             _stateCoordinator.NotifyAboutGameEnd();
+            _stateCoordinator = new StateCoordinator(_gameName, _color, _role);
         }
 
         public void UpdatePlayer(int playerId, Guid playerGuid, PlayerBase playerBase, int gameId)

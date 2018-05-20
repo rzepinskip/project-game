@@ -42,7 +42,8 @@ namespace CommunicationServer
                 return false;
             var gameId = connectionId;
             _gameIdToGameInfo.Add(gameId, gameInfo);
-            _connectionIdToGameId.Add(connectionId, gameId);
+            if(!_connectionIdToGameId.ContainsKey(connectionId))
+                _connectionIdToGameId.Add(connectionId, gameId);
             return true;
         }
 
@@ -73,7 +74,8 @@ namespace CommunicationServer
 
         public void AssignGameIdToPlayerId(int gameId, int playerId)
         {
-            _connectionIdToGameId.Add(playerId, gameId);
+            if(!_connectionIdToGameId.ContainsKey(playerId))
+                _connectionIdToGameId.Add(playerId, gameId);
         }
 
         public IEnumerable<int> GetAllClientsConnectedWithGame(int gameId)
