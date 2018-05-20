@@ -13,10 +13,10 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
     public class IsPlayerBlockedStrategyTransition : GameStrategyTransition
     {
         private readonly Random _directionGenerator;
-        private readonly GameStrategyState _fromState;
+        private readonly NormalPlayerStrategyState _fromState;
         private Direction? _chosenDirection;
         private bool _isAnyMoveAvailable;
-        public IsPlayerBlockedStrategyTransition(GameStrategyInfo gameStrategyInfo, GameStrategyState fromState) : base(
+        public IsPlayerBlockedStrategyTransition(GameStrategyInfo gameStrategyInfo, NormalPlayerStrategyState fromState) : base(
             gameStrategyInfo)
         {
             _directionGenerator = new Random();
@@ -39,7 +39,7 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
                     if (_fromState.TransitionType == StateTransitionType.Immediate)
                         throw new StrategyException(_fromState,
                             "IsPlayerBlocked transition cannot proceed to Immediate state! - an error in designing strategy");
-                    return Activator.CreateInstance(_fromState.GetType(), GameStrategyInfo) as GameStrategyState;
+                    return Activator.CreateInstance(_fromState.GetType(), GameStrategyInfo) as NormalPlayerStrategyState;
                 }
 
                 return new DiscoverStrategyState(GameStrategyInfo);

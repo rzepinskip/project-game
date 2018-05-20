@@ -235,5 +235,10 @@ namespace Common.BoardObjects
         {
             return !(base1 == base2);
         }
+
+        public int GoalAreaStartYFor(TeamColor teamColor)
+        {
+            return teamColor == TeamColor.Blue ? GoalAreaSize - 1 : GoalAreaSize + TaskAreaSize;
+        }
     }
 }
