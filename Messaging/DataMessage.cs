@@ -113,7 +113,7 @@ namespace Messaging
             }
 
             foreach (var taskField in TaskFields)
-                player.Board.HandleTaskField(taskField);
+                player.Board.HandleTaskField(PlayerId, taskField);
 
             foreach (var piece in pieces)
                 player.Board.HandlePiece(PlayerId, piece);

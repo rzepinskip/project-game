@@ -20,7 +20,7 @@ namespace Player
         {
         }
 
-        public void HandleTaskField(TaskField taskField)
+        public void HandleTaskField(int playerId, TaskField taskField)
         {
             var oldTaskField = (TaskField)this[taskField];
 
@@ -30,7 +30,7 @@ namespace Player
                 ClearPieceFromField(oldTaskField);
 
                 HandlePlayerInField(taskField);
-                HandlePieceInField(taskField);
+                HandlePieceInField(playerId, taskField);
 
                 this[taskField] = new TaskField(taskField, taskField.DistanceToPiece, taskField.PieceId, taskField.PlayerId);
             }
@@ -98,7 +98,7 @@ namespace Player
             }
         }
 
-        private void HandlePieceInField(TaskField taskField)
+        private void HandlePieceInField(int playerId, TaskField taskField)
         {
             if (!taskField.PieceId.HasValue) return;
 
@@ -114,6 +114,10 @@ namespace Player
                     taskField.PieceId = null;
                 }
             }
+
+            //place piece
+            if (Players[playerId].Piece!= null && taskField.PieceId == Players[playerId].Piece.Id)
+                Players[playerId].Piece = null;
         }
 
         private TaskField FindFieldWithPiece(int pieceId)
