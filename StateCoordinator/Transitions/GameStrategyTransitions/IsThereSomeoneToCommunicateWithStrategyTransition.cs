@@ -38,7 +38,8 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
 
         public override bool IsPossible()
         {
-            var result = GameStrategyInfo.Board.Players.Count > 2;
+            var result = GameStrategyInfo.Board.Players.Count > 2 && GameStrategyInfo.IsTimeForExchange();
+            
             return result;
         }
     }
