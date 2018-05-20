@@ -6,7 +6,7 @@ using Common.ActionInfo;
 namespace Messaging.Requests
 {
     [XmlType(XmlRootName)]
-    public class PickUpPieceRequest : Request
+    public class PickUpPieceRequest : RequestMessage
     {
         public const string XmlRootName = "PickUpPiece";
 

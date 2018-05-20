@@ -33,6 +33,11 @@ namespace Common
         {
             return new BoardData(playerId, null, taskFields, new GoalField[0], pieces);
         }
+        
+        public static BoardData Create(int playerId, TaskField[] taskFields, GoalField[] goalFields)
+        {
+            return new BoardData(playerId, null, taskFields, goalFields, new Piece[0]);
+        }
 
         public static BoardData Create(int playerId, Piece[] pieces)
         {

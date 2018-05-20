@@ -22,14 +22,14 @@ namespace GameMaster
             
             if (!_initiatorsExchanges.ContainsKey(initiatorId))
                 _initiatorsExchanges.Add(initiatorId, new List<ExchangeState>());
-            if (!_subjectsExchanges.ContainsKey(initiatorId))
+            if (!_subjectsExchanges.ContainsKey(subjectId))
                 _subjectsExchanges.Add(subjectId, new List<ExchangeState>());
 
             _initiatorsExchanges[initiatorId].Add(exchange);
             _subjectsExchanges[subjectId].Add(exchange);
         }
 
-        public bool IsExchangeInitiator(int dataSenderId, int  receiverId )
+        public bool IsExchangeInitiator(int dataSenderId, int receiverId)
         {
             if (_initiatorsExchanges.ContainsKey(dataSenderId))
             {
@@ -41,6 +41,7 @@ namespace GameMaster
 
         public IMessage FinalizeExchange(int initiatorId, int subjectId)
         {
+            Console.WriteLine($"{initiatorId} with {subjectId} succesful exchange");
             var exchange = _initiatorsExchanges[initiatorId].First(e => e.SubjectId == subjectId);
             _initiatorsExchanges[initiatorId].Remove(exchange);
             if (!_subjectsExchanges[subjectId].Remove(exchange))
@@ -58,14 +59,17 @@ namespace GameMaster
 
         public bool HasMatchingInitiatorWithData(int senderId, int initiatorId)
         {
+            if (!_subjectsExchanges.ContainsKey(senderId))
+                return false;
+
             return _subjectsExchanges[senderId].Any( e => e.InitiatorId == initiatorId && e.InitiatorData != null);
         }
 
 
         public void HandleExchangeRejection(int subjectId, int initiatorId)
         {
-            _subjectsExchanges.Remove(subjectId);
-            _initiatorsExchanges.Remove(initiatorId);
+            _subjectsExchanges[subjectId].Remove(_subjectsExchanges[subjectId].First(e => e.InitiatorId == initiatorId && e.SubjectId == subjectId));
+            _initiatorsExchanges[initiatorId].Remove(_initiatorsExchanges[initiatorId].First(e => e.InitiatorId == initiatorId && e.SubjectId == subjectId));
         }
     }
 }

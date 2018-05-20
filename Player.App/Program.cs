@@ -23,7 +23,6 @@ namespace Player.App
             var player = CreatePlayerFrom(args);
 
             _logger = player.VerboseLogger;
-            player.CommunicationClient.Send(player.GetNextRequestMessage());
         }
 
         private static Player CreatePlayerFrom(IEnumerable<string> parameters)

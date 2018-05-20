@@ -93,6 +93,11 @@ namespace Common.BoardObjects
             return location.Y <= TaskAreaSize + GoalAreaSize - 1 && location.Y >= GoalAreaSize;
         }
 
+        public virtual BoardData ToBoardData(int senderId, int receiverId)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool Equals(BoardBase other)
         {
             return other != null &&
@@ -127,6 +132,7 @@ namespace Common.BoardObjects
             var readElements = ReadCollection<Field>(reader, nameof(Content), types);
             foreach (var element in readElements) this[element] = element;
         }
+
         public IEnumerable<Field> ToEnumerable()
         {
             foreach (var item in Content)

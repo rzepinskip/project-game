@@ -154,11 +154,20 @@ namespace Player
         {
             // Remove old data
             var playerInfo = Players[playerId];
-            this[playerInfo.Location].PlayerId = null;
+            if(playerInfo.Location != null)
+                this[playerInfo.Location].PlayerId = null;
 
             // Insert new data
             playerInfo.Location = playerUpdatedLocation;
             this[playerUpdatedLocation].PlayerId = playerId;
+        }
+
+        public override BoardData ToBoardData(int senderId, int receiverId)
+        {
+            var taskFields = ToEnumerable().Where(f => f is TaskField taskField && taskField.DistanceToPiece != -1).Select(t => (TaskField)t);
+            var goalFields = ToEnumerable().Where(f => f is GoalField goalField).Select(t => (GoalField)t);
+        
+            return BoardData.Create(receiverId, taskFields.ToArray(), goalFields.ToArray());
         }
 
         public override void ReadXml(XmlReader reader)
@@ -166,16 +175,6 @@ namespace Player
             base.ReadXml(reader);
 
             reader.ReadEndElement();
-        }
-
-        public BoardData ToBoardData(int responderId, int dataReceiverId)
-        {
-            var taskFields = ToEnumerable().Where(f => f is TaskField taskField && taskField.DistanceToPiece != -1).Select(t => (TaskField)t);
-            var goalFields = ToEnumerable().Where(f => f is GoalField goalField && goalField.Type != GoalFieldType.Unknown).Select(t => (GoalField)t);
-            //var pieces = Pieces.Values.ToArray();
-            var pieces = new Piece[0];
-
-            return BoardData.Create(dataReceiverId, Players[responderId].Location, taskFields.ToArray(), goalFields.ToArray(), pieces);
         }
     }
 }
