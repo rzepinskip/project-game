@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Common.Interfaces;
-using Messaging;
-using Messaging.KnowledgeExchangeMessages;
+﻿using PlayerStateCoordinator.Common;
+using PlayerStateCoordinator.Common.States;
 using PlayerStateCoordinator.Info;
-using PlayerStateCoordinator.States;
-using PlayerStateCoordinator.Transitions;
 
 namespace PlayerStateCoordinator.TeamLeader
 {
@@ -20,6 +15,5 @@ namespace PlayerStateCoordinator.TeamLeader
         {
             return false;
         }
-
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using Common.Interfaces;
-using PlayerStateCoordinator.Transitions;
+using PlayerStateCoordinator.Common.Transitions;
 
 namespace PlayerStateCoordinator
 {

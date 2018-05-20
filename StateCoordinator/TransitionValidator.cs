@@ -1,7 +1,5 @@
 ﻿using Common;
 using Common.BoardObjects;
-using Common.Interfaces;
-using PlayerStateCoordinator.Info;
 
 namespace PlayerStateCoordinator
 {

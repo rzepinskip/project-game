@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using Common;
 using Common.BoardObjects;
+using PlayerStateCoordinator.Common;
+using PlayerStateCoordinator.Common.States;
 using PlayerStateCoordinator.Info;
-using PlayerStateCoordinator.States;
+using PlayerStateCoordinator.NormalPlayer;
 
 namespace Player
 {

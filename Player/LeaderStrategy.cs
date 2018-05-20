@@ -1,7 +1,7 @@
 ﻿using System;
 using Common;
 using Common.BoardObjects;
-using PlayerStateCoordinator.States;
+using PlayerStateCoordinator.Common.States;
 using PlayerStateCoordinator.TeamLeader.States;
 
 namespace Player

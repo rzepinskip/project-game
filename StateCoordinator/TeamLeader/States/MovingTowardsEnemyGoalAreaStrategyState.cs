@@ -1,17 +1,19 @@
-﻿using PlayerStateCoordinator.Info;
-using PlayerStateCoordinator.States;
+﻿using PlayerStateCoordinator.Common;
+using PlayerStateCoordinator.Common.Transitions;
+using PlayerStateCoordinator.Info;
+using PlayerStateCoordinator.NormalPlayer.Transitions;
 using PlayerStateCoordinator.TeamLeader.Transitions;
-using PlayerStateCoordinator.Transitions;
-using PlayerStateCoordinator.Transitions.GameStrategyTransitions;
 
 namespace PlayerStateCoordinator.TeamLeader.States
 {
-    public class MovingTowardsEnemyGoalAreaStrategyState : NormalPlayerStrategyState
+    public class MovingTowardsEnemyGoalAreaStrategyState : LeaderStrategyState
     {
-        public MovingTowardsEnemyGoalAreaStrategyState(GameStrategyInfo gameStrategyInfo) : base(StateTransitionType.Triggered, gameStrategyInfo)
+        public MovingTowardsEnemyGoalAreaStrategyState(GameStrategyInfo gameStrategyInfo) : base(
+            StateTransitionType.Triggered, gameStrategyInfo)
         {
-            Transitions = new Transition []{
-                new IsPlayerBlockedStrategyTransition(GameStrategyInfo, this), 
+            Transitions = new Transition[]
+            {
+                new IsPlayerBlockedStrategyTransition(GameStrategyInfo, this),
                 new NearEnemyGoalAreaTransition(GameStrategyInfo),
                 new FarFromEnemyGoalAreaTransition(GameStrategyInfo)
             };

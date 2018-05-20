@@ -1,23 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using Common.Interfaces;
-using Messaging;
-using Messaging.KnowledgeExchangeMessages;
+using PlayerStateCoordinator.Common;
+using PlayerStateCoordinator.Common.Transitions;
 using PlayerStateCoordinator.Info;
-using PlayerStateCoordinator.States;
-using PlayerStateCoordinator.Transitions;
 
 namespace PlayerStateCoordinator.TeamLeader.States
 {
-    public class KnowledgeExchangeWithTeamMembersStrategyState : GamePlayStrategyState
+    public class KnowledgeExchangeWithTeamMembersStrategyState : LeaderStrategyState
     {
-        public KnowledgeExchangeWithTeamMembersStrategyState(GameStrategyInfo gameStrategyInfo) : base(StateTransitionType.Triggered, gameStrategyInfo)
+        public KnowledgeExchangeWithTeamMembersStrategyState(GameStrategyInfo gameStrategyInfo) : base(
+            StateTransitionType.Triggered, gameStrategyInfo)
         {
             Transitions = new Transition[0];
         }
-        protected virtual bool IsExchangeWantedWithPlayer(int initiatorId)
+
+        protected override bool IsExchangeWantedWithPlayer(int initiatorId)
         {
-            return GameStrategyInfo.Board.Players[initiatorId].Team == GameStrategyInfo.Team;
+            bool isExchangeWanted = GameStrategyInfo.Board.Players[initiatorId].Team == GameStrategyInfo.Team;
+            Console.WriteLine($" {GameStrategyInfo.Team} {GameStrategyInfo.PlayerId} exchange for initiator {initiatorId} {GameStrategyInfo.Board.Players[initiatorId].Team} wanted {isExchangeWanted}");
+            return isExchangeWanted;
         }
     }
 }

@@ -1,21 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using PlayerStateCoordinator.Common;
+using PlayerStateCoordinator.Common.Transitions;
 using PlayerStateCoordinator.Info;
-using PlayerStateCoordinator.States;
 using PlayerStateCoordinator.TeamLeader.Transitions;
-using PlayerStateCoordinator.Transitions;
 
 namespace PlayerStateCoordinator.TeamLeader.States
 {
-    public class InitLeaderStrategyState : NormalPlayerStrategyState
+    public class InitLeaderStrategyState : LeaderStrategyState
     {
-        public InitLeaderStrategyState(GameStrategyInfo gameStrategyInfo) : base(StateTransitionType.Immediate, gameStrategyInfo)
+        public InitLeaderStrategyState(GameStrategyInfo gameStrategyInfo) : base(StateTransitionType.Immediate,
+            gameStrategyInfo)
         {
-            Transitions = new Transition [] 
+            Transitions = new Transition[]
             {
                 new NearEnemyGoalAreaTransition(gameStrategyInfo),
-                new FarFromEnemyGoalAreaTransition(GameStrategyInfo), 
+                new FarFromEnemyGoalAreaTransition(GameStrategyInfo)
             };
         }
     }
-
 }
