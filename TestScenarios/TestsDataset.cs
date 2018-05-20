@@ -99,11 +99,11 @@ namespace TestScenarios
         {
             return new List<object[]>
             {
-                new  object[] {new PlaceValidPieceOnGoalFieldWithGoal()},
-                new  object[] {new PlaceValidPieceOnGoalFieldWithNonGoal()},
-                //new  object[] {new PlaceValidPieceOnTaskFieldWithPiece()},
-                //new  object[] {new PlaceValidPieceOnTaskFieldWithoutPiece()},
-                new  object[] {new PlaceWithoutPiece()}
+                //new  object[] {new PlaceValidPieceOnGoalFieldWithGoal()},
+                //new  object[] {new PlaceValidPieceOnGoalFieldWithNonGoal()},
+                new  object[] {new PlaceValidPieceOnTaskFieldWithPiece()},
+                new  object[] {new PlaceValidPieceOnTaskFieldWithoutPiece()},
+                //new  object[] {new PlaceWithoutPiece()}
             };
         }
 
