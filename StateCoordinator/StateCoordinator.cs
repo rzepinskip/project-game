@@ -41,7 +41,7 @@ namespace PlayerStateCoordinator
             }
             catch (StrategyException strategyException)
             {
-                strategyException.PrintFull();
+                Console.WriteLine(strategyException.PrintFull());
                 CurrentState = _gameInitializationInfo.PlayerGameStrategyBeginningState;
                 messagesToSend = new List<IMessage>();
             }

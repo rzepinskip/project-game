@@ -23,13 +23,15 @@ namespace PlayerStateCoordinator.States
             if (responseMessage is KnowledgeExchangeRequestMessage knowledgeExchangeRequest)
             {
                 var initiatorId = knowledgeExchangeRequest.SenderPlayerId;
-                Console.WriteLine($"Player #{initiatorId} requested communication");
+                Console.WriteLine($"Player #{initiatorId} requested communication in state {this}");
                 IMessage knowledgeExchangeResponse =
                     new RejectKnowledgeExchangeMessage(GameStrategyInfo.PlayerId, initiatorId);
 
                 if (GameStrategyInfo.Board.Players[initiatorId].Team == GameStrategyInfo.Team)
                     knowledgeExchangeResponse =
-                        DataMessage.FromBoardData(GameStrategyInfo.Board.ToBoardData(GameStrategyInfo.PlayerId, initiatorId), false, GameStrategyInfo.PlayerGuid);
+                        DataMessage.FromBoardData(
+                            GameStrategyInfo.Board.ToBoardData(GameStrategyInfo.PlayerId, initiatorId), false,
+                            GameStrategyInfo.PlayerGuid);
 
                 return new LoopbackTransition(this, new List<IMessage> {knowledgeExchangeResponse});
             }
@@ -46,6 +48,7 @@ namespace PlayerStateCoordinator.States
 
         protected override Transition HandleErrorMessage(IErrorMessage errorMessage)
         {
+            Console.WriteLine("Got error messages, proceeding to strategy reset");
             return new ErrorTransition(GameStrategyInfo.PlayerGameStrategyBeginningState);
         }
 
