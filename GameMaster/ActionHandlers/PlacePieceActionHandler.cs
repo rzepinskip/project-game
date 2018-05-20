@@ -31,7 +31,7 @@ namespace GameMaster.ActionHandlers
                 return BoardData.Create(PlayerId, new GoalField[0]);
 
             var player = Board.Players[PlayerId];
-            var piece = player.Piece;
+            var piece = Board.Pieces[player.Piece.Id];
 
             if (Validate())
             {
@@ -41,18 +41,18 @@ namespace GameMaster.ActionHandlers
                 if (Board.IsLocationInTaskArea(player.Location))
                 {
                     piece.PlayerId = null;
+                    
 
                     var playerGoalField = Board[player.Location] as TaskField;
                     playerGoalField.PieceId = piece.Id;
 
                     var resultPiece = new Piece(piece.Id, PieceType.Unknown);
 
-                    return BoardData.Create(PlayerId, new[] { playerGoalField.Clone() }, new[] { resultPiece });
+                    return BoardData.Create(PlayerId, new[] { playerGoalField }, new[] { resultPiece });
 
                 }
                 else
                 {
-
                     Board.Pieces.Remove(piece.Id);
 
                     if (piece.Type == PieceType.Sham)
@@ -72,12 +72,11 @@ namespace GameMaster.ActionHandlers
 
                 var pieceInField = Board.Pieces[playerTaskField.PieceId.Value];
                 var resultPiece = new Piece(pieceInField.Id, PieceType.Unknown);
-                var holdingPiece = new Piece(piece.Id, PieceType.Unknown);
+                var holdingPiece = new Piece(piece.Id, PieceType.Unknown, piece.PlayerId);
 
 
                 return BoardData.Create(PlayerId, new[] { playerTaskField.Clone() }, new[] { resultPiece, holdingPiece });
             }
-
         }
     }
 }
