@@ -13,8 +13,10 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
     public class IsPlayerBlockedStrategyTransition : GameStrategyTransition
     {
         private readonly Random _directionGenerator;
-        private readonly State _fromState;
-        public IsPlayerBlockedStrategyTransition(GameStrategyInfo gameStrategyInfo, State fromState) : base(gameStrategyInfo)
+        private readonly GameStrategyState _fromState;
+
+        public IsPlayerBlockedStrategyTransition(GameStrategyInfo gameStrategyInfo, GameStrategyState fromState) : base(
+            gameStrategyInfo)
         {
             _directionGenerator = new Random();
             _fromState = fromState;
@@ -27,17 +29,14 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
                 var onlyTaskArea = false;
                 Randomize4WayDirection(GameStrategyInfo, onlyTaskArea, out var isAnyMoveAvailable);
                 if (isAnyMoveAvailable)
-                    switch (_fromState)
-                    {
-                        case InGoalAreaMovingToTaskStrategyState inGoalAreaMovingToTaskState:
-                            return new InGoalAreaMovingToTaskStrategyState(GameStrategyInfo);
-                        case MoveToPieceStrategyState moveToPieceState:
-                            return new MoveToPieceStrategyState(GameStrategyInfo);
-                        case MoveToUndiscoveredGoalStrategyState moveToUndiscoveredGoalState:
-                            return new MoveToUndiscoveredGoalStrategyState(GameStrategyInfo);
-                        default:
-                            throw new StrategyException(_fromState, "Unknown state");
-                    }
+                {
+                    Console.WriteLine($"PlayerBlocked returning to {_fromState}");
+                    if (_fromState.TransitionType == StateTransitionType.Immediate)
+                        throw new StrategyException(_fromState,
+                            "IsPlayerBlocked transition cannot proceed to Immediate state! - an error in designing strategy");
+                    return Activator.CreateInstance(_fromState.GetType(), GameStrategyInfo) as GameStrategyState;
+                }
+
                 return new DiscoverStrategyState(GameStrategyInfo);
             }
         }
@@ -58,22 +57,25 @@ namespace PlayerStateCoordinator.Transitions.GameStrategyTransitions
                     }
                     case InGoalAreaMovingToTaskStrategyState inGoalAreaMovingToTaskState:
                     case MoveToUndiscoveredGoalStrategyState moveToUndiscoveredGoalState:
+                    case InitialMoveAfterPlaceStrategyState initialMoveAfterPlaceStrategyState:
                         break;
-
                     default:
-                        throw new StrategyException(_fromState, "Unknown state");
+                        Console.WriteLine("Unexpeted state in PlayerBlocked transition");
+                        break;
                 }
 
                 direction = Randomize4WayDirection(GameStrategyInfo, onlyTaskArea, out var isAnyMoveAvailable);
                 if (!isAnyMoveAvailable)
+                {
                     message = new DiscoverRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId);
+                }
                 else
                 {
                     GameStrategyInfo.TargetLocation = GameStrategyInfo.CurrentLocation.GetNewLocation(direction);
                     message = new MoveRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId, direction);
                 }
 
-                return new List<IMessage>()
+                return new List<IMessage>
                 {
                     message
                 };

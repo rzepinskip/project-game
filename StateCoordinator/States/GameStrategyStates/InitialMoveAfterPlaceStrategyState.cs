@@ -16,7 +16,7 @@ namespace PlayerStateCoordinator.States.GameStrategyStates
         {
             Transitions = new Transition[]
             {
-                new IsPlayerBlockedStrategyTransition(gameStrategyInfo, this),
+                new IsPlayerBlockedStrategyTransition(gameStrategyInfo, new InGoalAreaMovingToTaskStrategyState(GameStrategyInfo)),
                 new IsInGoalWithoutPieceStrategyTransition(gameStrategyInfo)
             };
         }
