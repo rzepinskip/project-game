@@ -46,7 +46,7 @@ namespace Messaging
         [XmlIgnore] public Guid? PlayerGuid { get; set; }
 
         [XmlAttribute("playerGuid")]
-        protected Guid PlayerGuidValue
+        public Guid PlayerGuidValue
         {
             get
             {
@@ -56,15 +56,16 @@ namespace Messaging
             }
             set => PlayerGuid = value;
         }
-
-        [XmlIgnore] protected bool PlayerGuidValueSpecified => PlayerGuid.HasValue;
+        [XmlIgnore] public bool PlayerGuidValueSpecified => PlayerGuid.HasValue;
 
         public override IMessage Process(IGameMaster gameMaster)
         {
             var knowledgeExchangeManager = gameMaster.KnowledgeExchangeManager;
-            var promisedSenderId = PlayerGuid.HasValue ? gameMaster.Authorize(PlayerGuid.Value) : null;
-            if (!promisedSenderId.HasValue) return null;
-            var senderId = promisedSenderId.Value;
+            if (PlayerGuid == null) return null;
+            var playerGuidValue = PlayerGuid.Value;
+            var optionalSenderId = gameMaster.Authorize(playerGuidValue);
+            if (!optionalSenderId.HasValue) return null;
+            var senderId = optionalSenderId.Value;
             // stripping guid from data;
             PlayerGuid = null;
             if (knowledgeExchangeManager.IsExchangeInitiator(senderId, PlayerId))
