@@ -20,15 +20,16 @@ namespace Messaging.Tests
         public static IEnumerable<object[]> InitializationMessagesTypes =>
             new List<object[]>
             {
-                new object[] {typeof(KnowledgeExchangeRequestMessage) },
-                new object[] {typeof(RejectKnowledgeExchangeMessage) },
+                new object[] {"KnowledgeExchangeRequestMessage"},
+                new object[] {"RejectKnowledgeExchangeMessage"},
+                new object[] {"RejectKnowledgeExchangeMessageWithoutGuid"},
             };
 
         [Theory]
         [MemberData(nameof(InitializationMessagesTypes))]
-        public void TestKnowledgeExchangeMessages(Type messageType)
+        public void TestKnowledgeExchangeMessages(string filename)
         {
-            var filePath = $"Resources/KnowledgeExchangeMessages/{messageType.Name}.xml";
+            var filePath = $"Resources/KnowledgeExchangeMessages/{filename}.xml";
             var expected = File.ReadAllText(filePath);
 
             var message = MessageXmlSerializer.Deserialize(expected);

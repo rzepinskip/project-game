@@ -21,21 +21,21 @@ namespace Messaging.Tests
         public static IEnumerable<object[]> ActionMessagesTypes =>
             new List<object[]>
             {
-                new object[] {typeof(AuthorizeKnowledgeExchangeRequest) },
-                new object[] {typeof(DestroyPieceRequest) },
-                new object[] {typeof(DiscoverRequest) },
-                new object[] {typeof(MoveRequest) },
-                new object[] {typeof(PickUpPieceRequest) },
-                new object[] {typeof(PlacePieceRequest) },
-                new object[] {typeof(TestPieceRequest) },
-                new object[] {typeof(DataMessage) },
+                new object[] {"AuthorizeKnowledgeExchangeRequest"},
+                new object[] {"DestroyPieceRequest"},
+                new object[] {"DiscoverRequest"},
+                new object[] {"MoveRequest"},
+                new object[] {"PickUpPieceRequest"},
+                new object[] {"PlacePieceRequest"},
+                new object[] {"TestPieceRequest"},
+                new object[] {"DataMessage"},
             };
 
         [Theory]
         [MemberData(nameof(ActionMessagesTypes))]
-        public void TestActionMessages(Type messageType)
+        public void TestActionMessages(string filename)
         {
-            var filePath = $"Resources/ActionMessages/{messageType.Name}.xml";
+            var filePath = $"Resources/ActionMessages/{filename}.xml";
             var expected = File.ReadAllText(filePath);
 
             var message = MessageXmlSerializer.Deserialize(expected);

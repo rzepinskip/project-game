@@ -19,21 +19,21 @@ namespace Messaging.Tests
         public static IEnumerable<object[]> InitializationMessagesTypes =>
             new List<object[]>
             {
-                new object[] {typeof(GetGamesMessage)},
-                new object[] {typeof(JoinGameMessage)},
-                new object[] {typeof(RegisteredGamesMessage)},
-                new object[] {typeof(ConfirmGameRegistrationMessage) },
-                new object[] {typeof(ConfirmJoiningGameMessage) },
-                new object[] {typeof(GameMessage) },
-                new object[] {typeof(RejectGameRegistrationMessage) },
-                new object[] {typeof(RejectJoiningGame) }
+                new object[] {"GetGamesMessage"},
+                new object[] {"JoinGameMessage"},
+                new object[] {"RegisteredGamesMessage"},
+                new object[] {"ConfirmGameRegistrationMessage"},
+                new object[] {"ConfirmJoiningGameMessage" },
+                new object[] {"GameMessage"},
+                new object[] {"RejectGameRegistrationMessage"},
+                new object[] {"RejectJoiningGame"}
             };
 
         [Theory]
         [MemberData(nameof(InitializationMessagesTypes))]
-        public void TestInitializationMessages(Type messageType)
+        public void TestInitializationMessages(string filename)
         {
-            var filePath = $"Resources/InitializationMessages/{messageType.Name}.xml";
+            var filePath = $"Resources/InitializationMessages/{filename}.xml";
             var expected = File.ReadAllText(filePath);
 
             var message = MessageXmlSerializer.Deserialize(expected);
