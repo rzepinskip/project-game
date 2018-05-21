@@ -95,9 +95,7 @@ namespace Player
 
             PlayerBoard.Players[Id].Location = playerLocation;
 
-            Strategy playerStrategy = new NormalPlayerStrategy(this, PlayerBoard, PlayerGuid, GameId);
-            if (this.Role == PlayerType.Leader) 
-                playerStrategy = new LeaderStrategy(this, PlayerBoard, PlayerGuid, GameId);
+            Strategy playerStrategy = Strategy.Create(this, PlayerBoard, PlayerGuid, GameId);
             Console.WriteLine("Player has chosen " + playerStrategy.GetType().Name);
 
             _stateCoordinator.UpdatePlayerStrategyBeginningState(playerStrategy.GetBeginningState());

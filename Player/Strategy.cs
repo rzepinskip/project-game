@@ -16,5 +16,18 @@ namespace Player
         }
 
         public abstract State GetBeginningState();
+        public static Strategy Create(PlayerBase player, BoardBase board, Guid playerGuid, int gameId)
+        {
+            switch (player.Role)
+            {
+                case PlayerType.Member:
+                    return new NormalPlayerStrategy(player, board, playerGuid, gameId);
+                case PlayerType.Leader:
+                    return new LeaderStrategy(player, board, playerGuid, gameId);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(player.Role), player.Role, null);
+            }
+        }
     }
+
 }
