@@ -1,75 +1,101 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Common.Interfaces;
 
 namespace GameMaster
 {
     public class KnowledgeExchangeManager : IKnowledgeExchangeManager
     {
+        private readonly Object _managerLock;
         private readonly Dictionary<int, List<ExchangeState>> _initiatorsExchanges;
         private readonly Dictionary<int, List<ExchangeState>> _subjectsExchanges;
+        private readonly TimeSpan _knowledgeExchangeDelay;
 
-        public KnowledgeExchangeManager()
+        public KnowledgeExchangeManager(double knowledgeExchangeDelay = 10)
         {
             _initiatorsExchanges = new Dictionary<int, List<ExchangeState>>();
             _subjectsExchanges = new Dictionary<int, List<ExchangeState>>();
+            _knowledgeExchangeDelay = TimeSpan.FromMilliseconds(knowledgeExchangeDelay);
+            _managerLock = new Object();
         }
 
         public void AssignSubjectToInitiator(int initiatorId, int subjectId)
         {
             var exchange = new ExchangeState(initiatorId: initiatorId, subjectId: subjectId);
-            
-            if (!_initiatorsExchanges.ContainsKey(initiatorId))
-                _initiatorsExchanges.Add(initiatorId, new List<ExchangeState>());
-            if (!_subjectsExchanges.ContainsKey(subjectId))
-                _subjectsExchanges.Add(subjectId, new List<ExchangeState>());
+            lock (_managerLock)
+            {
+                if (!_initiatorsExchanges.ContainsKey(initiatorId))
+                    _initiatorsExchanges.Add(initiatorId, new List<ExchangeState>());
+                if (!_subjectsExchanges.ContainsKey(subjectId))
+                    _subjectsExchanges.Add(subjectId, new List<ExchangeState>());
 
-            _initiatorsExchanges[initiatorId].Add(exchange);
-            _subjectsExchanges[subjectId].Add(exchange);
+                _initiatorsExchanges[initiatorId].Add(exchange);
+                _subjectsExchanges[subjectId].Add(exchange);
+            }
         }
 
         public bool IsExchangeInitiator(int dataSenderId, int receiverId)
         {
-            if (_initiatorsExchanges.ContainsKey(dataSenderId))
+            var result = false;
+            lock (_managerLock)
             {
-                return _initiatorsExchanges[dataSenderId].Any(e => e.SubjectId == receiverId);
+                result = _initiatorsExchanges.ContainsKey(dataSenderId) && _initiatorsExchanges[dataSenderId].Any(e => e.SubjectId == receiverId);
             }
 
-            return false;
+            return result;
         }
 
-        public IMessage FinalizeExchange(int initiatorId, int subjectId)
+        public IMessage DelayedFinalizeExchange(int initiatorId, int subjectId)
         {
             //Console.WriteLine($"{initiatorId} with {subjectId} succesful exchange");
-            var exchange = _initiatorsExchanges[initiatorId].First(e => e.SubjectId == subjectId);
-            _initiatorsExchanges[initiatorId].Remove(exchange);
-            if (!_subjectsExchanges[subjectId].Remove(exchange))
-                throw new NotSupportedException();
+            ExchangeState exchange;
+            lock (_managerLock)
+            {
+                exchange = _initiatorsExchanges[initiatorId].First(e => e.SubjectId == subjectId);
+                _initiatorsExchanges[initiatorId].Remove(exchange);
+                if (!_subjectsExchanges[subjectId].Remove(exchange))
+                    throw new NotSupportedException();
+            }
+            Task.Delay(_knowledgeExchangeDelay);
+            // Console.WriteLine($"Finalize exchange between player {initiatorId} and {subjectId}");
             return exchange.InitiatorData;
         }
 
         public void AttachDataToInitiator(IMessage responseWithData, int initiatorId, int subjectId)
         {
-            _initiatorsExchanges[initiatorId]
-                .First(e => e.InitiatorId == initiatorId 
-                            && e.SubjectId == subjectId)
-                .InitiatorData = responseWithData;
+
+            lock (_managerLock)
+            {
+                _initiatorsExchanges[initiatorId]
+                    .First(e => e.InitiatorId == initiatorId 
+                                && e.SubjectId == subjectId)
+                    .InitiatorData = responseWithData;
+            }
         }
 
         public bool HasMatchingInitiatorWithData(int senderId, int initiatorId)
         {
-            if (!_subjectsExchanges.ContainsKey(senderId))
-                return false;
+            var result = false;
+            lock (_managerLock)
+            {
+                if (_subjectsExchanges.ContainsKey(senderId))
+                    result = _subjectsExchanges[senderId].Any( e => e.InitiatorId == initiatorId && e.InitiatorData != null);
+            }
 
-            return _subjectsExchanges[senderId].Any( e => e.InitiatorId == initiatorId && e.InitiatorData != null);
+            return result;
         }
 
 
         public void HandleExchangeRejection(int subjectId, int initiatorId)
         {
-            _subjectsExchanges[subjectId].Remove(_subjectsExchanges[subjectId].First(e => e.InitiatorId == initiatorId && e.SubjectId == subjectId));
-            _initiatorsExchanges[initiatorId].Remove(_initiatorsExchanges[initiatorId].First(e => e.InitiatorId == initiatorId && e.SubjectId == subjectId));
+            lock (_managerLock)
+            {
+                _subjectsExchanges[subjectId].Remove(_subjectsExchanges[subjectId].First(e => e.InitiatorId == initiatorId && e.SubjectId == subjectId));
+                _initiatorsExchanges[initiatorId].Remove(_initiatorsExchanges[initiatorId].First(e => e.InitiatorId == initiatorId && e.SubjectId == subjectId));
+            }
         }
     }
 }

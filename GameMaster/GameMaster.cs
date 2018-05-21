@@ -34,7 +34,7 @@ namespace GameMaster
             _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
 
             VerboseLogger = new VerboseLogger(LogManager.GetCurrentClassLogger(), loggingMode);
-            KnowledgeExchangeManager = new KnowledgeExchangeManager();
+            KnowledgeExchangeManager = new KnowledgeExchangeManager(_messagingHandler.KnowledgeExchangeDelay);
             HostNewGame();
         }
 
@@ -129,7 +129,7 @@ namespace GameMaster
         public void StartGame()
         {
             _messagingHandler.StartListeningToRequests(_playerGuidToId.Keys);
-            KnowledgeExchangeManager = new KnowledgeExchangeManager();
+            KnowledgeExchangeManager = new KnowledgeExchangeManager(_messagingHandler.KnowledgeExchangeDelay);
             _actionHandler = new ActionHandlerDispatcher(Board, KnowledgeExchangeManager);
 
             var boardInfo = new BoardInfo(Board.Width, Board.TaskAreaSize, Board.GoalAreaSize);

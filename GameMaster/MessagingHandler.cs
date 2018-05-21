@@ -124,5 +124,7 @@ namespace GameMaster
             _hostNewGame();
 
         }
+
+        public double KnowledgeExchangeDelay => _actionCosts.KnowledgeExchangeDelay;
     }
 }

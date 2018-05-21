@@ -7,6 +7,6 @@
         bool HasMatchingInitiatorWithData(int senderId, int initiatorId);
         void HandleExchangeRejection(int subjectId, int initiatorId);
         bool IsExchangeInitiator(int senderId, int receiverId);
-        IMessage FinalizeExchange(int initiatorId, int subjectId);
+        IMessage DelayedFinalizeExchange(int initiatorId, int subjectId);
     }
 }
