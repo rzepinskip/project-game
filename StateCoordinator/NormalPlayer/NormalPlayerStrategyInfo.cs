@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using Common;
 using Common.BoardObjects;
+using PlayerStateCoordinator.Common;
 
-namespace PlayerStateCoordinator.Common
+namespace PlayerStateCoordinator.NormalPlayer
 {
     public class NormalPlayerStrategyInfo : GamePlayStrategyInfo
     {
