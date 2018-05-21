@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using Common;
 using Common.Interfaces;
@@ -20,13 +21,13 @@ namespace CommunicationServer
 
         public CommunicationServer(IMessageDeserializer messageDeserializer, TimeSpan keepAliveTimeout, int port,
             IErrorsMessagesFactory
-                errorsMessagesFactory, LoggingMode loggingMode)
+                errorsMessagesFactory, LoggingMode loggingMode, IPAddress address)
         {
             VerboseLogger = new VerboseLogger(LogManager.GetCurrentClassLogger(), loggingMode);
 
             _errorsMessagesFactory = errorsMessagesFactory;
             _socketListener = new AsynchronousSocketListener(port, keepAliveTimeout,
-                messageDeserializer, HandleMessage
+                messageDeserializer, HandleMessage, address
             );
             _communicationRouter = new CommunicationRouter();
             new Thread(() => _socketListener.StartListening(HandleConnectionError)).Start();

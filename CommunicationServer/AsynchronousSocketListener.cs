@@ -23,9 +23,10 @@ namespace CommunicationServer
         private readonly Dictionary<int, ITcpConnection> _connectionIdToTcpConnection;
         private Action<CommunicationException> _connectionExceptionHandler;
         private int _nextConnectionId;
+        private IPAddress _address;
 
         public AsynchronousSocketListener(int port, TimeSpan keepAliveTimeout,
-            IMessageDeserializer messageDeserializer, Action<IMessage, int> messageHandler)
+            IMessageDeserializer messageDeserializer, Action<IMessage, int> messageHandler, IPAddress address)
         {
             _connectionIdToTcpConnection = new Dictionary<int, ITcpConnection>();
             _port = port;
@@ -33,6 +34,7 @@ namespace CommunicationServer
             _messageHandler = messageHandler;
             _messageDeserializer = messageDeserializer;
             _keepAliveTimeout = keepAliveTimeout;
+            _address = address;
         }
 
         public void Send(IMessage message, int connectionId)
@@ -57,12 +59,10 @@ namespace CommunicationServer
 
         public void StartListening(Action<CommunicationException> connectionExceptionHandler)
         {
-            var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-            var ipAddress = ipHostInfo.AddressList[0];
-            var localEndPoint = new IPEndPoint(ipAddress, _port);
+            var localEndPoint = new IPEndPoint(_address, _port);
             _connectionExceptionHandler = connectionExceptionHandler;
 
-            var listeningSocket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            var listeningSocket = new Socket(_address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             try
             {
                 listeningSocket.Bind(localEndPoint);
