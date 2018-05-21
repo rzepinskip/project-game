@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using Common;
 using Common.Interfaces;
 using Messaging.InitializationMessages;
@@ -13,6 +15,8 @@ namespace PlayerStateCoordinator
     public class StateCoordinator
     {
         private readonly GameInitializationInfo _gameInitializationInfo;
+        private Timer _stateTimeoutTimer;
+        private readonly List<State> _lastStates = new List<State>();
 
         public StateCoordinator(string gameName, TeamColor preferredTeam, PlayerType preferredRole)
         {
@@ -20,10 +24,20 @@ namespace PlayerStateCoordinator
             CurrentState = new GetGamesState(_gameInitializationInfo);
         }
 
-        public State CurrentState { get; set; }
+        private State _currentState;
+        public State CurrentState
+        {
+            get => _currentState;
+            set
+            {
+                _lastStates.Add(value);
+                _currentState = value;
+            }
+        }
 
         public IMessage Start()
         {
+            _stateTimeoutTimer = new Timer(CheckForInactivity, null, TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(30));
             return new GetGamesMessage();
         }
 
@@ -45,8 +59,8 @@ namespace PlayerStateCoordinator
             catch (StrategyException strategyException)
             {
                 Console.WriteLine(strategyException.PrintFull());
-                CurrentState = _gameInitializationInfo.PlayerGameStrategyBeginningState;
-                messagesToSend = new List<IMessage>();
+                ResetToInitState();
+                return new List<IMessage>();
             }
 
             return messagesToSend;
@@ -70,6 +84,30 @@ namespace PlayerStateCoordinator
         public void NotifyAboutGameEnd()
         {
             _gameInitializationInfo.IsGameRunning = false;
+            _stateTimeoutTimer.Dispose();
+        }
+
+        private void CheckForInactivity(object state)
+        {
+            const int checkedItemsCount = 30;
+            var lastXStates = _lastStates.TakeLast(checkedItemsCount).ToList();
+
+            if (_lastStates.Count >= checkedItemsCount && lastXStates.TrueForAll(i => i.Equals(lastXStates.FirstOrDefault())))
+            {
+                ResetToInitState();
+            }
+        }
+
+        private void ResetToInitState()
+        {
+            if (CurrentState is GameInitializationState)
+                CurrentState = _gameInitializationInfo.PlayerGameInitializationBeginningState;
+            else if (CurrentState is GameStrategyState)
+                CurrentState = _gameInitializationInfo.PlayerGameStrategyBeginningState;
+
+            _lastStates.Clear();
+
+            Console.WriteLine($"Strategy error - resetting back to state {CurrentState.GetType().Name}");
         }
     }
 }
