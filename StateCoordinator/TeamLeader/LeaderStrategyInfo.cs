@@ -7,8 +7,7 @@ namespace PlayerStateCoordinator.TeamLeader
 {
     public class LeaderStrategyInfo : GamePlayStrategyInfo
     {
-
-        protected LeaderStrategyInfo(BoardBase board, int playerId, Guid playerGuid, int gameId, TeamColor team) : base(board, playerId, playerGuid, gameId, team)
+        public LeaderStrategyInfo(BoardBase board, int playerId, Guid playerGuid, int gameId, TeamColor team) : base(board, playerId, playerGuid, gameId, team)
         {
         }
     }
