@@ -7,14 +7,14 @@ namespace PlayerStateCoordinator.TeamLeader.States
 {
     public class MovingTowardsEnemyGoalAreaStrategyState : LeaderStrategyState
     {
-        public MovingTowardsEnemyGoalAreaStrategyState(GameStrategyInfo gameStrategyInfo) : base(
-            StateTransitionType.Triggered, gameStrategyInfo)
+        public MovingTowardsEnemyGoalAreaStrategyState(LeaderStrategyInfo leaderStrategyInfo) : base(
+            StateTransitionType.Triggered, leaderStrategyInfo)
         {
             Transitions = new Transition[]
             {
-                new IsPlayerBlockedStrategyTransition(GameStrategyInfo, this),
-                new NearEnemyGoalAreaTransition(GameStrategyInfo),
-                new FarFromEnemyGoalAreaTransition(GameStrategyInfo)
+                new IsPlayerBlockedStrategyTransition(leaderStrategyInfo, this),
+                new NearEnemyGoalAreaTransition(leaderStrategyInfo),
+                new FarFromEnemyGoalAreaTransition(leaderStrategyInfo)
             };
         }
     }

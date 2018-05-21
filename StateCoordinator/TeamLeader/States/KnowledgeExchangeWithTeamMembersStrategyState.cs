@@ -6,16 +6,16 @@ namespace PlayerStateCoordinator.TeamLeader.States
 {
     public class KnowledgeExchangeWithTeamMembersStrategyState : LeaderStrategyState
     {
-        public KnowledgeExchangeWithTeamMembersStrategyState(GameStrategyInfo gameStrategyInfo) : base(
-            StateTransitionType.Triggered, gameStrategyInfo)
+        public KnowledgeExchangeWithTeamMembersStrategyState(LeaderStrategyInfo leaderStrategyInfo) : base(
+            StateTransitionType.Triggered, leaderStrategyInfo)
         {
             Transitions = new Transition[0];
         }
 
         protected override bool IsExchangeWantedWithPlayer(int initiatorId)
         {
-            bool isExchangeWanted = GameStrategyInfo.Board.Players[initiatorId].Team == GameStrategyInfo.Team;
-            Console.WriteLine($" {GameStrategyInfo.Team} {GameStrategyInfo.PlayerId} exchange for initiator {initiatorId} {GameStrategyInfo.Board.Players[initiatorId].Team} wanted {isExchangeWanted}");
+            bool isExchangeWanted = PlayerStrategyInfo.Board.Players[initiatorId].Team == PlayerStrategyInfo.Team;
+            Console.WriteLine($" {PlayerStrategyInfo.Team} {PlayerStrategyInfo.PlayerId} exchange for initiator {initiatorId} {PlayerStrategyInfo.Board.Players[initiatorId].Team} wanted {isExchangeWanted}");
             return isExchangeWanted;
         }
     }

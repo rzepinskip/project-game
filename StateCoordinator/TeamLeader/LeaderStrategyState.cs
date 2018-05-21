@@ -6,7 +6,7 @@ namespace PlayerStateCoordinator.TeamLeader
     public class LeaderStrategyState : GamePlayStrategyState
     {
         public LeaderStrategyState(StateTransitionType transitionType,
-            GameStrategyInfo gameStrategyInfo) : base(transitionType, gameStrategyInfo)
+            LeaderStrategyInfo playerStrategyInfo) : base(transitionType, playerStrategyInfo)
         {
         }
 

@@ -6,13 +6,13 @@ namespace PlayerStateCoordinator.TeamLeader.States
 {
     public class InitLeaderStrategyState : LeaderStrategyState
     {
-        public InitLeaderStrategyState(GameStrategyInfo gameStrategyInfo) : base(StateTransitionType.Immediate,
-            gameStrategyInfo)
+        public InitLeaderStrategyState(LeaderStrategyInfo leaderStrategyInfo) : base(StateTransitionType.Immediate,
+            leaderStrategyInfo)
         {
             Transitions = new Transition[]
             {
-                new NearEnemyGoalAreaTransition(gameStrategyInfo),
-                new FarFromEnemyGoalAreaTransition(GameStrategyInfo)
+                new NearEnemyGoalAreaTransition(leaderStrategyInfo),
+                new FarFromEnemyGoalAreaTransition(leaderStrategyInfo)
             };
         }
     }
