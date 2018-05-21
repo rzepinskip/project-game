@@ -11,7 +11,7 @@ namespace Player
     public abstract class Strategy
     {
         protected NormalPlayerStrategyState BeginningState;
-        protected GameStrategyInfo GameStrategyInfo;
+        protected NormalPlayerStrategyInfo NormalPlayerStrategyInfo;
 
         protected Strategy(PlayerBase player, BoardBase board, Guid playerGuid, int gameId)
         {
@@ -26,7 +26,7 @@ namespace Player
 
             undiscoveredGoalFields.Shuffle();
 
-            GameStrategyInfo = new GameStrategyInfo(board, player.Id, playerGuid, gameId, player.Team,
+            NormalPlayerStrategyInfo = new NormalPlayerStrategyInfo(board, player.Id, playerGuid, gameId, player.Team,
                 undiscoveredGoalFields, new Location(board.Width / 2, board.GoalAreaSize + 1));
         }
 

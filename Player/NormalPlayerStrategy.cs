@@ -12,7 +12,7 @@ namespace Player
 
         public NormalPlayerStrategy(PlayerBase player, BoardBase board, Guid playerGuid, int gameId) :base(player, board, playerGuid, gameId)
         {
-            BeginningState = new InitStrategyState(GameStrategyInfo);
+            BeginningState = new InitStrategyState(NormalPlayerStrategyInfo);
         }
 
         public override State GetBeginningState()

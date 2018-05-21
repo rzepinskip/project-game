@@ -9,16 +9,16 @@ namespace PlayerStateCoordinator.Common.States
 {
     public abstract class GamePlayStrategyState : State
     {
-        protected readonly GameStrategyInfo GameStrategyInfo;
+        protected readonly GamePlayStrategyInfo PlayerStrategyInfo;
 
         protected GamePlayStrategyState(StateTransitionType transitionType,
-            GameStrategyInfo gameStrategyInfo) : base(transitionType, gameStrategyInfo)
+            GamePlayStrategyInfo playerStrategyInfo) : base(transitionType, playerStrategyInfo)
         {
-            GameStrategyInfo = gameStrategyInfo;
+            PlayerStrategyInfo = playerStrategyInfo;
         }
         protected virtual bool IsExchangeWantedWithPlayer(int initiatorId)
         {
-            return GameStrategyInfo.Board.Players[initiatorId].Team == GameStrategyInfo.Team;
+            return PlayerStrategyInfo.Board.Players[initiatorId].Team == PlayerStrategyInfo.Team;
         }
 
         protected override Transition HandleRequestMessage(IRequestMessage requestMessage)
@@ -33,13 +33,13 @@ namespace PlayerStateCoordinator.Common.States
                 var initiatorId = knowledgeExchangeRequest.SenderPlayerId;
                 //Console.WriteLine($"Player #{initiatorId} requested communication in state {this}");
                 IMessage knowledgeExchangeResponse =
-                    new RejectKnowledgeExchangeMessage(GameStrategyInfo.PlayerId, initiatorId, GameStrategyInfo.PlayerGuid);
+                    new RejectKnowledgeExchangeMessage(PlayerStrategyInfo.PlayerId, initiatorId, PlayerStrategyInfo.PlayerGuid);
 
                 if (IsExchangeWantedWithPlayer(initiatorId))
                     knowledgeExchangeResponse =
                         DataMessage.FromBoardData(
-                            GameStrategyInfo.Board.ToBoardData(GameStrategyInfo.PlayerId, initiatorId), false,
-                            GameStrategyInfo.PlayerGuid);
+                            PlayerStrategyInfo.Board.ToBoardData(PlayerStrategyInfo.PlayerId, initiatorId), false,
+                            PlayerStrategyInfo.PlayerGuid);
 
                 return new LoopbackTransition(this, new List<IMessage> {knowledgeExchangeResponse});
             }
@@ -57,7 +57,7 @@ namespace PlayerStateCoordinator.Common.States
         protected override Transition HandleErrorMessage(IErrorMessage errorMessage)
         {
             Console.WriteLine("Got error messages, proceeding to strategy reset");
-            return new ErrorTransition(GameStrategyInfo.PlayerGameStrategyBeginningState);
+            return new ErrorTransition(PlayerStrategyInfo.PlayerGameStrategyBeginningState);
         }
 
         protected override Transition HandleNoMatchingTransitionCase()
