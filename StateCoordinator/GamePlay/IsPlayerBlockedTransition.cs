@@ -54,6 +54,7 @@ namespace PlayerStateCoordinator.GamePlay
         protected abstract GamePlayStrategyState GetRecoveryFromBlockedState();
 
         protected abstract GamePlayStrategyState GetFromState();
+        protected abstract bool IsFromStateOnlyInTaskArea(GamePlayStrategyState fromState);
 
         public override IEnumerable<IMessage> Message
         {
@@ -83,22 +84,7 @@ namespace PlayerStateCoordinator.GamePlay
 
         private Direction Randomize4WayDirection(GamePlayStrategyInfo strategyInfo)
         {
-            var onlyTaskArea = false;
-            switch (FromState)
-            {
-                case MoveToPieceStrategyState moveToPieceState:
-                {
-                    onlyTaskArea = true;
-                    break;
-                }
-                case InGoalAreaMovingToTaskStrategyState inGoalAreaMovingToTaskState:
-                case MoveToUndiscoveredGoalStrategyState moveToUndiscoveredGoalState:
-                case InitialMoveAfterPlaceStrategyState initialMoveAfterPlaceStrategyState:
-                    break;
-                default:
-                    Console.WriteLine("Unexpeted state in PlayerBlocked transition");
-                    break;
-            }
+            var onlyTaskArea = IsFromStateOnlyInTaskArea(FromState);
 
             _isAnyMoveAvailable = true;
             var currentLocation = GamePlayStrategyInfo.CurrentLocation;

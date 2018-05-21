@@ -23,5 +23,27 @@ namespace PlayerStateCoordinator.GamePlay.NormalPlayer.Transitions
             return Activator.CreateInstance(FromState.GetType(),
                 GamePlayStrategyInfo) as NormalPlayerStrategyState;
         }
+
+        protected override bool IsFromStateOnlyInTaskArea(GamePlayStrategyState fromState)
+        {
+            var onlyTaskArea = false;
+            switch (FromState)
+            {
+                case MoveToPieceStrategyState moveToPieceState:
+                {
+                    onlyTaskArea = true;
+                    break;
+                }
+                case InGoalAreaMovingToTaskStrategyState inGoalAreaMovingToTaskState:
+                case MoveToUndiscoveredGoalStrategyState moveToUndiscoveredGoalState:
+                case InitialMoveAfterPlaceStrategyState initialMoveAfterPlaceStrategyState:
+                    break;
+                default:
+                    Console.WriteLine("Unexpeted state in PlayerBlocked transition");
+                    break;
+            }
+
+            return onlyTaskArea;
+        }
     }
 }

@@ -26,5 +26,20 @@ namespace PlayerStateCoordinator.GamePlay.TeamLeader.Transitions
                 GamePlayStrategyInfo) as LeaderStrategyState;
 
         }
+
+        protected override bool IsFromStateOnlyInTaskArea(GamePlayStrategyState fromState)
+        {
+            switch (FromState)
+            {
+                case InitLeaderStrategyState initLeaderStrategyState:
+                case MovingTowardsEnemyGoalAreaStrategyState movingTowardsEnemyGoalAreaStrategyState:
+                case KnowledgeExchangeWithTeamMembersStrategyState knowledgeExchangeWithTeamMembersStrategyState :
+                    break;
+                default:
+                    Console.WriteLine("Unexpeted state in PlayerBlocked transition");
+                    break;
+            }
+            return false;
+        }
     }
 }
