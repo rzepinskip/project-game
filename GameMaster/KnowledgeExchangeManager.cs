@@ -14,7 +14,7 @@ namespace GameMaster
         private readonly Dictionary<int, List<ExchangeState>> _subjectsExchanges;
         private readonly TimeSpan _knowledgeExchangeDelay;
 
-        public KnowledgeExchangeManager(double knowledgeExchangeDelay)
+        public KnowledgeExchangeManager(double knowledgeExchangeDelay = 10)
         {
             _initiatorsExchanges = new Dictionary<int, List<ExchangeState>>();
             _subjectsExchanges = new Dictionary<int, List<ExchangeState>>();
