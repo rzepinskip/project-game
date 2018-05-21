@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 using Messaging.ActionsMessages;
 using Messaging.ErrorsMessages;
@@ -13,6 +16,7 @@ namespace Messaging.Serialization
     public class ExtendedMessageXmlDeserializer : ExtendedXmlSerializer
     {
         private readonly Dictionary<string, XmlSerializer> _serializers;
+        private readonly string _schemaFilePath =  Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "./Serialization/TheProjectGameCommunication.xsd");
 
         public ExtendedMessageXmlDeserializer(string xmlNamespace) : base(xmlNamespace)
         {
@@ -141,7 +145,7 @@ namespace Messaging.Serialization
             Message message = null;
 
             if (document.Root != null)
-                message = serializer.Deserialize(document.Root.CreateReader()) as Message;
+                message = DeserializeAndValidate(document.Root.CreateReader(), serializer);
 
             return message;
         }
@@ -150,6 +154,47 @@ namespace Messaging.Serialization
         {
             var node = document.Root;
             return node?.Name.LocalName;
+        }
+
+        private Message DeserializeAndValidate(XmlReader xmlReader, XmlSerializer serializer)
+        {
+            var schemas = new XmlSchemaSet();
+            schemas.Add(DefaultNamespace, _schemaFilePath);
+
+            Exception firstException = null;
+
+            var settings = new XmlReaderSettings
+            {
+                Schemas = schemas,
+                ValidationType = ValidationType.Schema,
+                ValidationFlags =
+                    XmlSchemaValidationFlags.ProcessIdentityConstraints |
+                    XmlSchemaValidationFlags.ReportValidationWarnings
+            };
+            settings.ValidationEventHandler +=
+                delegate(object sender, ValidationEventArgs args)
+                {
+                    if (args.Severity == XmlSeverityType.Warning)
+                    {
+                        Console.WriteLine(args.Message);
+                    }
+                    else
+                    {
+                        if (firstException == null)
+                            firstException = args.Exception;
+
+                        Console.WriteLine(args.Exception.ToString());
+                    }
+                };
+
+            var message = serializer.Deserialize(xmlReader) as Message;
+
+            if (firstException != null)
+            {
+                throw firstException;
+            }
+
+            return message;
         }
     }
 }
