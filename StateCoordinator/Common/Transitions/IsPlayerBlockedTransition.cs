@@ -4,22 +4,21 @@ using ClientsCommon.ActionAvailability.AvailabilityChain;
 using Common;
 using Common.Interfaces;
 using Messaging.Requests;
-using PlayerStateCoordinator.Common;
 using PlayerStateCoordinator.Common.States;
-using PlayerStateCoordinator.Common.Transitions;
+using PlayerStateCoordinator.NormalPlayer;
 using PlayerStateCoordinator.NormalPlayer.States;
 using PlayerStateCoordinator.TeamLeader;
 
-namespace PlayerStateCoordinator.NormalPlayer.Transitions
+namespace PlayerStateCoordinator.Common.Transitions
 {
-    public class IsPlayerBlockedStrategyTransition : GameStrategyTransition
+    public abstract class IsPlayerBlockedTransition : GameStrategyTransition
     {
         private readonly Random _directionGenerator;
-        private readonly GamePlayStrategyState _fromState;
+        protected readonly GamePlayStrategyState _fromState;
         private Direction? _chosenDirection;
         private bool _isAnyMoveAvailable;
 
-        public IsPlayerBlockedStrategyTransition(GamePlayStrategyInfo gamePlayStrategyInfo,
+        public IsPlayerBlockedTransition(GamePlayStrategyInfo gamePlayStrategyInfo,
             GamePlayStrategyState fromState)
             : base(
                 gamePlayStrategyInfo)
@@ -41,26 +40,21 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
                     if (_fromState.TransitionType == StateTransitionType.Immediate)
                         throw new StrategyException(_fromState,
                             "IsPlayerBlocked transition cannot proceed to Immediate state! - an error in designing strategy");
-                    if (_fromState is NormalPlayerStrategyState)
-                    {
-                        Console.WriteLine("Recognized normal state");
-                        return Activator.CreateInstance(_fromState.GetType(),
-                            GamePlayStrategyInfo) as NormalPlayerStrategyState;
-                    }
+                    
 
-                    if (_fromState is LeaderStrategyState)
-                    {
-                        Console.WriteLine("Recognized leader state");
-                        return Activator.CreateInstance(_fromState.GetType(),
-                            GamePlayStrategyInfo) as LeaderStrategyState;
-                    }
+                    Console.WriteLine("Recognized normal state");
+
+                    return GetFromState();
+
                 }
-
-                throw new NotSupportedException();
-
                 //return new DiscoverStrategyState(GamePlayStrategyInfo);
+                return GetRecoveryFromBlockedState();
             }
         }
+
+        protected abstract GamePlayStrategyState GetRecoveryFromBlockedState();
+
+        protected abstract GamePlayStrategyState GetFromState();
 
         public override IEnumerable<IMessage> Message
         {
