@@ -35,7 +35,7 @@ namespace Messaging.InitializationMessages
 
         public override void Process(ICommunicationServer cs, int id)
         {
-            throw new NotImplementedException("Should deregister game now");
+            cs.DeregisterGame(id);
         }
 
         public override string ToLog()

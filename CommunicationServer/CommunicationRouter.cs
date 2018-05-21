@@ -67,9 +67,9 @@ namespace CommunicationServer
             _gameIdToGameInfo[gameId] = info;
         }
 
-        public void DeregisterGame(int gameId)
+        public void DeregisterGame(int connectionId)
         {
-            _gameIdToGameInfo.Remove(gameId);
+            _gameIdToGameInfo.Remove(GetGameIdFor(connectionId));
         }
 
         public void AssignGameIdToPlayerId(int gameId, int playerId)
