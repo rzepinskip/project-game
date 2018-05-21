@@ -9,24 +9,24 @@ using PlayerStateCoordinator.NormalPlayer.States;
 
 namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
-    public class IsOnFieldWithNoPieceStrategyTransition : GameStrategyTransition
+    public class IsOnFieldWithNoPieceStrategyTransition : NormalPlayerStrategyTransition
     {
-        public IsOnFieldWithNoPieceStrategyTransition(GameStrategyInfo gameStrategyInfo) : base(gameStrategyInfo)
+        public IsOnFieldWithNoPieceStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(normalPlayerStrategyInfo)
         {
         }
 
-        public override State NextState => new DiscoverStrategyState(GameStrategyInfo);
+        public override State NextState => new DiscoverStrategyState(NormalPlayerStrategyInfo);
 
         public override IEnumerable<IMessage> Message => new List<IMessage>
         {
-            new DiscoverRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId)
+            new DiscoverRequest(NormalPlayerStrategyInfo.PlayerGuid, NormalPlayerStrategyInfo.GameId)
         };
 
         public override bool IsPossible()
         {
-            var currentLocation = GameStrategyInfo.CurrentLocation;
+            var currentLocation = NormalPlayerStrategyInfo.CurrentLocation;
             var taskField =
-                GameStrategyInfo.Board[currentLocation] as TaskField;
+                NormalPlayerStrategyInfo.Board[currentLocation] as TaskField;
             var result = false;
             if (taskField != null)
             {

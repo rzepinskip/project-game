@@ -8,31 +8,31 @@ using PlayerStateCoordinator.NormalPlayer.States;
 
 namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
-    public class IsOnDesiredUndiscoveredGoalFieldStrategyTransition : GameStrategyTransition
+    public class IsOnDesiredUndiscoveredGoalFieldStrategyTransition : NormalPlayerStrategyTransition
     {
-        public IsOnDesiredUndiscoveredGoalFieldStrategyTransition(GameStrategyInfo gameStrategyInfo) : base(
-            gameStrategyInfo)
+        public IsOnDesiredUndiscoveredGoalFieldStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(
+            normalPlayerStrategyInfo)
         {
         }
 
-        public override State NextState => new ReportGoalFieldsStrategyState(GameStrategyInfo);
+        public override State NextState => new ReportGoalFieldsStrategyState(NormalPlayerStrategyInfo);
 
         public override IEnumerable<IMessage> Message
         {
             get
             {
-                GameStrategyInfo.UndiscoveredGoalFields.RemoveAt(0);
+                NormalPlayerStrategyInfo.UndiscoveredGoalFields.RemoveAt(0);
                 return new List<IMessage>
                 {
-                    new PlacePieceRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId)
+                    new PlacePieceRequest(NormalPlayerStrategyInfo.PlayerGuid, NormalPlayerStrategyInfo.GameId)
                 };
             }
         }
 
         public override bool IsPossible()
         {
-            var currentLocation = GameStrategyInfo.CurrentLocation;
-            var goalLocation = GameStrategyInfo.UndiscoveredGoalFields[0];
+            var currentLocation = NormalPlayerStrategyInfo.CurrentLocation;
+            var goalLocation = NormalPlayerStrategyInfo.UndiscoveredGoalFields[0];
             return currentLocation.Equals(goalLocation);
         }
     }

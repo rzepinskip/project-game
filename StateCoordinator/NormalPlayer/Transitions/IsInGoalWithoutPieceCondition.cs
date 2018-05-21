@@ -8,32 +8,32 @@ using PlayerStateCoordinator.NormalPlayer.States;
 
 namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
-    public class IsInGoalWithoutPieceStrategyTransition : GameStrategyTransition
+    public class IsInGoalWithoutPieceStrategyTransition : NormalPlayerStrategyTransition
     {
-        public IsInGoalWithoutPieceStrategyTransition(GameStrategyInfo gameStrategyInfo) : base(gameStrategyInfo)
+        public IsInGoalWithoutPieceStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(normalPlayerStrategyInfo)
         {
         }
 
-        public override State NextState => new InGoalAreaMovingToTaskStrategyState(GameStrategyInfo);
+        public override State NextState => new InGoalAreaMovingToTaskStrategyState(NormalPlayerStrategyInfo);
 
         public override IEnumerable<IMessage> Message
         {
             get
             {
-                var currentLocation = GameStrategyInfo.CurrentLocation;
-                var direction = currentLocation.DirectionToTask(GameStrategyInfo.Team);
-                GameStrategyInfo.TargetLocation = currentLocation.GetNewLocation(direction);
+                var currentLocation = NormalPlayerStrategyInfo.CurrentLocation;
+                var direction = currentLocation.DirectionToTask(NormalPlayerStrategyInfo.Team);
+                NormalPlayerStrategyInfo.TargetLocation = currentLocation.GetNewLocation(direction);
                 return new List<IMessage>
                 {
-                    new MoveRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId, direction)
+                    new MoveRequest(NormalPlayerStrategyInfo.PlayerGuid, NormalPlayerStrategyInfo.GameId, direction)
                 };
             }
         }
 
         public override bool IsPossible()
         {
-            var currentLocation = GameStrategyInfo.CurrentLocation;
-            return !GameStrategyInfo.Board.IsLocationInTaskArea(currentLocation);
+            var currentLocation = NormalPlayerStrategyInfo.CurrentLocation;
+            return !NormalPlayerStrategyInfo.Board.IsLocationInTaskArea(currentLocation);
         }
     }
 }

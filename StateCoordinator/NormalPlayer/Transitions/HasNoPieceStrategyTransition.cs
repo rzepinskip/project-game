@@ -8,22 +8,22 @@ using PlayerStateCoordinator.NormalPlayer.States;
 
 namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
-    public class HasNoPieceStrategyTransition : GameStrategyTransition
+    public class HasNoPieceStrategyTransition : NormalPlayerStrategyTransition
     {
-        public HasNoPieceStrategyTransition(GameStrategyInfo gameStrategyInfo) : base(gameStrategyInfo)
+        public HasNoPieceStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(normalPlayerStrategyInfo)
         {
         }
 
-        public override State NextState => new DiscoverStrategyState(GameStrategyInfo);
+        public override State NextState => new DiscoverStrategyState(NormalPlayerStrategyInfo);
 
         public override IEnumerable<IMessage> Message => new List<IMessage>
         {
-            new DiscoverRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId)
+            new DiscoverRequest(NormalPlayerStrategyInfo.PlayerGuid, NormalPlayerStrategyInfo.GameId)
         };
 
         public override bool IsPossible()
         {
-            var playerInfo = GameStrategyInfo.Board.Players[GameStrategyInfo.PlayerId];
+            var playerInfo = NormalPlayerStrategyInfo.Board.Players[NormalPlayerStrategyInfo.PlayerId];
             return playerInfo.Piece == null;
         }
     }

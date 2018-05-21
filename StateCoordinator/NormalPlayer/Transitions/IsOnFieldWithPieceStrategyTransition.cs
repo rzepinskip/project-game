@@ -9,23 +9,23 @@ using PlayerStateCoordinator.NormalPlayer.States;
 
 namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
-    internal class IsOnFieldWithPieceStrategyTransition : GameStrategyTransition
+    internal class IsOnFieldWithPieceStrategyTransition : NormalPlayerStrategyTransition
     {
-        public IsOnFieldWithPieceStrategyTransition(GameStrategyInfo gameStrategyInfo) : base(gameStrategyInfo)
+        public IsOnFieldWithPieceStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(normalPlayerStrategyInfo)
         {
         }
 
-        public override State NextState => new PickupPieceStrategyState(GameStrategyInfo);
+        public override State NextState => new PickupPieceStrategyState(NormalPlayerStrategyInfo);
 
         public override IEnumerable<IMessage> Message => new List<IMessage>
         {
-            new PickUpPieceRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId)
+            new PickUpPieceRequest(NormalPlayerStrategyInfo.PlayerGuid, NormalPlayerStrategyInfo.GameId)
         };
 
         public override bool IsPossible()
         {
-            var currentLocation = GameStrategyInfo.CurrentLocation;
-            var taskField = GameStrategyInfo.Board[currentLocation] as TaskField;
+            var currentLocation = NormalPlayerStrategyInfo.CurrentLocation;
+            var taskField = NormalPlayerStrategyInfo.Board[currentLocation] as TaskField;
             var result = false;
             if (taskField != null)
             {

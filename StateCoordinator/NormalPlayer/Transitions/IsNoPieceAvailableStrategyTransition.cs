@@ -11,16 +11,16 @@ using PlayerStateCoordinator.NormalPlayer.States;
 
 namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
-    public class IsNoPieceAvailableStrategyTransition : GameStrategyTransition
+    public class IsNoPieceAvailableStrategyTransition : NormalPlayerStrategyTransition
     {
         private readonly Random _directionGenerator;
 
-        public IsNoPieceAvailableStrategyTransition(GameStrategyInfo gameStrategyInfo) : base(gameStrategyInfo)
+        public IsNoPieceAvailableStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(normalPlayerStrategyInfo)
         {
             _directionGenerator = new Random();
         }
 
-        public override State NextState => new MoveToPieceStrategyState(GameStrategyInfo);
+        public override State NextState => new MoveToPieceStrategyState(NormalPlayerStrategyInfo);
 
         public override IEnumerable<IMessage> Message
         {
@@ -29,19 +29,19 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
                 var direction = _directionGenerator.Next() % 2 == 0
                     ? Direction.Left
                     : Direction.Right;
-                var currentLocation = GameStrategyInfo.CurrentLocation;
-                GameStrategyInfo.TargetLocation = currentLocation.GetNewLocation(direction);
+                var currentLocation = NormalPlayerStrategyInfo.CurrentLocation;
+                NormalPlayerStrategyInfo.TargetLocation = currentLocation.GetNewLocation(direction);
                 return new List<IMessage>
                 {
-                    new MoveRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId, direction)
+                    new MoveRequest(NormalPlayerStrategyInfo.PlayerGuid, NormalPlayerStrategyInfo.GameId, direction)
                 };
             }
         }
 
         public override bool IsPossible()
         {
-            var currentLocation = GameStrategyInfo.CurrentLocation;
-            var taskField = GameStrategyInfo.Board[currentLocation] as TaskField;
+            var currentLocation = NormalPlayerStrategyInfo.CurrentLocation;
+            var taskField = NormalPlayerStrategyInfo.Board[currentLocation] as TaskField;
             var result = false;
             if (taskField != null)
             {

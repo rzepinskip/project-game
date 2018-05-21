@@ -8,17 +8,17 @@ using PlayerStateCoordinator.NormalPlayer.States;
 
 namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
-    public class IsAbleToTestStrategyTransition : GameStrategyTransition
+    public class IsAbleToTestStrategyTransition : NormalPlayerStrategyTransition
     {
-        public IsAbleToTestStrategyTransition(GameStrategyInfo gameStrategyInfo) : base(gameStrategyInfo)
+        public IsAbleToTestStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(normalPlayerStrategyInfo)
         {
         }
 
-        public override State NextState => new TestPieceStrategyState(GameStrategyInfo);
+        public override State NextState => new TestPieceStrategyState(NormalPlayerStrategyInfo);
 
         public override IEnumerable<IMessage> Message => new List<IMessage>
         {
-            new TestPieceRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId)
+            new TestPieceRequest(NormalPlayerStrategyInfo.PlayerGuid, NormalPlayerStrategyInfo.GameId)
         };
 
         public override bool IsPossible()

@@ -11,13 +11,13 @@ using PlayerStateCoordinator.NormalPlayer.States;
 
 namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
-    public class MoveToPieceStrategyTransition : GameStrategyTransition
+    public class MoveToPieceStrategyTransition : NormalPlayerStrategyTransition
     {
-        public MoveToPieceStrategyTransition(GameStrategyInfo gameStrategyInfo) : base(gameStrategyInfo)
+        public MoveToPieceStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(normalPlayerStrategyInfo)
         {
         }
 
-        public override State NextState => new MoveToPieceStrategyState(GameStrategyInfo);
+        public override State NextState => new MoveToPieceStrategyState(NormalPlayerStrategyInfo);
 
         public override IEnumerable<IMessage> Message
         {
@@ -25,10 +25,10 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
             {
                 var directionToNearest = Direction.Left;
                 var distanceToNearest = int.MaxValue;
-                var currentLocation = GameStrategyInfo.CurrentLocation;
-                var boardWidth = GameStrategyInfo.Board.Width;
-                var boardHeight = GameStrategyInfo.Board.Height;
-                var board = GameStrategyInfo.Board;
+                var currentLocation = NormalPlayerStrategyInfo.CurrentLocation;
+                var boardWidth = NormalPlayerStrategyInfo.Board.Width;
+                var boardHeight = NormalPlayerStrategyInfo.Board.Height;
+                var board = NormalPlayerStrategyInfo.Board;
                 //New chain of resposibility, maybe (?)
                 if (new MoveAvailability().IsInsideBoard(currentLocation, Direction.Left, boardWidth,
                     boardHeight))
@@ -47,11 +47,11 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
                     CheckIfCloser(board, new Location(currentLocation.X, currentLocation.Y + 1), ref distanceToNearest,
                         Direction.Up, ref directionToNearest);
 
-                GameStrategyInfo.TargetLocation = currentLocation.GetNewLocation(directionToNearest);
+                NormalPlayerStrategyInfo.TargetLocation = currentLocation.GetNewLocation(directionToNearest);
 
                 return new List<IMessage>
                 {
-                    new MoveRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId, directionToNearest)
+                    new MoveRequest(NormalPlayerStrategyInfo.PlayerGuid, NormalPlayerStrategyInfo.GameId, directionToNearest)
                 };
             }
         }

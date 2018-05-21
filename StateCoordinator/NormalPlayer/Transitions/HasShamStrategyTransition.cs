@@ -9,24 +9,24 @@ using PlayerStateCoordinator.NormalPlayer.States;
 
 namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
-    public class HasShamStrategyTransition : GameStrategyTransition
+    public class HasShamStrategyTransition : NormalPlayerStrategyTransition
     {
-        public HasShamStrategyTransition(GameStrategyInfo gameStrategyInfo) : base(gameStrategyInfo)
+        public HasShamStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(normalPlayerStrategyInfo)
         {
         }
 
-        public override State NextState => new DestroyPieceStrategyState(GameStrategyInfo);
+        public override State NextState => new DestroyPieceStrategyState(NormalPlayerStrategyInfo);
 
         public override IEnumerable<IMessage> Message => new List<IMessage>
         {
-            new DestroyPieceRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId)
+            new DestroyPieceRequest(NormalPlayerStrategyInfo.PlayerGuid, NormalPlayerStrategyInfo.GameId)
         };
 
         public override bool IsPossible()
         {
-            var currentLocation = GameStrategyInfo.CurrentLocation;
-            var goalLocation = GameStrategyInfo.UndiscoveredGoalFields[0];
-            var playerInfo = GameStrategyInfo.Board.Players[GameStrategyInfo.PlayerId];
+            var currentLocation = NormalPlayerStrategyInfo.CurrentLocation;
+            var goalLocation = NormalPlayerStrategyInfo.UndiscoveredGoalFields[0];
+            var playerInfo = NormalPlayerStrategyInfo.Board.Players[NormalPlayerStrategyInfo.PlayerId];
             var piece = playerInfo.Piece;
             var result = false;
             if (piece != null && !currentLocation.Equals(goalLocation))

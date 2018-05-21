@@ -18,9 +18,9 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
         private readonly GamePlayStrategyState _fromState;
         private Direction? _chosenDirection;
         private bool _isAnyMoveAvailable;
-        public IsPlayerBlockedStrategyTransition(GameStrategyInfo gameStrategyInfo, GamePlayStrategyState fromState)
+        public IsPlayerBlockedStrategyTransition(GamePlayStrategyInfo gamePlayStrategyInfo, GamePlayStrategyState fromState)
             : base(
-                gameStrategyInfo)
+                gamePlayStrategyInfo)
         {
             _directionGenerator = new Random();
             _fromState = fromState;
@@ -33,7 +33,7 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
             {
                 if (!_chosenDirection.HasValue)
                 {
-                    _chosenDirection = Randomize4WayDirection(GameStrategyInfo);
+                    _chosenDirection = Randomize4WayDirection(GamePlayStrategyInfo);
                 }
 
                 if (_isAnyMoveAvailable)
@@ -46,18 +46,18 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
                     {
                         Console.WriteLine("Recognized normal state");
                         return Activator.CreateInstance(_fromState.GetType(),
-                            GameStrategyInfo) as NormalPlayerStrategyState;
+                            GamePlayStrategyInfo) as NormalPlayerStrategyState;
                     }
 
                     if (_fromState is LeaderStrategyState)
                     {
                         Console.WriteLine("Recognized leader state");
                         return Activator.CreateInstance(_fromState.GetType(),
-                            GameStrategyInfo) as LeaderStrategyState;
+                            GamePlayStrategyInfo) as LeaderStrategyState;
                     }
                 }
 
-                return new DiscoverStrategyState(GameStrategyInfo);
+                return new DiscoverStrategyState(GamePlayStrategyInfo);
             }
         }
 
@@ -67,18 +67,18 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
             {
                 if (!_chosenDirection.HasValue)
                 {
-                    _chosenDirection = Randomize4WayDirection(GameStrategyInfo);
+                    _chosenDirection = Randomize4WayDirection(GamePlayStrategyInfo);
                 }
 
                 var message = default(IMessage);
                 if (!_isAnyMoveAvailable)
                 {
-                    message = new DiscoverRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId);
+                    message = new DiscoverRequest(GamePlayStrategyInfo.PlayerGuid, GamePlayStrategyInfo.GameId);
                 }
                 else
                 {
-                    GameStrategyInfo.TargetLocation = GameStrategyInfo.CurrentLocation.GetNewLocation(_chosenDirection.Value);
-                    message = new MoveRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId, _chosenDirection.Value);
+                    GamePlayStrategyInfo.TargetLocation = GamePlayStrategyInfo.CurrentLocation.GetNewLocation(_chosenDirection.Value);
+                    message = new MoveRequest(GamePlayStrategyInfo.PlayerGuid, GamePlayStrategyInfo.GameId, _chosenDirection.Value);
                 }
 
                 return new List<IMessage>
@@ -88,7 +88,7 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
             }
         }
 
-        private Direction Randomize4WayDirection(GameStrategyInfo strategyInfo)
+        private Direction Randomize4WayDirection(GamePlayStrategyInfo strategyInfo)
         {
             var onlyTaskArea = false;
             switch (_fromState)
@@ -108,16 +108,16 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
             }
 
             _isAnyMoveAvailable = true;
-            var currentLocation = GameStrategyInfo.CurrentLocation;
-            var desiredLocation = GameStrategyInfo.TargetLocation;
+            var currentLocation = GamePlayStrategyInfo.CurrentLocation;
+            var desiredLocation = GamePlayStrategyInfo.TargetLocation;
             var numberOfDirections = Enum.GetNames(typeof(Direction)).Length;
             var directionValue = _directionGenerator.Next(numberOfDirections);
             var direction = (Direction) directionValue;
             var newLocation = currentLocation.GetNewLocation(direction);
             var checkDirectionsCounter = 0;
             while (desiredLocation.Equals(currentLocation.GetNewLocation(direction)) ||
-                   !new MoveAvailabilityChain(currentLocation, direction, GameStrategyInfo.Team, GameStrategyInfo.Board)
-                       .ActionAvailable() || onlyTaskArea && !GameStrategyInfo.Board.IsLocationInTaskArea(newLocation))
+                   !new MoveAvailabilityChain(currentLocation, direction, GamePlayStrategyInfo.Team, GamePlayStrategyInfo.Board)
+                       .ActionAvailable() || onlyTaskArea && !GamePlayStrategyInfo.Board.IsLocationInTaskArea(newLocation))
             {
                 directionValue = (directionValue + 1) % 4;
                 direction = (Direction) directionValue;
@@ -136,7 +136,7 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
 
         public override bool IsPossible()
         {
-            return !GameStrategyInfo.CurrentLocation.Equals(GameStrategyInfo.TargetLocation);
+            return !GamePlayStrategyInfo.CurrentLocation.Equals(GamePlayStrategyInfo.TargetLocation);
         }
     }
 }

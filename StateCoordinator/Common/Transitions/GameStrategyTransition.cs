@@ -3,11 +3,11 @@ namespace PlayerStateCoordinator.Common.Transitions
 {
     public abstract class GameStrategyTransition : Transition
     {
-        protected readonly GameStrategyInfo GameStrategyInfo;
+        protected readonly GamePlayStrategyInfo GamePlayStrategyInfo;
 
-        protected GameStrategyTransition(GameStrategyInfo gameStrategyInfo)
+        protected GameStrategyTransition(GamePlayStrategyInfo leaderStrategyInfo)
         {
-            GameStrategyInfo = gameStrategyInfo;
+            GamePlayStrategyInfo = leaderStrategyInfo;
         }
     }
 }

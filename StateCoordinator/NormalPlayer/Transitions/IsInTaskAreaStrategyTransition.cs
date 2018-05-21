@@ -8,23 +8,23 @@ using PlayerStateCoordinator.NormalPlayer.States;
 
 namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
-    public class IsInTaskAreaStrategyTransition : GameStrategyTransition
+    public class IsInTaskAreaStrategyTransition : NormalPlayerStrategyTransition
     {
-        public IsInTaskAreaStrategyTransition(GameStrategyInfo gameStrategyInfo) : base(gameStrategyInfo)
+        public IsInTaskAreaStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(normalPlayerStrategyInfo)
         {
         }
 
-        public override State NextState => new DiscoverStrategyState(GameStrategyInfo);
+        public override State NextState => new DiscoverStrategyState(NormalPlayerStrategyInfo);
 
         public override IEnumerable<IMessage> Message => new List<IMessage>
         {
-            new DiscoverRequest(GameStrategyInfo.PlayerGuid, GameStrategyInfo.GameId)
+            new DiscoverRequest(NormalPlayerStrategyInfo.PlayerGuid, NormalPlayerStrategyInfo.GameId)
         };
 
         public override bool IsPossible()
         {
-            var currentLocation = GameStrategyInfo.CurrentLocation;
-            return GameStrategyInfo.Board.IsLocationInTaskArea(currentLocation);
+            var currentLocation = NormalPlayerStrategyInfo.CurrentLocation;
+            return NormalPlayerStrategyInfo.Board.IsLocationInTaskArea(currentLocation);
         }
     }
 }

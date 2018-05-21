@@ -11,35 +11,35 @@ using PlayerStateCoordinator.NormalPlayer.States;
 
 namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
-    public class IsThereSomeoneToCommunicateWithStrategyTransition : GameStrategyTransition
+    public class IsThereSomeoneToCommunicateWithStrategyTransition : NormalPlayerStrategyTransition
     {
-        public IsThereSomeoneToCommunicateWithStrategyTransition(GameStrategyInfo gameStrategyInfo) : base(
-            gameStrategyInfo)
+        public IsThereSomeoneToCommunicateWithStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(
+            normalPlayerStrategyInfo)
         {
         }
 
-        public override State NextState => new InitialMoveAfterPlaceStrategyState(GameStrategyInfo);
+        public override State NextState => new InitialMoveAfterPlaceStrategyState(NormalPlayerStrategyInfo);
 
         public override IEnumerable<IMessage> Message
         {
             get
             {
-                var withPlayerId = GameStrategyInfo.Board.Players.Values
-                    .First(v => v.Id != GameStrategyInfo.PlayerId && v.Team == GameStrategyInfo.Team).Id;
+                var withPlayerId = NormalPlayerStrategyInfo.Board.Players.Values
+                    .First(v => v.Id != NormalPlayerStrategyInfo.PlayerId && v.Team == NormalPlayerStrategyInfo.Team).Id;
                 //Console.WriteLine($"Exchanging data with {withPlayerId}");
 
-                var knowledgeExchangeRequest = new AuthorizeKnowledgeExchangeRequest(GameStrategyInfo.PlayerGuid,
-                    GameStrategyInfo.GameId, withPlayerId);
+                var knowledgeExchangeRequest = new AuthorizeKnowledgeExchangeRequest(NormalPlayerStrategyInfo.PlayerGuid,
+                    NormalPlayerStrategyInfo.GameId, withPlayerId);
                 var dataMessage = DataMessage.FromBoardData(
-                    GameStrategyInfo.Board.ToBoardData(GameStrategyInfo.PlayerId, withPlayerId), false,
-                    GameStrategyInfo.PlayerGuid);
+                    NormalPlayerStrategyInfo.Board.ToBoardData(NormalPlayerStrategyInfo.PlayerId, withPlayerId), false,
+                    NormalPlayerStrategyInfo.PlayerGuid);
                 return new List<IMessage> {knowledgeExchangeRequest, dataMessage};
             }
         }
 
         public override bool IsPossible()
         {
-            var result = GameStrategyInfo.Board.Players.Count > 2 && GameStrategyInfo.IsTimeForExchange();
+            var result = NormalPlayerStrategyInfo.Board.Players.Count > 2 && NormalPlayerStrategyInfo.IsTimeForExchange();
 
             return result;
         }
