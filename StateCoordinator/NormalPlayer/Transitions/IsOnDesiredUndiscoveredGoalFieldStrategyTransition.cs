@@ -10,8 +10,9 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
     public class IsOnDesiredUndiscoveredGoalFieldStrategyTransition : NormalPlayerStrategyTransition
     {
-        public IsOnDesiredUndiscoveredGoalFieldStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(
-            normalPlayerStrategyInfo)
+        public IsOnDesiredUndiscoveredGoalFieldStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) :
+            base(
+                normalPlayerStrategyInfo)
         {
         }
 

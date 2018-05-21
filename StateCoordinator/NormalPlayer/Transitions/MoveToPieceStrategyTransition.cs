@@ -13,7 +13,8 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
     public class MoveToPieceStrategyTransition : NormalPlayerStrategyTransition
     {
-        public MoveToPieceStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(normalPlayerStrategyInfo)
+        public MoveToPieceStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(
+            normalPlayerStrategyInfo)
         {
         }
 
@@ -51,7 +52,8 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
 
                 return new List<IMessage>
                 {
-                    new MoveRequest(NormalPlayerStrategyInfo.PlayerGuid, NormalPlayerStrategyInfo.GameId, directionToNearest)
+                    new MoveRequest(NormalPlayerStrategyInfo.PlayerGuid, NormalPlayerStrategyInfo.GameId,
+                        directionToNearest)
                 };
             }
         }

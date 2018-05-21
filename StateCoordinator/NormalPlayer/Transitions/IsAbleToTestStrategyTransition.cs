@@ -10,7 +10,8 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
     public class IsAbleToTestStrategyTransition : NormalPlayerStrategyTransition
     {
-        public IsAbleToTestStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(normalPlayerStrategyInfo)
+        public IsAbleToTestStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(
+            normalPlayerStrategyInfo)
         {
         }
 

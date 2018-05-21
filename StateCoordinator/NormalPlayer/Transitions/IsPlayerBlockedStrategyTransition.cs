@@ -18,7 +18,9 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
         private readonly GamePlayStrategyState _fromState;
         private Direction? _chosenDirection;
         private bool _isAnyMoveAvailable;
-        public IsPlayerBlockedStrategyTransition(GamePlayStrategyInfo gamePlayStrategyInfo, GamePlayStrategyState fromState)
+
+        public IsPlayerBlockedStrategyTransition(GamePlayStrategyInfo gamePlayStrategyInfo,
+            GamePlayStrategyState fromState)
             : base(
                 gamePlayStrategyInfo)
         {
@@ -31,10 +33,7 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
         {
             get
             {
-                if (!_chosenDirection.HasValue)
-                {
-                    _chosenDirection = Randomize4WayDirection(GamePlayStrategyInfo);
-                }
+                if (!_chosenDirection.HasValue) _chosenDirection = Randomize4WayDirection(GamePlayStrategyInfo);
 
                 if (_isAnyMoveAvailable)
                 {
@@ -57,7 +56,9 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
                     }
                 }
 
-                return new DiscoverStrategyState(GamePlayStrategyInfo);
+                throw new NotSupportedException();
+
+                //return new DiscoverStrategyState(GamePlayStrategyInfo);
             }
         }
 
@@ -65,10 +66,7 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
         {
             get
             {
-                if (!_chosenDirection.HasValue)
-                {
-                    _chosenDirection = Randomize4WayDirection(GamePlayStrategyInfo);
-                }
+                if (!_chosenDirection.HasValue) _chosenDirection = Randomize4WayDirection(GamePlayStrategyInfo);
 
                 var message = default(IMessage);
                 if (!_isAnyMoveAvailable)
@@ -77,8 +75,10 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
                 }
                 else
                 {
-                    GamePlayStrategyInfo.TargetLocation = GamePlayStrategyInfo.CurrentLocation.GetNewLocation(_chosenDirection.Value);
-                    message = new MoveRequest(GamePlayStrategyInfo.PlayerGuid, GamePlayStrategyInfo.GameId, _chosenDirection.Value);
+                    GamePlayStrategyInfo.TargetLocation =
+                        GamePlayStrategyInfo.CurrentLocation.GetNewLocation(_chosenDirection.Value);
+                    message = new MoveRequest(GamePlayStrategyInfo.PlayerGuid, GamePlayStrategyInfo.GameId,
+                        _chosenDirection.Value);
                 }
 
                 return new List<IMessage>
@@ -116,8 +116,10 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
             var newLocation = currentLocation.GetNewLocation(direction);
             var checkDirectionsCounter = 0;
             while (desiredLocation.Equals(currentLocation.GetNewLocation(direction)) ||
-                   !new MoveAvailabilityChain(currentLocation, direction, GamePlayStrategyInfo.Team, GamePlayStrategyInfo.Board)
-                       .ActionAvailable() || onlyTaskArea && !GamePlayStrategyInfo.Board.IsLocationInTaskArea(newLocation))
+                   !new MoveAvailabilityChain(currentLocation, direction, GamePlayStrategyInfo.Team,
+                           GamePlayStrategyInfo.Board)
+                       .ActionAvailable() ||
+                   onlyTaskArea && !GamePlayStrategyInfo.Board.IsLocationInTaskArea(newLocation))
             {
                 directionValue = (directionValue + 1) % 4;
                 direction = (Direction) directionValue;

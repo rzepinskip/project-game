@@ -10,7 +10,8 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
     public class HasNoPieceStrategyTransition : NormalPlayerStrategyTransition
     {
-        public HasNoPieceStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(normalPlayerStrategyInfo)
+        public HasNoPieceStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(
+            normalPlayerStrategyInfo)
         {
         }
 

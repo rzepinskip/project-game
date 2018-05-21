@@ -11,6 +11,7 @@ namespace PlayerStateCoordinator.TeamLeader.Transitions
     public class FarFromEnemyGoalAreaTransition : LeaderStrategyTransition
     {
         private readonly LeaderStrategyInfo _leaderStrategyInfo;
+
         public FarFromEnemyGoalAreaTransition(LeaderStrategyInfo leaderStrategyInfo) : base(leaderStrategyInfo)
         {
             _leaderStrategyInfo = leaderStrategyInfo;
@@ -29,12 +30,12 @@ namespace PlayerStateCoordinator.TeamLeader.Transitions
                 return new List<IMessage>
                 {
                     new MoveRequest(LeaderStrategyInfo.PlayerGuid,
-                    LeaderStrategyInfo.GameId,
-                    direction)
+                        LeaderStrategyInfo.GameId,
+                        direction)
                 };
             }
         }
-    
+
 
         public override bool IsPossible()
         {

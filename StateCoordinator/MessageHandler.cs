@@ -14,7 +14,7 @@ namespace PlayerStateCoordinator
 
         public MessageHandler(Func<IRequestMessage, Transition> requestMessageHandler,
             Func<IResponseMessage, Transition> responseMessageHandler,
-            Func<IErrorMessage, Transition> errorMessageHandler, 
+            Func<IErrorMessage, Transition> errorMessageHandler,
             Func<IMessage, Transition> genericMessageHandler)
         {
             _requestMessageHandler = requestMessageHandler;

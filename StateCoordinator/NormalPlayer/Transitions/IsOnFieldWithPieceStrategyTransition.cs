@@ -11,7 +11,8 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
     internal class IsOnFieldWithPieceStrategyTransition : NormalPlayerStrategyTransition
     {
-        public IsOnFieldWithPieceStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(normalPlayerStrategyInfo)
+        public IsOnFieldWithPieceStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(
+            normalPlayerStrategyInfo)
         {
         }
 

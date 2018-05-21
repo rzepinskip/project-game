@@ -11,7 +11,8 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
     public class HasShamStrategyTransition : NormalPlayerStrategyTransition
     {
-        public HasShamStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(normalPlayerStrategyInfo)
+        public HasShamStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(
+            normalPlayerStrategyInfo)
         {
         }
 

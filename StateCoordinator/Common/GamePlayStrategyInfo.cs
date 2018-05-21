@@ -12,6 +12,7 @@ namespace PlayerStateCoordinator.Common
         public readonly int PlayerId;
         public readonly TeamColor Team;
         public Location TargetLocation;
+
         protected GamePlayStrategyInfo(BoardBase board, int playerId, Guid playerGuid, int gameId, TeamColor team)
         {
             Board = board;
@@ -20,6 +21,7 @@ namespace PlayerStateCoordinator.Common
             GameId = gameId;
             Team = team;
         }
+
         public Location CurrentLocation => Board.Players[PlayerId].Location;
     }
 }

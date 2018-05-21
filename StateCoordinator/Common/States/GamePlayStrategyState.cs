@@ -16,6 +16,7 @@ namespace PlayerStateCoordinator.Common.States
         {
             PlayerStrategyInfo = playerStrategyInfo;
         }
+
         protected virtual bool IsExchangeWantedWithPlayer(int initiatorId)
         {
             return PlayerStrategyInfo.Board.Players[initiatorId].Team == PlayerStrategyInfo.Team;
@@ -23,7 +24,8 @@ namespace PlayerStateCoordinator.Common.States
 
         protected override Transition HandleRequestMessage(IRequestMessage requestMessage)
         {
-            throw new InvalidOperationException($"Not expecting processing incoming request while playing: {requestMessage.GetType().Name}");
+            throw new InvalidOperationException(
+                $"Not expecting processing incoming request while playing: {requestMessage.GetType().Name}");
         }
 
         protected override Transition HandleResponseMessage(IResponseMessage responseMessage)
@@ -33,7 +35,8 @@ namespace PlayerStateCoordinator.Common.States
                 var initiatorId = knowledgeExchangeRequest.SenderPlayerId;
                 //Console.WriteLine($"Player #{initiatorId} requested communication in state {this}");
                 IMessage knowledgeExchangeResponse =
-                    new RejectKnowledgeExchangeMessage(PlayerStrategyInfo.PlayerId, initiatorId, PlayerStrategyInfo.PlayerGuid);
+                    new RejectKnowledgeExchangeMessage(PlayerStrategyInfo.PlayerId, initiatorId,
+                        PlayerStrategyInfo.PlayerGuid);
 
                 if (IsExchangeWantedWithPlayer(initiatorId))
                     knowledgeExchangeResponse =

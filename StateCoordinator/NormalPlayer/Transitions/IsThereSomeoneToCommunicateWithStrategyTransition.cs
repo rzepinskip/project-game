@@ -13,8 +13,9 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
     public class IsThereSomeoneToCommunicateWithStrategyTransition : NormalPlayerStrategyTransition
     {
-        public IsThereSomeoneToCommunicateWithStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(
-            normalPlayerStrategyInfo)
+        public IsThereSomeoneToCommunicateWithStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) :
+            base(
+                normalPlayerStrategyInfo)
         {
         }
 
@@ -25,10 +26,12 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
             get
             {
                 var withPlayerId = NormalPlayerStrategyInfo.Board.Players.Values
-                    .First(v => v.Id != NormalPlayerStrategyInfo.PlayerId && v.Team == NormalPlayerStrategyInfo.Team).Id;
+                    .First(v => v.Id != NormalPlayerStrategyInfo.PlayerId && v.Team == NormalPlayerStrategyInfo.Team)
+                    .Id;
                 //Console.WriteLine($"Exchanging data with {withPlayerId}");
 
-                var knowledgeExchangeRequest = new AuthorizeKnowledgeExchangeRequest(NormalPlayerStrategyInfo.PlayerGuid,
+                var knowledgeExchangeRequest = new AuthorizeKnowledgeExchangeRequest(
+                    NormalPlayerStrategyInfo.PlayerGuid,
                     NormalPlayerStrategyInfo.GameId, withPlayerId);
                 var dataMessage = DataMessage.FromBoardData(
                     NormalPlayerStrategyInfo.Board.ToBoardData(NormalPlayerStrategyInfo.PlayerId, withPlayerId), false,
@@ -39,7 +42,8 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
 
         public override bool IsPossible()
         {
-            var result = NormalPlayerStrategyInfo.Board.Players.Count > 2 && NormalPlayerStrategyInfo.IsTimeForExchange();
+            var result = NormalPlayerStrategyInfo.Board.Players.Count > 2 &&
+                         NormalPlayerStrategyInfo.IsTimeForExchange();
 
             return result;
         }

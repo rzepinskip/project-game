@@ -10,7 +10,8 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
     public class IsInTaskAreaStrategyTransition : NormalPlayerStrategyTransition
     {
-        public IsInTaskAreaStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(normalPlayerStrategyInfo)
+        public IsInTaskAreaStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(
+            normalPlayerStrategyInfo)
         {
         }
 

@@ -15,7 +15,8 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
     {
         private readonly Random _directionGenerator;
 
-        public IsNoPieceAvailableStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(normalPlayerStrategyInfo)
+        public IsNoPieceAvailableStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(
+            normalPlayerStrategyInfo)
         {
             _directionGenerator = new Random();
         }

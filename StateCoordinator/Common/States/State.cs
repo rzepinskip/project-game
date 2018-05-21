@@ -17,7 +17,8 @@ namespace PlayerStateCoordinator.Common.States
             TransitionType = transitionType;
             Transitions = new Transition[0];
             Info = info;
-            _messageHandler = new MessageHandler(HandleRequestMessage, HandleResponseMessage, HandleErrorMessage, HandleGenericMessage);
+            _messageHandler = new MessageHandler(HandleRequestMessage, HandleResponseMessage, HandleErrorMessage,
+                HandleGenericMessage);
         }
 
         public Transition Process(IMessage message)

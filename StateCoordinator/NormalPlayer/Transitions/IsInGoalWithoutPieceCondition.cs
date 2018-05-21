@@ -10,7 +10,8 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
     public class IsInGoalWithoutPieceStrategyTransition : NormalPlayerStrategyTransition
     {
-        public IsInGoalWithoutPieceStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(normalPlayerStrategyInfo)
+        public IsInGoalWithoutPieceStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(
+            normalPlayerStrategyInfo)
         {
         }
 

@@ -11,7 +11,8 @@ namespace PlayerStateCoordinator.NormalPlayer.Transitions
 {
     public class HasNormalPieceStrategyTransition : NormalPlayerStrategyTransition
     {
-        public HasNormalPieceStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(normalPlayerStrategyInfo)
+        public HasNormalPieceStrategyTransition(NormalPlayerStrategyInfo normalPlayerStrategyInfo) : base(
+            normalPlayerStrategyInfo)
         {
         }
 

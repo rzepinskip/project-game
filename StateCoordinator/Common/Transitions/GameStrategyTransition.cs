@@ -1,5 +1,4 @@
-﻿
-namespace PlayerStateCoordinator.Common.Transitions
+﻿namespace PlayerStateCoordinator.Common.Transitions
 {
     public abstract class GameStrategyTransition : Transition
     {
