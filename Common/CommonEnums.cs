@@ -116,4 +116,9 @@ namespace Common
         Defeat
     }
 
+    public enum RuntimeMode
+    {
+        Visualization,
+        Console
+    }
 }

@@ -17,6 +17,7 @@ namespace GameMaster.App
     {
         private static VerboseLogger _logger;
         private static string _finishedGameMessage = "";
+        private static RuntimeMode _runtimeMode;
 
         private static void Main(string[] args)
         {
@@ -27,14 +28,18 @@ namespace GameMaster.App
             _logger = gm.VerboseLogger;
             Console.Title = "Game Master";
 
-            var boardVisualizer = new BoardVisualizer();
-            for (var i = 0;; i++)
+            if (_runtimeMode == RuntimeMode.Visualization)
             {
-                Thread.Sleep(200);
-                boardVisualizer.VisualizeBoard(gm.Board);
-                Console.WriteLine(i);
-                Console.WriteLine(_finishedGameMessage);
+                var boardVisualizer = new BoardVisualizer();
+                for (var i = 0; ; i++)
+                {
+                    Thread.Sleep(200);
+                    boardVisualizer.VisualizeBoard(gm.Board);
+                    Console.WriteLine(i);
+                    Console.WriteLine(_finishedGameMessage);
+                }   
             }
+        
         }
 
         private static void GenerateNewFinishedGameMessage(object sender, GameFinishedEventArgs e)
@@ -52,6 +57,7 @@ namespace GameMaster.App
             var ipAddress = default(IPAddress);
             var gameName = default(string);
             var loggingMode = LoggingMode.NonVerbose;
+            _runtimeMode = RuntimeMode.Console;
 
             var options = new OptionSet
             {
@@ -59,7 +65,8 @@ namespace GameMaster.App
                 {"conf=", "configuration filename", c => gameConfigPath = c},
                 {"address=", "server adress or hostname", a => addressFlag = IPAddress.TryParse(a, out ipAddress)},
                 {"game=", "name of the game", g => gameName = g},
-                {"verbose:", "logging mode", v => loggingMode = LoggingMode.Verbose }
+                {"verbose:", "logging mode", v => loggingMode = LoggingMode.Verbose },
+                {"visualize:", "runtime mode", r => _runtimeMode = RuntimeMode.Visualization }
             };
 
             options.Parse(parameters);
