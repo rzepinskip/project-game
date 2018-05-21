@@ -1,6 +1,5 @@
 $localname = hostname
-$address = Test-Connection $localname -count 1 | select Ipv6Address | ft -HideTableHeaders | Out-String
-$address = $address.Trim()
+$address = "127.0.0.1"
 
 $PlayerAppPath = "..\..\Player.App\bin\Debug\netcoreapp2.0\Player.App.dll"
 $gameConfigFilePath = "..\GameConfigs\run-single_game-p2.xml"
