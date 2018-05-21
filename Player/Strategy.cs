@@ -4,7 +4,6 @@ using Common;
 using Common.BoardObjects;
 using PlayerStateCoordinator.Common;
 using PlayerStateCoordinator.Common.States;
-using PlayerStateCoordinator.NormalPlayer;
 
 namespace Player
 {

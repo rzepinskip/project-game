@@ -4,8 +4,8 @@ using Common;
 using Common.BoardObjects;
 using PlayerStateCoordinator.Common;
 using PlayerStateCoordinator.Common.States;
-using PlayerStateCoordinator.NormalPlayer;
-using PlayerStateCoordinator.NormalPlayer.States;
+using PlayerStateCoordinator.GamePlay.NormalPlayer;
+using PlayerStateCoordinator.GamePlay.NormalPlayer.States;
 
 namespace Player
 {

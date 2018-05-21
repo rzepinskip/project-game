@@ -2,8 +2,8 @@
 using Common;
 using Common.BoardObjects;
 using PlayerStateCoordinator.Common.States;
-using PlayerStateCoordinator.TeamLeader;
-using PlayerStateCoordinator.TeamLeader.States;
+using PlayerStateCoordinator.GamePlay.TeamLeader;
+using PlayerStateCoordinator.GamePlay.TeamLeader.States;
 
 namespace Player
 {
