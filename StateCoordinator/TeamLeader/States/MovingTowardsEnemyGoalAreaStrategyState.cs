@@ -12,7 +12,7 @@ namespace PlayerStateCoordinator.TeamLeader.States
         {
             Transitions = new Transition[]
             {
-                new IsPlayerBlockedStrategyTransition(leaderStrategyInfo, this),
+                new IsLeaderBlockedTransition(leaderStrategyInfo, this),
                 new NearEnemyGoalAreaTransition(leaderStrategyInfo),
                 new FarFromEnemyGoalAreaTransition(leaderStrategyInfo)
             };

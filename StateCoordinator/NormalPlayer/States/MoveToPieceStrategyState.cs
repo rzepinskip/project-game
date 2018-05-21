@@ -12,7 +12,7 @@ namespace PlayerStateCoordinator.NormalPlayer.States
         {
             Transitions = new Transition[]
             {
-                new IsPlayerBlockedStrategyTransition(playerStrategyInfo, this),
+                new IsNormalPlayerBlockedTransition(playerStrategyInfo, this),
                 new IsOnFieldWithNoPieceStrategyTransition(playerStrategyInfo),
                 new IsNoPieceAvailableStrategyTransition(playerStrategyInfo),
                 new IsOnFieldWithPieceStrategyTransition(playerStrategyInfo)
