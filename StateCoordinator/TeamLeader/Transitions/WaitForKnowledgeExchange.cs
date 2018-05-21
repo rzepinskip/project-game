@@ -3,7 +3,6 @@ using Common.Interfaces;
 using PlayerStateCoordinator.Common;
 using PlayerStateCoordinator.Common.States;
 using PlayerStateCoordinator.Common.Transitions;
-using PlayerStateCoordinator.Info;
 using PlayerStateCoordinator.TeamLeader.States;
 
 namespace PlayerStateCoordinator.TeamLeader.Transitions

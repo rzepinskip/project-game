@@ -4,7 +4,6 @@ using Common.Interfaces;
 using Messaging.InitializationMessages;
 using PlayerStateCoordinator.Common.States;
 using PlayerStateCoordinator.GameInitialization.States;
-using PlayerStateCoordinator.Info;
 
 namespace PlayerStateCoordinator.GameInitialization.Transitions
 {

@@ -1,5 +1,4 @@
-﻿using PlayerStateCoordinator.Info;
-
+﻿
 namespace PlayerStateCoordinator.Common.Transitions
 {
     public abstract class GameStrategyTransition : Transition

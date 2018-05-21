@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Common;
 using Common.BoardObjects;
 using PlayerStateCoordinator.Common.States;
-using PlayerStateCoordinator.Info;
 using PlayerStateCoordinator.NormalPlayer.States;
 
 namespace Player

@@ -1,6 +1,5 @@
 ﻿using PlayerStateCoordinator.Common;
 using PlayerStateCoordinator.Common.States;
-using PlayerStateCoordinator.Info;
 
 namespace PlayerStateCoordinator.TeamLeader
 {

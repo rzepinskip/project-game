@@ -2,7 +2,6 @@
 using Common.Interfaces;
 using PlayerStateCoordinator.Common.States;
 using PlayerStateCoordinator.GameInitialization.States;
-using PlayerStateCoordinator.Info;
 
 namespace PlayerStateCoordinator.GameInitialization.Transitions
 {

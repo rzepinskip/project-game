@@ -2,7 +2,6 @@
 using System.Text;
 using PlayerStateCoordinator.Common.States;
 using PlayerStateCoordinator.GameInitialization;
-using PlayerStateCoordinator.Info;
 
 namespace PlayerStateCoordinator
 {

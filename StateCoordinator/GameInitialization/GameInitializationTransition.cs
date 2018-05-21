@@ -1,5 +1,4 @@
 ﻿using PlayerStateCoordinator.Common.Transitions;
-using PlayerStateCoordinator.Info;
 
 namespace PlayerStateCoordinator.GameInitialization
 {

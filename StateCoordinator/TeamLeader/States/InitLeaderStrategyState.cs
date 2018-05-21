@@ -1,6 +1,5 @@
 ﻿using PlayerStateCoordinator.Common;
 using PlayerStateCoordinator.Common.Transitions;
-using PlayerStateCoordinator.Info;
 using PlayerStateCoordinator.TeamLeader.Transitions;
 
 namespace PlayerStateCoordinator.TeamLeader.States

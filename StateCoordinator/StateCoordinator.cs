@@ -7,7 +7,6 @@ using PlayerStateCoordinator.Common;
 using PlayerStateCoordinator.Common.States;
 using PlayerStateCoordinator.GameInitialization;
 using PlayerStateCoordinator.GameInitialization.States;
-using PlayerStateCoordinator.Info;
 
 namespace PlayerStateCoordinator
 {

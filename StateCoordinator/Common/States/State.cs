@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using Common.Interfaces;
 using PlayerStateCoordinator.Common.Transitions;
-using PlayerStateCoordinator.Info;
-using PlayerStateCoordinator.Common.States;
 
 namespace PlayerStateCoordinator.Common.States
 {

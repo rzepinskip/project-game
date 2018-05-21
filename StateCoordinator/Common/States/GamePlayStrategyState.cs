@@ -4,8 +4,6 @@ using Common.Interfaces;
 using Messaging;
 using Messaging.KnowledgeExchangeMessages;
 using PlayerStateCoordinator.Common.Transitions;
-using PlayerStateCoordinator.Info;
-using PlayerStateCoordinator.Common.States;
 
 namespace PlayerStateCoordinator.Common.States
 {
