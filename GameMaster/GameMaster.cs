@@ -15,26 +15,28 @@ namespace GameMaster
     {
         private readonly IErrorsMessagesFactory _errorsMessagesFactory;
 
-        private readonly GameHost _gameHost;
+        private GameHost _gameHost;
 
         private readonly string _gameName;
-        private readonly MessagingHandler _messagingHandler;
+        private MessagingHandler _messagingHandler;
         private ActionHandlerDispatcher _actionHandler;
         private Dictionary<Guid, int> _playerGuidToId;
+        private readonly GameConfiguration _gameConfiguration;
+        private readonly ICommunicationClient _communicationClient;
+        private readonly IGameResultsMessageFactory _gameResultsMessageFactory;
         private HashSet<Guid> _playersInformedAboutGameResult;
 
-        public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient,
-            string gameName, IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode)
+        public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationClient,
+            string gameName, IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode, IGameResultsMessageFactory gameResultsMessageFactory)
         {
             _gameHost = new GameHost(gameName, gameConfiguration, StartGame);
-
+            _gameConfiguration = gameConfiguration;
+            _communicationClient = communicationClient;
+            _gameResultsMessageFactory = gameResultsMessageFactory;
             _errorsMessagesFactory = errorsMessagesFactory;
-
-            _messagingHandler = new MessagingHandler(gameConfiguration, communicationCommunicationClient, HostNewGame);
-            _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
-
+            _gameName = gameName;
             VerboseLogger = new VerboseLogger(LogManager.GetCurrentClassLogger(), loggingMode);
-            KnowledgeExchangeManager = new KnowledgeExchangeManager(_messagingHandler.KnowledgeExchangeDelay);
+
             HostNewGame();
         }
 
@@ -109,21 +111,34 @@ namespace GameMaster
 
         public (BoardData data, bool isGameFinished) EvaluateAction(ActionInfo actionInfo)
         {
-            if (!_playerGuidToId.ContainsKey(actionInfo.PlayerGuid)) return (null, true);
+            //if (!_playerGuidToId.ContainsKey(actionInfo.PlayerGuid)) return (null, true);
 
             var playerId = _playerGuidToId[actionInfo.PlayerGuid];
             var action = _actionHandler.Resolve((dynamic) actionInfo, playerId);
             var hasGameEnded = Board.IsGameFinished();
+
             if (hasGameEnded)
             {
                 GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner()));
                 _gameHost.GameInProgress = false;
 
-                _playersInformedAboutGameResult.Add(actionInfo.PlayerGuid);
-                if (_playersInformedAboutGameResult.Count == _playerGuidToId.Count) HostNewGame();
+                //_playersInformedAboutGameResult.Add(actionInfo.PlayerGuid);
+                //if (_playersInformedAboutGameResult.Count == _playerGuidToId.Count) HostNewGame();
+                BroadcastGameResults();
+                HostNewGame();
             }
 
             return (data: action.Respond(), isGameFinished: hasGameEnded);
+        }
+
+        private void BroadcastGameResults()
+        {
+            var boardDataList = new List<BoardData>();
+            foreach (var (guid, id) in _playerGuidToId)
+            {
+                boardDataList.Add(Board.ToBoardData(-1, id));
+            }
+            _messagingHandler.BroadcastGameResults(boardDataList);
         }
 
         public void StartGame()
@@ -145,13 +160,23 @@ namespace GameMaster
         {
             _playerGuidToId = new Dictionary<Guid, int>();
             _playersInformedAboutGameResult = new HashSet<Guid>();
+            
+            _messagingHandler = new MessagingHandler(_gameConfiguration, _communicationClient, HostNewGame, _gameResultsMessageFactory);
+            _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
+            KnowledgeExchangeManager = new KnowledgeExchangeManager(_messagingHandler.KnowledgeExchangeDelay);
             _gameHost.HostNewGame();
             RegisterGame();
         }
 
         public void MessageHandler(IMessage message)
         {
-            // TODO Log all messages
+            // TODO Log all player
+            //Check if player is still in game
+            //playerid
+            //gamaeid
+            //guid - as key
+            //is informed if finished do not responed (and on other conditions too)
+            
             if (message is IRequestMessage request)
                 PutActionLog(request);
 

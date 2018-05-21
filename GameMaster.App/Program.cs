@@ -6,6 +6,7 @@ using BoardGenerators.Loaders;
 using Common;
 using Communication.Client;
 using GameMaster.Configuration;
+using Messaging;
 using Messaging.ErrorsMessages;
 using Messaging.Serialization;
 using Mono.Options;
@@ -82,7 +83,7 @@ namespace GameMaster.App
 
             var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), TimeSpan.FromMilliseconds((int) config.KeepAliveInterval), MessageSerializer.Instance);
 
-            return new GameMaster(config, communicationClient, gameName, new ErrorsMessagesFactory(), loggingMode);
+            return new GameMaster(config, communicationClient, gameName, new ErrorsMessagesFactory(), loggingMode, new GameResultsMessageFactory());
         }
 
         private static void Usage(OptionSet options)

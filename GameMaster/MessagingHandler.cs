@@ -18,11 +18,13 @@ namespace GameMaster
         private bool _gameFinished;
         private readonly Action _hostNewGame;
         private Dictionary<Guid, PlayerHandle> _playerHandles;
+        private readonly IGameResultsMessageFactory _gameResultsMessageFactory;
 
-        public MessagingHandler(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, Action hostNewGame)
+        public MessagingHandler(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, Action hostNewGame, IGameResultsMessageFactory gameResultsMessageFactory)
         {
             _actionCosts = gameConfiguration.ActionCosts;
             _hostNewGame = hostNewGame;
+            _gameResultsMessageFactory = gameResultsMessageFactory;
             CommunicationClient = communicationCommunicationClient;
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleMessagesFromClient)).Start();
         }
@@ -50,6 +52,12 @@ namespace GameMaster
 
                 var timeSpan = Convert.ToInt32(_actionCosts.GetDelayFor(requestMessage.GetActionInfo()));
                 await Task.Delay(timeSpan);
+
+                if (!_playerHandles.ContainsKey(playerGuid))
+                {
+                    Console.WriteLine($"Unrecoginzed player with guid:{playerGuid}");
+                    continue;
+                }
 
                 MessageReceived.Invoke(this, requestMessage);
             }
@@ -80,6 +88,12 @@ namespace GameMaster
         {
             if (message is IRequestMessage request)
             {
+                if (!_playerHandles.ContainsKey(request.PlayerGuid))
+                {
+                    Console.WriteLine($"Unrecoginzed player with guid:{request.PlayerGuid}");
+                    return;
+                }
+
                 var playerHandle = _playerHandles[request.PlayerGuid];
                 lock (playerHandle.Lock)
                 {
@@ -123,6 +137,14 @@ namespace GameMaster
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleMessagesFromClient)).Start();
             _hostNewGame();
 
+        }
+
+        public void BroadcastGameResults(IEnumerable<BoardData> boardData)
+        {
+            foreach (var data in boardData)
+            {
+                CommunicationClient.Send(_gameResultsMessageFactory.CreateGameResultsMessage(data));
+            }
         }
 
         public double KnowledgeExchangeDelay => _actionCosts.KnowledgeExchangeDelay;
