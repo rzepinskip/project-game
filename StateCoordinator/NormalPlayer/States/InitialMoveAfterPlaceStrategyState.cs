@@ -10,15 +10,15 @@ namespace PlayerStateCoordinator.NormalPlayer.States
     /// </summary>
     public class InitialMoveAfterPlaceStrategyState : NormalPlayerStrategyState
     {
-        public InitialMoveAfterPlaceStrategyState(GameStrategyInfo gameStrategyInfo) : base(
+        public InitialMoveAfterPlaceStrategyState(NormalPlayerStrategyInfo playerStrategyInfo) : base(
             StateTransitionType.Immediate,
-            gameStrategyInfo)
+            playerStrategyInfo)
         {
             Transitions = new Transition[]
             {
-                new IsPlayerBlockedStrategyTransition(gameStrategyInfo,
-                    new InGoalAreaMovingToTaskStrategyState(GameStrategyInfo)),
-                new IsInGoalWithoutPieceStrategyTransition(gameStrategyInfo)
+                new IsPlayerBlockedStrategyTransition(playerStrategyInfo,
+                    new InGoalAreaMovingToTaskStrategyState(playerStrategyInfo)),
+                new IsInGoalWithoutPieceStrategyTransition(playerStrategyInfo)
             };
         }
     }

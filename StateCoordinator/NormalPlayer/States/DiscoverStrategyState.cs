@@ -6,13 +6,13 @@ namespace PlayerStateCoordinator.NormalPlayer.States
 {
     public class DiscoverStrategyState : NormalPlayerStrategyState
     {
-        public DiscoverStrategyState(GameStrategyInfo gameStrategyInfo) : base(
+        public DiscoverStrategyState(NormalPlayerStrategyInfo playerStrategyInfo) : base(
             StateTransitionType.Triggered,
-            gameStrategyInfo)
+            playerStrategyInfo)
         {
             Transitions = new Transition[]
             {
-                new MoveToPieceStrategyTransition(gameStrategyInfo)
+                new MoveToPieceStrategyTransition(playerStrategyInfo)
             };
         }
     }

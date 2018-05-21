@@ -6,16 +6,16 @@ namespace PlayerStateCoordinator.NormalPlayer.States
 {
     public class MoveToPieceStrategyState : NormalPlayerStrategyState
     {
-        public MoveToPieceStrategyState(GameStrategyInfo gameStrategyInfo) : base(
+        public MoveToPieceStrategyState(NormalPlayerStrategyInfo playerStrategyInfo) : base(
             StateTransitionType.Triggered,
-            gameStrategyInfo)
+            playerStrategyInfo)
         {
             Transitions = new Transition[]
             {
-                new IsPlayerBlockedStrategyTransition(gameStrategyInfo, this),
-                new IsOnFieldWithNoPieceStrategyTransition(gameStrategyInfo),
-                new IsNoPieceAvailableStrategyTransition(gameStrategyInfo),
-                new IsOnFieldWithPieceStrategyTransition(gameStrategyInfo)
+                new IsPlayerBlockedStrategyTransition(playerStrategyInfo, this),
+                new IsOnFieldWithNoPieceStrategyTransition(playerStrategyInfo),
+                new IsNoPieceAvailableStrategyTransition(playerStrategyInfo),
+                new IsOnFieldWithPieceStrategyTransition(playerStrategyInfo)
             };
         }
     }

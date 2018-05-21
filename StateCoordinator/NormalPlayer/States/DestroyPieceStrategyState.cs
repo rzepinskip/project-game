@@ -6,13 +6,13 @@ namespace PlayerStateCoordinator.NormalPlayer.States
 {
     public class DestroyPieceStrategyState : NormalPlayerStrategyState
     {
-        public DestroyPieceStrategyState(GameStrategyInfo gameStrategyInfo) : base(
+        public DestroyPieceStrategyState(NormalPlayerStrategyInfo playerStrategyInfo) : base(
             StateTransitionType.Triggered,
-            gameStrategyInfo)
+            playerStrategyInfo)
         {
             Transitions = new Transition[]
             {
-                new HasNoPieceStrategyTransition(gameStrategyInfo)
+                new HasNoPieceStrategyTransition(playerStrategyInfo)
             };
         }
     }

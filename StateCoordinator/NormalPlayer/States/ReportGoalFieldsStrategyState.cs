@@ -6,14 +6,14 @@ namespace PlayerStateCoordinator.NormalPlayer.States
 {
     public class ReportGoalFieldsStrategyState : NormalPlayerStrategyState
     {
-        public ReportGoalFieldsStrategyState(GameStrategyInfo gameStrategyInfo) : base(
+        public ReportGoalFieldsStrategyState(NormalPlayerStrategyInfo playerStrategyInfo) : base(
             StateTransitionType.Triggered,
-            gameStrategyInfo)
+            playerStrategyInfo)
         {
             Transitions = new Transition[]
             {
-                new IsThereSomeoneToCommunicateWithStrategyTransition(gameStrategyInfo),
-                new IsInGoalWithoutPieceStrategyTransition(gameStrategyInfo)
+                new IsThereSomeoneToCommunicateWithStrategyTransition(playerStrategyInfo),
+                new IsInGoalWithoutPieceStrategyTransition(playerStrategyInfo)
             };
         }
     }

@@ -6,15 +6,15 @@ namespace PlayerStateCoordinator.NormalPlayer.States
 {
     public class InGoalAreaMovingToTaskStrategyState : NormalPlayerStrategyState
     {
-        public InGoalAreaMovingToTaskStrategyState(GameStrategyInfo gameStrategyInfo) : base(
+        public InGoalAreaMovingToTaskStrategyState(NormalPlayerStrategyInfo playerStrategyInfo) : base(
             StateTransitionType.Triggered,
-            gameStrategyInfo)
+            playerStrategyInfo)
         {
             Transitions = new Transition[]
             {
-                new IsPlayerBlockedStrategyTransition(gameStrategyInfo, this),
-                new IsInGoalWithoutPieceStrategyTransition(gameStrategyInfo),
-                new IsInTaskAreaStrategyTransition(gameStrategyInfo)
+                new IsPlayerBlockedStrategyTransition(playerStrategyInfo, this),
+                new IsInGoalWithoutPieceStrategyTransition(playerStrategyInfo),
+                new IsInTaskAreaStrategyTransition(playerStrategyInfo)
             };
         }
     }

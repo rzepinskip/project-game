@@ -6,13 +6,13 @@ namespace PlayerStateCoordinator.NormalPlayer.States
 {
     public class PickupPieceStrategyState : NormalPlayerStrategyState
     {
-        public PickupPieceStrategyState(GameStrategyInfo gameStrategyInfo) : base(
+        public PickupPieceStrategyState(NormalPlayerStrategyInfo playerStrategyInfo) : base(
             StateTransitionType.Triggered,
-            gameStrategyInfo)
+            playerStrategyInfo)
         {
             Transitions = new Transition[]
             {
-                new IsAbleToTestStrategyTransition(gameStrategyInfo)
+                new IsAbleToTestStrategyTransition(playerStrategyInfo)
             };
         }
     }

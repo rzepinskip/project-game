@@ -6,15 +6,15 @@ namespace PlayerStateCoordinator.NormalPlayer.States
 {
     public class TestPieceStrategyState : NormalPlayerStrategyState
     {
-        public TestPieceStrategyState(GameStrategyInfo gameStrategyInfo) : base(
+        public TestPieceStrategyState(NormalPlayerStrategyInfo playerStrategyInfo) : base(
             StateTransitionType.Triggered,
-            gameStrategyInfo)
+            playerStrategyInfo)
         {
             Transitions = new Transition[]
             {
-                new HasNoPieceStrategyTransition(gameStrategyInfo),
-                new HasNormalPieceStrategyTransition(gameStrategyInfo),
-                new HasShamStrategyTransition(gameStrategyInfo)
+                new HasNoPieceStrategyTransition(playerStrategyInfo),
+                new HasNormalPieceStrategyTransition(playerStrategyInfo),
+                new HasShamStrategyTransition(playerStrategyInfo)
             };
         }
     }

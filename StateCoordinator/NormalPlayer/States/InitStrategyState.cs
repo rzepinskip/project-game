@@ -6,14 +6,14 @@ namespace PlayerStateCoordinator.NormalPlayer.States
 {
     public class InitStrategyState : NormalPlayerStrategyState
     {
-        public InitStrategyState(GameStrategyInfo gameStrategyInfo) : base(
+        public InitStrategyState(NormalPlayerStrategyInfo playerStrategyInfo) : base(
             StateTransitionType.Immediate,
-            gameStrategyInfo)
+            playerStrategyInfo)
         {
             Transitions = new Transition[]
             {
-                new IsInGoalWithoutPieceStrategyTransition(gameStrategyInfo),
-                new IsInTaskAreaStrategyTransition(gameStrategyInfo)
+                new IsInGoalWithoutPieceStrategyTransition(playerStrategyInfo),
+                new IsInTaskAreaStrategyTransition(playerStrategyInfo)
             };
         }
     }

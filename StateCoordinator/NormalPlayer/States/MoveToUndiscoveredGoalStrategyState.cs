@@ -6,15 +6,15 @@ namespace PlayerStateCoordinator.NormalPlayer.States
 {
     public class MoveToUndiscoveredGoalStrategyState : NormalPlayerStrategyState
     {
-        public MoveToUndiscoveredGoalStrategyState(GameStrategyInfo gameStrategyInfo) : base(
+        public MoveToUndiscoveredGoalStrategyState(NormalPlayerStrategyInfo playerStrategyInfo) : base(
             StateTransitionType.Triggered,
-            gameStrategyInfo)
+            playerStrategyInfo)
         {
             Transitions = new Transition[]
             {
-                new IsPlayerBlockedStrategyTransition(gameStrategyInfo, this),
-                new IsOnDesiredUndiscoveredGoalFieldStrategyTransition(gameStrategyInfo),
-                new HasNormalPieceStrategyTransition(gameStrategyInfo)
+                new IsPlayerBlockedStrategyTransition(playerStrategyInfo, this),
+                new IsOnDesiredUndiscoveredGoalFieldStrategyTransition(playerStrategyInfo),
+                new HasNormalPieceStrategyTransition(playerStrategyInfo)
             };
         }
     }
