@@ -8,26 +8,28 @@ using PlayerStateCoordinator.TeamLeader.States;
 
 namespace PlayerStateCoordinator.TeamLeader.Transitions
 {
-    public class FarFromEnemyGoalAreaTransition : GameStrategyTransition
+    public class FarFromEnemyGoalAreaTransition : LeaderStrategyTransition
     {
-        public FarFromEnemyGoalAreaTransition(GameStrategyInfo gameStrategyInfo) : base(gameStrategyInfo)
+        private readonly LeaderStrategyInfo _leaderStrategyInfo;
+        public FarFromEnemyGoalAreaTransition(LeaderStrategyInfo leaderStrategyInfo) : base(leaderStrategyInfo)
         {
+            _leaderStrategyInfo = leaderStrategyInfo;
         }
 
-        public override State NextState => new MovingTowardsEnemyGoalAreaStrategyState(GameStrategyInfo);
+        public override State NextState => new MovingTowardsEnemyGoalAreaStrategyState(_leaderStrategyInfo);
 
         public override IEnumerable<IMessage> Message
         {
             get
             {
-                var direction = GameStrategyInfo.CurrentLocation.DirectionToTask(GameStrategyInfo.Team);
-                GameStrategyInfo.TargetLocation =
-                    GameStrategyInfo.CurrentLocation.GetNewLocation(direction);
+                var direction = LeaderStrategyInfo.CurrentLocation.DirectionToTask(LeaderStrategyInfo.Team);
+                LeaderStrategyInfo.TargetLocation =
+                    LeaderStrategyInfo.CurrentLocation.GetNewLocation(direction);
 
                 return new List<IMessage>
                 {
-                    new MoveRequest(GameStrategyInfo.PlayerGuid,
-                    GameStrategyInfo.GameId,
+                    new MoveRequest(LeaderStrategyInfo.PlayerGuid,
+                    LeaderStrategyInfo.GameId,
                     direction)
                 };
             }
@@ -36,8 +38,8 @@ namespace PlayerStateCoordinator.TeamLeader.Transitions
 
         public override bool IsPossible()
         {
-            return TransitionValidator.IsFarFromEnemyGoalArea(GameStrategyInfo.Team, GameStrategyInfo.Board,
-                GameStrategyInfo.CurrentLocation);
+            return TransitionValidator.IsFarFromEnemyGoalArea(LeaderStrategyInfo.Team, LeaderStrategyInfo.Board,
+                LeaderStrategyInfo.CurrentLocation);
         }
     }
 }

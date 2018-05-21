@@ -7,13 +7,13 @@ using PlayerStateCoordinator.TeamLeader.States;
 
 namespace PlayerStateCoordinator.TeamLeader.Transitions
 {
-    public class WaitForKnowledgeExchange : GameStrategyTransition
+    public class WaitForKnowledgeExchange : LeaderStrategyTransition
     {
-        public WaitForKnowledgeExchange(GameStrategyInfo gameStrategyInfo) : base(gameStrategyInfo)
+        public WaitForKnowledgeExchange(LeaderStrategyInfo leaderStrategyInfo) : base(leaderStrategyInfo)
         {
         }
 
-        public override State NextState => new KnowledgeExchangeWithTeamMembersStrategyState(GameStrategyInfo);
+        public override State NextState => new KnowledgeExchangeWithTeamMembersStrategyState(LeaderStrategyInfo);
 
         public override IEnumerable<IMessage> Message => new List<IMessage>();
 
