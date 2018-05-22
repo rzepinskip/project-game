@@ -1,5 +1,4 @@
 $localname = hostname
-$address = Test-Connection $localname -count 1 | select Ipv6Address | ft -HideTableHeaders | Out-String
 $address = "127.0.0.1"
 $CSAppPath = "..\..\CommunicationServer.App\bin\Debug\netcoreapp2.0\CommunicationServer.App.dll"
 $GMAppPath = "..\..\GameMaster.App\bin\Debug\netcoreapp2.0\GameMaster.App.dll"
