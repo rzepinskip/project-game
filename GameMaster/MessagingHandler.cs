@@ -53,11 +53,11 @@ namespace GameMaster
                 var timeSpan = Convert.ToInt32(_actionCosts.GetDelayFor(requestMessage.GetActionInfo()));
                 await Task.Delay(timeSpan);
 
-                if (!_playerHandles.ContainsKey(playerGuid))
-                {
-                    Console.WriteLine($"Unrecoginzed player with guid:{playerGuid}");
-                    continue;
-                }
+                //if (!_playerHandles.ContainsKey(playerGuid))
+                //{
+                //    Console.WriteLine($"Unrecoginzed player with guid:{playerGuid}");
+                //    continue;
+                //}
 
                 MessageReceived.Invoke(this, requestMessage);
             }
@@ -88,11 +88,11 @@ namespace GameMaster
         {
             if (message is IRequestMessage request)
             {
-                if (!_playerHandles.ContainsKey(request.PlayerGuid))
-                {
-                    Console.WriteLine($"Unrecoginzed player with guid:{request.PlayerGuid}");
-                    return;
-                }
+                //if (!_playerHandles.ContainsKey(request.PlayerGuid))
+                //{
+                //    Console.WriteLine($"Unrecoginzed player with guid:{request.PlayerGuid}");
+                //    return;
+                //}
 
                 var playerHandle = _playerHandles[request.PlayerGuid];
                 lock (playerHandle.Lock)

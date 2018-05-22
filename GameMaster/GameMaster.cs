@@ -36,7 +36,9 @@ namespace GameMaster
             _errorsMessagesFactory = errorsMessagesFactory;
             _gameName = gameName;
             VerboseLogger = new VerboseLogger(LogManager.GetCurrentClassLogger(), loggingMode);
-
+            
+            _messagingHandler = new MessagingHandler(_gameConfiguration, _communicationClient, HostNewGame, _gameResultsMessageFactory);
+            _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
             HostNewGame();
         }
 
@@ -76,7 +78,11 @@ namespace GameMaster
             _playerGuidToId.Add(playerGuid, playerId);
             var (gameId, playerInfo) =
                 _gameHost.AssignPlayerToAvailableSlotWithPrefered(playerId, preferredTeam, preferredRole);
-
+            Console.WriteLine("Players after adding new");
+            foreach (var i in _playerGuidToId)
+            {
+                Console.WriteLine(i.Key);
+            }
             return (gameId, playerGuid, playerInfo);
         }
 
@@ -111,7 +117,8 @@ namespace GameMaster
 
         public (BoardData data, bool isGameFinished) EvaluateAction(ActionInfo actionInfo)
         {
-            //if (!_playerGuidToId.ContainsKey(actionInfo.PlayerGuid)) return (null, true);
+            Console.WriteLine("Guid: " + actionInfo.PlayerGuid + "keys " + _playerGuidToId.Count);
+            if (!_playerGuidToId.ContainsKey(actionInfo.PlayerGuid)) return (null, true);
 
             var playerId = _playerGuidToId[actionInfo.PlayerGuid];
             var action = _actionHandler.Resolve((dynamic) actionInfo, playerId);
@@ -134,7 +141,7 @@ namespace GameMaster
         private void BroadcastGameResults()
         {
             var boardDataList = new List<BoardData>();
-            foreach (var (guid, id) in _playerGuidToId)
+            foreach (var (guid, id) in _playerGuidToId.ToList())
             {
                 boardDataList.Add(Board.ToBoardData(-1, id));
             }
@@ -159,10 +166,10 @@ namespace GameMaster
         public void HostNewGame()
         {
             _playerGuidToId = new Dictionary<Guid, int>();
+            Console.WriteLine("Clear");
             _playersInformedAboutGameResult = new HashSet<Guid>();
             
-            _messagingHandler = new MessagingHandler(_gameConfiguration, _communicationClient, HostNewGame, _gameResultsMessageFactory);
-            _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
+            
             KnowledgeExchangeManager = new KnowledgeExchangeManager(_messagingHandler.KnowledgeExchangeDelay);
             _gameHost.HostNewGame();
             RegisterGame();
@@ -176,9 +183,17 @@ namespace GameMaster
             //gamaeid
             //guid - as key
             //is informed if finished do not responed (and on other conditions too)
-            
+
             if (message is IRequestMessage request)
+            {
+                if (!_playerGuidToId.ContainsKey(request.PlayerGuid))
+                {
+                    Console.WriteLine($"Unrecoginzed player with guid:{request.PlayerGuid}");
+                    return;
+                }
+
                 PutActionLog(request);
+            }
 
             IMessage response;
             lock (Board.Lock)
