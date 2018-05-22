@@ -12,10 +12,12 @@ namespace PlayerStateCoordinator.GamePlay
     public abstract class GamePlayStrategyState : State
     {
         protected readonly GamePlayStrategyInfo PlayerStrategyInfo;
+        public bool RestrictedToTaskArea { get; private set; }
 
         protected GamePlayStrategyState(StateTransitionType transitionType,
             GamePlayStrategyInfo playerStrategyInfo) : base(transitionType, playerStrategyInfo)
         {
+            RestrictedToTaskArea = false;
             PlayerStrategyInfo = playerStrategyInfo;
         }
 

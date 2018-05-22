@@ -10,6 +10,7 @@ namespace PlayerStateCoordinator.GamePlay.NormalPlayer.States
             StateTransitionType.Triggered,
             playerStrategyInfo)
         {
+            RestrictedToTaskArea = true;
             Transitions = new Transition[]
             {
                 new IsNormalPlayerBlockedTransition(playerStrategyInfo, this),
