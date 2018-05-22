@@ -8,7 +8,7 @@ $playersCount = 20
 $portNumber = 11000
 
 
-Start-Process -FilePath "dotnet" -ArgumentList  "$CSAppPath --port $portNumber --conf $gameConfigFilePath" 
+Start-Process -FilePath "dotnet" -ArgumentList  "$CSAppPath --port $portNumber --conf $gameConfigFilePath --address 127.0.0.1" 
 Start-Sleep -s 1
 Start-Process -FilePath "dotnet" -ArgumentList  "$GMAppPath --port $portNumber --conf $gameConfigFilePath --address $address --game game --visualize"
 Start-Sleep -s 1

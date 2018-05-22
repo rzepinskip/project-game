@@ -1,20 +1,20 @@
 ﻿using System;
 using Common.Interfaces;
-using PlayerStateCoordinator.Transitions;
+using PlayerStateCoordinator.Common.Transitions;
 
 namespace PlayerStateCoordinator
 {
     public class MessageHandler
     {
         private readonly Func<IErrorMessage, Transition> _errorMessageHandler;
+        private readonly Func<IMessage, Transition> _genericMessageHandler;
         private readonly Func<IRequestMessage, Transition> _requestMessageHandler;
         private readonly Func<IResponseMessage, Transition> _responseMessageHandler;
-        private readonly Func<IMessage, Transition> _genericMessageHandler;
 
 
         public MessageHandler(Func<IRequestMessage, Transition> requestMessageHandler,
             Func<IResponseMessage, Transition> responseMessageHandler,
-            Func<IErrorMessage, Transition> errorMessageHandler, 
+            Func<IErrorMessage, Transition> errorMessageHandler,
             Func<IMessage, Transition> genericMessageHandler)
         {
             _requestMessageHandler = requestMessageHandler;

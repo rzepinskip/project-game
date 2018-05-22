@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using Common;
 using Common.Interfaces;
 using Messaging.InitializationMessages;
-using PlayerStateCoordinator.Info;
-using PlayerStateCoordinator.States;
-using PlayerStateCoordinator.States.GameInitializationStates;
+using PlayerStateCoordinator.Common;
+using PlayerStateCoordinator.Common.States;
+using PlayerStateCoordinator.GameInitialization;
+using PlayerStateCoordinator.GameInitialization.States;
 
 namespace PlayerStateCoordinator
 {
@@ -37,6 +38,7 @@ namespace PlayerStateCoordinator
                     var transition = CurrentState.Process(message);
                     //Console.WriteLine($"{transition.GetType().Name} for {message.GetType().Name}\n\t{transition.NextState.GetType().Name}\n");
                     CurrentState = transition.NextState;
+                    //Console.WriteLine($"After transition state {CurrentState.GetType().Name}");
                     messagesToSend.AddRange(transition.Message);
                 } while (CurrentState.TransitionType == StateTransitionType.Immediate);
             }
