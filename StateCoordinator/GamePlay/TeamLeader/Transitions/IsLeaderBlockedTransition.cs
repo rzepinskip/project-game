@@ -13,10 +13,8 @@ namespace PlayerStateCoordinator.GamePlay.TeamLeader.Transitions
             _leaderStrategyInfo = gamePlayStrategyInfo;
         }
 
-        protected override GamePlayStrategyState GetRecoveryFromBlockedState()
-        {
-            return new MovingTowardsEnemyGoalAreaStrategyState(_leaderStrategyInfo);
-        }
+        protected override GamePlayStrategyState NextStateForFullyBlockedCase => new MovingTowardsEnemyGoalAreaStrategyState(_leaderStrategyInfo);
+
         protected override void CheckIfFromStateIsPredicted(GamePlayStrategyState fromState)
         {
             switch (FromState)

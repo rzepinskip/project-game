@@ -27,15 +27,13 @@ namespace PlayerStateCoordinator.GamePlay
             _chosenDirection = null;
         }
 
-        protected abstract void CheckIfFromStateIsPredicted(GamePlayStrategyState FromState);
-
         public override State NextState
         {
             get
             {
                 if (!_chosenDirection.HasValue) _chosenDirection = Randomize4WayDirection();
 
-                if (!_isAnyMoveAvailable) return GetRecoveryFromBlockedState();
+                if (!_isAnyMoveAvailable) return NextStateForFullyBlockedCase;
 
                 //Console.WriteLine($"PlayerBlocked returning to {_fromState}");
                 if (FromState.TransitionType == StateTransitionType.Immediate)
@@ -44,7 +42,7 @@ namespace PlayerStateCoordinator.GamePlay
 
                 Console.WriteLine("Recognized normal state");
 
-                return FromState;
+                return Activator.CreateInstance(FromState.GetType(), GamePlayStrategyInfo) as GamePlayStrategyState;
             }
         }
 
@@ -74,24 +72,24 @@ namespace PlayerStateCoordinator.GamePlay
             }
         }
 
+        protected abstract GamePlayStrategyState NextStateForFullyBlockedCase { get; }
+
+        protected abstract void CheckIfFromStateIsPredicted(GamePlayStrategyState FromState);
+
         public override bool IsPossible()
         {
             return !GamePlayStrategyInfo.CurrentLocation.Equals(GamePlayStrategyInfo.TargetLocation);
         }
 
-        protected abstract GamePlayStrategyState GetRecoveryFromBlockedState();
-
-        private Direction Randomize4WayDirection()
+        private Direction? Randomize4WayDirection()
         {
-
-            _isAnyMoveAvailable = true;
             var currentLocation = GamePlayStrategyInfo.CurrentLocation;
             var numberOfDirections = Enum.GetNames(typeof(Direction)).Length;
             var directionValue = _directionGenerator.Next(numberOfDirections);
             var direction = (Direction) directionValue;
             var newLocation = currentLocation.GetNewLocation(direction);
             var checkDirectionsCounter = 0;
-            while(!IsRandomlyChosenDirectionAppriopriate(direction, currentLocation, newLocation ))
+            while (!IsRandomlyChosenDirectionAppriopriate(direction, currentLocation, newLocation))
             {
                 directionValue = (directionValue + 1) % numberOfDirections;
                 direction = (Direction) directionValue;
@@ -105,6 +103,7 @@ namespace PlayerStateCoordinator.GamePlay
                 }
             }
 
+            _isAnyMoveAvailable = true;
             return direction;
         }
 
