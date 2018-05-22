@@ -36,9 +36,16 @@ namespace Messaging.ActionsMessages
 
         public override IMessage Process(IGameMaster gameMaster)
         {
-            var optionalSenderId = gameMaster.Authorize(PlayerGuid);
-            if (!optionalSenderId.HasValue) throw new ApplicationFatalException("Not signed request");
+            if (PlayerGuid == default(Guid))
+            {
+                Console.WriteLine("Unsigned request");
+                return null;
+            }
 
+            var optionalSenderId = gameMaster.Authorize(PlayerGuid);
+            if (!optionalSenderId.HasValue)
+                Console.WriteLine("Unrecognized player");
+            
             var senderId = optionalSenderId.Value;
 
             //Console.WriteLine($"Player {senderId} request to {WithPlayerId}");
