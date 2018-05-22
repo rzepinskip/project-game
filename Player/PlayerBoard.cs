@@ -22,7 +22,7 @@ namespace Player
 
         public void HandleTaskField(int playerId, TaskField taskField)
         {
-            var oldTaskField = (TaskField)this[taskField];
+            var oldTaskField = (TaskField) this[taskField];
 
             if (taskField.IsNewerThan(oldTaskField))
             {
@@ -32,7 +32,8 @@ namespace Player
                 HandlePlayerInField(taskField);
                 HandlePieceInField(playerId, taskField);
 
-                this[taskField] = new TaskField(taskField, taskField.DistanceToPiece, taskField.PieceId, taskField.PlayerId);
+                this[taskField] = new TaskField(taskField, taskField.DistanceToPiece, taskField.PieceId,
+                    taskField.PlayerId);
             }
         }
 
@@ -116,7 +117,7 @@ namespace Player
             }
 
             //place piece
-            if (Players[playerId].Piece!= null && taskField.PieceId == Players[playerId].Piece.Id)
+            if (Players[playerId].Piece != null && taskField.PieceId == Players[playerId].Piece.Id)
                 Players[playerId].Piece = null;
         }
 
@@ -130,7 +131,7 @@ namespace Player
                     var field = Content[i, j];
                     if (!IsLocationInTaskArea(field)) continue;
 
-                    var taskFiled = (TaskField)field;
+                    var taskFiled = (TaskField) field;
                     if (taskFiled.PieceId != pieceId) continue;
 
                     result = taskFiled;
@@ -158,7 +159,7 @@ namespace Player
         {
             // Remove old data
             var playerInfo = Players[playerId];
-            if(playerInfo.Location != null)
+            if (playerInfo.Location != null)
                 this[playerInfo.Location].PlayerId = null;
 
             // Insert new data
@@ -168,9 +169,10 @@ namespace Player
 
         public override BoardData ToBoardData(int senderId, int receiverId)
         {
-            var taskFields = ToEnumerable().Where(f => f is TaskField taskField && taskField.DistanceToPiece != -1).Select(t => (TaskField)t);
-            var goalFields = ToEnumerable().Where(f => f is GoalField goalField).Select(t => (GoalField)t);
-        
+            var taskFields = ToEnumerable().Where(f => f is TaskField taskField && taskField.DistanceToPiece != -1)
+                .Select(t => (TaskField) t);
+            var goalFields = ToEnumerable().Where(f => f is GoalField goalField).Select(t => (GoalField) t);
+
             return BoardData.Create(receiverId, taskFields.ToArray(), goalFields.ToArray());
         }
 

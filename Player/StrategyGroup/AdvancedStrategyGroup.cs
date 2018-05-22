@@ -15,8 +15,8 @@ namespace Player.StrategyGroup
             {
                 return new NormalPlayerStrategy(player, board, playerGuid, gameId);
             }
+
             return new LeaderStrategy(player, board, playerGuid, gameId);
-            
         }
     }
 }

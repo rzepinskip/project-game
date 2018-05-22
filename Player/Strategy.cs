@@ -8,7 +8,6 @@ namespace Player
 {
     public abstract class Strategy
     {
-
         protected Strategy(PlayerBase player, BoardBase board, Guid playerGuid, int gameId)
         {
         }
