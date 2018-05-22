@@ -9,6 +9,7 @@ using Messaging.ErrorsMessages;
 using Messaging.Serialization;
 using Mono.Options;
 using NLog;
+using Player.StrategyGroup;
 
 namespace Player.App
 {
@@ -27,7 +28,7 @@ namespace Player.App
 
         private static Player CreatePlayerFrom(IEnumerable<string> parameters)
         {
-            bool teamFlag = false, roleFlag = false, addressFlag = false;
+            bool teamFlag = false, roleFlag = false, addressFlag = false, strategyFlag;
             var ipAddress = default(IPAddress);
             var port = default(int);
             var gameConfigPath = default(string);
@@ -35,6 +36,7 @@ namespace Player.App
             var team = default(TeamColor);
             var role = default(PlayerType);
             var loggingMode = LoggingMode.NonVerbose;
+            var strategyGroupType = StrategyGroupType.Advanced;
 
             var options = new OptionSet
             {
@@ -44,7 +46,7 @@ namespace Player.App
                 {"game=", "name of the game", g => gameName = g},
                 {"team=", "red|blue", t => teamFlag = Enum.TryParse(t, true, out team)},
                 {"role=", "leader|player", r => roleFlag = Enum.TryParse(r, true, out role)},
-                {"verbose:", "logging mode", v => loggingMode = LoggingMode.Verbose }
+                {"verbose:", "logging mode", v => loggingMode = LoggingMode.Verbose },
             };
 
             options.Parse(parameters);
@@ -67,8 +69,8 @@ namespace Player.App
             var keepAliveInterval = TimeSpan.FromMilliseconds((int) config.KeepAliveInterval);
             var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
                 MessageSerializer.Instance);
-
-            var player = new Player(communicationClient, gameName, team, role, new ErrorsMessagesFactory(), loggingMode);
+            var strategyGroup = new StrategyGroupFactory().Create(strategyGroupType);
+            var player = new Player(communicationClient, gameName, team, role, new ErrorsMessagesFactory(), loggingMode, strategyGroup);
 
             return player;
         }
