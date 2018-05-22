@@ -167,7 +167,16 @@ namespace Communication.TcpConnection
 
                 foreach (var message in messages)
                     if (!string.IsNullOrEmpty(message))
-                        Handle(MessageDeserializer.Deserialize(message), Id);
+                    {
+                        try
+                        {
+                            Handle(MessageDeserializer.Deserialize(message), Id);
+                        }
+                        catch (Exception e)
+                        {
+                            throw new IdentifiableCommunicationException(Id, "Encountered error while deserializing message", e, CommunicationException.ErrorSeverity.Temporary);
+                        }
+                    }
 
                 //DONT TOUCH THAT 
                 //DANGER ZONE ************
