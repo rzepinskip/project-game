@@ -8,5 +8,6 @@
   <GoalFields/>
   <Pieces>
     <Piece id="1" type="unknown" timestamp="2018-04-12T15:33:40" />
+    <Piece id="0" playerId="1" type="unknown" timestamp="2018-04-12T15:33:40" />
   </Pieces>
 </Data>

@@ -48,7 +48,7 @@ namespace TestScenarios
             _testScenarios.AddRange(GetPickUpTests());
             _testScenarios.AddRange(TestPieceTests());
         }
-        
+
 
         public IEnumerator<object[]> GetEnumerator()
         {
@@ -101,8 +101,8 @@ namespace TestScenarios
             {
                 new  object[] {new PlaceValidPieceOnGoalFieldWithGoal()},
                 new  object[] {new PlaceValidPieceOnGoalFieldWithNonGoal()},
-                //new  object[] {new PlaceValidPieceOnTaskFieldWithPiece()},
-                //new  object[] {new PlaceValidPieceOnTaskFieldWithoutPiece()},
+                new  object[] {new PlaceValidPieceOnTaskFieldWithPiece()},
+                new  object[] {new PlaceValidPieceOnTaskFieldWithoutPiece()},
                 new  object[] {new PlaceWithoutPiece()}
             };
         }
