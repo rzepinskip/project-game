@@ -132,12 +132,15 @@ namespace GameMaster
             KnowledgeExchangeManager = new KnowledgeExchangeManager(_messagingHandler.KnowledgeExchangeDelay);
             _actionHandler = new ActionHandlerDispatcher(Board, KnowledgeExchangeManager);
 
+            var gameStartedMessage = new GameStartedMessage(_gameHost.GameId);
+            _messagingHandler.CommunicationClient.Send(gameStartedMessage);
+
             var boardInfo = new BoardInfo(Board.Width, Board.TaskAreaSize, Board.GoalAreaSize);
             foreach (var i in _playerGuidToId)
             {
                 var playerLocation = Board.Players.Values.Single(x => x.Id == i.Value).Location;
-                var gameStartMessage = new GameMessage(i.Value, Board.Players.Values, playerLocation, boardInfo);
-                _messagingHandler.CommunicationClient.Send(gameStartMessage);
+                var gameMessage = new GameMessage(i.Value, Board.Players.Values, playerLocation, boardInfo);
+                _messagingHandler.CommunicationClient.Send(gameMessage);
             }
         }
 

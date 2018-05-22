@@ -62,6 +62,10 @@ namespace Messaging.Serialization
                 },
                 // Initialization request
                 {
+                    GameStartedMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(GameStartedMessage))
+                },
+                {
                     GetGamesMessage.XmlRootName,
                     GetDefaultXmlSerializer(typeof(GetGamesMessage))
                 },

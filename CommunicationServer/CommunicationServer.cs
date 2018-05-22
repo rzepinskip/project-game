@@ -63,9 +63,9 @@ namespace CommunicationServer
             _communicationRouter.UpdateTeamCount(gameId, team);
         }
 
-        public void DeregisterGame(int gameId)
+        public void DeregisterGame(int connectionId)
         {
-            _communicationRouter.DeregisterGame(gameId);
+            _communicationRouter.DeregisterGame(connectionId);
         }
 
         public void AssignGameIdToPlayerId(int gameId, int playerId)

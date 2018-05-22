@@ -47,7 +47,6 @@ namespace Messaging.InitializationMessages
 
         public override void Process(ICommunicationServer cs, int id)
         {
-            cs.DeregisterGame(id);
             cs.Send(this, PlayerId);
         }
 
