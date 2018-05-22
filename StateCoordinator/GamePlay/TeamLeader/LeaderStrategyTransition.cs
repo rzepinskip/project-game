@@ -11,6 +11,7 @@ namespace PlayerStateCoordinator.GamePlay.TeamLeader
         {
             LeaderStrategyInfo = leaderStrategyInfo;
         }
+
         protected bool IsFarFromEnemyGoalArea(TeamColor team, BoardBase board, Location currentLocation)
         {
             var enemyTeamColor = team == TeamColor.Blue ? TeamColor.Red : TeamColor.Blue;

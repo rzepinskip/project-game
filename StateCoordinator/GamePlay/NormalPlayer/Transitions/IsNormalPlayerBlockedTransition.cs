@@ -15,6 +15,7 @@ namespace PlayerStateCoordinator.GamePlay.NormalPlayer.Transitions
 
         protected override GamePlayStrategyState NextStateForFullyBlockedCase => new DiscoverStrategyState(_normalPlayerStrategyInfo);
 
+
         protected override void CheckIfFromStateIsPredicted(GamePlayStrategyState fromState)
         {
             switch (FromState)

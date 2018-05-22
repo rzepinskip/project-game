@@ -15,17 +15,17 @@ namespace PlayerStateCoordinator.GamePlay.TeamLeader.Transitions
 
         protected override GamePlayStrategyState NextStateForFullyBlockedCase => new MovingTowardsEnemyGoalAreaStrategyState(_leaderStrategyInfo);
 
+
         protected override void CheckIfFromStateIsPredicted(GamePlayStrategyState fromState)
         {
             switch (FromState)
             {
-                    case MovingTowardsEnemyGoalAreaStrategyState _:
-                        break;
-                    default:
-                        Console.WriteLine($"Unexpeted state in {this.GetType().Name} transition");
-                        break;
+                case MovingTowardsEnemyGoalAreaStrategyState _:
+                    break;
+                default:
+                    Console.WriteLine($"Unexpeted state in {this.GetType().Name} transition");
+                    break;
             }
-        
         }
     }
 }
