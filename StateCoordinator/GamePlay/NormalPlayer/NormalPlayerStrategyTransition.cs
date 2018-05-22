@@ -1,6 +1,4 @@
-﻿using PlayerStateCoordinator.Common.Transitions;
-
-namespace PlayerStateCoordinator.GamePlay.NormalPlayer
+﻿namespace PlayerStateCoordinator.GamePlay.NormalPlayer
 {
     public abstract class NormalPlayerStrategyTransition : GameStrategyTransition
     {

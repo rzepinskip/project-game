@@ -6,7 +6,6 @@ using Common.Interfaces;
 using Messaging.Requests;
 using PlayerStateCoordinator.Common;
 using PlayerStateCoordinator.Common.States;
-using PlayerStateCoordinator.GamePlay.NormalPlayer.States;
 
 namespace PlayerStateCoordinator.GamePlay
 {
@@ -17,7 +16,7 @@ namespace PlayerStateCoordinator.GamePlay
         private Direction? _chosenDirection;
         private bool _isAnyMoveAvailable;
 
-        public IsPlayerBlockedTransition(GamePlayStrategyInfo gamePlayStrategyInfo,
+        protected IsPlayerBlockedTransition(GamePlayStrategyInfo gamePlayStrategyInfo,
             GamePlayStrategyState fromState)
             : base(
                 gamePlayStrategyInfo)
@@ -31,38 +30,28 @@ namespace PlayerStateCoordinator.GamePlay
         {
             get
             {
-                if (!_chosenDirection.HasValue) _chosenDirection = Randomize4WayDirection(GamePlayStrategyInfo);
+                if (!_chosenDirection.HasValue) _chosenDirection = Randomize4WayDirection();
 
-                if (_isAnyMoveAvailable)
-                {
-                    //Console.WriteLine($"PlayerBlocked returning to {_fromState}");
-                    if (FromState.TransitionType == StateTransitionType.Immediate)
-                        throw new StrategyException(FromState,
-                            "IsPlayerBlocked transition cannot proceed to Immediate state! - an error in designing strategy");
-                    
+                if (!_isAnyMoveAvailable) return GetRecoveryFromBlockedState();
 
-                    Console.WriteLine("Recognized normal state");
+                //Console.WriteLine($"PlayerBlocked returning to {_fromState}");
+                if (FromState.TransitionType == StateTransitionType.Immediate)
+                    throw new StrategyException(FromState,
+                        "IsPlayerBlocked transition cannot proceed to Immediate state! - an error in designing strategy");
 
-                    return GetFromState();
+                Console.WriteLine("Recognized normal state");
 
-                }
-                //return new DiscoverStrategyState(GamePlayStrategyInfo);
-                return GetRecoveryFromBlockedState();
+                return GetFromState();
             }
         }
-
-        protected abstract GamePlayStrategyState GetRecoveryFromBlockedState();
-
-        protected abstract GamePlayStrategyState GetFromState();
-        protected abstract bool IsFromStateOnlyInTaskArea(GamePlayStrategyState fromState);
 
         public override IEnumerable<IMessage> Message
         {
             get
             {
-                if (!_chosenDirection.HasValue) _chosenDirection = Randomize4WayDirection(GamePlayStrategyInfo);
+                if (!_chosenDirection.HasValue) _chosenDirection = Randomize4WayDirection();
 
-                var message = default(IMessage);
+                IMessage message;
                 if (!_isAnyMoveAvailable)
                 {
                     message = new DiscoverRequest(GamePlayStrategyInfo.PlayerGuid, GamePlayStrategyInfo.GameId);
@@ -82,7 +71,16 @@ namespace PlayerStateCoordinator.GamePlay
             }
         }
 
-        private Direction Randomize4WayDirection(GamePlayStrategyInfo strategyInfo)
+        public override bool IsPossible()
+        {
+            return !GamePlayStrategyInfo.CurrentLocation.Equals(GamePlayStrategyInfo.TargetLocation);
+        }
+
+        protected abstract GamePlayStrategyState GetRecoveryFromBlockedState();
+        protected abstract GamePlayStrategyState GetFromState();
+        protected abstract bool IsFromStateOnlyInTaskArea(GamePlayStrategyState fromState);
+
+        private Direction Randomize4WayDirection()
         {
             var onlyTaskArea = IsFromStateOnlyInTaskArea(FromState);
 
@@ -100,12 +98,12 @@ namespace PlayerStateCoordinator.GamePlay
                        .ActionAvailable() ||
                    onlyTaskArea && !GamePlayStrategyInfo.Board.IsLocationInTaskArea(newLocation))
             {
-                directionValue = (directionValue + 1) % 4;
+                directionValue = (directionValue + 1) % numberOfDirections;
                 direction = (Direction) directionValue;
                 newLocation = currentLocation.GetNewLocation(direction);
                 checkDirectionsCounter++;
 
-                if (checkDirectionsCounter >= 4)
+                if (checkDirectionsCounter >= numberOfDirections)
                 {
                     _isAnyMoveAvailable = false;
                     break;
@@ -113,11 +111,6 @@ namespace PlayerStateCoordinator.GamePlay
             }
 
             return direction;
-        }
-
-        public override bool IsPossible()
-        {
-            return !GamePlayStrategyInfo.CurrentLocation.Equals(GamePlayStrategyInfo.TargetLocation);
         }
     }
 }

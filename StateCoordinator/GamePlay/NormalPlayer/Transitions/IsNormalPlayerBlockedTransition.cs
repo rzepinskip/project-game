@@ -1,6 +1,4 @@
 ﻿using System;
-using PlayerStateCoordinator.Common.States;
-using PlayerStateCoordinator.Common.Transitions;
 using PlayerStateCoordinator.GamePlay.NormalPlayer.States;
 
 namespace PlayerStateCoordinator.GamePlay.NormalPlayer.Transitions
@@ -8,7 +6,9 @@ namespace PlayerStateCoordinator.GamePlay.NormalPlayer.Transitions
     public class IsNormalPlayerBlockedTransition : IsPlayerBlockedTransition
     {
         private readonly NormalPlayerStrategyInfo _normalPlayerStrategyInfo;
-        public IsNormalPlayerBlockedTransition(NormalPlayerStrategyInfo gamePlayStrategyInfo, NormalPlayerStrategyState fromState) : base(gamePlayStrategyInfo, fromState)
+
+        public IsNormalPlayerBlockedTransition(NormalPlayerStrategyInfo gamePlayStrategyInfo,
+            NormalPlayerStrategyState fromState) : base(gamePlayStrategyInfo, fromState)
         {
             _normalPlayerStrategyInfo = gamePlayStrategyInfo;
         }
@@ -29,14 +29,14 @@ namespace PlayerStateCoordinator.GamePlay.NormalPlayer.Transitions
             var onlyTaskArea = false;
             switch (FromState)
             {
-                case MoveToPieceStrategyState moveToPieceState:
+                case MoveToPieceStrategyState _:
                 {
                     onlyTaskArea = true;
                     break;
                 }
-                case InGoalAreaMovingToTaskStrategyState inGoalAreaMovingToTaskState:
-                case MoveToUndiscoveredGoalStrategyState moveToUndiscoveredGoalState:
-                case InitialMoveAfterPlaceStrategyState initialMoveAfterPlaceStrategyState:
+                case InGoalAreaMovingToTaskStrategyState _:
+                case MoveToUndiscoveredGoalStrategyState _:
+                case InitialMoveAfterPlaceStrategyState _:
                     break;
                 default:
                     Console.WriteLine("Unexpeted state in PlayerBlocked transition");

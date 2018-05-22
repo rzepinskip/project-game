@@ -7,9 +7,9 @@ namespace PlayerStateCoordinator
     public class MessageHandler
     {
         private readonly Func<IErrorMessage, Transition> _errorMessageHandler;
+        private readonly Func<IMessage, Transition> _genericMessageHandler;
         private readonly Func<IRequestMessage, Transition> _requestMessageHandler;
         private readonly Func<IResponseMessage, Transition> _responseMessageHandler;
-        private readonly Func<IMessage, Transition> _genericMessageHandler;
 
 
         public MessageHandler(Func<IRequestMessage, Transition> requestMessageHandler,

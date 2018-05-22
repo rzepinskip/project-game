@@ -11,15 +11,16 @@ namespace Player
     {
         protected LeaderStrategyState BeginningState;
         protected LeaderStrategyInfo LeaderStrategyInfo;
-        public LeaderStrategy(PlayerBase player, BoardBase board, Guid playerGuid, int gameId) : base(player, board, playerGuid, gameId)
+
+        public LeaderStrategy(PlayerBase player, BoardBase board, Guid playerGuid, int gameId) : base(player, board,
+            playerGuid, gameId)
         {
             LeaderStrategyInfo = new LeaderStrategyInfo(board, player.Id, playerGuid, gameId, player.Team);
-
         }
 
         public override State GetBeginningState()
         {
-            return  new InitLeaderStrategyState(LeaderStrategyInfo);
+            return new InitLeaderStrategyState(LeaderStrategyInfo);
         }
     }
 }

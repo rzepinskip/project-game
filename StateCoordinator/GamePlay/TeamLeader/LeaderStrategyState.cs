@@ -1,11 +1,10 @@
 ﻿using PlayerStateCoordinator.Common;
-using PlayerStateCoordinator.Common.States;
 
 namespace PlayerStateCoordinator.GamePlay.TeamLeader
 {
-    public class LeaderStrategyState : GamePlayStrategyState
+    public abstract class LeaderStrategyState : GamePlayStrategyState
     {
-        public LeaderStrategyState(StateTransitionType transitionType,
+        protected LeaderStrategyState(StateTransitionType transitionType,
             LeaderStrategyInfo playerStrategyInfo) : base(transitionType, playerStrategyInfo)
         {
         }

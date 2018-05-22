@@ -12,6 +12,7 @@ namespace PlayerStateCoordinator.GamePlay.TeamLeader.Transitions
         }
 
         public override State NextState => new KnowledgeExchangeWithTeamMembersStrategyState(LeaderStrategyInfo);
+
         public override IEnumerable<IMessage> Message => new List<IMessage>();
 
         public override bool IsPossible()

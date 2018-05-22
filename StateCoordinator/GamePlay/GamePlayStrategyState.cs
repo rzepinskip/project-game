@@ -50,11 +50,7 @@ namespace PlayerStateCoordinator.GamePlay
             }
 
             if (responseMessage is DataMessage dataMessage && dataMessage.GoalFields.Length > 1)
-            {
-                //Console.WriteLine($"Got some data, doing nothing");
-
                 return new LoopbackTransition(this, new List<IMessage>());
-            }
 
             return base.HandleResponseMessage(responseMessage);
         }

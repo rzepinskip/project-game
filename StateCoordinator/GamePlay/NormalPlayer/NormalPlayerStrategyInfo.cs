@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Common;
 using Common.BoardObjects;
-using PlayerStateCoordinator.Common;
 
 namespace PlayerStateCoordinator.GamePlay.NormalPlayer
 {

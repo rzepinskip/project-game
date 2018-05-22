@@ -14,7 +14,7 @@ namespace PlayerStateCoordinator.GamePlay.TeamLeader.States
 
         protected override bool IsExchangeWantedWithPlayer(int initiatorId)
         {
-            bool isExchangeWanted = PlayerStrategyInfo.Board.Players[initiatorId].Team == PlayerStrategyInfo.Team;
+            var isExchangeWanted = PlayerStrategyInfo.Board.Players[initiatorId].Team == PlayerStrategyInfo.Team;
             Console.WriteLine(
                 $" {PlayerStrategyInfo.Team} {PlayerStrategyInfo.PlayerId} exchange for initiator {initiatorId} {PlayerStrategyInfo.Board.Players[initiatorId].Team} wanted {isExchangeWanted}");
             return isExchangeWanted;

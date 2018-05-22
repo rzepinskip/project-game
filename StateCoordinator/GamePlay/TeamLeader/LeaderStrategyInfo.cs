@@ -1,7 +1,6 @@
 ﻿using System;
 using Common;
 using Common.BoardObjects;
-using PlayerStateCoordinator.Common;
 
 namespace PlayerStateCoordinator.GamePlay.TeamLeader
 {

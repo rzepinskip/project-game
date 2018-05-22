@@ -1,5 +1,4 @@
-﻿using PlayerStateCoordinator.Common;
-using PlayerStateCoordinator.Common.Transitions;
+﻿using PlayerStateCoordinator.Common.Transitions;
 
 namespace PlayerStateCoordinator.GamePlay
 {
