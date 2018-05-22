@@ -111,7 +111,6 @@ namespace GameMaster
 
         public (BoardData data, bool isGameFinished) EvaluateAction(ActionInfo actionInfo)
         {
-            //if (!_playerGuidToId.ContainsKey(actionInfo.PlayerGuid)) return (null, true);
             var hasGameEnded = false;
             var action = default(ActionHandler);
 
