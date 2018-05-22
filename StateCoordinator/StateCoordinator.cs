@@ -29,13 +29,13 @@ namespace PlayerStateCoordinator
         public IEnumerable<IMessage> Process(IMessage message)
         {
             var messagesToSend = new List<IMessage>();
-
+            
             try
             {
                 do
                 {
                     var transition = CurrentState.Process(message);
-                    //Console.WriteLine($"{transition.GetType().Name} for {message.GetType().Name}\n\t{transition.NextState.GetType().Name}\n");
+                    //Console.WriteLine($"{CurrentState.GetType().Name} for {message.GetType().Name}\n\t{transition.NextState.GetType().Name} by {transition.GetType().Name}");
                     CurrentState = transition.NextState;
                     messagesToSend.AddRange(transition.Message);
                 } while (CurrentState.TransitionType == StateTransitionType.Immediate);
@@ -47,6 +47,11 @@ namespace PlayerStateCoordinator
                 messagesToSend = new List<IMessage>();
             }
 
+            //foreach (var sendMessage in messagesToSend)
+            //{
+            //    Console.WriteLine(sendMessage.GetType().Name);
+            //}
+            Console.WriteLine();
             return messagesToSend;
         }
 
