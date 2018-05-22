@@ -17,14 +17,12 @@ namespace GameMaster
 
         private GameHost _gameHost;
 
-        private readonly string _gameName;
-        private MessagingHandler _messagingHandler;
+        private readonly MessagingHandler _messagingHandler;
         private ActionHandlerDispatcher _actionHandler;
         private Dictionary<Guid, int> _playerGuidToId;
         private readonly GameConfiguration _gameConfiguration;
         private readonly ICommunicationClient _communicationClient;
         private readonly IGameResultsMessageFactory _gameResultsMessageFactory;
-        private HashSet<Guid> _playersInformedAboutGameResult;
 
         public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationClient,
             string gameName, IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode, IGameResultsMessageFactory gameResultsMessageFactory)
@@ -34,7 +32,7 @@ namespace GameMaster
             _communicationClient = communicationClient;
             _gameResultsMessageFactory = gameResultsMessageFactory;
             _errorsMessagesFactory = errorsMessagesFactory;
-            _gameName = gameName;
+            
             VerboseLogger = new VerboseLogger(LogManager.GetCurrentClassLogger(), loggingMode);
             
             _messagingHandler = new MessagingHandler(_gameConfiguration, _communicationClient, HostNewGame, _gameResultsMessageFactory);
@@ -78,11 +76,7 @@ namespace GameMaster
             _playerGuidToId.Add(playerGuid, playerId);
             var (gameId, playerInfo) =
                 _gameHost.AssignPlayerToAvailableSlotWithPrefered(playerId, preferredTeam, preferredRole);
-            Console.WriteLine("Players after adding new");
-            foreach (var i in _playerGuidToId)
-            {
-                Console.WriteLine(i.Key);
-            }
+
             return (gameId, playerGuid, playerInfo);
         }
 
@@ -117,24 +111,23 @@ namespace GameMaster
 
         public (BoardData data, bool isGameFinished) EvaluateAction(ActionInfo actionInfo)
         {
-            Console.WriteLine("Guid: " + actionInfo.PlayerGuid + "keys " + _playerGuidToId.Count);
-            if (!_playerGuidToId.ContainsKey(actionInfo.PlayerGuid)) return (null, true);
+            //if (!_playerGuidToId.ContainsKey(actionInfo.PlayerGuid)) return (null, true);
+            var hasGameEnded = false;
+            var action = default(ActionHandler);
 
-            var playerId = _playerGuidToId[actionInfo.PlayerGuid];
-            var action = _actionHandler.Resolve((dynamic) actionInfo, playerId);
-            var hasGameEnded = Board.IsGameFinished();
+                var playerId = _playerGuidToId[actionInfo.PlayerGuid];
+                action = _actionHandler.Resolve((dynamic) actionInfo, playerId);
+                hasGameEnded = Board.IsGameFinished();
 
-            if (hasGameEnded)
-            {
-                GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner()));
-                _gameHost.GameInProgress = false;
+                if (hasGameEnded)
+                {
+                    GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner()));
+                    _gameHost.GameInProgress = false;
 
-                //_playersInformedAboutGameResult.Add(actionInfo.PlayerGuid);
-                //if (_playersInformedAboutGameResult.Count == _playerGuidToId.Count) HostNewGame();
-                BroadcastGameResults();
-                HostNewGame();
-            }
-
+                    BroadcastGameResults();
+                    HostNewGame();
+                }
+            
             return (data: action.Respond(), isGameFinished: hasGameEnded);
         }
 
@@ -166,43 +159,34 @@ namespace GameMaster
         public void HostNewGame()
         {
             _playerGuidToId = new Dictionary<Guid, int>();
-            Console.WriteLine("Clear");
-            _playersInformedAboutGameResult = new HashSet<Guid>();
-            
-            
-            KnowledgeExchangeManager = new KnowledgeExchangeManager(_messagingHandler.KnowledgeExchangeDelay);
+
             _gameHost.HostNewGame();
             RegisterGame();
         }
 
         public void MessageHandler(IMessage message)
         {
-            // TODO Log all player
-            //Check if player is still in game
-            //playerid
-            //gamaeid
-            //guid - as key
-            //is informed if finished do not responed (and on other conditions too)
-
-            if (message is IRequestMessage request)
-            {
-                if (!_playerGuidToId.ContainsKey(request.PlayerGuid))
-                {
-                    Console.WriteLine($"Unrecoginzed player with guid:{request.PlayerGuid}");
-                    return;
-                }
-
-                PutActionLog(request);
-            }
-
             IMessage response;
+            // TODO Log all player
             lock (Board.Lock)
             {
-                response = message.Process(this);
+                if (message is IRequestMessage request)
+                {
+                    if (!_playerGuidToId.ContainsKey(request.PlayerGuid))
+                    {
+                        Console.WriteLine($"Unrecoginzed player with guid:{request.PlayerGuid}");
+                        return;
+                    }
 
-                if (response != null)
-                    _messagingHandler.CommunicationClient.Send(response);
+                    PutActionLog(request);
+                }
+
+                response = message.Process(this);
             }
+
+            if (response != null)
+                    _messagingHandler.CommunicationClient.Send(response);
+            
         }
 
         public virtual event EventHandler<GameFinishedEventArgs> GameFinished;
