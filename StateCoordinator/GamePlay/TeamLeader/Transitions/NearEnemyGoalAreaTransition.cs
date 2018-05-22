@@ -17,7 +17,7 @@ namespace PlayerStateCoordinator.GamePlay.TeamLeader.Transitions
 
         public override bool IsPossible()
         {
-            return !TransitionValidator.IsFarFromEnemyGoalArea(LeaderStrategyInfo.Team, LeaderStrategyInfo.Board,
+            return !IsFarFromEnemyGoalArea(LeaderStrategyInfo.Team, LeaderStrategyInfo.Board,
                 LeaderStrategyInfo.CurrentLocation);
         }
     }

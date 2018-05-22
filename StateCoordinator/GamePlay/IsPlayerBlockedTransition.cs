@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ClientsCommon.ActionAvailability.AvailabilityChain;
 using Common;
+using Common.BoardObjects;
 using Common.Interfaces;
 using Messaging.Requests;
 using PlayerStateCoordinator.Common;
@@ -26,6 +27,8 @@ namespace PlayerStateCoordinator.GamePlay
             _chosenDirection = null;
         }
 
+        protected abstract void CheckIfFromStateIsPredicted(GamePlayStrategyState FromState);
+
         public override State NextState
         {
             get
@@ -41,7 +44,7 @@ namespace PlayerStateCoordinator.GamePlay
 
                 Console.WriteLine("Recognized normal state");
 
-                return GetFromState();
+                return FromState;
             }
         }
 
@@ -77,26 +80,18 @@ namespace PlayerStateCoordinator.GamePlay
         }
 
         protected abstract GamePlayStrategyState GetRecoveryFromBlockedState();
-        protected abstract GamePlayStrategyState GetFromState();
-        protected abstract bool IsFromStateOnlyInTaskArea(GamePlayStrategyState fromState);
 
         private Direction Randomize4WayDirection()
         {
-            var onlyTaskArea = IsFromStateOnlyInTaskArea(FromState);
 
             _isAnyMoveAvailable = true;
             var currentLocation = GamePlayStrategyInfo.CurrentLocation;
-            var desiredLocation = GamePlayStrategyInfo.TargetLocation;
             var numberOfDirections = Enum.GetNames(typeof(Direction)).Length;
             var directionValue = _directionGenerator.Next(numberOfDirections);
             var direction = (Direction) directionValue;
             var newLocation = currentLocation.GetNewLocation(direction);
             var checkDirectionsCounter = 0;
-            while (desiredLocation.Equals(currentLocation.GetNewLocation(direction)) ||
-                   !new MoveAvailabilityChain(currentLocation, direction, GamePlayStrategyInfo.Team,
-                           GamePlayStrategyInfo.Board)
-                       .ActionAvailable() ||
-                   onlyTaskArea && !GamePlayStrategyInfo.Board.IsLocationInTaskArea(newLocation))
+            while(!IsRandomlyChosenDirectionAppriopriate(direction, currentLocation, newLocation ))
             {
                 directionValue = (directionValue + 1) % numberOfDirections;
                 direction = (Direction) directionValue;
@@ -111,6 +106,19 @@ namespace PlayerStateCoordinator.GamePlay
             }
 
             return direction;
+        }
+
+        private bool IsRandomlyChosenDirectionAppriopriate(Direction direction, Location currentLocation,
+            Location newLocation)
+        {
+            var desiredLocation = GamePlayStrategyInfo.TargetLocation;
+            var isAvailableMove = new MoveAvailabilityChain(currentLocation, direction, GamePlayStrategyInfo.Team,
+                    GamePlayStrategyInfo.Board)
+                .ActionAvailable();
+            var isLocationInTaskArea = GamePlayStrategyInfo.Board.IsLocationInTaskArea(newLocation);
+            var isLocationInAllowedAreaForState = !FromState.RestrictedToTaskArea || isLocationInTaskArea;
+            var isBlockedDirection = desiredLocation.Equals(currentLocation.GetNewLocation(direction));
+            return isAvailableMove && !isBlockedDirection && isLocationInAllowedAreaForState;
         }
     }
 }

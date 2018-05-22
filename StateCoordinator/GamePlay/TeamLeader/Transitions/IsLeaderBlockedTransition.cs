@@ -17,28 +17,17 @@ namespace PlayerStateCoordinator.GamePlay.TeamLeader.Transitions
         {
             return new MovingTowardsEnemyGoalAreaStrategyState(_leaderStrategyInfo);
         }
-
-        protected override GamePlayStrategyState GetFromState()
-        {
-            Console.WriteLine("Recognized leader state");
-            return Activator.CreateInstance(FromState.GetType(),
-                GamePlayStrategyInfo) as LeaderStrategyState;
-        }
-
-        protected override bool IsFromStateOnlyInTaskArea(GamePlayStrategyState fromState)
+        protected override void CheckIfFromStateIsPredicted(GamePlayStrategyState fromState)
         {
             switch (FromState)
             {
-                case InitLeaderStrategyState _:
-                case MovingTowardsEnemyGoalAreaStrategyState _:
-                case KnowledgeExchangeWithTeamMembersStrategyState _:
-                    break;
-                default:
-                    Console.WriteLine("Unexpeted state in PlayerBlocked transition");
-                    break;
+                    case MovingTowardsEnemyGoalAreaStrategyState _:
+                        break;
+                    default:
+                        Console.WriteLine($"Unexpeted state in {this.GetType().Name} transition");
+                        break;
             }
-
-            return false;
+        
         }
     }
 }
