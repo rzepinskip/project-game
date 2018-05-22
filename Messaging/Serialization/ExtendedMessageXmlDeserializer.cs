@@ -17,9 +17,13 @@ namespace Messaging.Serialization
     {
         private readonly Dictionary<string, XmlSerializer> _serializers;
         private readonly string _schemaFilePath =  Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "./Serialization/TheProjectGameCommunication.xsd");
+        private readonly XmlSchemaSet _schemas;
 
         public ExtendedMessageXmlDeserializer(string xmlNamespace) : base(xmlNamespace)
         {
+            _schemas = new XmlSchemaSet();
+            _schemas.Add(xmlNamespace, _schemaFilePath);
+
             _serializers = new Dictionary<string, XmlSerializer>
             {
                 // Actions
@@ -137,7 +141,8 @@ namespace Messaging.Serialization
 
         private Message ReadMessage(TextReader stream)
         {
-            var document = XDocument.Load(stream);
+            var xml = stream.ReadToEnd();
+            var document = XDocument.Parse(xml);
 
             var name = ReadRootName(document);
             var serializer = _serializers[name];
@@ -145,7 +150,7 @@ namespace Messaging.Serialization
             Message message = null;
 
             if (document.Root != null)
-                message = DeserializeAndValidate(document.Root.CreateReader(), serializer);
+                message = ValidateAndDeserialize(xml, serializer);
 
             return message;
         }
@@ -156,16 +161,13 @@ namespace Messaging.Serialization
             return node?.Name.LocalName;
         }
 
-        private Message DeserializeAndValidate(XmlReader xmlReader, XmlSerializer serializer)
+        private Message ValidateAndDeserialize(string xml, XmlSerializer serializer)
         {
-            var schemas = new XmlSchemaSet();
-            schemas.Add(DefaultNamespace, _schemaFilePath);
-
             Exception firstException = null;
 
             var settings = new XmlReaderSettings
             {
-                Schemas = schemas,
+                Schemas = _schemas,
                 ValidationType = ValidationType.Schema,
                 ValidationFlags =
                     XmlSchemaValidationFlags.ProcessIdentityConstraints |
@@ -187,7 +189,14 @@ namespace Messaging.Serialization
                     }
                 };
 
-            var message = serializer.Deserialize(xmlReader) as Message;
+            Message message;
+            using (var input = new StringReader(xml))
+            {
+                using (var xmlReader = XmlReader.Create(input, settings))
+                {
+                    message = serializer.Deserialize(xmlReader) as Message;
+                }
+            }
 
             if (firstException != null)
             {

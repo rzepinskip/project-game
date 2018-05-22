@@ -8,11 +8,11 @@ namespace Messaging.Serialization
 {
     public class ExtendedXmlSerializer
     {
-        protected readonly string DefaultNamespace;
+        private readonly string _defaultNamespace;
 
         public ExtendedXmlSerializer(string xmlNamespace)
         {
-            DefaultNamespace = xmlNamespace;
+            _defaultNamespace = xmlNamespace;
         }
 
         private static XmlSerializer GetXmlSerializer(Type type, string xmlNamespace)
@@ -23,7 +23,7 @@ namespace Messaging.Serialization
 
         public XmlSerializer GetDefaultXmlSerializer(Type type)
         {
-            return GetXmlSerializer(type, DefaultNamespace);
+            return GetXmlSerializer(type, _defaultNamespace);
         }
 
         public string SerializeToXml<T>(T value)
@@ -31,7 +31,7 @@ namespace Messaging.Serialization
             if (value == null) return string.Empty;
 
             var ns = new XmlSerializerNamespaces();
-            ns.Add("", DefaultNamespace);
+            ns.Add("", _defaultNamespace);
 
             var xmlSerializer = GetDefaultXmlSerializer(value.GetType());
 
