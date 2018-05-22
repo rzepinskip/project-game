@@ -74,14 +74,13 @@ namespace Player
 
         public void NotifyAboutGameEnd()
         {
-            if (_gameStarted)
-            {
-                Console.WriteLine("Game finished");
+            //if (_gameStarted)
+            //{
                 _stateCoordinator = new StateCoordinator(_gameName, _color, _role);
                 CommunicationClient.Send(_stateCoordinator.Start());
                 _gameStarted = false;
-            }
-            _gameFinished = true;
+            //}
+            //_gameFinished = true;
         }
 
         public void UpdatePlayer(int playerId, Guid playerGuid, PlayerBase playerBase, int gameId)
