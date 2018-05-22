@@ -9,6 +9,7 @@ using PlayerStateCoordinator.Common;
 using PlayerStateCoordinator.Common.States;
 using PlayerStateCoordinator.GameInitialization;
 using PlayerStateCoordinator.GameInitialization.States;
+using PlayerStateCoordinator.GamePlay;
 
 namespace PlayerStateCoordinator
 {
@@ -89,10 +90,11 @@ namespace PlayerStateCoordinator
 
         private void CheckForInactivity(object state)
         {
-            const int checkedItemsCount = 30;
+            const int checkedItemsCount = Constants.DefaultLastStatesChecked;
             var lastXStates = _lastStates.TakeLast(checkedItemsCount).ToList();
 
-            if (_lastStates.Count >= checkedItemsCount && lastXStates.TrueForAll(i => i.Equals(lastXStates.FirstOrDefault())))
+            if (_lastStates.Count >= checkedItemsCount && lastXStates.TrueForAll(i => i.Equals(lastXStates.FirstOrDefault())) ||
+                DateTime.Now - CurrentState.EnteredTimestamp > Constants.DefaultStateTimeout)
             {
                 ResetToInitState();
             }
@@ -102,7 +104,7 @@ namespace PlayerStateCoordinator
         {
             if (CurrentState is GameInitializationState)
                 CurrentState = _gameInitializationInfo.PlayerGameInitializationBeginningState;
-            else if (CurrentState is GameStrategyState)
+            else if (CurrentState is GamePlayStrategyState)
                 CurrentState = _gameInitializationInfo.PlayerGameStrategyBeginningState;
 
             _lastStates.Clear();
