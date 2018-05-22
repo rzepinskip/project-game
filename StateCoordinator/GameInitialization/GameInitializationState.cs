@@ -15,6 +15,11 @@ namespace PlayerStateCoordinator.GameInitialization
             _gameInitializationInfo = gameInitializationInfo;
         }
 
+        protected override Transition HandleGenericMessage(IMessage genericMessage)
+        {
+            return ProceedToNextState();
+        }
+
         protected override Transition HandleErrorMessage(IErrorMessage errorMessage)
         {
             return new ErrorTransition(_gameInitializationInfo.PlayerGameInitializationBeginningState);

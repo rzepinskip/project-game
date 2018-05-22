@@ -26,7 +26,7 @@ namespace PlayerStateCoordinator.Common.States
             return _messageHandler.Process(message);
         }
 
-        private Transition ProceedToNextState()
+        protected Transition ProceedToNextState()
         {
             foreach (var transition in Transitions)
                 if (transition.IsPossible())
@@ -52,7 +52,7 @@ namespace PlayerStateCoordinator.Common.States
 
         protected virtual Transition HandleGenericMessage(IMessage genericMessage)
         {
-            return ProceedToNextState();
+            throw new NotImplementedException();
         }
 
         protected virtual Transition HandleNoMatchingTransitionCase()
