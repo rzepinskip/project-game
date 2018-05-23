@@ -25,9 +25,9 @@ namespace Messaging.SuggestingActions
             GoalFields = new GoalField[0];
         }
 
-        public TaskField[] TaskFields { get; }
+        public TaskField[] TaskFields { get; set; }
 
-        public GoalField[] GoalFields { get; }
+        public GoalField[] GoalFields { get; set;  }
 
         [XmlAttribute("gameId")] public int GameId { get; set; }
 
