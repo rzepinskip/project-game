@@ -87,6 +87,18 @@
     <None Update="Resources\KnowledgeExchangeMessages\RejectKnowledgeExchangeMessageWithoutGuid.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\SuggestActionMessages\SuggestActionResponseWithGuid.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\SuggestActionMessages\SuggestActionResponseWithoutGuid.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\SuggestActionMessages\SuggestActionWithGuid.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\SuggestActionMessages\SuggestActionWithoutGuid.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
