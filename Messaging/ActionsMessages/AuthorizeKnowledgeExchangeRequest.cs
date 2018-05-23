@@ -38,14 +38,18 @@ namespace Messaging.ActionsMessages
         {
             if (PlayerGuid == default(Guid))
             {
-                Console.WriteLine("Unsigned request");
+                //Console.WriteLine("Unsigned request");
                 return null;
             }
 
             var optionalSenderId = gameMaster.Authorize(PlayerGuid);
+
             if (!optionalSenderId.HasValue)
-                Console.WriteLine("Unrecognized player");
-            
+            {
+                //Console.WriteLine("Unrecognized player");
+                return null;
+            }
+
             var senderId = optionalSenderId.Value;
 
             //Console.WriteLine($"Player {senderId} request to {WithPlayerId}");

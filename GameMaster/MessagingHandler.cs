@@ -84,7 +84,7 @@ namespace GameMaster
             {
                 if (!_playerHandles.ContainsKey(request.PlayerGuid))
                 {
-                    Console.WriteLine($"Unrecoginzed player with guid:{request.PlayerGuid}");
+                    //Console.WriteLine($"Unrecognized player with guid: {request.PlayerGuid}");
                     return;
                 }
 

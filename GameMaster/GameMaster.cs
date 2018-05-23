@@ -171,11 +171,7 @@ namespace GameMaster
             {
                 if (message is IRequestMessage request)
                 {
-                    if (!_playerGuidToId.ContainsKey(request.PlayerGuid))
-                    {
-                        Console.WriteLine($"Unrecoginzed player with guid:{request.PlayerGuid}");
-                        return;
-                    }
+                    if (!_playerGuidToId.ContainsKey(request.PlayerGuid)) return;
 
                     PutActionLog(request);
                 }
