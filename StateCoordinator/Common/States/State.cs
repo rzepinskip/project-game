@@ -11,6 +11,7 @@ namespace PlayerStateCoordinator.Common.States
         public readonly BaseInfo Info;
         public readonly StateTransitionType TransitionType;
         protected IEnumerable<Transition> Transitions;
+        public readonly DateTime EnteredTimestamp;
 
         protected State(StateTransitionType transitionType, BaseInfo info)
         {
@@ -19,6 +20,7 @@ namespace PlayerStateCoordinator.Common.States
             Info = info;
             _messageHandler = new MessageHandler(HandleRequestMessage, HandleResponseMessage, HandleErrorMessage,
                 HandleGenericMessage);
+            EnteredTimestamp = DateTime.Now;
         }
 
         public Transition Process(IMessage message)
