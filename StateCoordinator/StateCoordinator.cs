@@ -51,9 +51,9 @@ namespace PlayerStateCoordinator
                 do
                 {
                     var transition = CurrentState.Process(message);
+                    //Console.WriteLine($"{DateTime.Now} now but state's {CurrentState.EnteredTimestamp}");
                     //Console.WriteLine($"{CurrentState.GetType().Name} for {message.GetType().Name}\n\t{transition.NextState.GetType().Name} by {transition.GetType().Name}");
                     CurrentState = transition.NextState;
-                    //Console.WriteLine($"After transition state {CurrentState.GetType().Name}");
                     messagesToSend.AddRange(transition.Message);
                 } while (CurrentState.TransitionType == StateTransitionType.Immediate);
             }
@@ -98,9 +98,15 @@ namespace PlayerStateCoordinator
             const int checkedItemsCount = Constants.DefaultLastStatesChecked;
             var lastXStates = _lastStates.TakeLast(checkedItemsCount).ToList();
 
-            if (_lastStates.Count >= checkedItemsCount && lastXStates.TrueForAll(i => i.Equals(lastXStates.FirstOrDefault())) ||
-                DateTime.Now - CurrentState.EnteredTimestamp > Constants.DefaultStateTimeout)
+            if (_lastStates.Count >= checkedItemsCount && lastXStates.TrueForAll(i => i.Equals(lastXStates.FirstOrDefault())))
             {
+                Console.WriteLine("Same states");
+                ResetToInitState();
+            }
+
+            if (DateTime.Now - CurrentState.EnteredTimestamp > Constants.DefaultStateTimeout)
+            {
+                Console.WriteLine($"Inactivity: {DateTime.Now} vs last state {CurrentState.EnteredTimestamp}");
                 ResetToInitState();
             }
         }
