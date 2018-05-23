@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace Messaging.KnowledgeExchangeMessages
+namespace Messaging
 {
     public abstract class BetweenPlayersMessage : MessageToPlayer
     {
