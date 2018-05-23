@@ -14,28 +14,23 @@ namespace GameMaster
     public class GameMaster : IGameMaster
     {
         private readonly IErrorsMessagesFactory _errorsMessagesFactory;
-
-        private GameHost _gameHost;
-
+        private readonly GameHost _gameHost;
         private readonly MessagingHandler _messagingHandler;
+
         private ActionHandlerDispatcher _actionHandler;
         private Dictionary<Guid, int> _playerGuidToId;
-        private readonly GameConfiguration _gameConfiguration;
-        private readonly ICommunicationClient _communicationClient;
-        private readonly IGameResultsMessageFactory _gameResultsMessageFactory;
 
         public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationClient,
-            string gameName, IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode, IGameResultsMessageFactory gameResultsMessageFactory)
+            string gameName, IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode,
+            IGameResultsMessageFactory gameResultsMessageFactory)
         {
             _gameHost = new GameHost(gameName, gameConfiguration, StartGame);
-            _gameConfiguration = gameConfiguration;
-            _communicationClient = communicationClient;
-            _gameResultsMessageFactory = gameResultsMessageFactory;
             _errorsMessagesFactory = errorsMessagesFactory;
-            
+
             VerboseLogger = new VerboseLogger(LogManager.GetCurrentClassLogger(), loggingMode);
-            
-            _messagingHandler = new MessagingHandler(_gameConfiguration, _communicationClient, HostNewGame, _gameResultsMessageFactory);
+
+            _messagingHandler = new MessagingHandler(gameConfiguration, communicationClient, HostNewGame,
+                gameResultsMessageFactory);
             _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
             HostNewGame();
         }
@@ -91,6 +86,7 @@ namespace GameMaster
         {
             if (_playerGuidToId.ContainsKey(playerGuid))
                 return _playerGuidToId[playerGuid];
+
             return null;
         }
 
@@ -111,32 +107,26 @@ namespace GameMaster
 
         public (BoardData data, bool isGameFinished) EvaluateAction(ActionInfo actionInfo)
         {
-            var hasGameEnded = false;
-            var action = default(ActionHandler);
+            var playerId = _playerGuidToId[actionInfo.PlayerGuid];
+            var action = _actionHandler.Resolve((dynamic) actionInfo, playerId);
+            var hasGameEnded = Board.IsGameFinished();
 
-                var playerId = _playerGuidToId[actionInfo.PlayerGuid];
-                action = _actionHandler.Resolve((dynamic) actionInfo, playerId);
-                hasGameEnded = Board.IsGameFinished();
+            if (hasGameEnded)
+            {
+                GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner()));
+                _gameHost.GameInProgress = false;
 
-                if (hasGameEnded)
-                {
-                    GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner()));
-                    _gameHost.GameInProgress = false;
+                BroadcastGameResults();
+                HostNewGame();
+            }
 
-                    BroadcastGameResults();
-                    HostNewGame();
-                }
-            
             return (data: action.Respond(), isGameFinished: hasGameEnded);
         }
 
         private void BroadcastGameResults()
         {
             var boardDataList = new List<BoardData>();
-            foreach (var (guid, id) in _playerGuidToId.ToList())
-            {
-                boardDataList.Add(Board.ToBoardData(-1, id));
-            }
+            foreach (var (_, id) in _playerGuidToId.ToList()) boardDataList.Add(Board.ToBoardData(-1, id));
             _messagingHandler.BroadcastGameResults(boardDataList);
         }
 
@@ -180,8 +170,7 @@ namespace GameMaster
             }
 
             if (response != null)
-                    _messagingHandler.CommunicationClient.Send(response);
-            
+                _messagingHandler.CommunicationClient.Send(response);
         }
 
         public virtual event EventHandler<GameFinishedEventArgs> GameFinished;

@@ -14,8 +14,7 @@ namespace GameMaster
     public class MessagingHandler
     {
         private readonly ActionCosts _actionCosts;
-        public readonly ICommunicationClient CommunicationClient;    
-        private bool _gameFinished;
+        public readonly ICommunicationClient CommunicationClient;
         private readonly Action _hostNewGame;
         private Dictionary<Guid, PlayerHandle> _playerHandles;
         private readonly IGameResultsMessageFactory _gameResultsMessageFactory;

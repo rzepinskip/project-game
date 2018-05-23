@@ -43,7 +43,7 @@ namespace GameMaster
             Board = board;
         }
 
-        public GameMasterBoard Board { get; set; }
+        public GameMasterBoard Board { get; private set; }
 
         private void CheckIfGameFullCallback(object obj)
         {
