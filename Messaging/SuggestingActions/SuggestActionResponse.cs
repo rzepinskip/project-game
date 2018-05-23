@@ -8,7 +8,7 @@ namespace Messaging.SuggestingActions
     ///     There is such an element defined in schema, but a copy of SuggestAction. Thus, useless.
     /// </summary>
     [XmlType(XmlRootName)]
-    public class SuggestActionResponse : SuggestingActions.SuggestAction
+    public class SuggestActionResponse : SuggestAction
     {
         public new const string XmlRootName = "SuggestActionResponse";
 

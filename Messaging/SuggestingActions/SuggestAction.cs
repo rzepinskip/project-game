@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
 using Common.BoardObjects;
+using Common.Interfaces;
 
 namespace Messaging.SuggestingActions
 {
@@ -48,5 +49,18 @@ namespace Messaging.SuggestingActions
         }
 
         [XmlIgnore] public bool PlayerGuidValueSpecified => PlayerGuid.HasValue;
+
+        public override IMessage Process(IGameMaster gameMaster)
+        {
+            return null;
+        }
+
+        public override void Process(IPlayer player)
+        {
+        }
+
+        public override void Process(ICommunicationServer cs, int id)
+        {
+        }
     }
 }
