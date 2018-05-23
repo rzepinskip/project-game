@@ -76,6 +76,7 @@ namespace Player
         {
             if (_gameStarted)
             {
+                _stateCoordinator.NotifyAboutGameEnd();
                 _stateCoordinator = new StateCoordinator(_gameName, _preferredColor, _preferredRole);
                 CommunicationClient.Send(_stateCoordinator.Start());
                 _gameStarted = false;

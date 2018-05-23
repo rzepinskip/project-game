@@ -38,7 +38,7 @@ namespace PlayerStateCoordinator
 
         public IMessage Start()
         {
-            _stateTimeoutTimer = new Timer(CheckForInactivity, null, TimeSpan.FromSeconds(0), TimeSpan.FromSeconds(30));
+            _stateTimeoutTimer = new Timer(CheckForInactivity, null, TimeSpan.FromSeconds(0), Constants.DefaultStateTimeout / 2);
             return new GetGamesMessage();
         }
 
