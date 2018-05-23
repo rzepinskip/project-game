@@ -36,6 +36,7 @@ namespace Player.App
             var team = default(TeamColor);
             var role = default(PlayerType);
             var loggingMode = LoggingMode.NonVerbose;
+            var strategyGroupTypeFlag = true;
             var strategyGroupType = StrategyGroupType.Advanced;
 
             var options = new OptionSet
@@ -47,6 +48,7 @@ namespace Player.App
                 {"team=", "red|blue", t => teamFlag = Enum.TryParse(t, true, out team)},
                 {"role=", "leader|player", r => roleFlag = Enum.TryParse(r, true, out role)},
                 {"verbose:", "logging mode", v => loggingMode = LoggingMode.Verbose },
+                {"strategy=", "strategy options", s => strategyGroupTypeFlag = Enum.TryParse(s, true, out strategyGroupType) }
             };
 
             options.Parse(parameters);
@@ -59,7 +61,7 @@ namespace Player.App
             }
 
             if (port == default(int) || gameConfigPath == default(string) || gameName == default(string) ||
-                !addressFlag || !teamFlag || !roleFlag)
+                !addressFlag || !teamFlag || !roleFlag || !strategyGroupTypeFlag)
                 Usage(options);
 
 
