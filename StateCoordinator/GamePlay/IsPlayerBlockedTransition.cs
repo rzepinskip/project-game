@@ -42,7 +42,7 @@ namespace PlayerStateCoordinator.GamePlay
 
                 //Console.WriteLine("Recognized normal state");
 
-                return Activator.CreateInstance(FromState.GetType(), GamePlayStrategyInfo) as GamePlayStrategyState;
+                return FromState.Copy();
             }
         }
 

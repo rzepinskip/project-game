@@ -11,7 +11,12 @@ namespace PlayerStateCoordinator.Common.States
         public readonly BaseInfo Info;
         public readonly StateTransitionType TransitionType;
         protected IEnumerable<Transition> Transitions;
-        public readonly DateTime EnteredTimestamp;
+
+        public DateTime EnteredTimestamp
+        {
+            get;
+            private set;
+        }
 
         protected State(StateTransitionType transitionType, BaseInfo info)
         {
@@ -60,6 +65,13 @@ namespace PlayerStateCoordinator.Common.States
         protected virtual Transition HandleNoMatchingTransitionCase()
         {
             throw new NotImplementedException();
+        }
+
+        public virtual State Copy()
+        {
+            var instance = Activator.CreateInstance(GetType(), Info) as State;
+            instance.EnteredTimestamp = DateTime.Now;
+            return instance;
         }
     }
 }
