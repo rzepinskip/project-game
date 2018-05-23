@@ -1,4 +1,6 @@
-﻿using Common.Interfaces;
+﻿using System.Collections.Generic;
+using Common.Interfaces;
+using Messaging;
 using PlayerStateCoordinator.Info;
 using PlayerStateCoordinator.Transitions;
 
@@ -17,6 +19,14 @@ namespace PlayerStateCoordinator.States
         protected override Transition HandleErrorMessage(IErrorMessage errorMessage)
         {
             return new ErrorTransition(_gameInitializationInfo.PlayerGameInitializationBeginningState);
+        }
+
+        protected override Transition HandleResponseMessage(IResponseMessage responseMessage)
+        {
+            if(responseMessage is DataMessage)
+                return new LoopbackTransition(this, new List<IMessage>());
+
+            return base.HandleResponseMessage(responseMessage);
         }
     }
 }
