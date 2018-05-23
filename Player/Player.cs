@@ -17,8 +17,9 @@ namespace Player
         private readonly string _gameName;
         private readonly PlayerType _preferedRole;
         private StateCoordinator _stateCoordinator;
-
-        public Player(ICommunicationClient communicationClient, string gameName, TeamColor preferedColor, PlayerType preferedRole,
+        private bool _gameFinished;
+        private bool _gameStarted;
+        public Player(ICommunicationClient communicationClient, string gameName, TeamColor color, PlayerType role,
             IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode)
         {
             CommunicationClient = communicationClient;
@@ -73,8 +74,13 @@ namespace Player
 
         public void NotifyAboutGameEnd()
         {
-            Console.WriteLine("Game finished");
-            _stateCoordinator = new StateCoordinator(_gameName, _preferedColor, _preferedRole);
+            if (_gameStarted)
+            {
+                _stateCoordinator = new StateCoordinator(_gameName, _color, _role);
+                CommunicationClient.Send(_stateCoordinator.Start());
+                _gameStarted = false;
+            }
+            _gameFinished = true;
         }
 
         public void UpdatePlayer(int playerId, Guid playerGuid, PlayerBase playerBase, int gameId)
@@ -101,6 +107,7 @@ namespace Player
             _stateCoordinator.UpdatePlayerStrategyBeginningState(playerStrategy.GetBeginningState());
             _stateCoordinator.CurrentState = playerStrategy.GetBeginningState();
 
+            _gameStarted = true;
             Console.WriteLine("Player has updated game data and started playing");
         }
 
@@ -132,6 +139,12 @@ namespace Player
             message.Process(this);
 
             var responsesToSend = _stateCoordinator.Process(message).ToList();
+
+            if (_gameFinished)
+            {
+                _gameFinished = false;
+                return;
+            }
 
             foreach (var response in responsesToSend)
             {

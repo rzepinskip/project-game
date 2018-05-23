@@ -147,5 +147,14 @@ namespace GameMaster
             }
             reader.ReadEndElement();
         }
+
+        public override BoardData ToBoardData(int senderId, int receiverId)
+        {
+            var taskFields = ToEnumerable().Where(f => f is TaskField taskField).Select(t => (TaskField)t);
+            var goalFields = ToEnumerable().Where(f => f is GoalField goalField).Select(t => (GoalField)t);
+            var pieces = Pieces.Values;
+            var playerLocation = Players[receiverId].Location;
+            return BoardData.Create(receiverId, playerLocation, taskFields.ToArray(), goalFields.ToArray(), pieces.ToArray());
+        }
     }
 }

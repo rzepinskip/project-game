@@ -14,15 +14,16 @@ namespace GameMaster
     public class MessagingHandler
     {
         private readonly ActionCosts _actionCosts;
-        public readonly ICommunicationClient CommunicationClient;    
-        private bool _gameFinished;
+        public readonly ICommunicationClient CommunicationClient;
         private readonly Action _hostNewGame;
         private Dictionary<Guid, PlayerHandle> _playerHandles;
+        private readonly IGameResultsMessageFactory _gameResultsMessageFactory;
 
-        public MessagingHandler(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, Action hostNewGame)
+        public MessagingHandler(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, Action hostNewGame, IGameResultsMessageFactory gameResultsMessageFactory)
         {
             _actionCosts = gameConfiguration.ActionCosts;
             _hostNewGame = hostNewGame;
+            _gameResultsMessageFactory = gameResultsMessageFactory;
             CommunicationClient = communicationCommunicationClient;
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleMessagesFromClient)).Start();
         }
@@ -80,6 +81,12 @@ namespace GameMaster
         {
             if (message is IRequestMessage request)
             {
+                if (!_playerHandles.ContainsKey(request.PlayerGuid))
+                {
+                    //Console.WriteLine($"Unrecognized player with guid: {request.PlayerGuid}");
+                    return;
+                }
+
                 var playerHandle = _playerHandles[request.PlayerGuid];
                 lock (playerHandle.Lock)
                 {
@@ -123,6 +130,14 @@ namespace GameMaster
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleMessagesFromClient)).Start();
             _hostNewGame();
 
+        }
+
+        public void BroadcastGameResults(IEnumerable<BoardData> boardData)
+        {
+            foreach (var data in boardData)
+            {
+                CommunicationClient.Send(_gameResultsMessageFactory.CreateGameResultsMessage(data));
+            }
         }
 
         public double KnowledgeExchangeDelay => _actionCosts.KnowledgeExchangeDelay;

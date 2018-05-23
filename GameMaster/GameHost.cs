@@ -27,10 +27,6 @@ namespace GameMaster
             _startGame = startGame;
             _gameName = gameName;
 
-            checkIfFullTeamTimer = new Timer(CheckIfGameFullCallback, null,
-                (int) Constants.GameFullCheckStartDelay.TotalMilliseconds,
-                (int) Constants.GameFullCheckInterval.TotalMilliseconds);
-
             _boardGenerator = new GameMasterBoardGenerator();
             Board = _boardGenerator.InitializeBoard(gameConfiguration.GameDefinition);
         }
@@ -43,13 +39,15 @@ namespace GameMaster
             Board = board;
         }
 
-        public GameMasterBoard Board { get; set; }
+        public GameMasterBoard Board { get; private set; }
 
         private void CheckIfGameFullCallback(object obj)
         {
             if (_playersSlots.Count > 0 || GameInProgress) return;
 
             GameInProgress = true;
+            checkIfFullTeamTimer.Dispose();
+
             Board = _boardGenerator.InitializeBoard(_gameConfiguration.GameDefinition);
             Board = _boardGenerator.SpawnGameObjects(_gameConfiguration.GameDefinition, _connectedPlayers);
             _pieceGenerator = new PieceGenerator(Board, _gameConfiguration.GameDefinition.ShamProbability,
@@ -61,10 +59,14 @@ namespace GameMaster
         public void HostNewGame()
         {
             GameInProgress = false;
+            _pieceGenerator?.SpawnTimer.Dispose();
+
             _connectedPlayers = new List<PlayerInfo>();
             _playersSlots =
                 GameMasterBoardGenerator.GeneratePlayerSlots(_gameConfiguration.GameDefinition.NumberOfPlayersPerTeam);
-            _pieceGenerator?.SpawnTimer.Dispose();
+            checkIfFullTeamTimer = new Timer(CheckIfGameFullCallback, null,
+                (int) Constants.GameFullCheckStartDelay.TotalMilliseconds,
+                (int) Constants.GameFullCheckInterval.TotalMilliseconds);
         }
 
         public (int gameId, PlayerBase playerInfo) AssignPlayerToAvailableSlotWithPrefered(

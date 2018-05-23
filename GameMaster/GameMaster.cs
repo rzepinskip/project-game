@@ -14,27 +14,24 @@ namespace GameMaster
     public class GameMaster : IGameMaster
     {
         private readonly IErrorsMessagesFactory _errorsMessagesFactory;
-
         private readonly GameHost _gameHost;
-
-        private readonly string _gameName;
         private readonly MessagingHandler _messagingHandler;
+
         private ActionHandlerDispatcher _actionHandler;
         private Dictionary<Guid, int> _playerGuidToId;
-        private HashSet<Guid> _playersInformedAboutGameResult;
 
-        public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient,
-            string gameName, IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode)
+        public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationClient,
+            string gameName, IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode,
+            IGameResultsMessageFactory gameResultsMessageFactory)
         {
             _gameHost = new GameHost(gameName, gameConfiguration, StartGame);
-
             _errorsMessagesFactory = errorsMessagesFactory;
 
-            _messagingHandler = new MessagingHandler(gameConfiguration, communicationCommunicationClient, HostNewGame);
-            _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
-
             VerboseLogger = new VerboseLogger(LogManager.GetCurrentClassLogger(), loggingMode);
-            KnowledgeExchangeManager = new KnowledgeExchangeManager(_messagingHandler.KnowledgeExchangeDelay);
+
+            _messagingHandler = new MessagingHandler(gameConfiguration, communicationClient, HostNewGame,
+                gameResultsMessageFactory);
+            _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
             HostNewGame();
         }
 
@@ -89,6 +86,7 @@ namespace GameMaster
         {
             if (_playerGuidToId.ContainsKey(playerGuid))
                 return _playerGuidToId[playerGuid];
+
             return null;
         }
 
@@ -109,21 +107,27 @@ namespace GameMaster
 
         public (BoardData data, bool isGameFinished) EvaluateAction(ActionInfo actionInfo)
         {
-            if (!_playerGuidToId.ContainsKey(actionInfo.PlayerGuid)) return (null, true);
-
             var playerId = _playerGuidToId[actionInfo.PlayerGuid];
             var action = _actionHandler.Resolve((dynamic) actionInfo, playerId);
             var hasGameEnded = Board.IsGameFinished();
+
             if (hasGameEnded)
             {
                 GameFinished?.Invoke(this, new GameFinishedEventArgs(Board.CheckWinner()));
                 _gameHost.GameInProgress = false;
 
-                _playersInformedAboutGameResult.Add(actionInfo.PlayerGuid);
-                if (_playersInformedAboutGameResult.Count == _playerGuidToId.Count) HostNewGame();
+                BroadcastGameResults();
+                HostNewGame();
             }
 
             return (data: action.Respond(), isGameFinished: hasGameEnded);
+        }
+
+        private void BroadcastGameResults()
+        {
+            var boardDataList = new List<BoardData>();
+            foreach (var (_, id) in _playerGuidToId.ToList()) boardDataList.Add(Board.ToBoardData(-1, id));
+            _messagingHandler.BroadcastGameResults(boardDataList);
         }
 
         public void StartGame()
@@ -147,25 +151,29 @@ namespace GameMaster
         public void HostNewGame()
         {
             _playerGuidToId = new Dictionary<Guid, int>();
-            _playersInformedAboutGameResult = new HashSet<Guid>();
+
             _gameHost.HostNewGame();
             RegisterGame();
         }
 
         public void MessageHandler(IMessage message)
         {
-            // TODO Log all messages
-            if (message is IRequestMessage request)
-                PutActionLog(request);
-
             IMessage response;
+            // TODO Log all player
             lock (Board.Lock)
             {
-                response = message.Process(this);
+                if (message is IRequestMessage request)
+                {
+                    if (!_playerGuidToId.ContainsKey(request.PlayerGuid)) return;
 
-                if (response != null)
-                    _messagingHandler.CommunicationClient.Send(response);
+                    PutActionLog(request);
+                }
+
+                response = message.Process(this);
             }
+
+            if (response != null)
+                _messagingHandler.CommunicationClient.Send(response);
         }
 
         public virtual event EventHandler<GameFinishedEventArgs> GameFinished;
