@@ -12,26 +12,26 @@ namespace Player
 {
     public class Player : PlayerBase, IPlayer
     {
-        private readonly TeamColor _preferedColor;
+        private readonly TeamColor _preferredColor;
         private readonly IErrorsMessagesFactory _errorsMessagesFactory;
         private readonly string _gameName;
-        private readonly PlayerType _preferedRole;
+        private readonly PlayerType _preferredRole;
         private StateCoordinator _stateCoordinator;
         private bool _gameFinished;
         private bool _gameStarted;
-        public Player(ICommunicationClient communicationClient, string gameName, TeamColor color, PlayerType role,
+        public Player(ICommunicationClient communicationClient, string gameName, TeamColor preferredColor, PlayerType preferredRole,
             IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode)
         {
             CommunicationClient = communicationClient;
             _gameName = gameName;
-            _preferedColor = preferedColor;
-            _preferedRole = preferedRole;
+            _preferredColor = preferredColor;
+            _preferredRole = preferredRole;
             _errorsMessagesFactory = errorsMessagesFactory;
 
             var factory = new LoggerFactory();
             VerboseLogger = new VerboseLogger(factory.GetPlayerLogger(0), loggingMode);
 
-            _stateCoordinator = new StateCoordinator(gameName, preferedColor, preferedRole);
+            _stateCoordinator = new StateCoordinator(gameName, preferredColor, preferredRole);
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
             CommunicationClient.Send(_stateCoordinator.Start());
         }
@@ -39,18 +39,18 @@ namespace Player
         /// <summary>
         ///     Only for tests
         /// </summary>
-        public Player(int id, Guid guid, TeamColor team, PlayerType preferedRole,
+        public Player(int id, Guid guid, TeamColor team, PlayerType preferredRole,
             PlayerBoard board, Location location)
         {
             Id = id;
             Team = team;
-            Role = preferedRole;
+            Role = preferredRole;
             PlayerGuid = guid;
             GameId = 0;
             PlayerBoard = board;
-            PlayerBoard.Players[id] = new PlayerInfo(id, team, preferedRole, location);
+            PlayerBoard.Players[id] = new PlayerInfo(id, team, preferredRole, location);
 
-            _stateCoordinator = new StateCoordinator("", team, preferedRole);
+            _stateCoordinator = new StateCoordinator("", team, preferredRole);
         }
 
         public VerboseLogger VerboseLogger { get; private set; }
@@ -76,7 +76,7 @@ namespace Player
         {
             if (_gameStarted)
             {
-                _stateCoordinator = new StateCoordinator(_gameName, _color, _role);
+                _stateCoordinator = new StateCoordinator(_gameName, _preferredColor, _preferredRole);
                 CommunicationClient.Send(_stateCoordinator.Start());
                 _gameStarted = false;
             }
@@ -114,7 +114,7 @@ namespace Player
         public void HandleGameMasterDisconnection()
         {
             VerboseLogger.Log($"GM for game {GameId} disconnected");
-            _stateCoordinator = new StateCoordinator(_gameName, _preferedColor, _preferedRole);
+            _stateCoordinator = new StateCoordinator(_gameName, _preferredColor, _preferredRole);
         }
 
         public void InitializePlayer(int id, Guid guid, TeamColor team, PlayerType role, PlayerBoard board,
@@ -160,7 +160,7 @@ namespace Player
             if (e.Severity == CommunicationException.ErrorSeverity.Temporary)
                 return;
 
-            _stateCoordinator = new StateCoordinator(_gameName, _preferedColor, _preferedRole);
+            _stateCoordinator = new StateCoordinator(_gameName, _preferredColor, _preferredRole);
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
             CommunicationClient.Send(_stateCoordinator.Start());
         }

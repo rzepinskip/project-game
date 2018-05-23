@@ -68,7 +68,7 @@ namespace PlayerStateCoordinator
             //{
             //    Console.WriteLine(sendMessage.GetType().Name);
             //}
-            Console.WriteLine();
+            //Console.WriteLine();
             return messagesToSend;
         }
 

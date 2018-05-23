@@ -40,7 +40,7 @@ namespace PlayerStateCoordinator.GamePlay
                     throw new StrategyException(FromState,
                         "IsPlayerBlocked transition cannot proceed to Immediate state! - an error in designing strategy");
 
-                Console.WriteLine("Recognized normal state");
+                //Console.WriteLine("Recognized normal state");
 
                 return Activator.CreateInstance(FromState.GetType(), GamePlayStrategyInfo) as GamePlayStrategyState;
             }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Common.Interfaces;
+using Messaging;
 using PlayerStateCoordinator.Common;
 using PlayerStateCoordinator.Common.States;
 using PlayerStateCoordinator.Common.Transitions;
