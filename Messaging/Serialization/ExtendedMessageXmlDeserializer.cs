@@ -10,6 +10,7 @@ using Messaging.ErrorsMessages;
 using Messaging.InitializationMessages;
 using Messaging.KnowledgeExchangeMessages;
 using Messaging.Requests;
+using Messaging.SuggestingActions;
 
 namespace Messaging.Serialization
 {
@@ -110,7 +111,7 @@ namespace Messaging.Serialization
                     RejectJoiningGame.XmlRootName,
                     GetDefaultXmlSerializer(typeof(RejectJoiningGame))
                 },
-                // KnowledgeExchangeMessages
+                // Knowledge exchange
                 {
                     KnowledgeExchangeRequestMessage.XmlRootName,
                     GetDefaultXmlSerializer(typeof(KnowledgeExchangeRequestMessage))
@@ -118,6 +119,15 @@ namespace Messaging.Serialization
                 {
                     RejectKnowledgeExchangeMessage.XmlRootName,
                     GetDefaultXmlSerializer(typeof(RejectKnowledgeExchangeMessage))
+                },
+                // Suggest action
+                {
+                    SuggestAction.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(SuggestAction))
+                },
+                {
+                    SuggestActionResponse.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(SuggestActionResponse))
                 },
                 // Other
                 {
