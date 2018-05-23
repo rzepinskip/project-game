@@ -9,6 +9,7 @@ using GameMaster.Configuration;
 using Messaging;
 using Messaging.ErrorsMessages;
 using Messaging.Serialization;
+using Player.StrategyGroups;
 
 namespace GameSimulation
 {
@@ -16,7 +17,7 @@ namespace GameSimulation
     {
         public CommunicationServer.CommunicationServer CommunicationServer;
 
-        public GameSimulation(string configFilePath)
+        public GameSimulation(string configFilePath, StrategyGroup strategyGroup)
         {
             var port = Constants.DefaultPortNumber;
             var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
@@ -37,7 +38,7 @@ namespace GameSimulation
             {
                 communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
                     MessageSerializer.Instance);
-                var player = new Player.Player(communicationClient, "game", TeamColor.Blue, PlayerType.Leader, new ErrorsMessagesFactory(), LoggingMode.NonVerbose);
+                var player = new Player.Player(communicationClient, "game", TeamColor.Blue, PlayerType.Leader, new ErrorsMessagesFactory(), LoggingMode.NonVerbose, strategyGroup);
                 Players.Add(player);
             }
 

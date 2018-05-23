@@ -1,17 +1,24 @@
 ﻿using System;
 using System.Threading;
 using Common;
+using Player.StrategyGroups;
 
 namespace GameSimulation
 {
     internal class Program
     {
+        public Program(StrategyGroup strategyGroup)
+        {
+            _strategyGroup = strategyGroup;
+        }
+
         private static VerboseLogger _logger;
+        private static StrategyGroup _strategyGroup;
 
         private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            var simulation = new GameSimulation("../../../../ExampleConfig.xml");
+            var simulation = new GameSimulation("../../../../ExampleConfig.xml", _strategyGroup);
 
             _logger = simulation.GameMaster.VerboseLogger;
 

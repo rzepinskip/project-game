@@ -6,6 +6,7 @@ using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
 using Player.Logging;
+using Player.StrategyGroups;
 using PlayerStateCoordinator;
 
 namespace Player
@@ -14,19 +15,21 @@ namespace Player
     {
         private readonly TeamColor _preferredColor;
         private readonly IErrorsMessagesFactory _errorsMessagesFactory;
+        private readonly StrategyGroup _strategyGroup;
         private readonly string _gameName;
         private readonly PlayerType _preferredRole;
         private StateCoordinator _stateCoordinator;
         private bool _gameFinished;
         private bool _gameStarted;
         public Player(ICommunicationClient communicationClient, string gameName, TeamColor preferredColor, PlayerType preferredRole,
-            IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode)
+            IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode, StrategyGroup strategyGroup)
         {
             CommunicationClient = communicationClient;
             _gameName = gameName;
             _preferredColor = preferredColor;
             _preferredRole = preferredRole;
             _errorsMessagesFactory = errorsMessagesFactory;
+            _strategyGroup = strategyGroup;
 
             var factory = new LoggerFactory();
             VerboseLogger = new VerboseLogger(factory.GetPlayerLogger(0), loggingMode);
@@ -97,11 +100,12 @@ namespace Player
         public void InitializeGameData(Location playerLocation, BoardInfo board, IEnumerable<PlayerBase> players)
         {
             PlayerBoard = new PlayerBoard(board.Width, board.TasksHeight, board.GoalsHeight);
-            foreach (var playerBase in players) PlayerBoard.Players.Add(playerBase.Id, new PlayerInfo(playerBase));
+            var playerBases = players.ToList();
+            foreach (var playerBase in playerBases) PlayerBoard.Players.Add(playerBase.Id, new PlayerInfo(playerBase));
 
             PlayerBoard.Players[Id].Location = playerLocation;
 
-            Strategy playerStrategy = Strategy.Create(this, PlayerBoard, PlayerGuid, GameId);
+            Strategy playerStrategy = _strategyGroup.Create(this, PlayerBoard, PlayerGuid, GameId, playerBases);
             Console.WriteLine("Player has chosen " + playerStrategy.GetType().Name);
 
             _stateCoordinator.UpdatePlayerStrategyBeginningState(playerStrategy.GetBeginningState());
