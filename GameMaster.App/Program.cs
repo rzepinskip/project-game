@@ -37,9 +37,9 @@ namespace GameMaster.App
                     boardVisualizer.VisualizeBoard(gm.Board);
                     Console.WriteLine(i);
                     Console.WriteLine(_finishedGameMessage);
-                }   
+                }
             }
-        
+
         }
 
         private static void GenerateNewFinishedGameMessage(object sender, GameFinishedEventArgs e)
@@ -71,6 +71,10 @@ namespace GameMaster.App
 
             options.Parse(parameters);
 
+            if (loggingMode == LoggingMode.Verbose && _runtimeMode == RuntimeMode.Visualization)
+                _runtimeMode = RuntimeMode.Console;
+
+
             if (!addressFlag)
             {
                 addressFlag = true;
@@ -85,7 +89,7 @@ namespace GameMaster.App
             var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(gameConfigPath);
 
-            var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), TimeSpan.FromMilliseconds((int) config.KeepAliveInterval), MessageSerializer.Instance);
+            var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), TimeSpan.FromMilliseconds((int)config.KeepAliveInterval), MessageSerializer.Instance);
 
             return new GameMaster(config, communicationClient, gameName, new ErrorsMessagesFactory(), loggingMode, new GameResultsMessageFactory());
         }

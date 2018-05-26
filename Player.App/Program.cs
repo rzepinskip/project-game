@@ -67,12 +67,15 @@ namespace Player.App
                 {"game=", "name of the game", g => gameName = g},
                 {"team=", "red|blue", t => teamFlag = Enum.TryParse(t, true, out team)},
                 {"role=", "leader|player", r => roleFlag = Enum.TryParse(r, true, out role)},
-                {"strategy=", "strategy options", s => strategyGroupTypeFlag = Enum.TryParse(s, true, out strategyGroupType) }
+                {"strategy=", "strategy options", s => strategyGroupTypeFlag = Enum.TryParse(s, true, out strategyGroupType) },
                 {"verbose:", "logging mode", v => loggingMode = LoggingMode.Verbose },
                 {"visualize:", "runtime mode", r => _runtimeMode = RuntimeMode.Visualization }
             };
 
             options.Parse(parameters);
+
+            if (loggingMode == LoggingMode.Verbose && _runtimeMode == RuntimeMode.Visualization)
+                _runtimeMode = RuntimeMode.Console;
 
             if (!addressFlag)
             {
