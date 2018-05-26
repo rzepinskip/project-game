@@ -165,8 +165,13 @@ namespace GameMaster
                 if (message is IRequestMessage request)
                 {
                     if (!_playerGuidToId.ContainsKey(request.PlayerGuid)) return;
-
                     PutActionLog(request);
+
+                }
+                else
+                {
+
+                    VerboseLogger.Log(message.ToLog());
                 }
 
                 response = message.Process(this);
