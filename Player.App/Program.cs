@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading;
 using BoardGenerators.Loaders;
 using Common;
 using Communication.Client;
@@ -16,6 +17,7 @@ namespace Player.App
     internal class Program
     {
         private static VerboseLogger _logger;
+        private static RuntimeMode _runtimeMode;
 
         private static void Main(string[] args)
         {
@@ -24,6 +26,23 @@ namespace Player.App
             var player = CreatePlayerFrom(args);
 
             _logger = player.VerboseLogger;
+            if (_runtimeMode == RuntimeMode.Visualization)
+            {
+                var boardVisualizer = new BoardVisualizer();
+                for (var i = 0;; i++)
+                {
+                    if (player.PlayerBoard != null)
+                    {
+                        Thread.Sleep(200);
+                        boardVisualizer.VisualizeBoard(player.PlayerBoard, player.Id);
+                        Console.WriteLine(i);
+                    }
+                    else
+                    {
+                        Thread.Sleep(2000);
+                    }
+                }
+            }
         }
 
         private static Player CreatePlayerFrom(IEnumerable<string> parameters)
@@ -38,6 +57,7 @@ namespace Player.App
             var loggingMode = LoggingMode.NonVerbose;
             var strategyGroupTypeFlag = true;
             var strategyGroupType = StrategyGroupType.Primitive;
+            _runtimeMode = RuntimeMode.Console;
 
             var options = new OptionSet
             {
@@ -47,11 +67,15 @@ namespace Player.App
                 {"game=", "name of the game", g => gameName = g},
                 {"team=", "red|blue", t => teamFlag = Enum.TryParse(t, true, out team)},
                 {"role=", "leader|player", r => roleFlag = Enum.TryParse(r, true, out role)},
+                {"strategy=", "strategy options", s => strategyGroupTypeFlag = Enum.TryParse(s, true, out strategyGroupType) },
                 {"verbose:", "logging mode", v => loggingMode = LoggingMode.Verbose },
-                {"strategy=", "strategy options", s => strategyGroupTypeFlag = Enum.TryParse(s, true, out strategyGroupType) }
+                {"visualize:", "runtime mode", r => _runtimeMode = RuntimeMode.Visualization }
             };
 
             options.Parse(parameters);
+
+            if (loggingMode == LoggingMode.Verbose && _runtimeMode == RuntimeMode.Visualization)
+                _runtimeMode = RuntimeMode.Console;
 
             if (!addressFlag)
             {
