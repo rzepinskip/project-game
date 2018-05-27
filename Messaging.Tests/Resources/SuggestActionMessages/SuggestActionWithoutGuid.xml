@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SuggestAction xmlns="https://se2.mini.pw.edu.pl/17-results/"
+               senderPlayerId="1"
+               playerId="2"
+               gameId="1"
+>
+  <!-- Timestamps in those messages mark the time of suggestion -->
+  <!-- Distance to piece =-1 has no meaning here, GM should impose its value -->
+  <TaskFields>
+    <TaskField x="1" y="2" distanceToPiece="-1" timestamp="2018-01-02T23:59:56"/>
+    <TaskField x="3" y="5" distanceToPiece="-1" timestamp="2018-01-02T23:59:56"/>
+  </TaskFields>
+  <!-- type unknown has no meaning here, GM should impose such a value -->
+  <GoalFields>
+    <GoalField x="0" y="0" type="unknown" team="blue" timestamp="2018-01-02T23:59:56"/>
+    <GoalField x="1" y="0" type="unknown" team="blue" timestamp="2018-01-02T23:59:56"/>
+  </GoalFields>
+</SuggestAction>
