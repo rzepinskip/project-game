@@ -69,6 +69,7 @@ namespace Communication.Client
         public override void CloseConnection()
         {
             base.CloseConnection();
+            if (SendKeepAliveTimer == null) return;
             SendKeepAliveTimer.Stop();
             SendKeepAliveTimer.Dispose();
         }

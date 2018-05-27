@@ -72,6 +72,7 @@ namespace Communication.Client
         {
             while (!_connectedToServer)
             {
+                _tcpConnection?.CloseConnection();
                 try
                 {
                     _connectDone.Reset();
