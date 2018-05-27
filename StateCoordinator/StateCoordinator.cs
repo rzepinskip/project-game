@@ -90,7 +90,7 @@ namespace PlayerStateCoordinator
         public void NotifyAboutGameEnd()
         {
             _gameInitializationInfo.IsGameRunning = false;
-            _stateTimeoutTimer.Dispose();
+            StopTimers();
         }
 
         private void CheckForInactivity(object state)
@@ -121,6 +121,11 @@ namespace PlayerStateCoordinator
             _lastStates.Clear();
 
             Console.WriteLine($"Strategy error - resetting back to state {CurrentState.GetType().Name}");
+        }
+
+        public void StopTimers()
+        {
+            _stateTimeoutTimer.Dispose();
         }
     }
 }

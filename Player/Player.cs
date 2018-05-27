@@ -80,7 +80,7 @@ namespace Player
             if (_gameStarted)
             {
                 _stateCoordinator.NotifyAboutGameEnd();
-                _stateCoordinator = new StateCoordinator(_gameName, _preferredColor, _preferredRole);
+                RestartStateCoordinator();
                 CommunicationClient.Send(_stateCoordinator.Start());
                 _gameStarted = false;
             }
@@ -119,7 +119,7 @@ namespace Player
         public void HandleGameMasterDisconnection()
         {
             VerboseLogger.Log($"GM for game {GameId} disconnected");
-            _stateCoordinator = new StateCoordinator(_gameName, _preferredColor, _preferredRole);
+            RestartStateCoordinator();
         }
 
         public void InitializePlayer(int id, Guid guid, TeamColor team, PlayerType role, PlayerBoard board,
@@ -135,7 +135,6 @@ namespace Player
             GameId = 0;
             PlayerBoard = board;
             PlayerBoard.Players[id] = new PlayerInfo(id, team, role, location);
-
             _stateCoordinator = new StateCoordinator("", team, role);
         }
 
@@ -164,10 +163,15 @@ namespace Player
 
             if (e.Severity == CommunicationException.ErrorSeverity.Temporary)
                 return;
-
-            _stateCoordinator = new StateCoordinator(_gameName, _preferredColor, _preferredRole);
+            RestartStateCoordinator();
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleResponse)).Start();
             CommunicationClient.Send(_stateCoordinator.Start());
+        }
+
+        private void RestartStateCoordinator()
+        {
+            _stateCoordinator.StopTimers();
+            _stateCoordinator = new StateCoordinator(_gameName, _preferredColor, _preferredRole);
         }
     }
 }
