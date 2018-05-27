@@ -32,7 +32,7 @@ namespace GameSimulation
 
             CommunicationServer =
                 new CommunicationServer.CommunicationServer(MessageSerializer.Instance, keepAliveInterval, port, new ErrorsMessagesFactory(), LoggingMode.NonVerbose, ipAddress);
-            GameMaster = new GameMaster.GameMaster(config, communicationClient, "game", new ErrorsMessagesFactory(), LoggingMode.NonVerbose, new GameResultsMessageFactory());
+            GameMaster = new GameMaster.GameMaster(config, communicationClient, "game", new ErrorsMessagesFactory(), LoggingMode.NonVerbose, new GameMasterMessageFactory());
             Players = new List<Player.Player>();
             for (var i = 0; i < 2 * config.GameDefinition.NumberOfPlayersPerTeam; i++)
             {

@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ClientsCommon;
 using Common;
+using Common.BoardObjects;
 using Common.Interfaces;
 using GameMaster.Configuration;
 using GameMaster.Delays;
@@ -17,13 +18,13 @@ namespace GameMaster
         public readonly ICommunicationClient CommunicationClient;
         private readonly Action _hostNewGame;
         private Dictionary<Guid, PlayerHandle> _playerHandles;
-        private readonly IGameResultsMessageFactory _gameResultsMessageFactory;
+        private readonly IGameMasterMessageFactory _gameMasterMessageFactory;
 
-        public MessagingHandler(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, Action hostNewGame, IGameResultsMessageFactory gameResultsMessageFactory)
+        public MessagingHandler(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, Action hostNewGame, IGameMasterMessageFactory gameMasterMessageFactory)
         {
             _actionCosts = gameConfiguration.ActionCosts;
             _hostNewGame = hostNewGame;
-            _gameResultsMessageFactory = gameResultsMessageFactory;
+            _gameMasterMessageFactory = gameMasterMessageFactory;
             CommunicationClient = communicationCommunicationClient;
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleMessagesFromClient)).Start();
         }
@@ -136,8 +137,30 @@ namespace GameMaster
         {
             foreach (var data in boardData)
             {
-                CommunicationClient.Send(_gameResultsMessageFactory.CreateGameResultsMessage(data));
+                var message = _gameMasterMessageFactory.CreateGameResultsMessage(data);
+                CommunicationClient.Send(message);
             }
+        }
+
+        public void SendGameStartedMessage(int gameId)
+        {
+            var message = _gameMasterMessageFactory.CreateGameStartedMessage(gameId);
+            CommunicationClient.Send(message);
+        }
+
+        public void SendGameStartedToPlayerMessage(int playerId, IEnumerable<PlayerBase> playersInGame,
+            Location playerLocation,
+            BoardInfo boardInfo)
+        {
+            var message =
+                _gameMasterMessageFactory.CreateGameMessage(playerId, playersInGame, playerLocation, boardInfo);
+            CommunicationClient.Send(message);
+        }
+
+        public void SendRegisterGameMessage(GameInfo gameInfo)
+        {
+            var message = _gameMasterMessageFactory.CreateRegisterGameMessage(gameInfo);
+            CommunicationClient.Send(message);
         }
 
         public double KnowledgeExchangeDelay => _actionCosts.KnowledgeExchangeDelay;
