@@ -6,7 +6,6 @@ using Common.ActionInfo;
 using Common.Interfaces;
 using GameMaster.ActionHandlers;
 using GameMaster.Configuration;
-using Messaging.InitializationMessages;
 using NLog;
 
 namespace GameMaster
@@ -77,7 +76,7 @@ namespace GameMaster
 
         public void RegisterGame()
         {
-            _messagingHandler.CommunicationClient.Send(new RegisterGameMessage(_gameHost.CurrentGameInfo()));
+            _messagingHandler.SendRegisterGameMessage(_gameHost.CurrentGameInfo());
         }
 
         public IKnowledgeExchangeManager KnowledgeExchangeManager { get; private set; }
@@ -136,15 +135,14 @@ namespace GameMaster
             KnowledgeExchangeManager = new KnowledgeExchangeManager(_messagingHandler.KnowledgeExchangeDelay);
             _actionHandler = new ActionHandlerDispatcher(Board, KnowledgeExchangeManager);
 
-            var gameStartedMessage = new GameStartedMessage(_gameHost.GameId);
-            _messagingHandler.CommunicationClient.Send(gameStartedMessage);
+            _messagingHandler.SendGameStartedMessage(_gameHost.GameId);
 
             var boardInfo = new BoardInfo(Board.Width, Board.TaskAreaSize, Board.GoalAreaSize);
-            foreach (var i in _playerGuidToId)
+            var playersInGame = Board.Players.Values;
+            foreach (var (_, id) in _playerGuidToId)
             {
-                var playerLocation = Board.Players.Values.Single(x => x.Id == i.Value).Location;
-                var gameMessage = new GameMessage(i.Value, Board.Players.Values, playerLocation, boardInfo);
-                _messagingHandler.CommunicationClient.Send(gameMessage);
+                var playerLocation = Board.Players.Values.Single(x => x.Id == id).Location;
+                _messagingHandler.SendGameStartedToPlayerMessage(id, playersInGame, playerLocation, boardInfo);
             }
         }
 

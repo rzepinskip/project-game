@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ClientsCommon;
 using Common;
+using Common.BoardObjects;
 using Common.Interfaces;
 using GameMaster.Configuration;
 using GameMaster.Delays;
@@ -139,6 +140,27 @@ namespace GameMaster
                 var message = _gameMasterMessageFactory.CreateGameResultsMessage(data);
                 CommunicationClient.Send(message);
             }
+        }
+
+        public void SendGameStartedMessage(int gameId)
+        {
+            var message = _gameMasterMessageFactory.CreateGameStartedMessage(gameId);
+            CommunicationClient.Send(message);
+        }
+
+        public void SendGameStartedToPlayerMessage(int playerId, IEnumerable<PlayerBase> playersInGame,
+            Location playerLocation,
+            BoardInfo boardInfo)
+        {
+            var message =
+                _gameMasterMessageFactory.CreateGameMessage(playerId, playersInGame, playerLocation, boardInfo);
+            CommunicationClient.Send(message);
+        }
+
+        public void SendRegisterGameMessage(GameInfo gameInfo)
+        {
+            var message = _gameMasterMessageFactory.CreateRegisterGameMessage(gameInfo);
+            CommunicationClient.Send(message);
         }
 
         public double KnowledgeExchangeDelay => _actionCosts.KnowledgeExchangeDelay;
