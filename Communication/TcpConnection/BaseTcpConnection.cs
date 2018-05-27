@@ -75,8 +75,8 @@ namespace Communication.TcpConnection
             }
             catch (Exception e)
             {
+                Console.WriteLine("Socket is already closed");
                 ConnectionError.PrintUnexpectedConnectionErrorDetails(e);
-                throw;
             }
             finally
             {
