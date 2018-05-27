@@ -17,7 +17,6 @@ namespace PlayerStateCoordinator
     {
         private readonly GameInitializationInfo _gameInitializationInfo;
         private Timer _stateTimeoutTimer;
-        private readonly List<State> _lastStates = new List<State>();
 
         public StateCoordinator(string gameName, TeamColor preferredTeam, PlayerType preferredRole)
         {
@@ -25,16 +24,7 @@ namespace PlayerStateCoordinator
             CurrentState = new GetGamesState(_gameInitializationInfo);
         }
 
-        private State _currentState;
-        public State CurrentState
-        {
-            get => _currentState;
-            set
-            {
-                _lastStates.Add(value);
-                _currentState = value;
-            }
-        }
+        public State CurrentState { get; set; }
 
         public IMessage Start()
         {
@@ -95,15 +85,6 @@ namespace PlayerStateCoordinator
 
         private void CheckForInactivity(object state)
         {
-            const int checkedItemsCount = Constants.DefaultLastStatesChecked;
-            var lastXStates = _lastStates.TakeLast(checkedItemsCount).ToList();
-
-            if (_lastStates.Count >= checkedItemsCount && lastXStates.TrueForAll(i => i.Equals(lastXStates.FirstOrDefault())))
-            {
-                Console.WriteLine("Same states");
-                ResetToInitState();
-            }
-
             if (DateTime.Now - CurrentState.EnteredTimestamp > Constants.DefaultStateTimeout)
             {
                 Console.WriteLine($"Inactivity: {DateTime.Now} vs last state {CurrentState.EnteredTimestamp}");
@@ -117,8 +98,6 @@ namespace PlayerStateCoordinator
                 CurrentState = _gameInitializationInfo.PlayerGameInitializationBeginningState;
             else if (CurrentState is GamePlayStrategyState)
                 CurrentState = _gameInitializationInfo.PlayerGameStrategyBeginningState;
-
-            _lastStates.Clear();
 
             Console.WriteLine($"Strategy error - resetting back to state {CurrentState.GetType().Name}");
         }
