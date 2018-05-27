@@ -17,13 +17,13 @@ namespace GameMaster
         public readonly ICommunicationClient CommunicationClient;
         private readonly Action _hostNewGame;
         private Dictionary<Guid, PlayerHandle> _playerHandles;
-        private readonly IGameResultsMessageFactory _gameResultsMessageFactory;
+        private readonly IGameMasterMessageFactory _gameMasterMessageFactory;
 
-        public MessagingHandler(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, Action hostNewGame, IGameResultsMessageFactory gameResultsMessageFactory)
+        public MessagingHandler(GameConfiguration gameConfiguration, ICommunicationClient communicationCommunicationClient, Action hostNewGame, IGameMasterMessageFactory gameMasterMessageFactory)
         {
             _actionCosts = gameConfiguration.ActionCosts;
             _hostNewGame = hostNewGame;
-            _gameResultsMessageFactory = gameResultsMessageFactory;
+            _gameMasterMessageFactory = gameMasterMessageFactory;
             CommunicationClient = communicationCommunicationClient;
             new Thread(() => CommunicationClient.Connect(HandleConnectionError, HandleMessagesFromClient)).Start();
         }
@@ -136,7 +136,8 @@ namespace GameMaster
         {
             foreach (var data in boardData)
             {
-                CommunicationClient.Send(_gameResultsMessageFactory.CreateGameResultsMessage(data));
+                var message = _gameMasterMessageFactory.CreateGameResultsMessage(data);
+                CommunicationClient.Send(message);
             }
         }
 

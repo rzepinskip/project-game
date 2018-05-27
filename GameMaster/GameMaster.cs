@@ -22,7 +22,7 @@ namespace GameMaster
 
         public GameMaster(GameConfiguration gameConfiguration, ICommunicationClient communicationClient,
             string gameName, IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode,
-            IGameResultsMessageFactory gameResultsMessageFactory)
+            IGameMasterMessageFactory gameMasterMessageFactory)
         {
             _gameHost = new GameHost(gameName, gameConfiguration, StartGame);
             _errorsMessagesFactory = errorsMessagesFactory;
@@ -30,7 +30,7 @@ namespace GameMaster
             VerboseLogger = new VerboseLogger(LogManager.GetCurrentClassLogger(), loggingMode);
 
             _messagingHandler = new MessagingHandler(gameConfiguration, communicationClient, HostNewGame,
-                gameResultsMessageFactory);
+                gameMasterMessageFactory);
             _messagingHandler.MessageReceived += (sender, args) => MessageHandler(args);
             HostNewGame();
         }

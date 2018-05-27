@@ -83,7 +83,7 @@ namespace GameMaster.App
 
             var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), TimeSpan.FromMilliseconds((int) config.KeepAliveInterval), MessageSerializer.Instance);
 
-            return new GameMaster(config, communicationClient, gameName, new ErrorsMessagesFactory(), loggingMode, new GameResultsMessageFactory());
+            return new GameMaster(config, communicationClient, gameName, new ErrorsMessagesFactory(), loggingMode, new GameMasterMessageFactory());
         }
 
         private static void Usage(OptionSet options)
