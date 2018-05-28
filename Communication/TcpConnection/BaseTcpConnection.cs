@@ -170,6 +170,7 @@ namespace Communication.TcpConnection
                     {
                         try
                         {
+                            Console.WriteLine(message);
                             Handle(MessageDeserializer.Deserialize(message), Id);
                         }
                         catch (Exception e)

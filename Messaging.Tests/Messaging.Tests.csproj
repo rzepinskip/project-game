@@ -72,6 +72,9 @@
     <None Update="Resources\InitializationMessages\RegisteredGamesMessage.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\InitializationMessages\RegisterGame.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\InitializationMessages\RejectGameRegistrationMessage.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

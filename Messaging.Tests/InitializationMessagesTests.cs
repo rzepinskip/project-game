@@ -24,7 +24,8 @@ namespace Messaging.Tests
                 new object[] {"ConfirmJoiningGameMessage" },
                 new object[] {"GameMessage"},
                 new object[] {"RejectGameRegistrationMessage"},
-                new object[] {"RejectJoiningGame"}
+                new object[] {"RejectJoiningGame"},
+                new object[] {"RegisterGame"}
             };
 
         [Theory]

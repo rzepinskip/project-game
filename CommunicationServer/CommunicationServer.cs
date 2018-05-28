@@ -77,6 +77,7 @@ namespace CommunicationServer
         {
             try
             {
+                VerboseLogger.Log(message.ToLog());
                 _socketListener.Send(message, connectionId);
             }
             catch (Exception e)

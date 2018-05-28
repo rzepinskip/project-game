@@ -40,7 +40,8 @@ namespace CommunicationServer
         public void Send(IMessage message, int connectionId)
         {
             var byteData = Encoding.ASCII.GetBytes(message.SerializeToXml() + Communication.Constants.EtbByte);
-            
+            Console.WriteLine(message.SerializeToXml());
+
             if (!IsConnectionExistent(connectionId))
                 throw new IdentifiableCommunicationException(connectionId, $"Non existent connection during Send\n{message}", null, CommunicationException.ErrorSeverity.Temporary);
 

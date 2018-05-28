@@ -2,7 +2,7 @@
   "profiles": {
     "CommunicationServer.App": {
       "commandName": "Project",
-      "commandLineArgs": "--port 11000 --conf $(SolutionDir)\\Resources\\GameConfigs\\ExampleConfig.xml"
+      "commandLineArgs": "--port 11000 --conf $(SolutionDir)\\Resources\\GameConfigs\\ExampleConfig.xml --address 192.168.143.193 --verbose"
     }
   }
 }
