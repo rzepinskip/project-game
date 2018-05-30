@@ -9,7 +9,6 @@ using GameMaster.Configuration;
 using Messaging.ErrorsMessages;
 using Messaging.Serialization;
 using Mono.Options;
-using NLog;
 using Player.StrategyGroups;
 
 namespace Player.App
@@ -30,7 +29,6 @@ namespace Player.App
             {
                 var boardVisualizer = new BoardVisualizer();
                 for (var i = 0;; i++)
-                {
                     if (player.PlayerBoard != null)
                     {
                         Thread.Sleep(200);
@@ -41,13 +39,12 @@ namespace Player.App
                     {
                         Thread.Sleep(2000);
                     }
-                }
             }
         }
 
         private static Player CreatePlayerFrom(IEnumerable<string> parameters)
         {
-            bool teamFlag = false, roleFlag = false, addressFlag = false, strategyFlag;
+            bool teamFlag = false, roleFlag = false, addressFlag = false;
             var ipAddress = default(IPAddress);
             var port = default(int);
             var gameConfigPath = default(string);
@@ -55,8 +52,10 @@ namespace Player.App
             var team = default(TeamColor);
             var role = default(PlayerType);
             var loggingMode = LoggingMode.NonVerbose;
-            var strategyGroupTypeFlag = true;
-            var strategyGroupType = StrategyGroupType.Basic;
+            var blueStrategyGroupTypeFlag = true;
+            var redStrategyGroupTypeFlag = true;
+            var blueStrategyGroupType = StrategyGroupType.Basic;
+            var redStrategyGroupType = StrategyGroupType.Basic;
             _runtimeMode = RuntimeMode.Console;
 
             var options = new OptionSet
@@ -67,9 +66,16 @@ namespace Player.App
                 {"game=", "name of the game", g => gameName = g},
                 {"team=", "red|blue", t => teamFlag = Enum.TryParse(t, true, out team)},
                 {"role=", "leader|player", r => roleFlag = Enum.TryParse(r, true, out role)},
-                {"strategy=", "strategy options", s => strategyGroupTypeFlag = Enum.TryParse(s, true, out strategyGroupType) },
-                {"verbose:", "logging mode", v => loggingMode = LoggingMode.Verbose },
-                {"visualize:", "runtime mode", r => _runtimeMode = RuntimeMode.Visualization }
+                {
+                    "blueStrategy=", "strategy options",
+                    s => blueStrategyGroupTypeFlag = Enum.TryParse(s, true, out blueStrategyGroupType)
+                },
+                {
+                    "redStrategy=", "strategy options",
+                    s => redStrategyGroupTypeFlag = Enum.TryParse(s, true, out redStrategyGroupType)
+                },
+                {"verbose:", "logging mode", v => loggingMode = LoggingMode.Verbose},
+                {"visualize:", "runtime mode", r => _runtimeMode = RuntimeMode.Visualization}
             };
 
             options.Parse(parameters);
@@ -85,7 +91,7 @@ namespace Player.App
             }
 
             if (port == default(int) || gameConfigPath == default(string) || gameName == default(string) ||
-                !addressFlag || !teamFlag || !roleFlag || !strategyGroupTypeFlag)
+                !addressFlag || !teamFlag || !roleFlag || !blueStrategyGroupTypeFlag || !redStrategyGroupTypeFlag)
                 Usage(options);
 
 
@@ -93,10 +99,20 @@ namespace Player.App
             var config = configLoader.LoadConfigurationFromFile(gameConfigPath);
 
             var keepAliveInterval = TimeSpan.FromMilliseconds((int) config.KeepAliveInterval);
-            var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
+            var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port),
+                keepAliveInterval,
                 MessageSerializer.Instance);
-            var strategyGroup = StrategyGroupFactory.Create(strategyGroupType);
-            var player = new Player(communicationClient, gameName, team, role, new ErrorsMessagesFactory(), loggingMode, strategyGroup);
+            var strategyGroups = new Dictionary<TeamColor, StrategyGroup>
+            {
+                {
+                    TeamColor.Blue, StrategyGroupFactory.Create(blueStrategyGroupType)
+                },
+                {
+                    TeamColor.Red, StrategyGroupFactory.Create(redStrategyGroupType)
+                }
+            };
+            var player = new Player(communicationClient, gameName, team, role, new ErrorsMessagesFactory(), loggingMode,
+                strategyGroups);
 
             return player;
         }

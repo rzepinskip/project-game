@@ -17,21 +17,20 @@ namespace Player
         private readonly string _gameName;
         private readonly TeamColor _preferredColor;
         private readonly PlayerType _preferredRole;
-        private readonly StrategyGroup _strategyGroup;
+        private readonly Dictionary<TeamColor, StrategyGroup> _strategyGroups;
         private bool _gameFinished;
         private bool _gameStarted;
         private StateCoordinator _stateCoordinator;
 
         public Player(ICommunicationClient communicationClient, string gameName, TeamColor preferredColor,
-            PlayerType preferredRole,
-            IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode, StrategyGroup strategyGroup)
+            PlayerType preferredRole, IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode, Dictionary<TeamColor, StrategyGroup> strategyGroups)
         {
             CommunicationClient = communicationClient;
             _gameName = gameName;
             _preferredColor = preferredColor;
             _preferredRole = preferredRole;
             _errorsMessagesFactory = errorsMessagesFactory;
-            _strategyGroup = strategyGroup;
+            _strategyGroups = strategyGroups;
 
             var factory = new LoggerFactory();
             VerboseLogger = new VerboseLogger(factory.GetPlayerLogger(0), loggingMode);
@@ -109,14 +108,13 @@ namespace Player
 
             PlayerBoard.Players[Id].Location = playerLocation;
 
-            var playerStrategy = _strategyGroup.GetStrategyFor(this, PlayerBoard, PlayerGuid, GameId, playerBases);
-            Console.WriteLine("Player has chosen " + playerStrategy.GetType().Name);
+            var playerStrategy = _strategyGroups[PlayerBoard.Players[Id].Team].GetStrategyFor(this, PlayerBoard, PlayerGuid, GameId, playerBases);
+            Console.WriteLine($"Player has chosen {playerStrategy.GetType().Name} from {_strategyGroups[PlayerBoard.Players[Id].Team].GetType().Name}");
 
             _stateCoordinator.UpdatePlayerStrategyBeginningState(playerStrategy.GetBeginningState());
             _stateCoordinator.CurrentState = playerStrategy.GetBeginningState();
 
             _gameStarted = true;
-            Console.WriteLine("Player has updated game data and started playing");
         }
 
         public void HandleGameMasterDisconnection()
