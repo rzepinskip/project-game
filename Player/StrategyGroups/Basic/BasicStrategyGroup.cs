@@ -10,7 +10,7 @@ namespace Player.StrategyGroups.Basic
         public override Strategy GetStrategyFor(PlayerBase player, BoardBase board, Guid playerGuid, int gameId,
             List<PlayerBase> playerBases)
         {
-            return new NormalPlayerStrategy(player, board, playerGuid, gameId);
+            return new BasicStrategy(player, board, playerGuid, gameId);
         }
     }
 }
