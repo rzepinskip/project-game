@@ -5,6 +5,7 @@ using System.Threading;
 using Common;
 using Common.Interfaces;
 using Messaging.InitializationMessages;
+using Messaging.Requests;
 using PlayerStateCoordinator.Common;
 using PlayerStateCoordinator.Common.States;
 using PlayerStateCoordinator.GameInitialization;
@@ -50,8 +51,7 @@ namespace PlayerStateCoordinator
             catch (StrategyException strategyException)
             {
                 Console.WriteLine(strategyException.PrintFull());
-                ResetToInitState();
-                return new List<IMessage>();
+                return ResetToInitState();
             }
 
             //foreach (var sendMessage in messagesToSend)
@@ -92,14 +92,25 @@ namespace PlayerStateCoordinator
             }
         }
 
-        private void ResetToInitState()
+        private IEnumerable<IMessage> ResetToInitState()
         {
+            var messagesToSend = new List<IMessage>();
+
             if (CurrentState is GameInitializationState)
+            {
                 CurrentState = _gameInitializationInfo.PlayerGameInitializationBeginningState;
-            else if (CurrentState is GamePlayStrategyState)
+                messagesToSend.Add(new GetGamesMessage());
+            }
+            else if (CurrentState is GamePlayStrategyState gamePlayStrategyState)
+            {
                 CurrentState = _gameInitializationInfo.PlayerGameStrategyBeginningState;
+                var info = gamePlayStrategyState.Info as GamePlayStrategyInfo;
+                messagesToSend.Add(new DiscoverRequest(info.PlayerGuid, info.GameId));
+            }
 
             Console.WriteLine($"Strategy error - resetting back to state {CurrentState.GetType().Name}");
+
+            return messagesToSend;
         }
 
         public void StopTimers()
