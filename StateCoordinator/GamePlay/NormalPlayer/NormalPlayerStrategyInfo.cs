@@ -13,15 +13,14 @@ namespace PlayerStateCoordinator.GamePlay.NormalPlayer
         private int _skippedKnowledgeExchangeCounter;
 
         public NormalPlayerStrategyInfo(BoardBase board, int playerId, Guid playerGuid, int gameId, TeamColor team,
-            List<GoalField> undiscoveredGoalFields, Location targetLocation) : base(board, playerId, playerGuid, gameId,
-            team)
+            List<GoalField> undiscoveredGoalFields) : base(board, playerId, playerGuid, gameId, team)
         {
             UndiscoveredGoalFields = undiscoveredGoalFields;
             _skippedKnowledgeExchangeCounter = 0;
         }
 
 
-        public bool IsTimeForExchange()
+        public virtual bool ShouldInitiateKnowledgeExchange()
         {
             var result = false;
             _skippedKnowledgeExchangeCounter++;

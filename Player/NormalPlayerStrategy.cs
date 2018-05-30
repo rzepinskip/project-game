@@ -10,7 +10,6 @@ namespace Player
 {
     public class NormalPlayerStrategy : Strategy
     {
-        protected NormalPlayerStrategyState BeginningState;
         protected NormalPlayerStrategyInfo NormalPlayerStrategyInfo;
 
         public NormalPlayerStrategy(PlayerBase player, BoardBase board, Guid playerGuid, int gameId) : base(player,
@@ -27,13 +26,12 @@ namespace Player
             undiscoveredGoalFields.Shuffle();
 
             NormalPlayerStrategyInfo = new NormalPlayerStrategyInfo(board, player.Id, playerGuid, gameId, player.Team,
-                undiscoveredGoalFields, new Location(board.Width / 2, board.GoalAreaSize + 1));
-            BeginningState = new InitStrategyState(NormalPlayerStrategyInfo);
+                undiscoveredGoalFields);
         }
 
         public override State GetBeginningState()
         {
-            return BeginningState;
+            return new InitStrategyState(NormalPlayerStrategyInfo);
         }
     }
 }

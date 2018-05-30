@@ -40,7 +40,7 @@ namespace PlayerStateCoordinator.GamePlay.NormalPlayer.Transitions
         public override bool IsPossible()
         {
             var result = NormalPlayerStrategyInfo.Board.Players.Count > 2 &&
-                         NormalPlayerStrategyInfo.IsTimeForExchange();
+                         NormalPlayerStrategyInfo.ShouldInitiateKnowledgeExchange();
 
             return result;
         }
