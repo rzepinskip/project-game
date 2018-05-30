@@ -52,7 +52,10 @@ namespace PlayerStateCoordinator.GamePlay
             }
 
             if (responseMessage is DataMessage dataMessage && dataMessage.GoalFields.Length > 1)
+            {
+                HandleSuccessfulKnowledgeExchange();
                 return new LoopbackTransition(this, new List<IMessage>());
+            }
 
             return base.HandleResponseMessage(responseMessage);
         }
@@ -67,5 +70,7 @@ namespace PlayerStateCoordinator.GamePlay
         {
             throw new StrategyException(this, "No matching transition");
         }
+
+        protected abstract void HandleSuccessfulKnowledgeExchange();
     }
 }

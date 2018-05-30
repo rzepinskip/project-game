@@ -13,5 +13,9 @@ namespace PlayerStateCoordinator.GamePlay.TeamLeader
         {
             return false;
         }
+
+        protected override void HandleSuccessfulKnowledgeExchange()
+        {
+        }
     }
 }
