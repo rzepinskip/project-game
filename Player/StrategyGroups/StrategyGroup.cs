@@ -7,7 +7,7 @@ namespace Player.StrategyGroups
 {
     public abstract class StrategyGroup
     {
-        public abstract Strategy Create(PlayerBase player, BoardBase board, Guid playerGuid, int gameId,
+        public abstract Strategy GetStrategyFor(PlayerBase player, BoardBase board, Guid playerGuid, int gameId,
             List<PlayerBase> players);
     }
 }

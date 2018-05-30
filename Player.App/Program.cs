@@ -56,7 +56,7 @@ namespace Player.App
             var role = default(PlayerType);
             var loggingMode = LoggingMode.NonVerbose;
             var strategyGroupTypeFlag = true;
-            var strategyGroupType = StrategyGroupType.Primitive;
+            var strategyGroupType = StrategyGroupType.Basic;
             _runtimeMode = RuntimeMode.Console;
 
             var options = new OptionSet
@@ -95,7 +95,7 @@ namespace Player.App
             var keepAliveInterval = TimeSpan.FromMilliseconds((int) config.KeepAliveInterval);
             var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
                 MessageSerializer.Instance);
-            var strategyGroup = new StrategyGroupFactory().Create(strategyGroupType);
+            var strategyGroup = StrategyGroupFactory.Create(strategyGroupType);
             var player = new Player(communicationClient, gameName, team, role, new ErrorsMessagesFactory(), loggingMode, strategyGroup);
 
             return player;

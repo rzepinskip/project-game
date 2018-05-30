@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using Common;
 using Common.BoardObjects;
 
-namespace Player.StrategyGroups
+namespace Player.StrategyGroups.Basic
 {
-    internal class PrimitiveStrategyGroup : StrategyGroup
+    public class BasicStrategyGroup : StrategyGroup
     {
-        public override Strategy Create(PlayerBase player, BoardBase board, Guid playerGuid, int gameId,
+        public override Strategy GetStrategyFor(PlayerBase player, BoardBase board, Guid playerGuid, int gameId,
             List<PlayerBase> playerBases)
         {
             return new NormalPlayerStrategy(player, board, playerGuid, gameId);

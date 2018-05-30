@@ -13,15 +13,17 @@ namespace Player
 {
     public class Player : PlayerBase, IPlayer
     {
-        private readonly TeamColor _preferredColor;
         private readonly IErrorsMessagesFactory _errorsMessagesFactory;
-        private readonly StrategyGroup _strategyGroup;
         private readonly string _gameName;
+        private readonly TeamColor _preferredColor;
         private readonly PlayerType _preferredRole;
-        private StateCoordinator _stateCoordinator;
+        private readonly StrategyGroup _strategyGroup;
         private bool _gameFinished;
         private bool _gameStarted;
-        public Player(ICommunicationClient communicationClient, string gameName, TeamColor preferredColor, PlayerType preferredRole,
+        private StateCoordinator _stateCoordinator;
+
+        public Player(ICommunicationClient communicationClient, string gameName, TeamColor preferredColor,
+            PlayerType preferredRole,
             IErrorsMessagesFactory errorsMessagesFactory, LoggingMode loggingMode, StrategyGroup strategyGroup)
         {
             CommunicationClient = communicationClient;
@@ -84,6 +86,7 @@ namespace Player
                 CommunicationClient.Send(_stateCoordinator.Start());
                 _gameStarted = false;
             }
+
             _gameFinished = true;
         }
 
@@ -106,7 +109,7 @@ namespace Player
 
             PlayerBoard.Players[Id].Location = playerLocation;
 
-            Strategy playerStrategy = _strategyGroup.Create(this, PlayerBoard, PlayerGuid, GameId, playerBases);
+            var playerStrategy = _strategyGroup.GetStrategyFor(this, PlayerBoard, PlayerGuid, GameId, playerBases);
             Console.WriteLine("Player has chosen " + playerStrategy.GetType().Name);
 
             _stateCoordinator.UpdatePlayerStrategyBeginningState(playerStrategy.GetBeginningState());
