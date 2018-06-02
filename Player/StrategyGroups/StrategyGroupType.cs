@@ -2,7 +2,7 @@
 {
     public enum StrategyGroupType
     {
-        Primitive,
+        Basic,
         Advanced
     }
 }

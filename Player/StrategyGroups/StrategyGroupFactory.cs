@@ -1,15 +1,17 @@
 ﻿using System;
+using Player.StrategyGroups.Advanced;
+using Player.StrategyGroups.Basic;
 
 namespace Player.StrategyGroups
 {
     public class StrategyGroupFactory
     {
-        public StrategyGroup Create(StrategyGroupType groupType)
+        public static StrategyGroup Create(StrategyGroupType groupType)
         {
             switch (groupType)
             {
-                case StrategyGroupType.Primitive:
-                    return new PrimitiveStrategyGroup();
+                case StrategyGroupType.Basic:
+                    return new BasicStrategyGroup();
                 case StrategyGroupType.Advanced:
                     return new AdvancedStrategyGroup();
                 default:
