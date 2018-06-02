@@ -4,11 +4,11 @@ using Common;
 using Common.BoardObjects;
 using PlayerStateCoordinator.GamePlay.NormalPlayer;
 
-namespace PlayerStateCoordinator.GamePlay.TeamLeader
+namespace PlayerStateCoordinator.GamePlay.BasicPlayer
 {
-    public class LeaderStrategyInfo : NormalPlayerStrategyInfo
+    public class BasicStrategyInfo : NormalPlayerStrategyInfo
     {
-        public LeaderStrategyInfo(BoardBase board, int playerId, Guid playerGuid, int gameId, TeamColor team,
+        public BasicStrategyInfo(BoardBase board, int playerId, Guid playerGuid, int gameId, TeamColor team,
             List<GoalField> undiscoveredGoalFields) : base(board, playerId, playerGuid, gameId, team, undiscoveredGoalFields)
         {
         }

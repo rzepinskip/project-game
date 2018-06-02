@@ -16,5 +16,5 @@ Start-Sleep -s 1
 
 For ($i=0; $i -le ($playersCount - 1); $i++) 
 {
-    Start-Process -FilePath "dotnet" -ArgumentList  "$PlayerAppPath --port $portNumber --conf $gameConfigFilePath --address $address --game game --team blue --role leader"
+    Start-Process -FilePath "dotnet" -ArgumentList  "$PlayerAppPath --port $portNumber --conf $gameConfigFilePath --address $address --game game --team blue --role leader --blueStrategy Advanced --redStrategy Advanced"
 }

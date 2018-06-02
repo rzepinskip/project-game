@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Common;
 using Player.StrategyGroups;
@@ -7,18 +8,20 @@ namespace GameSimulation
 {
     internal class Program
     {
-        public Program(StrategyGroup strategyGroup)
-        {
-            _strategyGroup = strategyGroup;
-        }
-
         private static VerboseLogger _logger;
-        private static StrategyGroup _strategyGroup;
-
         private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            var simulation = new GameSimulation("../../../../ExampleConfig.xml", _strategyGroup);
+            var strategyGroups = new Dictionary<TeamColor, StrategyGroup>
+            {
+                {
+                    TeamColor.Blue, StrategyGroupFactory.Create(StrategyGroupType.Basic)
+                },
+                {
+                    TeamColor.Red, StrategyGroupFactory.Create(StrategyGroupType.Basic)
+                }
+            };
+            var simulation = new GameSimulation("../../../../ExampleConfig.xml", strategyGroups);
 
             _logger = simulation.GameMaster.VerboseLogger;
 

@@ -1,11 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Xml;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
-using System;
 
 namespace Player
 {
@@ -57,6 +54,26 @@ namespace Player
             this[goalField] = goalField;
         }
 
+        public void HandlePiece(int playerId, Piece piece)
+        {
+            if (piece.PlayerId == playerId) Players[playerId].Piece = piece;
+
+            if (piece.Type == PieceType.Destroyed && Players[playerId].Piece.Id == piece.Id)
+                Players[playerId].Piece = null;
+        }
+
+        public void HandlePlayerLocation(int playerId, Location playerUpdatedLocation)
+        {
+            // Remove old data
+            var playerInfo = Players[playerId];
+            if (playerInfo.Location != null)
+                this[playerInfo.Location].PlayerId = null;
+
+            // Insert new data
+            playerInfo.Location = playerUpdatedLocation;
+            this[playerUpdatedLocation].PlayerId = playerId;
+        }
+
         private void ClearPlayerFromField(Field field)
         {
             if (field.PlayerId.HasValue)
@@ -68,10 +85,7 @@ namespace Player
 
         private void ClearPieceFromField(TaskField taskField)
         {
-            if (taskField.PieceId.HasValue)
-            {
-                taskField.PieceId = null;
-            }
+            if (taskField.PieceId.HasValue) taskField.PieceId = null;
         }
 
         private void HandlePlayerInField(Field field)
@@ -105,16 +119,10 @@ namespace Player
 
             var oldPieceField = FindFieldWithPiece(taskField.PieceId.Value);
             if (oldPieceField != null)
-            {
                 if (taskField.IsNewerThan(oldPieceField))
-                {
                     oldPieceField.PieceId = null;
-                }
                 else
-                {
                     taskField.PieceId = null;
-                }
-            }
 
             //place piece
             if (Players[playerId].Piece != null && taskField.PieceId == Players[playerId].Piece.Id)
@@ -125,46 +133,19 @@ namespace Player
         {
             TaskField result = null;
             for (var i = 0; i < Width; ++i)
+            for (var j = GoalAreaSize; j < TaskAreaSize + GoalAreaSize; ++j)
             {
-                for (var j = GoalAreaSize; j < TaskAreaSize + GoalAreaSize; ++j)
-                {
-                    var field = Content[i, j];
-                    if (!IsLocationInTaskArea(field)) continue;
+                var field = Content[i, j];
+                if (!IsLocationInTaskArea(field)) continue;
 
-                    var taskFiled = (TaskField) field;
-                    if (taskFiled.PieceId != pieceId) continue;
+                var taskFiled = (TaskField) field;
+                if (taskFiled.PieceId != pieceId) continue;
 
-                    result = taskFiled;
-                    break;
-                }
+                result = taskFiled;
+                break;
             }
 
             return result;
-        }
-
-        public void HandlePiece(int playerId, Piece piece)
-        {
-            if (piece.PlayerId == playerId)
-            {
-                Players[playerId].Piece = piece;
-            }
-
-            if (piece.Type == PieceType.Destroyed && Players[playerId].Piece.Id == piece.Id)
-            {
-                Players[playerId].Piece = null;
-            }
-        }
-
-        public void HandlePlayerLocation(int playerId, Location playerUpdatedLocation)
-        {
-            // Remove old data
-            var playerInfo = Players[playerId];
-            if (playerInfo.Location != null)
-                this[playerInfo.Location].PlayerId = null;
-
-            // Insert new data
-            playerInfo.Location = playerUpdatedLocation;
-            this[playerUpdatedLocation].PlayerId = playerId;
         }
 
         public override BoardData ToBoardData(int senderId, int receiverId)

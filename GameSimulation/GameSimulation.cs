@@ -17,7 +17,7 @@ namespace GameSimulation
     {
         public CommunicationServer.CommunicationServer CommunicationServer;
 
-        public GameSimulation(string configFilePath, StrategyGroup strategyGroup)
+        public GameSimulation(string configFilePath, Dictionary<TeamColor, StrategyGroup> strategyGroups)
         {
             var port = Constants.DefaultPortNumber;
             var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
@@ -38,7 +38,7 @@ namespace GameSimulation
             {
                 communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
                     MessageSerializer.Instance);
-                var player = new Player.Player(communicationClient, "game", TeamColor.Blue, PlayerType.Leader, new ErrorsMessagesFactory(), LoggingMode.NonVerbose, strategyGroup);
+                var player = new Player.Player(communicationClient, "game", TeamColor.Blue, PlayerType.Leader, new ErrorsMessagesFactory(), LoggingMode.NonVerbose, strategyGroups);
                 Players.Add(player);
             }
 
