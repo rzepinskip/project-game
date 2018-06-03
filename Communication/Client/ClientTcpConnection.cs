@@ -1,46 +1,77 @@
 ﻿using System;
 using System.Net.Sockets;
+using System.Timers;
 using Common;
 using Common.Interfaces;
 
 namespace Communication.Client
 {
-    public class ClientTcpConnection : TcpConnection
+    public class ClientTcpConnection : TcpConnection.TcpConnection
     {
-        private readonly Action<IMessage> _handler;
-        private ClientKeepAliveHandler _clientKeepAliveHandler;
+        private readonly Action<IMessage> _messageHandler;
+        protected Timer SendKeepAliveTimer;
 
-        public ClientTcpConnection(Socket workSocket, int id, IMessageDeserializer messageDeserializer,
-            Action<IMessage> handler)
-            : base(workSocket, id, messageDeserializer)
+        public ClientTcpConnection(int id, Socket socket, Action<CommunicationException> connectionFailureHandler,
+            TimeSpan maxUnresponsivenessDuration, IMessageDeserializer messageDeserializer,
+            Action<IMessage> messageHandler)
+            : base(id, socket, maxUnresponsivenessDuration, connectionFailureHandler, messageDeserializer)
         {
-            _handler = handler;
+            _messageHandler = messageHandler;
         }
 
-        public void StartKeepAliveTimer(TimeSpan keepAliveInterval)
+        public override void Handle(IMessage message, int connectionId = -404)
         {
-            _clientKeepAliveHandler =
-                new ClientKeepAliveHandler(keepAliveInterval, new ClientMaintainedConnections(this));
+            _messageHandler(message);
         }
 
-        public override void Handle(IMessage message, int id = -404)
+        protected override void FinalizeSend(IAsyncResult ar)
         {
-            _handler(message);
+            ResetSendKeepAliveTimer();
+            base.FinalizeSend(ar);
         }
 
-        public override void Send(byte[] data)
+        public override void FinalizeConnect(IAsyncResult ar)
         {
-            _clientKeepAliveHandler.ResetTimer();
-            base.Send(data);
+            base.FinalizeConnect(ar);
+            UpdateLastReceivedMessageTicks();
+            StartSendKeepAliveTimer();
         }
 
-        public override void HandleKeepAliveMessage()
+        private void StartSendKeepAliveTimer()
         {
+            SendKeepAliveTimer = new Timer(KeepAliveTimersInterval);
+            SendKeepAliveTimer.Elapsed += SendKeepAliveCallback;
+            SendKeepAliveTimer.Start();
         }
 
-        protected override void HandleConnectionException(Exception e)
+        private void SendKeepAliveCallback(object source, ElapsedEventArgs e)
         {
-            throw new ApplicationFatalException("Communication Server disconnected");
+            SendKeepAlive();
+        }
+
+        private void StopSendKeepAliveTimer()
+        {
+            SendKeepAliveTimer?.Stop();
+        }
+
+        private void ResetSendKeepAliveTimer()
+        {
+            StopSendKeepAliveTimer();
+            StartSendKeepAliveTimer();
+        }
+
+        protected override void HandleExpectedConnectionError(CommunicationException e)
+        {
+            StopSendKeepAliveTimer();
+            ConnectionFailureHandler(e);
+        }
+
+        public override void CloseConnection()
+        {
+            base.CloseConnection();
+            if (SendKeepAliveTimer == null) return;
+            SendKeepAliveTimer.Stop();
+            SendKeepAliveTimer.Dispose();
         }
     }
 }

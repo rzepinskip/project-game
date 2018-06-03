@@ -1,0 +1,11 @@
+diff a/CommunicationServer.App/Properties/launchSettings.json b/CommunicationServer.App/Properties/launchSettings.json	(rejected hunks)
+@@ -2,7 +2,7 @@
+   "profiles": {
+     "CommunicationServer.App": {
+       "commandName": "Project",
+-      "commandLineArgs": "--port 11000 --conf $(SolutionDir)\\Resources\\GameConfigs\\ExampleConfig.xml"
++      "commandLineArgs": "--port 11000 --conf $(SolutionDir)\\Resources\\GameConfigs\\run-single_game-p6.xml"
+     }
+   }
+ }
+\ No newline at end of file

@@ -12,6 +12,6 @@ namespace Common.Interfaces
         void NotifyAboutGameEnd();
         void UpdatePlayer(int playerid, Guid playerGuid, PlayerBase playerBase, int gameId);
         void InitializeGameData(Location playerLocation, BoardInfo board, IEnumerable<PlayerBase> players);
-        void HandleExchangeKnowledge(int senderPlayerId);
+        void HandleGameMasterDisconnection();
     }
 }

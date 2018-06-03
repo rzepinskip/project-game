@@ -6,28 +6,32 @@ using BoardGenerators.Loaders;
 using Common;
 using Communication.Client;
 using GameMaster.Configuration;
+using Messaging;
+using Messaging.ErrorsMessages;
 using Messaging.Serialization;
 using Mono.Options;
-using NLog;
 
 namespace GameMaster.App
 {
     internal class Program
     {
-        private static ILogger _logger;
+        private static VerboseLogger _logger;
         private static string _finishedGameMessage = "";
+        private static RuntimeMode _runtimeMode;
 
         private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            
+
             var gm = CreateGameMasterFrom(args);
             gm.GameFinished += GenerateNewFinishedGameMessage;
-            _logger = GameMaster.Logger;
-            while (true)
+            _logger = gm.VerboseLogger;
+            Console.Title = "Game Master";
+
+            if (_runtimeMode == RuntimeMode.Visualization)
             {
                 var boardVisualizer = new BoardVisualizer();
-                for (var i = 0;; i++)
+                for (var i = 0; ; i++)
                 {
                     Thread.Sleep(200);
                     boardVisualizer.VisualizeBoard(gm.Board);
@@ -35,10 +39,13 @@ namespace GameMaster.App
                     Console.WriteLine(_finishedGameMessage);
                 }
             }
+
         }
 
         private static void GenerateNewFinishedGameMessage(object sender, GameFinishedEventArgs e)
         {
+            var gameMaster = sender as GameMaster;
+            gameMaster.LogGameResults(e.Winners);
             _finishedGameMessage = "Last game winners: " + (e.Winners == TeamColor.Red ? "Red " : "Blue");
         }
 
@@ -47,18 +54,33 @@ namespace GameMaster.App
             var addressFlag = false;
             var port = default(int);
             var gameConfigPath = default(string);
-            var address = default(IPAddress);
+            var ipAddress = default(IPAddress);
             var gameName = default(string);
+            var loggingMode = LoggingMode.NonVerbose;
+            _runtimeMode = RuntimeMode.Console;
 
             var options = new OptionSet
             {
                 {"port=", "port number", (int p) => port = p},
                 {"conf=", "configuration filename", c => gameConfigPath = c},
-                {"address=", "server adress or hostname", a => addressFlag = IPAddress.TryParse(a, out address)},
-                {"game=", "name of the game", g => gameName = g}
+                {"address=", "server adress or hostname", a => addressFlag = IPAddress.TryParse(a, out ipAddress)},
+                {"game=", "name of the game", g => gameName = g},
+                {"verbose:", "logging mode", v => loggingMode = LoggingMode.Verbose },
+                {"visualize:", "runtime mode", r => _runtimeMode = RuntimeMode.Visualization }
             };
 
             options.Parse(parameters);
+
+            if (loggingMode == LoggingMode.Verbose && _runtimeMode == RuntimeMode.Visualization)
+                _runtimeMode = RuntimeMode.Console;
+
+
+            if (!addressFlag)
+            {
+                addressFlag = true;
+                var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
+                ipAddress = ipHostInfo.AddressList[0];
+            }
 
             if (port == default(int) || gameConfigPath == default(string) || gameName == default(string) ||
                 !addressFlag)
@@ -67,11 +89,9 @@ namespace GameMaster.App
             var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(gameConfigPath);
 
-            var communicationClient = new AsynchronousClient(new TcpSocketConnector(MessageSerializer.Instance, port,
-                address,
-                TimeSpan.FromMilliseconds((int) config.KeepAliveInterval)));
+            var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), TimeSpan.FromMilliseconds((int)config.KeepAliveInterval), MessageSerializer.Instance);
 
-            return new GameMaster(config, communicationClient, gameName);
+            return new GameMaster(config, communicationClient, gameName, new ErrorsMessagesFactory(), loggingMode, new GameMasterMessageFactory());
         }
 
         private static void Usage(OptionSet options)

@@ -14,14 +14,13 @@ namespace GameMaster.ActionHandlers
 
         protected override bool Validate()
         {
-            var playerInfo = Board.Players[PlayerId];
             return new DestroyAvailabilityChain(PlayerId, Board.Players).ActionAvailable();
         }
 
-        public override DataFieldSet Respond()
+        public override BoardData Respond()
         {
             if (!Validate())
-                return DataFieldSet.Create(PlayerId, new Piece[0]);
+                return BoardData.Create(PlayerId, new Piece[0]);
 
             var player = Board.Players[PlayerId];
             var playerPiece = player.Piece;
@@ -30,7 +29,7 @@ namespace GameMaster.ActionHandlers
             playerPiece.Type = PieceType.Destroyed;
             Board.Pieces.Remove(playerPiece.Id);
 
-            return DataFieldSet.Create(PlayerId, new[] {playerPiece});
+            return BoardData.Create(PlayerId, new[] {playerPiece});
         }
     }
 }

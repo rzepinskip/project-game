@@ -6,7 +6,10 @@ using Common;
 using Communication.Client;
 using GameMaster;
 using GameMaster.Configuration;
+using Messaging;
+using Messaging.ErrorsMessages;
 using Messaging.Serialization;
+using Player.StrategyGroups;
 
 namespace GameSimulation
 {
@@ -14,7 +17,7 @@ namespace GameSimulation
     {
         public CommunicationServer.CommunicationServer CommunicationServer;
 
-        public GameSimulation(string configFilePath)
+        public GameSimulation(string configFilePath, Dictionary<TeamColor, StrategyGroup> strategyGroups)
         {
             var port = Constants.DefaultPortNumber;
             var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
@@ -22,20 +25,20 @@ namespace GameSimulation
 
             var configLoader = new XmlLoader<GameConfiguration>();
             var config = configLoader.LoadConfigurationFromFile(configFilePath);
-            var communicationClient = new AsynchronousClient(new TcpSocketConnector(MessageSerializer.Instance, port,
-                ipAddress,
-                TimeSpan.FromMilliseconds((int) config.KeepAliveInterval)));
+            var keepAliveInterval = TimeSpan.FromMilliseconds((int) config.KeepAliveInterval);
+            var communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
+                MessageSerializer.Instance);
+
 
             CommunicationServer =
-                new CommunicationServer.CommunicationServer(MessageSerializer.Instance, config.KeepAliveInterval, port);
-            GameMaster = new GameMaster.GameMaster(config, communicationClient, "game");
+                new CommunicationServer.CommunicationServer(MessageSerializer.Instance, keepAliveInterval, port, new ErrorsMessagesFactory(), LoggingMode.NonVerbose, ipAddress);
+            GameMaster = new GameMaster.GameMaster(config, communicationClient, "game", new ErrorsMessagesFactory(), LoggingMode.NonVerbose, new GameMasterMessageFactory());
             Players = new List<Player.Player>();
             for (var i = 0; i < 2 * config.GameDefinition.NumberOfPlayersPerTeam; i++)
             {
-                communicationClient = new AsynchronousClient(new TcpSocketConnector(MessageSerializer.Instance, port,
-                    ipAddress,
-                    TimeSpan.FromMilliseconds((int) config.KeepAliveInterval)));
-                var player = new Player.Player(communicationClient, "game", TeamColor.Blue, PlayerType.Leader);
+                communicationClient = new AsynchronousCommunicationClient(new IPEndPoint(ipAddress, port), keepAliveInterval,
+                    MessageSerializer.Instance);
+                var player = new Player.Player(communicationClient, "game", TeamColor.Blue, PlayerType.Leader, new ErrorsMessagesFactory(), LoggingMode.NonVerbose, strategyGroups);
                 Players.Add(player);
             }
 
@@ -52,11 +55,6 @@ namespace GameSimulation
         {
             Winners = e.Winners;
             GameFinished = true;
-        }
-
-        public void StartSimulation()
-        {
-            foreach (var player in Players) player.CommunicationClient.Send(player.GetNextRequestMessage());
         }
     }
 }

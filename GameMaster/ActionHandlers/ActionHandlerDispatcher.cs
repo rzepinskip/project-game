@@ -1,15 +1,24 @@
-﻿using Common;
+﻿using System;
+using Common;
 using Common.ActionInfo;
+using Common.Interfaces;
 
 namespace GameMaster.ActionHandlers
 {
     internal class ActionHandlerDispatcher
     {
-        private readonly ActionHandler _actionHandler;
+        private readonly GameMasterBoard _board;
+        private readonly IKnowledgeExchangeManager _knowledgeExchangeManager;
 
-        public ActionHandlerDispatcher(dynamic actionInfo, GameMasterBoard board, int playerId)
+        public ActionHandlerDispatcher(GameMasterBoard board, IKnowledgeExchangeManager knowledgeExchangeManager)
         {
-            _actionHandler = ActionHandler(actionInfo, board, playerId);
+            _board = board;
+            _knowledgeExchangeManager = knowledgeExchangeManager;
+        }
+
+        public ActionHandler Resolve(dynamic actionInfo, int playerId)
+        {
+            return ActionHandler(actionInfo, _board, playerId);
         }
 
         public MoveActionHandler ActionHandler(MoveActionInfo actionInfo, GameMasterBoard board, int playerId)
@@ -43,9 +52,10 @@ namespace GameMaster.ActionHandlers
             return new DestroyPieceActionHandler(playerId, board);
         }
 
-        public DataFieldSet Execute()
+        public AuthorizeKnowledgeExchangeHandler ActionHandler(KnowledgeExchangeInfo actionInfo, GameMasterBoard board,
+            int playerId)
         {
-            return _actionHandler.Respond();
+            return new AuthorizeKnowledgeExchangeHandler(playerId, board, actionInfo.SubjectId, _knowledgeExchangeManager);
         }
     }
 }

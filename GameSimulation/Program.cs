@@ -1,21 +1,30 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Common;
-using NLog;
+using Player.StrategyGroups;
 
 namespace GameSimulation
 {
     internal class Program
     {
-        private static ILogger _logger;
-
+        private static VerboseLogger _logger;
         private static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            var simulation = new GameSimulation("../ExampleConfig.xml");
+            var strategyGroups = new Dictionary<TeamColor, StrategyGroup>
+            {
+                {
+                    TeamColor.Blue, StrategyGroupFactory.Create(StrategyGroupType.Basic)
+                },
+                {
+                    TeamColor.Red, StrategyGroupFactory.Create(StrategyGroupType.Basic)
+                }
+            };
+            var simulation = new GameSimulation("../../../../ExampleConfig.xml", strategyGroups);
 
-            _logger = GameMaster.GameMaster.Logger;
-            simulation.StartSimulation();
+            _logger = simulation.GameMaster.VerboseLogger;
+
             while (true)
             {
                 var boardVisualizer = new BoardVisualizer();
@@ -27,6 +36,7 @@ namespace GameSimulation
                     Thread.Sleep(200);
                     boardVisualizer.VisualizeBoard(simulation.GameMaster.Board);
                     Console.WriteLine(i);
+                   
                 }
 
                 if (simulation.GameFinished)

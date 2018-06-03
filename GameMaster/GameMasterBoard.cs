@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using System.Xml.Serialization;
 using Common;
 using Common.BoardObjects;
 using Common.Interfaces;
+using Messaging.Serialization;
 
 namespace GameMaster
 {
@@ -21,12 +23,15 @@ namespace GameMaster
         public List<Location> UncompletedBlueGoalsLocations { get; set; } = new List<Location>();
         public List<Location> UncompletedRedGoalsLocations { get; set; } = new List<Location>();
 
+        public SerializableDictionary<int, Piece> Pieces { get; } = new SerializableDictionary<int, Piece>();
+
         public bool Equals(GameMasterBoard other)
         {
             return other != null &&
                    base.Equals(other) &&
                    UncompletedBlueGoalsLocations.SequenceEqual(other.UncompletedBlueGoalsLocations) &&
-                   UncompletedRedGoalsLocations.SequenceEqual(other.UncompletedRedGoalsLocations);
+                   UncompletedRedGoalsLocations.SequenceEqual(other.UncompletedRedGoalsLocations) &&
+                   Pieces.SequenceEqual(other.Pieces);
         }
 
         public void MarkGoalAsCompleted(GoalField goal)
@@ -72,6 +77,7 @@ namespace GameMaster
                        EqualityComparer<List<Location>>.Default.GetHashCode(UncompletedBlueGoalsLocations);
             hashCode = hashCode * -1521134295 +
                        EqualityComparer<List<Location>>.Default.GetHashCode(UncompletedRedGoalsLocations);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Dictionary<int, Piece>>.Default.GetHashCode(Pieces);
             return hashCode;
         }
 
@@ -85,26 +91,70 @@ namespace GameMaster
             return !(board1 == board2);
         }
 
+        public override void WriteXml(XmlWriter writer)
+        {
+            base.WriteXml(writer);
+            WriteCollection(writer, Pieces, nameof(Pieces));
+            WriteUncompletedGoalsLocations(writer, UncompletedBlueGoalsLocations,
+                nameof(UncompletedBlueGoalsLocations));
+            WriteUncompletedGoalsLocations(writer, UncompletedRedGoalsLocations,
+                nameof(UncompletedRedGoalsLocations));
+        }
+
+        private void WriteUncompletedGoalsLocations(XmlWriter writer, List<Location> locations, string name)
+        {
+            writer.WriteStartElement(name);
+            foreach (var location in locations)
+            {
+                writer.WriteStartElement(nameof(Location));
+                location.WriteXml(writer);
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
         public override void ReadXml(XmlReader reader)
         {
             base.ReadXml(reader);
+            ReadCollection(reader, Pieces, nameof(Pieces));
 
-            foreach (var field in Content)
+            if (reader.NodeType != XmlNodeType.EndElement)
             {
-                if (!(field is GoalField goalField) || goalField.Type != GoalFieldType.Goal) continue;
+                var blueGoals = ReadCollection<Location>(reader, nameof(UncompletedBlueGoalsLocations), new[] { typeof(Location) });
+                UncompletedBlueGoalsLocations.AddRange(blueGoals);
 
-                switch (goalField.Team)
+                var readGoals = ReadCollection<Location>(reader, nameof(UncompletedRedGoalsLocations), new[] { typeof(Location) });
+                UncompletedRedGoalsLocations.AddRange(readGoals);
+            }
+            else
+            {
+                foreach (var field in Content)
                 {
-                    case TeamColor.Blue:
-                        UncompletedBlueGoalsLocations.Add(goalField);
-                        break;
-                    case TeamColor.Red:
-                        UncompletedRedGoalsLocations.Add(goalField);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    if (!(field is GoalField goalField) || goalField.Type != GoalFieldType.Goal) continue;
+
+                    switch (goalField.Team)
+                    {
+                        case TeamColor.Blue:
+                            UncompletedBlueGoalsLocations.Add(goalField);
+                            break;
+                        case TeamColor.Red:
+                            UncompletedRedGoalsLocations.Add(goalField);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
             }
+            reader.ReadEndElement();
+        }
+
+        public override BoardData ToBoardData(int senderId, int receiverId)
+        {
+            var taskFields = ToEnumerable().Where(f => f is TaskField taskField).Select(t => (TaskField)t);
+            var goalFields = ToEnumerable().Where(f => f is GoalField goalField).Select(t => (GoalField)t);
+            var pieces = Pieces.Values;
+            var playerLocation = Players[receiverId].Location;
+            return BoardData.Create(receiverId, playerLocation, taskFields.ToArray(), goalFields.ToArray(), pieces.ToArray());
         }
     }
 }

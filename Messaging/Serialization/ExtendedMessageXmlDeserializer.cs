@@ -1,22 +1,41 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Schema;
 using System.Xml.Serialization;
-using Messaging.ExchangeKnowledgeMessages;
-using Messaging.InitialisationMessages;
+using Messaging.ActionsMessages;
+using Messaging.ErrorsMessages;
+using Messaging.InitializationMessages;
+using Messaging.KnowledgeExchangeMessages;
 using Messaging.Requests;
-using Messaging.Responses;
+using Messaging.SuggestingActions;
 
 namespace Messaging.Serialization
 {
     public class ExtendedMessageXmlDeserializer : ExtendedXmlSerializer
     {
         private readonly Dictionary<string, XmlSerializer> _serializers;
+        private readonly string _schemaFilePath =  Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "./Serialization/TheProjectGameCommunication.xsd");
+        private readonly XmlSchemaSet _schemas;
 
         public ExtendedMessageXmlDeserializer(string xmlNamespace) : base(xmlNamespace)
         {
+            _schemas = new XmlSchemaSet();
+            _schemas.Add(xmlNamespace, _schemaFilePath);
+
             _serializers = new Dictionary<string, XmlSerializer>
             {
+                // Actions
+                {
+                    AuthorizeKnowledgeExchangeRequest.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(AuthorizeKnowledgeExchangeRequest))
+                },
+                {
+                    DestroyPieceRequest.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(DestroyPieceRequest))
+                },
                 {
                     DiscoverRequest.XmlRootName,
                     GetDefaultXmlSerializer(typeof(DiscoverRequest))
@@ -37,17 +56,23 @@ namespace Messaging.Serialization
                     TestPieceRequest.XmlRootName,
                     GetDefaultXmlSerializer(typeof(TestPieceRequest))
                 },
+                // Errors
                 {
-                    ResponseWithData.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(ResponseWithData))
+                    ErrorMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(ErrorMessage))
                 },
                 {
-                    ConfirmGameRegistrationMessage.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(ConfirmGameRegistrationMessage))
+                    GameMasterDisconnected.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(GameMasterDisconnected))
                 },
                 {
-                    GameMessage.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(GameMessage))
+                    PlayerDisconnected.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(PlayerDisconnected))
+                },
+                // Initialization request
+                {
+                    GameStartedMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(GameStartedMessage))
                 },
                 {
                     GetGamesMessage.XmlRootName,
@@ -58,38 +83,57 @@ namespace Messaging.Serialization
                     GetDefaultXmlSerializer(typeof(JoinGameMessage))
                 },
                 {
-                    RegisteredGamesMessage.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(RegisteredGamesMessage))
-                },
-                {
                     RegisterGameMessage.XmlRootName,
                     GetDefaultXmlSerializer(typeof(RegisterGameMessage))
                 },
+                // Initialization responses
                 {
-                    RejectJoiningGame.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(RejectJoiningGame))
+                    ConfirmGameRegistrationMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(ConfirmGameRegistrationMessage))
                 },
                 {
                     ConfirmJoiningGameMessage.XmlRootName,
                     GetDefaultXmlSerializer(typeof(ConfirmJoiningGameMessage))
                 },
                 {
-                    DestroyPieceRequest.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(DestroyPieceRequest))
+                    GameMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(GameMessage))
                 },
                 {
-                    AuthorizeKnowledgeExchangeRequest.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(AuthorizeKnowledgeExchangeRequest))
+                    RegisteredGamesMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(RegisteredGamesMessage))
                 },
+                {
+                    RejectGameRegistrationMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(RejectGameRegistrationMessage))
+                },
+                {
+                    RejectJoiningGame.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(RejectJoiningGame))
+                },
+                // Knowledge exchange
                 {
                     KnowledgeExchangeRequestMessage.XmlRootName,
                     GetDefaultXmlSerializer(typeof(KnowledgeExchangeRequestMessage))
                 },
                 {
-                    AcceptExchangeRequestMessage.XmlRootName,
-                    GetDefaultXmlSerializer(typeof(AcceptExchangeRequestMessage))
-                }
-
+                    RejectKnowledgeExchangeMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(RejectKnowledgeExchangeMessage))
+                },
+                // Suggest action
+                {
+                    SuggestAction.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(SuggestAction))
+                },
+                {
+                    SuggestActionResponse.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(SuggestActionResponse))
+                },
+                // Other
+                {
+                    DataMessage.XmlRootName,
+                    GetDefaultXmlSerializer(typeof(DataMessage))
+                },
             };
         }
 
@@ -111,7 +155,8 @@ namespace Messaging.Serialization
 
         private Message ReadMessage(TextReader stream)
         {
-            var document = XDocument.Load(stream);
+            var xml = stream.ReadToEnd();
+            var document = XDocument.Parse(xml);
 
             var name = ReadRootName(document);
             var serializer = _serializers[name];
@@ -119,7 +164,7 @@ namespace Messaging.Serialization
             Message message = null;
 
             if (document.Root != null)
-                message = serializer.Deserialize(document.Root.CreateReader()) as Message;
+                message = ValidateAndDeserialize(xml, serializer);
 
             return message;
         }
@@ -128,6 +173,51 @@ namespace Messaging.Serialization
         {
             var node = document.Root;
             return node?.Name.LocalName;
+        }
+
+        private Message ValidateAndDeserialize(string xml, XmlSerializer serializer)
+        {
+            Exception firstException = null;
+
+            var settings = new XmlReaderSettings
+            {
+                Schemas = _schemas,
+                ValidationType = ValidationType.Schema,
+                ValidationFlags =
+                    XmlSchemaValidationFlags.ProcessIdentityConstraints |
+                    XmlSchemaValidationFlags.ReportValidationWarnings
+            };
+            settings.ValidationEventHandler +=
+                delegate(object sender, ValidationEventArgs args)
+                {
+                    if (args.Severity == XmlSeverityType.Warning)
+                    {
+                        Console.WriteLine(args.Message);
+                    }
+                    else
+                    {
+                        if (firstException == null)
+                            firstException = args.Exception;
+
+                        Console.WriteLine(args.Exception.ToString());
+                    }
+                };
+
+            Message message;
+            using (var input = new StringReader(xml))
+            {
+                using (var xmlReader = XmlReader.Create(input, settings))
+                {
+                    message = serializer.Deserialize(xmlReader) as Message;
+                }
+            }
+
+            if (firstException != null)
+            {
+                throw firstException;
+            }
+
+            return message;
         }
     }
 }

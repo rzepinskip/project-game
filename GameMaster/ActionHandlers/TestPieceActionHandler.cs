@@ -17,18 +17,15 @@ namespace GameMaster.ActionHandlers
             return new TestAvailabilityChain(PlayerId, Board.Players).ActionAvailable();
         }
 
-        public override DataFieldSet Respond()
+        public override BoardData Respond()
         {
             if (!Validate())
-                return DataFieldSet.Create(PlayerId, new Piece[0]);
+                return BoardData.Create(PlayerId, new Piece[0]);
 
             var player = Board.Players[PlayerId];
             var playerPiece = player.Piece;
 
-            //if (playerPiece.Type == PieceType.Sham)
-            //    player.Piece = null;
-
-            return DataFieldSet.Create(PlayerId, new[] {playerPiece});
+            return BoardData.Create(PlayerId, new[] {playerPiece});
         }
     }
 }

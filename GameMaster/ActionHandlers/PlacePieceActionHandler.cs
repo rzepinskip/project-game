@@ -1,4 +1,5 @@
-﻿using ClientsCommon.ActionAvailability.AvailabilityChain;
+﻿using System;
+using ClientsCommon.ActionAvailability.AvailabilityChain;
 using Common;
 using Common.BoardObjects;
 
@@ -18,25 +19,64 @@ namespace GameMaster.ActionHandlers
             return new PlaceAvailabilityChain(playerInfo.Location, Board, PlayerId).ActionAvailable();
         }
 
-        public override DataFieldSet Respond()
+        private bool HavePiece()
         {
-            ///TODO: different action on TaskField
-            if (!Validate())
-                return DataFieldSet.Create(PlayerId, new GoalField[0]);
+            var playerInfo = Board.Players[PlayerId];
+            return new TryPlaceAvailabilityChain(playerInfo.Location, Board, PlayerId).ActionAvailable();
+        }
+
+        public override BoardData Respond()
+        {
+            if (!HavePiece())
+                return BoardData.Create(PlayerId, new GoalField[0]);
+
             var player = Board.Players[PlayerId];
-            var piece = player.Piece;
+            var piece = Board.Pieces[player.Piece.Id];
 
-            player.Piece = null;
+            if (Validate())
+            {
 
-            if (piece.Type == PieceType.Sham)
-                return DataFieldSet.Create(PlayerId, new GoalField[0]);
+                player.Piece = null;
 
-            var playerGoalField = Board[player.Location] as GoalField;
+                if (Board.IsLocationInTaskArea(player.Location))
+                {
+                    piece.PlayerId = null;
+                    
 
-            if (playerGoalField != null && playerGoalField.Type == GoalFieldType.Goal)
-                Board.MarkGoalAsCompleted(playerGoalField);
+                    var playerGoalField = Board[player.Location] as TaskField;
+                    playerGoalField.PieceId = piece.Id;
 
-            return DataFieldSet.Create(PlayerId, new[] {playerGoalField});
+                    var resultPiece = new Piece(piece.Id, PieceType.Unknown);
+
+                    return BoardData.Create(PlayerId, new[] { playerGoalField }, new[] { resultPiece });
+
+                }
+                else
+                {
+                    Board.Pieces.Remove(piece.Id);
+
+                    if (piece.Type == PieceType.Sham)
+                        return null;
+
+                    var playerGoalField = Board[player.Location] as GoalField;
+
+                    if (playerGoalField != null && playerGoalField.Type == GoalFieldType.Goal)
+                        Board.MarkGoalAsCompleted(playerGoalField);
+
+                    return BoardData.Create(PlayerId, new[] { playerGoalField });
+                }
+            }
+            else
+            {
+                var playerTaskField = Board[player.Location] as TaskField;
+
+                var pieceInField = Board.Pieces[playerTaskField.PieceId.Value];
+                var resultPiece = new Piece(pieceInField.Id, PieceType.Unknown);
+                var holdingPiece = new Piece(piece.Id, PieceType.Unknown, piece.PlayerId);
+
+
+                return BoardData.Create(PlayerId, new[] { playerTaskField.Clone() }, new[] { resultPiece, holdingPiece });
+            }
         }
     }
 }

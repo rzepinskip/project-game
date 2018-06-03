@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using BoardGenerators.Generators;
 using Common;
@@ -14,7 +15,7 @@ namespace GameMaster
 
         protected override GameMasterBoard Board { get; set; }
 
-        public List<(TeamColor, PlayerType)> GeneratePlayerSlots(int teamPlayerCount)
+        public static List<(TeamColor, PlayerType)> GeneratePlayerSlots(int teamPlayerCount)
         {
             var playersCount = 2 * teamPlayerCount;
             var playersSlots = new List<(TeamColor, PlayerType)>(playersCount);
@@ -42,7 +43,7 @@ namespace GameMaster
             return Board;
         }
 
-        public void SpawnGameObjects(GameDefinition gameDefinition)
+        public GameMasterBoard SpawnGameObjects(GameDefinition gameDefinition, IEnumerable<PlayerInfo> players)
         {
             var pieces = GeneratePieces(gameDefinition.InitialNumberOfPieces, gameDefinition.ShamProbability);
             var piecesLocations = GenerateLocationsForPieces(gameDefinition.InitialNumberOfPieces);
@@ -52,8 +53,26 @@ namespace GameMaster
             PlaceGoals(gameDefinition.Goals);
 
             var playersLocations = GenerateLocationsForPlayers(gameDefinition.NumberOfPlayersPerTeam);
-            var playersWithLocation = AssignLocationsToPlayers(Board.Players.Values, playersLocations);
+            var playersWithLocation = AssignLocationsToPlayers(players, playersLocations);
             PlacePlayers(playersWithLocation);
+
+            return Board;
+        }
+
+        protected void PlacePieces(IEnumerable<(Piece piece, Location location)> piecesWithLocations)
+        {
+            Board.Pieces.Clear();
+            foreach (var (piece, location) in piecesWithLocations)
+            {
+                var taskFieldToFill = Board[location] as TaskField;
+                if (taskFieldToFill == null)
+                    throw new InvalidDataException();
+
+                taskFieldToFill.DistanceToPiece = 0;
+                taskFieldToFill.PieceId = piece.Id;
+
+                Board.Pieces.Add(piece.Id, piece);
+            }
         }
 
         protected override void PlaceGoals(IEnumerable<GoalField> goals)

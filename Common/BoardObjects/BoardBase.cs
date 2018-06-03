@@ -56,7 +56,6 @@ namespace Common.BoardObjects
         public SerializableDictionary<int, PlayerInfo> Players { get; } =
             new SerializableDictionary<int, PlayerInfo>();
 
-        public SerializableDictionary<int, Piece> Pieces { get; } = new SerializableDictionary<int, Piece>();
 
         public int? GetPieceIdAt(Location location)
         {
@@ -94,6 +93,11 @@ namespace Common.BoardObjects
             return location.Y <= TaskAreaSize + GoalAreaSize - 1 && location.Y >= GoalAreaSize;
         }
 
+        public virtual BoardData ToBoardData(int senderId, int receiverId)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool Equals(BoardBase other)
         {
             return other != null &&
@@ -102,8 +106,7 @@ namespace Common.BoardObjects
                    GoalAreaSize == other.GoalAreaSize &&
                    Width == other.Width &&
                    Height == other.Height &&
-                   Players.SequenceEqual(other.Players) &&
-                   Pieces.SequenceEqual(other.Pieces);
+                   Players.SequenceEqual(other.Players);
         }
 
 
@@ -123,14 +126,17 @@ namespace Common.BoardObjects
             reader.ReadStartElement();
 
             ReadCollection(reader, Players, nameof(Players));
-            ReadCollection(reader, Pieces, nameof(Pieces));
 
             Content = new Field[Width, Height];
             var types = new[] {typeof(GoalField), typeof(TaskField)};
             var readElements = ReadCollection<Field>(reader, nameof(Content), types);
             foreach (var element in readElements) this[element] = element;
+        }
 
-            reader.ReadEndElement();
+        public IEnumerable<Field> ToEnumerable()
+        {
+            foreach (var item in Content)
+                yield return item;
         }
 
         public virtual void WriteXml(XmlWriter writer)
@@ -140,7 +146,6 @@ namespace Common.BoardObjects
             writer.WriteAttributeString("width", Width.ToString());
 
             WriteCollection(writer, Players, nameof(Players));
-            WriteCollection(writer, Pieces, nameof(Pieces));
 
             writer.WriteStartElement(nameof(Content));
             foreach (var field in Content)
@@ -149,7 +154,6 @@ namespace Common.BoardObjects
                 field.WriteXml(writer);
                 writer.WriteEndElement();
             }
-
             writer.WriteEndElement();
         }
 
@@ -158,13 +162,13 @@ namespace Common.BoardObjects
             throw new NotSupportedException("Add is not supported.");
         }
 
-        private void ReadCollection<TCollection>(XmlReader reader, TCollection collection, string collectionName)
+        protected void ReadCollection<TCollection>(XmlReader reader, TCollection collection, string collectionName)
             where TCollection : IEnumerable, IXmlSerializable
         {
             collection.ReadXml(reader);
         }
 
-        private void WriteCollection<TCollection>(XmlWriter writer, TCollection collection, string collectionName)
+        protected void WriteCollection<TCollection>(XmlWriter writer, TCollection collection, string collectionName)
             where TCollection : IEnumerable, IXmlSerializable
         {
             writer.WriteStartElement(collectionName);
@@ -172,7 +176,7 @@ namespace Common.BoardObjects
             writer.WriteEndElement();
         }
 
-        private List<T> ReadCollection<T>(XmlReader reader, string collectionName, IEnumerable<Type> derivedTypes)
+        protected List<T> ReadCollection<T>(XmlReader reader, string collectionName, IEnumerable<Type> derivedTypes)
             where T : class
         {
             var serializers = new Dictionary<string, XmlSerializer>();
@@ -219,7 +223,6 @@ namespace Common.BoardObjects
             hashCode = hashCode * -1521134295 + Height.GetHashCode();
             hashCode = hashCode * -1521134295 +
                        EqualityComparer<Dictionary<int, PlayerInfo>>.Default.GetHashCode(Players);
-            hashCode = hashCode * -1521134295 + EqualityComparer<Dictionary<int, Piece>>.Default.GetHashCode(Pieces);
             return hashCode;
         }
 
@@ -231,6 +234,11 @@ namespace Common.BoardObjects
         public static bool operator !=(BoardBase base1, BoardBase base2)
         {
             return !(base1 == base2);
+        }
+
+        public int GoalAreaStartYFor(TeamColor teamColor)
+        {
+            return teamColor == TeamColor.Blue ? GoalAreaSize - 1 : GoalAreaSize + TaskAreaSize;
         }
     }
 }

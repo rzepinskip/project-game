@@ -3,7 +3,7 @@
     "Player.App": {
       "commandName": "Project",
       "commandLineArgs":
-        "--port 11000 --conf ..\\ExampleConfig.xml --address 127.0.0.1 --game game --team blue --role leader"
+        "--port 11000 --conf  $(SolutionDir)\\Resources\\GameConfigs\\ExampleConfig.xml --game game --team blue --role leader"
     }
   }
 }

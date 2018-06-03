@@ -18,7 +18,7 @@ namespace GameMaster.ActionHandlers
             return true;
         }
 
-        public override DataFieldSet Respond()
+        public override BoardData Respond()
         {
             var player = Board.Players[PlayerId];
             var taskFields = new List<TaskField>();
@@ -48,7 +48,7 @@ namespace GameMaster.ActionHandlers
                     }
                 }
 
-            return DataFieldSet.Create(PlayerId, taskFields.ToArray(), pieces.ToArray());
+            return BoardData.Create(PlayerId, taskFields.ToArray(), pieces.ToArray());
         }
     }
 }

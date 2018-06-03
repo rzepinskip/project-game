@@ -13,5 +13,7 @@ namespace Messaging
         {
             return MessageSerializer.Instance.Serialize(this);
         }
+
+        public abstract string ToLog();
     }
 }

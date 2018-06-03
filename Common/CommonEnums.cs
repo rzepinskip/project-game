@@ -103,4 +103,22 @@ namespace Common
         GameMaster,
         Player
     }
+
+    public enum LoggingMode
+    {
+        Verbose,
+        NonVerbose
+    }
+
+    public enum GameResult
+    {
+        Victory,
+        Defeat
+    }
+
+    public enum RuntimeMode
+    {
+        Visualization,
+        Console
+    }
 }
