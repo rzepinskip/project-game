@@ -1,6 +1,6 @@
 # The Project Game
 
-Software Engineering project consisting of implementing system using given specification, using design patterns, planning systems' architecture, TCP communication, teamwork in Agile methodology.
+Software Engineering project consisting of implementing system according to specification. Main objectives: using design patterns, planning systems' architecture, utilizing TCP communication, working as a team in Agile methodology.
 
 ## Description
 
